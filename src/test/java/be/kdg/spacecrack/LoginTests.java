@@ -92,7 +92,7 @@ public class LoginTests extends TestWithFilteredMockMVC {
         System.out.println("Userjson : " + userjson);
 
         MockHttpServletRequestBuilder requestBuilder = post("/accesstokens");
-        mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"testUsername\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON).content(userjson).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andExpect(content().contentType("application/json;charset=UTF-8")).andExpect(jsonPath("$.value", CoreMatchers.notNullValue()));
 
 
@@ -115,17 +115,30 @@ public class LoginTests extends TestWithFilteredMockMVC {
 
     @Test
     public void PostToAccesstokens_InvalidUser_Unauthorized() throws Exception {
+
         MockHttpServletRequestBuilder requestBuilder = post("/accesstokens").contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"badUser\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder).andExpect(status().isUnauthorized());
 
     }
 
-    /*@Test
-    public void RequestToServer_ExpiredToken_Unauthorized() throws Exception {
-        MockHttpServletRequestBuilder requestBuilder = get("/hello").header("token","testtokenvalue1234");
-        mockMvc.perform(requestBuilder).andExpect(status().isUnauthorized());
-    }*/
+   /* @Test
+    public void Logout() throws Exception {
+
+        String userjson = objectMapper.writeValueAsString(testUser);
+        System.out.println("Userjson : " + userjson);
+
+        MockHttpServletRequestBuilder requestBuilder = post("/accesstokens");
+        mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON).content(userjson).accept(MediaType.APPLICATION_JSON));
+        MockHttpServletRequestBuilder deleteRequestBuilder = delete("/accesstokens");
+        AccessToken token = testUser.getToken();
+        String tokenjson = objectMapper.writeValueAsString(token);
+        mockMvc.perform(deleteRequestBuilder.contentType(MediaType.APPLICATION_JSON).header("token",tokenjson)).andExpect(status().isOk());
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction tx = session.beginTransaction();
+        Query q = session.createQuery("from AccessToken a where a.value == ")
+        assertEquals()
+      }*/
 
     @After
     public void tearDown() throws Exception {
