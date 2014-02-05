@@ -15,6 +15,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name="T_Game")
 public class Game {
+
     @Id
     @GeneratedValue
     private int gameId;

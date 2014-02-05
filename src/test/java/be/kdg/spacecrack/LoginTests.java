@@ -1,7 +1,7 @@
 package be.kdg.spacecrack;
 
 
-import be.kdg.spacecrack.Exceptions.UserNotFoundException;
+import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.controllers.TokenController;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
@@ -14,51 +14,37 @@ import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import javax.servlet.ServletContext;
 
 import static junit.framework.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
  * Created by Tim on 3/02/14.
  */
 
-@ContextConfiguration("file:src/main/webapp/WEB-INF/mvc-dispatcher-servlet.xml")
-@WebAppConfiguration
-@RunWith(SpringJUnit4ClassRunner.class)
-public class LoginTests {
 
-    @Autowired
-    private ServletContext servletContext;
-    private WebApplicationContext ctx;
-    private MockMvc mockMvc;
+public class LoginTests extends TestWithFilteredMockMVC {
+
+
     private TokenController tokenController;
     private User testUser;
     private ITokenStringGenerator mockTokenGenerator;
     private ObjectMapper objectMapper;
 
+
     @Before
     public void setUp() throws Exception {
-        objectMapper = new ObjectMapper();
-       ctx = WebApplicationContextUtils.getWebApplicationContext(servletContext);
-            mockMvc = webAppContextSetup(ctx).build();
+
+
 
         mockTokenGenerator = Mockito.mock(ITokenStringGenerator.class);
+
+        objectMapper = new ObjectMapper();
         tokenController = new TokenController(mockTokenGenerator);
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
@@ -88,7 +74,7 @@ public class LoginTests {
         assertEquals("Token value should be testtokenvalue1234", expectedTokenValue, token.getValue() );
     }
 
-    @Test(expected = UserNotFoundException.class)
+    @Test(expected = SpaceCrackUnauthorizedException.class)
     public void testRequestAccessToken_InvalidUser_UserNotFoundException()
     {
 

@@ -1,6 +1,6 @@
 package be.kdg.spacecrack.controllers;
 
-import be.kdg.spacecrack.Exceptions.UserNotFoundException;
+import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.utilities.HibernateUtil;
@@ -48,7 +48,7 @@ public class TokenController {
 
         if (dbUser == null) {
             tx.commit();
-            throw new UserNotFoundException();
+            throw new SpaceCrackUnauthorizedException();
         }
 
 

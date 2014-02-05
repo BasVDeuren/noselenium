@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * Created by Tim on 3/02/14.
  */
 @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
-public class UserNotFoundException extends RuntimeException{
-    public UserNotFoundException() {
+public class SpaceCrackUnauthorizedException extends RuntimeException{
+    public SpaceCrackUnauthorizedException() {
 
     }
 }
