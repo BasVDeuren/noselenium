@@ -8,22 +8,26 @@ function LoginController($scope,Login) {
     };
 
     $scope.login = function () {
-//         Login.save($scope.loginData, function(data,headers) {
-//             $scope.accesToken = data.key;
-//             $scope.go('/game');
-//         }, function(data,headers) {
-//             alert("failed");
-//         });
+         Login.save($scope.loginData, function(data,headers) {
+             $scope.accesToken = data.value;
+             $scope.go('/game');
+         }, function(data,headers) {
+             alert("failed");
+         });
 
-        if($scope.loginData.username == 'test' && $scope.loginData.password == 'test'){
-            $scope.go('/game');
-        }
+//        if($scope.loginData.username == 'test' && $scope.loginData.password == 'test'){
+//            $scope.go('/game');
+//        }
     };
 
-    $scope.validateFields = function(){
-        if($scope.loginData.username != ''){
+    $scope.validateLogin = function(){
+        if($scope.loginData.username != '' && $scope.loginData.password != ''){
+            return false;
+        }else{
             return true;
         }
     }
+
+
 
 }

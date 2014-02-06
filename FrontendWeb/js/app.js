@@ -32,7 +32,8 @@ spaceApp.config(['$translateProvider', function ($translateProvider) {
         REGISTER: "Register",
         FIRSTNAME: "Firstname",
         LASTNAME: "Lastname",
-        REPEAT_PASSWORD:"Repeat Password"
+        REPEAT_PASSWORD:"Repeat Password",
+        REQUIRED:"Required"
     });
     $translateProvider.translations('nl_NL', {
         HELLO_WORLD: 'Hallo Wereld!',
@@ -42,7 +43,8 @@ spaceApp.config(['$translateProvider', function ($translateProvider) {
         REGISTER: "Registreer",
         FIRSTNAME: "Voornaam",
         LASTNAME: "Achternaam",
-        REPEAT_PASSWORD:"Herhaal Wachtwoord"
+        REPEAT_PASSWORD:"Herhaal Wachtwoord",
+        REQUIRED:"Verplicht"
     });
     $translateProvider.preferredLanguage('en_US');
 }]);
