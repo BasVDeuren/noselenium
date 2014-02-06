@@ -61,21 +61,3 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
 
 
 
-spaceApp.controller("SimpleCtrl", function($scope){
-    $scope.message = "Hello World";
-});
-
-spaceApp.factory("SimpleService", function(){
-
-    var service = {
-        getData: function(){
-            return [{
-                id: 1,
-                name: "Mark"
-            }];
-        }
-
-    };
-
-    return service;
-});

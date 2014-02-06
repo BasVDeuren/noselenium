@@ -13,10 +13,18 @@ spaceApp.controller("RegisterController",function($scope, Register){
 
     $scope.register = function () {
 //        alert($scope.registerData.firstname + ' ' + $scope.registerData.lastname + ' ' + $scope.registerData.email + ' ' + $scope.registerData.username + ' ' + $scope.registerData.password);
-        Register.save($scope.registerData);
+        if($scope.checkPassword($scope.registerData.password,$scope.registerData.repeatPassword)){
+            Register.save($scope.registerData, function(data,headers) {
+                alert('Succes');
+            }, function(data,headers) {
+                alert('Failed');
+            });
+
+        }
+
     };
 
     $scope.checkPassword = function (password1, password2) {
-        return true;
+        return password1 == password2;
     }
 });
