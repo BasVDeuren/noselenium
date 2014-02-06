@@ -25,8 +25,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/**
- * Created by Tim on 3/02/14.
+/* Git $Id$
+ *
+ * Project Application Development
+ * Karel de Grote-Hogeschool
+ * 2013-2014
+ *
  */
 
 
@@ -104,9 +108,9 @@ public class LoginTests extends TestWithFilteredMockMVC {
     public void testUserAlreadyLoggedRelogin() throws Exception {
         MockHttpServletRequestBuilder requestBuilder = post("/accesstokens");
 
-        MvcResult firstResult = mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"testUsername\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON))
+        MvcResult firstResult = mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON).content("{\"username\":\"testUsername\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON))
                 .andReturn();
-        MvcResult secondResult = mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"testUsername\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON))
+        MvcResult secondResult = mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON).content("{\"username\":\"testUsername\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON))
                 .andReturn();
 
         String expected = objectMapper.readValue(firstResult.getResponse().getContentAsString(), AccessToken.class).getValue();
@@ -118,7 +122,7 @@ public class LoginTests extends TestWithFilteredMockMVC {
     @Test
     public void PostToAccesstokens_InvalidUser_Unauthorized() throws Exception {
 
-        MockHttpServletRequestBuilder requestBuilder = post("/accesstokens").contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"badUser\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder requestBuilder = post("/accesstokens").contentType(MediaType.APPLICATION_JSON).content("{\"username\":\"badUser\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder).andExpect(status().isUnauthorized());
 

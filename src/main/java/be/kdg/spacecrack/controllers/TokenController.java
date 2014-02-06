@@ -17,8 +17,12 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
 
-/**
- * Created by Tim on 3/02/14.
+/* Git $Id$
+ *
+ * Project Application Development
+ * Karel de Grote-Hogeschool
+ * 2013-2014
+ *
  */
 @Controller
 @RequestMapping("/accesstokens")
@@ -90,8 +94,8 @@ public class TokenController {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
 
-        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from User u where u.name = :name and u.password = :password");
-        q.setParameter("name", user.getName());
+        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from User u where u.username = :username and u.password = :password");
+        q.setParameter("username", user.getUsername());
         q.setParameter("password", user.getPassword());
         User dbUser = (User) q.uniqueResult();
         tx.commit();

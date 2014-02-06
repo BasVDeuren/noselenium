@@ -5,21 +5,29 @@ import org.codehaus.jackson.annotate.JsonManagedReference;
 import javax.persistence.*;
 import java.io.Serializable;
 
-/**
- * Created by Tim on 3/02/14.
+/* Git $Id$
+ *
+ * Project Application Development
+ * Karel de Grote-Hogeschool
+ * 2013-2014
+ *
  */
 @Entity
 @Table(name="T_User")
 public class User implements Serializable{
+
     @Id
     @GeneratedValue
     private int userId;
 
     @Column
-    private String name;
+    private String username;
 
     @Column
     private String password;
+
+    @Column
+    private String email;
 
     //@OneToOne(mappedBy = "user")
     @OneToOne(cascade = CascadeType.ALL)
@@ -31,17 +39,25 @@ public class User implements Serializable{
         System.out.println("lol");
     }
 
-    public User(String name, String password) {
-        this.name = name;
+    public User(String username, String password) {
+        this.username = username;
         this.password = password;
+    }
+
+    public User(String username, String pw, String pwherhalen, String email) {
+        if(pw.equals(pwherhalen)){
+            this.username = username;
+            this.password = pw;
+            this.email = email;
+        }
     }
 
     public int getUserId() {
         return userId;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
     public String getPassword() {
@@ -56,8 +72,8 @@ public class User implements Serializable{
         this.userId = userId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setPassword(String password) {

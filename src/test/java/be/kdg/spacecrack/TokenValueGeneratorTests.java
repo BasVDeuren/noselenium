@@ -6,8 +6,12 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by Tim on 4/02/14.
+/* Git $Id$
+ *
+ * Project Application Development
+ * Karel de Grote-Hogeschool
+ * 2013-2014
+ *
  */
 public class TokenValueGeneratorTests {
 

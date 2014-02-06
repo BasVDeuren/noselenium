@@ -15,8 +15,12 @@ import javax.servlet.ServletContext;
 
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-/**
- * Created by Tim on 5/02/14.
+/* Git $Id$
+ *
+ * Project Application Development
+ * Karel de Grote-Hogeschool
+ * 2013-2014
+ *
  */
 @ContextConfiguration("file:src/main/webapp/WEB-INF/mvc-dispatcher-servlet.xml")
 @WebAppConfiguration

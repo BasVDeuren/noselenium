@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 
 @Controller
-@RequestMapping("auth/hello")
+@RequestMapping("/auth/hello")
 public class HelloController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String printWelcome(ModelMap model){
