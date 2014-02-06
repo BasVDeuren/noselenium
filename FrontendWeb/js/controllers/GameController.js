@@ -3,7 +3,7 @@
  */
 function GameController ($scope, $translate,Login) {
 
-    var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render});
+    var game = new Phaser.Game(800, 550, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render});
 
     function preload() {
 
@@ -43,12 +43,12 @@ function GameController ($scope, $translate,Login) {
         planet2.inputEnabled = true;
         planet2.events.onInputDown.add(planetListener, this);
 
-        var planet3 = platforms.create(100, 500, 'planet3');
+        var planet3 = platforms.create(100, 400, 'planet3');
         planet3.body.immovable = true;
         planet3.inputEnabled = true;
         planet3.events.onInputDown.add(planetListener, this);
 
-        var planet4 = platforms.create(600, 400, 'planet4');
+        var planet4 = platforms.create(500, 400, 'planet4');
         planet4.body.immovable = true;
         planet4.inputEnabled = true;
         planet4.events.onInputDown.add(planetListener, this);
