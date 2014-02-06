@@ -1,5 +1,7 @@
 package be.kdg.spacecrack.model;
 
+import org.codehaus.jackson.annotate.JsonBackReference;
+
 import javax.persistence.*;
 
 /**
@@ -15,6 +17,11 @@ public class AccessToken {
     @Column
     private String value;
 
+    /*@OneToOne
+    @JoinColumn(name="userId")*/
+    @OneToOne(mappedBy = "token")
+    @JsonBackReference
+    User user;
     public AccessToken() {
     }
 
@@ -24,6 +31,14 @@ public class AccessToken {
 
     public int getAccessTokenId() {
         return accessTokenId;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getValue() {

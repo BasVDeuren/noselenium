@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @ContextConfiguration("file:src/main/webapp/WEB-INF/mvc-dispatcher-servlet.xml")
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-public class TestWithFilteredMockMVC {
+public abstract class TestWithFilteredMockMVC {
     protected MockMvc mockMvc;
     @Autowired
     private ServletContext servletContext;
