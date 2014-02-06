@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class FilterTest extends TestWithFilteredMockMVC {
 
 
-    private MockHttpServletRequestBuilder getHelloRequestBuilder = get("/auth/hello");
+    private MockHttpServletRequestBuilder helloGetRequestBuilder = get("/api/auth/hello");
 
     private AccessToken validToken;
     private User testUser;
@@ -52,7 +52,7 @@ public class FilterTest extends TestWithFilteredMockMVC {
     @Test
     public void testTokenFilterHello_noToken_Unauthorized() throws Exception {
 
-        mockMvc.perform(getHelloRequestBuilder)
+        mockMvc.perform(helloGetRequestBuilder)
             .andExpect(status().isUnauthorized());
 
     }
@@ -63,7 +63,7 @@ public class FilterTest extends TestWithFilteredMockMVC {
         String invalidTokenValue = new TokenStringGenerator(1235).generateTokenString();
         AccessToken invalidToken = new AccessToken(invalidTokenValue);
         String invalidTokenjson = objectMapper.writeValueAsString(invalidToken);
-        mockMvc.perform(getHelloRequestBuilder.header("token", invalidTokenjson))
+        mockMvc.perform(helloGetRequestBuilder.header("token", invalidTokenjson))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -71,7 +71,7 @@ public class FilterTest extends TestWithFilteredMockMVC {
     public void TokenFilter_validToken_OK() throws Exception {
 
         String validTokenjson = objectMapper.writeValueAsString(validToken);
-        mockMvc.perform(getHelloRequestBuilder.header("token", validTokenjson)).andExpect(status().isOk());
+        mockMvc.perform(helloGetRequestBuilder.header("token", validTokenjson)).andExpect(status().isOk());
     }
 
     @After

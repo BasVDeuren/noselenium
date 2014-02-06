@@ -22,6 +22,6 @@
     </filter>
     <filter-mapping>
         <filter-name>TokenFilter</filter-name>
-        <url-pattern>/auth/*</url-pattern>
+        <url-pattern>/api/auth/*</url-pattern>
     </filter-mapping>
 </web-app>

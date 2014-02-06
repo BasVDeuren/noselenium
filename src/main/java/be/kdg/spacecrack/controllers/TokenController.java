@@ -27,7 +27,7 @@ import java.io.IOException;
  *
  */
 @Controller
-@RequestMapping("/accesstokens")
+@RequestMapping("/api/accesstokens")
 public class TokenController {
     @Autowired
     private ITokenStringGenerator generator;
@@ -49,7 +49,6 @@ public class TokenController {
     public
     @ResponseBody
     AccessToken getToken(@RequestBody User user) {
-
         User dbUser = null;
         try {
             dbUser = userRepository.getUser(user);

@@ -86,7 +86,7 @@ public class IntegrationLoginTests extends TestWithFilteredMockMVC {
         String userjson = objectMapper.writeValueAsString(testUser);
         System.out.println("Userjson : " + userjson);
 
-        MockHttpServletRequestBuilder requestBuilder = post("/accesstokens");
+        MockHttpServletRequestBuilder requestBuilder = post("/api/accesstokens");
         mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON).content(userjson).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andExpect(content().contentType("application/json;charset=UTF-8")).andExpect(jsonPath("$.value", CoreMatchers.notNullValue()));
 
@@ -95,7 +95,7 @@ public class IntegrationLoginTests extends TestWithFilteredMockMVC {
 
     @Test
     public void testUserAlreadyLoggedRelogin() throws Exception {
-        MockHttpServletRequestBuilder requestBuilder = post("/accesstokens");
+        MockHttpServletRequestBuilder requestBuilder = post("/api/accesstokens");
 
         MvcResult firstResult = mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON).content("{\"username\":\"testUsername\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON))
                 .andReturn();
@@ -111,7 +111,7 @@ public class IntegrationLoginTests extends TestWithFilteredMockMVC {
     @Test
     public void PostToAccesstokens_InvalidUser_Unauthorized() throws Exception {
 
-        MockHttpServletRequestBuilder requestBuilder = post("/accesstokens").contentType(MediaType.APPLICATION_JSON).content("{\"username\":\"badUser\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder requestBuilder = post("/api/accesstokens").contentType(MediaType.APPLICATION_JSON).content("{\"username\":\"badUser\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder).andExpect(status().isUnauthorized());
 
@@ -127,14 +127,14 @@ public class IntegrationLoginTests extends TestWithFilteredMockMVC {
         String userjson = objectMapper.writeValueAsString(testUser);
         System.out.println("Userjson : " + userjson);
 
-        MockHttpServletRequestBuilder requestBuilder = post("/accesstokens");
+        MockHttpServletRequestBuilder requestBuilder = post("/api/accesstokens");
         MvcResult mvcResult = mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON).content(userjson).accept(MediaType.APPLICATION_JSON)).andReturn();
         String tokenJson = mvcResult.getResponse().getContentAsString();
-        mockMvc.perform(get("/auth/hello").header("token", tokenJson)).andExpect(status().isOk());
+        mockMvc.perform(get("/api/auth/hello").header("token", tokenJson)).andExpect(status().isOk());
 
-        MockHttpServletRequestBuilder deleteRequestBuilder = delete("/accesstokens").contentType(MediaType.APPLICATION_JSON).header("token",tokenJson);
+        MockHttpServletRequestBuilder deleteRequestBuilder = delete("/api/accesstokens").contentType(MediaType.APPLICATION_JSON).header("token",tokenJson);
         mockMvc.perform(deleteRequestBuilder).andExpect(status().isOk());
-        mockMvc.perform(get("/auth/hello").header("token", tokenJson)).andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/api/auth/hello").header("token", tokenJson)).andExpect(status().isUnauthorized());
 
       }
 

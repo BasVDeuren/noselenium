@@ -26,7 +26,7 @@ import java.util.List;
 
 public class TokenFilter implements Filter {
 
-    public static final String URLPATTERN = "/auth/*";
+    public static final String URLPATTERN = "/api/auth/*";
 
 
     @Override
