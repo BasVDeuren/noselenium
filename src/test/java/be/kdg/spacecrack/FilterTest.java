@@ -3,6 +3,7 @@ package be.kdg.spacecrack;
 import be.kdg.spacecrack.controllers.TokenController;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
+import be.kdg.spacecrack.repositories.UserRepository;
 import be.kdg.spacecrack.utilities.HibernateUtil;
 import be.kdg.spacecrack.utilities.TokenStringGenerator;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -37,7 +38,7 @@ public class FilterTest extends TestWithFilteredMockMVC {
     @Before
     public void setUp() throws Exception {
         objectMapper = new ObjectMapper();
-        TokenController tokenController = new TokenController(new TokenStringGenerator(1234));
+        TokenController tokenController = new TokenController(new UserRepository(), new TokenStringGenerator(1234));
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
         testUser = new User("testUsername", "testPassword");

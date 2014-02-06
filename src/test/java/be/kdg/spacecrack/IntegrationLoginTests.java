@@ -1,10 +1,10 @@
 package be.kdg.spacecrack;
 
 
-import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.controllers.TokenController;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
+import be.kdg.spacecrack.repositories.UserRepository;
 import be.kdg.spacecrack.utilities.HibernateUtil;
 import be.kdg.spacecrack.utilities.ITokenStringGenerator;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -20,9 +20,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import static junit.framework.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /* Git $Id$
@@ -34,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 
 
-public class LoginTests extends TestWithFilteredMockMVC {
+public class IntegrationLoginTests extends TestWithFilteredMockMVC {
 
 
     private TokenController tokenController;
@@ -51,7 +49,7 @@ public class LoginTests extends TestWithFilteredMockMVC {
         mockTokenGenerator = Mockito.mock(ITokenStringGenerator.class);
 
         objectMapper = new ObjectMapper();
-        tokenController = new TokenController(mockTokenGenerator);
+        tokenController = new TokenController(new UserRepository(),mockTokenGenerator);
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
         testUser = new User("testUsername", "testPassword");
@@ -80,16 +78,7 @@ public class LoginTests extends TestWithFilteredMockMVC {
         assertEquals("Token value should be testtokenvalue1234", expectedTokenValue, token.getValue() );
     }
 
-    @Test(expected = SpaceCrackUnauthorizedException.class)
-    public void testRequestAccessToken_InvalidUser_UserNotFoundException()
-    {
 
-        String name ="badUser";
-        String pw = "badPw";
-        User user = new User(name, pw);
-        tokenController.getToken(user);
-
-    }
 
     @Test
     public void integrationTestLogin_ValidUser_Token() throws Exception {

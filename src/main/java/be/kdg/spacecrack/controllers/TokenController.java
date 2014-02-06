@@ -5,10 +5,11 @@ import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackUnexpectedException;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
+import be.kdg.spacecrack.repositories.IUserRepository;
 import be.kdg.spacecrack.utilities.HibernateUtil;
 import be.kdg.spacecrack.utilities.ITokenStringGenerator;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +31,16 @@ import java.io.IOException;
 public class TokenController {
     @Autowired
     private ITokenStringGenerator generator;
+    @Autowired
+    private IUserRepository userRepository;
+
+    static Logger logger = Logger.getLogger(TokenController.class);
 
     public TokenController() {
     }
 
-    public TokenController(ITokenStringGenerator generator) {
+    public TokenController(IUserRepository userRepository, ITokenStringGenerator generator) {
+        this.userRepository = userRepository;
         this.generator = generator;
     }
 
@@ -46,8 +52,11 @@ public class TokenController {
 
         User dbUser = null;
         try {
-            dbUser = getUser(user);
+            dbUser = userRepository.getUser(user);
         } catch (Exception e) {
+
+            logger.error("Exception while getting user in getToken: ", e);
+
             throw new SpaceCrackUnexpectedException("Unexpected exception occurred while logging in");
 
         }
@@ -76,34 +85,12 @@ public class TokenController {
             throw new InvalidTokenHeaderException();
         }
         try {
-            DeleteAccessToken(accessToken);
+            userRepository.DeleteAccessToken(accessToken);
         } catch (Exception ex) {
             throw new SpaceCrackUnexpectedException("Unexpected exception happened while logging out");
         }
 
 
-    }
-
-    private void DeleteAccessToken(AccessToken accessToken) throws Exception {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from AccessToken a where a.accessTokenId = :id");
-                q.setParameter("id", accessToken.getAccessTokenId());
-                AccessToken dbAccessToken = (AccessToken) q.uniqueResult();
-                dbAccessToken.getUser().setToken(null);
-                session.delete(dbAccessToken);
-                tx.commit();
-
-            } catch (Exception ex) {
-                tx.rollback();
-                throw ex;
-            }
-        } finally {
-            HibernateUtil.close(session);
-        }
     }
 
     private AccessToken getAccessToken(User dbUser) throws Exception {
@@ -131,29 +118,6 @@ public class TokenController {
             HibernateUtil.close(session);
         }
         return accessToken;
-    }
-
-
-    private User getUser(User user) throws Exception {
-        User dbUser;
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from User u where u.username = :username and u.password = :password");
-                q.setParameter("username", user.getUsername());
-                q.setParameter("password", user.getPassword());
-                dbUser = (User) q.uniqueResult();
-
-                tx.commit();
-            } catch (Exception ex) {
-                tx.rollback();
-                throw ex;
-            }
-        } finally {
-            HibernateUtil.close(session);
-        }
-        return dbUser;
     }
 
 
