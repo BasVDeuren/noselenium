@@ -72,9 +72,7 @@ public class TokenFilter implements Filter {
         }
 
         if(unauthorized == true){
-           //responseWrapper.setStatus(401);
-           responseWrapper.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Unauthorized motherfucker");
-           // boolean b = servletResponse.isCommitted();
+           responseWrapper.sendError(HttpServletResponse.SC_UNAUTHORIZED,"You are unauthorized for this request");
             return;
         }else{
         filterChain.doFilter(servletRequest,servletResponse);
