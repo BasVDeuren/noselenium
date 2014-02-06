@@ -19,6 +19,7 @@ module.exports = function (config) {
             'js/vendor/angular-translate-min.js',
             'test/lib/angular/angular-mocks.js',
             'js/*.js',
+            'js/controllers/*js',
             'test/unit/*.js'
         ],
 
