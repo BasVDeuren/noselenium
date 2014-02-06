@@ -15,7 +15,8 @@ spaceApp.controller("RegisterController",function($scope, Register){
 //        alert($scope.registerData.firstname + ' ' + $scope.registerData.lastname + ' ' + $scope.registerData.email + ' ' + $scope.registerData.username + ' ' + $scope.registerData.password);
         if($scope.checkPassword($scope.registerData.password,$scope.registerData.repeatPassword)){
             Register.save($scope.registerData, function(data,headers) {
-                alert('Succes');
+                $scope.accesToken = data.key;
+                $scope.go('/game');
             }, function(data,headers) {
                 alert('Failed');
             });

@@ -7,8 +7,6 @@ angular.module('spaceServices', ['ngResource'])
         return $resource('rest/accesstoken')
     })
     .factory('Register', function ($resource) {
-        return $resource('/rooms')
+        return $resource('rest/account')
     })
     ;
-
-//    rest/account
