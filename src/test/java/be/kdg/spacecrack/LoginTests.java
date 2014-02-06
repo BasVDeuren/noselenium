@@ -20,6 +20,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import static junit.framework.Assert.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -122,23 +124,26 @@ public class LoginTests extends TestWithFilteredMockMVC {
 
     }
 
-   /* @Test
+
+
+    @Test
     public void Logout() throws Exception {
+
+
 
         String userjson = objectMapper.writeValueAsString(testUser);
         System.out.println("Userjson : " + userjson);
 
         MockHttpServletRequestBuilder requestBuilder = post("/accesstokens");
-        mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON).content(userjson).accept(MediaType.APPLICATION_JSON));
-        MockHttpServletRequestBuilder deleteRequestBuilder = delete("/accesstokens");
-        AccessToken token = testUser.getToken();
-        String tokenjson = objectMapper.writeValueAsString(token);
-        mockMvc.perform(deleteRequestBuilder.contentType(MediaType.APPLICATION_JSON).header("token",tokenjson)).andExpect(status().isOk());
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        Transaction tx = session.beginTransaction();
-        Query q = session.createQuery("from AccessToken a where a.value == ")
-        assertEquals()
-      }*/
+        MvcResult mvcResult = mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON).content(userjson).accept(MediaType.APPLICATION_JSON)).andReturn();
+        String tokenJson = mvcResult.getResponse().getContentAsString();
+        mockMvc.perform(get("/auth/hello").header("token", tokenJson)).andExpect(status().isOk());
+
+        MockHttpServletRequestBuilder deleteRequestBuilder = delete("/accesstokens").contentType(MediaType.APPLICATION_JSON).header("token",tokenJson);
+        mockMvc.perform(deleteRequestBuilder).andExpect(status().isOk());
+        mockMvc.perform(get("/auth/hello").header("token", tokenJson)).andExpect(status().isUnauthorized());
+
+      }
 
     @After
     public void tearDown() throws Exception {

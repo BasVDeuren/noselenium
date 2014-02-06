@@ -1,19 +1,20 @@
 package be.kdg.spacecrack.controllers;
 
+import be.kdg.spacecrack.Exceptions.InvalidTokenHeaderException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.utilities.HibernateUtil;
 import be.kdg.spacecrack.utilities.ITokenStringGenerator;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 
 /**
@@ -47,6 +48,27 @@ public class TokenController {
         return getAccessToken(dbUser);
     }
 
+    @RequestMapping(method = RequestMethod.DELETE, consumes = "application/json")
+    public void Logout(@RequestHeader("token") String tokenjson)  {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        try {
+            AccessToken accessToken = objectMapper.readValue(tokenjson, AccessToken.class);
+
+
+            Transaction tx = session.beginTransaction();
+            Query q = session.createQuery("from AccessToken a where a.accessTokenId = :id");
+            q.setParameter("id", accessToken.getAccessTokenId());
+            AccessToken dbAccessToken  = (AccessToken) q.uniqueResult();
+            dbAccessToken.getUser().setToken(null);
+            session.delete(dbAccessToken);
+            tx.commit();
+        } catch (IOException e) {
+            throw new InvalidTokenHeaderException();
+        }
+
+
+    }
     private AccessToken getAccessToken(User dbUser) {
         Session session2 = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx2 = session2.beginTransaction();
@@ -58,7 +80,7 @@ public class TokenController {
             accessToken = new AccessToken(tokenvalue);
             dbUser.setToken(accessToken);
         }
-        //  session.saveOrUpdate(accessToken);
+        session2.saveOrUpdate(accessToken);
         session2.saveOrUpdate(dbUser);
         tx2.commit();
         return accessToken;

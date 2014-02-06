@@ -1,5 +1,7 @@
 package be.kdg.spacecrack.model;
 
+import org.codehaus.jackson.annotate.JsonManagedReference;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -11,7 +13,7 @@ import java.io.Serializable;
 public class User implements Serializable{
     @Id
     @GeneratedValue
-    private int id;
+    private int userId;
 
     @Column
     private String name;
@@ -19,8 +21,10 @@ public class User implements Serializable{
     @Column
     private String password;
 
+    //@OneToOne(mappedBy = "user")
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "accessTokenId")
+    @JoinColumn(name="accesstokenid", nullable = true)
+    @JsonManagedReference
     private AccessToken token;
 
     public User() {
@@ -32,8 +36,8 @@ public class User implements Serializable{
         this.password = password;
     }
 
-    public int getId() {
-        return id;
+    public int getUserId() {
+        return userId;
     }
 
     public String getName() {
@@ -48,8 +52,8 @@ public class User implements Serializable{
         return token;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public void setName(String name) {

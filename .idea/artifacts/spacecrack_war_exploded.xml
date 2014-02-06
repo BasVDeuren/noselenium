@@ -32,6 +32,8 @@
           <element id="library" level="project" name="Maven: net.minidev:json-smart:1.2" />
           <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.5" />
           <element id="library" level="project" name="Maven: javax.servlet:javax.servlet-api:3.1-b03" />
+          <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.9.13" />
+          <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-core-asl:1.9.13" />
         </element>
       </element>
     </root>
