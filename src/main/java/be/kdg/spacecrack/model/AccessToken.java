@@ -4,8 +4,12 @@ import org.codehaus.jackson.annotate.JsonBackReference;
 
 import javax.persistence.*;
 
-/**
- * Created by Tim on 3/02/14.
+/* Git $Id$
+ *
+ * Project Application Development
+ * Karel de Grote-Hogeschool
+ * 2013-2014
+ *
  */
 @Entity
 @Table(name = "T_AccessToken")

@@ -9,7 +9,6 @@ import org.hibernate.Transaction;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
@@ -17,11 +16,14 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Created by Ikke on 5-2-14.
+/* Git $Id$
+ *
+ * Project Application Development
+ * Karel de Grote-Hogeschool
+ * 2013-2014
+ *
  */
-@WebFilter(filterName = "TokenFilter",
-urlPatterns = TokenFilter.URLPATTERN)
+
 public class TokenFilter implements Filter {
 
     public static final String URLPATTERN = "/auth/*";
@@ -34,8 +36,6 @@ public class TokenFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException, HttpStatusCodeException {
-
-
         boolean unauthorized;
 
         HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper((HttpServletResponse) servletResponse);
@@ -71,12 +71,14 @@ public class TokenFilter implements Filter {
             }
         }
 
-        if(unauthorized){
-            responseWrapper.setStatus(401);
+        if(unauthorized == true){
+           //responseWrapper.setStatus(401);
+           responseWrapper.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Unauthorized motherfucker");
+           // boolean b = servletResponse.isCommitted();
+            return;
         }else{
-            responseWrapper.setStatus(200);
-        }
         filterChain.doFilter(servletRequest,servletResponse);
+        }
     }
 
     @Override
