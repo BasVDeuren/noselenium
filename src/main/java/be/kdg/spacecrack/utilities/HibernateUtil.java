@@ -1,5 +1,7 @@
 package be.kdg.spacecrack.utilities;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
@@ -27,5 +29,13 @@ public class HibernateUtil {
         // Close caches and connection pools
         getSessionFactory().close();
     }
-
+    public static void close(Session session) {
+        if (session != null) {
+            try {
+                session.close();
+            } catch (HibernateException ignored) {
+               // log.error("Couldn't close Session", ignored);
+            }
+        }
+    }
 }

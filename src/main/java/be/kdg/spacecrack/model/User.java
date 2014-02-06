@@ -13,8 +13,8 @@ import java.io.Serializable;
  *
  */
 @Entity
-@Table(name="T_User")
-public class User implements Serializable{
+@Table(name = "T_User")
+public class User implements Serializable {
 
     @Id
     @GeneratedValue
@@ -31,12 +31,13 @@ public class User implements Serializable{
 
     //@OneToOne(mappedBy = "user")
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="accesstokenid", nullable = true)
+    @JoinColumn(name = "accesstokenid", nullable = true)
     @JsonManagedReference
     private AccessToken token;
 
+
+
     public User() {
-        System.out.println("lol");
     }
 
     public User(String username, String password) {
@@ -44,12 +45,10 @@ public class User implements Serializable{
         this.password = password;
     }
 
-    public User(String username, String pw, String pwherhalen, String email) {
-        if(pw.equals(pwherhalen)){
-            this.username = username;
-            this.password = pw;
-            this.email = email;
-        }
+    public User(String username, String pw, String email) {
+        this.username = username;
+        this.password = pw;
+        this.email = email;
     }
 
     public int getUserId() {
