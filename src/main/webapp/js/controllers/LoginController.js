@@ -10,7 +10,7 @@ function LoginController($scope,Login) {
     $scope.login = function () {
          Login.save($scope.loginData, function(data,headers) {
              $scope.accesToken = data.value;
-             $scope.go('/game');
+             $scope.go('/spacecrack/game');
              $scope.hasLoginFailed = false;
          }, function(data,headers) {
              $scope.hasLoginFailed = true;

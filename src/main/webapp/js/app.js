@@ -12,11 +12,11 @@ function appRouter($routeProvider) {
             templateUrl: 'partials/login.html',
             controller: 'LoginController'
         })
-        .when('/game', {
+        .when('/spacecrack/game', {
             templateUrl: 'partials/game.html',
             controller: 'GameController'
         })
-        .when('/register', {
+        .when('/spacecrack/register', {
             templateUrl: 'partials/register.html',
             controller: 'RegisterController'
         })
