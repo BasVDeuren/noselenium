@@ -20,7 +20,7 @@ public class User implements Serializable {
     @GeneratedValue
     private int userId;
 
-    @Column
+    @Column(unique = true)
     private String username;
 
     @Column
