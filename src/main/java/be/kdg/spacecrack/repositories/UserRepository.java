@@ -3,6 +3,7 @@ package be.kdg.spacecrack.repositories;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.utilities.HibernateUtil;
+import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -13,29 +14,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("userRepository")
 public class UserRepository implements IUserRepository {
-    Session session;
-    Transaction tx;
-    Query q;
-
-//    public void saveUser(User user){
-//        session = HibernateUtil.getSessionFactory().getCurrentSession();
-//        tx = session.beginTransaction();
-//        session.saveOrUpdate(user);
-//        tx.commit();
-//    }
-//
-//    public User containsUsername(String username){
-//        session = HibernateUtil.getSessionFactory().getCurrentSession();
-//        tx = session.beginTransaction();
-//        q = session.createQuery("from User u where u.username = :username");
-//        q.setParameter("username", username);
-//
-//        User user = (User)q.uniqueResult();
-//
-//        tx.commit();
-//
-//        return user;
-//    }
+      Logger logger = Logger.getLogger(UserRepository.class);
 
     @Override
     public void DeleteAccessToken(AccessToken accessToken) throws Exception {
@@ -52,6 +31,7 @@ public class UserRepository implements IUserRepository {
                 tx.commit();
 
             } catch (Exception ex) {
+                logger.error("Unexpected while retrieving user from database (getUser())", ex);
                 tx.rollback();
                 throw ex;
             }
@@ -74,6 +54,7 @@ public class UserRepository implements IUserRepository {
 
                 tx.commit();
             } catch (Exception ex) {
+                logger.error("Unexpected while retrieving user from database (getUser())", ex);
                 tx.rollback();
                 throw ex;
             }

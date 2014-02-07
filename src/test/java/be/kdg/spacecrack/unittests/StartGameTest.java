@@ -1,4 +1,4 @@
-package be.kdg.spacecrack;
+package be.kdg.spacecrack.unittests;
 
 import be.kdg.spacecrack.controllers.GameController;
 import be.kdg.spacecrack.model.Game;

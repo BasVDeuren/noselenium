@@ -1,4 +1,4 @@
-package be.kdg.spacecrack;
+package be.kdg.spacecrack.integrationtests;
 
 import be.kdg.spacecrack.filters.TokenFilter;
 import org.junit.Before;
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @ContextConfiguration("file:src/main/webapp/WEB-INF/mvc-dispatcher-servlet.xml")
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-public abstract class TestWithFilteredMockMVC {
+public abstract class BaseFilteredIntegrationTests {
     protected MockMvc mockMvc;
     @Autowired
     private ServletContext servletContext;

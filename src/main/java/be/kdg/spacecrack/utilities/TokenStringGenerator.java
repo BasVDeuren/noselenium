@@ -10,7 +10,6 @@ import java.util.Random;
  */
 @Component("generator")
 public class TokenStringGenerator implements ITokenStringGenerator {
-    long seed;
  Random random;
     public TokenStringGenerator(long seed) {
         random = new Random(seed);

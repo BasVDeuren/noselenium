@@ -1,10 +1,9 @@
-package be.kdg.spacecrack;
+package be.kdg.spacecrack.integrationtests;
 
 
 import be.kdg.spacecrack.controllers.TokenController;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
-import be.kdg.spacecrack.repositories.UserRepository;
 import be.kdg.spacecrack.utilities.HibernateUtil;
 import be.kdg.spacecrack.utilities.ITokenStringGenerator;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -32,10 +31,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 
 
-public class IntegrationLoginTests extends TestWithFilteredMockMVC {
+public class IntegrationLoginTests extends BaseFilteredIntegrationTests {
 
 
-    private TokenController tokenController;
+    private TokenController tokenControllerWithMockedGenerator;
     private User testUser;
     private ITokenStringGenerator mockTokenGenerator;
     private ObjectMapper objectMapper;
@@ -49,7 +48,7 @@ public class IntegrationLoginTests extends TestWithFilteredMockMVC {
         mockTokenGenerator = Mockito.mock(ITokenStringGenerator.class);
 
         objectMapper = new ObjectMapper();
-        tokenController = new TokenController(new UserRepository(),mockTokenGenerator);
+
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
         testUser = new User("testUsername", "testPassword");
@@ -63,20 +62,7 @@ public class IntegrationLoginTests extends TestWithFilteredMockMVC {
         ResultActions resultActions = mockMvc.perform(post("/tokens").param("username", "testUser").param("password", "testPassword")).andExpect(jsonPath("token", notNullValue()));
     }*/
 
-   @Test
-    public void testRequestAccessToken_ValidUser_Ok()
-    {
 
-        String name ="testUsername";
-        String pw = "testPassword";
-        User user = new User(name, pw);
-        String expectedTokenValue = "testtokenvalue1234";
-        Mockito.stub(mockTokenGenerator.generateTokenString()).toReturn(expectedTokenValue);
-        AccessToken token = tokenController.getToken(user);
-
-
-        assertEquals("Token value should be testtokenvalue1234", expectedTokenValue, token.getValue() );
-    }
 
 
 

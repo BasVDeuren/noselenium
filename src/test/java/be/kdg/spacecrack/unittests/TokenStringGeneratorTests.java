@@ -1,4 +1,4 @@
-package be.kdg.spacecrack;
+package be.kdg.spacecrack.unittests;
 
 import be.kdg.spacecrack.utilities.ITokenStringGenerator;
 import be.kdg.spacecrack.utilities.TokenStringGenerator;
@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
  * 2013-2014
  *
  */
-public class TokenValueGeneratorTests {
+public class TokenStringGeneratorTests {
 
     @Test
     public void testGenerator() throws Exception {

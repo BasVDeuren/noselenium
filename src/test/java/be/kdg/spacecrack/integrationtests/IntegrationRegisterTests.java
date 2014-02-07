@@ -1,4 +1,4 @@
-package be.kdg.spacecrack;
+package be.kdg.spacecrack.integrationtests;
 
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.UserRepository;
@@ -9,7 +9,7 @@ import static junit.framework.Assert.assertTrue;
 /**
  * Created by Ikke on 6-2-14.
  */
-public class RegisterTest extends TestWithFilteredMockMVC{
+public class IntegrationRegisterTests extends BaseFilteredIntegrationTests {
 
     private User testUser;
     private UserRepository userRepository;

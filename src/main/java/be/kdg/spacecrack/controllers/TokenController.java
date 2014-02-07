@@ -5,13 +5,10 @@ import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackUnexpectedException;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
+import be.kdg.spacecrack.repositories.ITokenRepository;
 import be.kdg.spacecrack.repositories.IUserRepository;
-import be.kdg.spacecrack.utilities.HibernateUtil;
-import be.kdg.spacecrack.utilities.ITokenStringGenerator;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -29,19 +26,22 @@ import java.io.IOException;
 @Controller
 @RequestMapping("/api/accesstokens")
 public class TokenController {
-    @Autowired
-    private ITokenStringGenerator generator;
+
     @Autowired
     private IUserRepository userRepository;
+
+    @Autowired
+    private ITokenRepository tokenRepository;
 
     static Logger logger = Logger.getLogger(TokenController.class);
 
     public TokenController() {
     }
 
-    public TokenController(IUserRepository userRepository, ITokenStringGenerator generator) {
+    public TokenController(IUserRepository userRepository, ITokenRepository tokenRepository) {
         this.userRepository = userRepository;
-        this.generator = generator;
+
+        this.tokenRepository = tokenRepository;
     }
 
 
@@ -66,7 +66,7 @@ public class TokenController {
 
         AccessToken accessToken = null;
         try {
-            accessToken = getAccessToken(dbUser);
+            accessToken = tokenRepository.getAccessToken(dbUser);
         } catch (Exception e) {
             throw new SpaceCrackUnexpectedException("Unexpected exception occurred while logging in");
         }
@@ -90,33 +90,6 @@ public class TokenController {
         }
 
 
-    }
-
-    private AccessToken getAccessToken(User dbUser) throws Exception {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        AccessToken accessToken;
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-
-                accessToken = dbUser.getToken();
-                if (accessToken == null) {
-                    String tokenvalue = generator.generateTokenString();
-                    accessToken = new AccessToken(tokenvalue);
-                    dbUser.setToken(accessToken);
-                }
-                session.saveOrUpdate(accessToken);
-                session.saveOrUpdate(dbUser);
-                tx.commit();
-            } catch (Exception ex) {
-                tx.rollback();
-                throw ex;
-            }
-
-        } finally {
-            HibernateUtil.close(session);
-        }
-        return accessToken;
     }
 
 
