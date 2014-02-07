@@ -40,7 +40,7 @@
                             <div class="col-sm-8">
                                 <input type="password" class="form-control" id="password2"
                                        placeholder="{{'REPEAT_PASSWORD' | translate}}" ng-model="registerData.repeatPassword" required>
-                                <span class="label label-danger" ng-hide="checkPassword(registerData.repeatPassword,registerData.password)">Passwords don't match</span>
+                                <span class="label label-danger" ng-hide="checkPassword(registerData.repeatPassword,registerData.password)">{{'ERR_PASSWORD_MISMATCH' | translate}}</span>
                             </div>
                         </div>
                         <div class="form-group">

@@ -33,7 +33,9 @@ spaceApp.config(['$translateProvider', function ($translateProvider) {
         FIRSTNAME: "Firstname",
         LASTNAME: "Lastname",
         REPEAT_PASSWORD:"Repeat Password",
-        REQUIRED:"Required"
+        REQUIRED:"Required",
+        ERR_PASSWORD_MISMATCH:"Passwords don't match",
+        ERR_LOGIN_FAILED:"Login Failed"
     });
     $translateProvider.translations('nl_NL', {
         HELLO_WORLD: 'Hallo Wereld!',
@@ -44,7 +46,9 @@ spaceApp.config(['$translateProvider', function ($translateProvider) {
         FIRSTNAME: "Voornaam",
         LASTNAME: "Achternaam",
         REPEAT_PASSWORD:"Herhaal Wachtwoord",
-        REQUIRED:"Verplicht"
+        REQUIRED:"Verplicht",
+        ERR_PASSWORD_MISMATCH:"Wachtwoorden komen niet overeen",
+        ERR_LOGIN_FAILED:"Aanmelden mislukt"
     });
     $translateProvider.preferredLanguage('en_US');
 }]);
