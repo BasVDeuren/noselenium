@@ -26,24 +26,20 @@ public class GameController {
     public int createNewGame() {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
-        System.out.println("transaction started");
         Game game;
         game = new Game();
         session.saveOrUpdate(game);
         tx.commit();
-        System.out.println("transaction committed");
         return game.getGameId();
     }
 
     public Game getGame(int gameId) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
-        System.out.println("transaction started");
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("FROM Game g where g.gameId = :gameId");
         q.setParameter("gameId", gameId);
         Game game = (Game)q.uniqueResult();
         tx.commit();
-        System.out.println("transaction committed");
         return game;
     }
 }

@@ -3,10 +3,11 @@ package be.kdg.spacecrack.repositories;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.utilities.HibernateUtil;
-import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("userRepository")
 public class UserRepository implements IUserRepository {
-      Logger logger = Logger.getLogger(UserRepository.class);
+      Logger logger = LoggerFactory.getLogger(UserRepository.class);
 
     @Override
     public void DeleteAccessToken(AccessToken accessToken) throws Exception {
