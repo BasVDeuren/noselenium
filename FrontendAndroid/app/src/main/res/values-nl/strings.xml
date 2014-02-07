@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_settings">Instellingen</string>
+    <string name="app_name">SpaceCrack</string>
+    <string name="email">E-mail</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="login">Aanmelden</string>
+    <string name="login_fail">Aanmelden mislukt</string>
+    <string name="login_succes">Aanmelden gelukt</string>
+    <string name="password">Wachtwoord</string>
+    <string name="repeat_password">Herhaal wachtwoord</string>
+    <string name="register">Registreer</string>
+    <string name="register_fail">Registratie gefaald</string>
+    <string name="register_succes">Registratie gelukt</string>
+    <string name="title_activity_game">GameActivity</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="username">Gebruikersnaam</string>
+</resources>
