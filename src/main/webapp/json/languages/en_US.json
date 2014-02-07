@@ -1,3 +1,13 @@
 {
-    "HELLO_WORLD": "Hello World!"
+    "HELLO_WORLD": "Hello World!",
+    "LOGIN": "Login",
+    "USERNAME": "Username",
+    "PASSWORD": "Password",
+    "REGISTER": "Register",
+    "FIRSTNAME": "Firstname",
+    "LASTNAME": "Lastname",
+    "REPEAT_PASSWORD":"Repeat Password",
+    "REQUIRED":"Required",
+    "ERR_PASSWORD_MISMATCH":"Passwords don't match",
+    "ERR_LOGIN_FAILED":"Login Failed"
 }
