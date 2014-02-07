@@ -6,13 +6,14 @@ function LoginController($scope,Login) {
         username: "",
         password: ""
     };
-
+    $scope.hasLoginFailed = false;
     $scope.login = function () {
          Login.save($scope.loginData, function(data,headers) {
              $scope.accesToken = data.value;
              $scope.go('/game');
+             $scope.hasLoginFailed = false;
          }, function(data,headers) {
-             alert("failed");
+             $scope.hasLoginFailed = true;
          });
 
 //        if($scope.loginData.username == 'test' && $scope.loginData.password == 'test'){
