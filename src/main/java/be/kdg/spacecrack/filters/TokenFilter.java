@@ -74,9 +74,8 @@ public class TokenFilter implements Filter {
         if(unauthorized == true){
            responseWrapper.sendError(HttpServletResponse.SC_UNAUTHORIZED,"You are unauthorized for this request");
             return;
-        }else{
-        filterChain.doFilter(servletRequest,servletResponse);
         }
+        filterChain.doFilter(servletRequest,servletResponse);
     }
 
     @Override

@@ -4,7 +4,7 @@
 
 angular.module('spaceServices', ['ngResource'])
     .factory('Login', function ($resource) {
-        return $resource('api/accesstokens')
+        return $resource('api/api/accesstokens')
     })
     .factory('Register', function ($resource) {
         return $resource('api/account')
