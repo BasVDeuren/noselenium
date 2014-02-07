@@ -7,7 +7,7 @@ import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.ITokenRepository;
 import be.kdg.spacecrack.repositories.IUserRepository;
-import be.kdg.spacecrack.utilities.GenerateSamplesForDatabase;
+import be.kdg.spacecrack.utilities.GenerateSampleUser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,10 +54,10 @@ public class TokenController {
         try {
             User testUserForDeployment = userRepository.getUser(new User("test", "test"));
             if(testUserForDeployment == null){
-                GenerateSamplesForDatabase.createUser();
+                GenerateSampleUser.createUser();
             }
         } catch (Exception e) {
-            GenerateSamplesForDatabase.createUser();
+            GenerateSampleUser.createUser();
             //e.printStackTrace();
         }
         User dbUser = null;
