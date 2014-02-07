@@ -7,8 +7,11 @@ import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.ITokenRepository;
 import be.kdg.spacecrack.repositories.IUserRepository;
-import be.kdg.spacecrack.utilities.GenerateSampleUser;
+import be.kdg.spacecrack.utilities.HibernateUtil;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,21 +49,32 @@ public class TokenController {
         this.tokenRepository = tokenRepository;
     }
 
-
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     public
     @ResponseBody
     AccessToken getToken(@RequestBody User user) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+       try{
+        Transaction tx = session.beginTransaction();
         try {
-            User testUserForDeployment = userRepository.getUser(new User("test", "test"));
-            if(testUserForDeployment == null){
-                GenerateSampleUser.createUser();
+
+
+            @SuppressWarnings("JpaQlInspection") Query query = session.createQuery("from User u where u.username = :testusername");
+            query.setParameter("testusername", "test");
+            if(query.list().size() <1)
+            {
+                session.saveOrUpdate(new User("test","test"));
             }
+            tx.commit();
+
         } catch (Exception e) {
-            GenerateSampleUser.createUser();
+            tx.rollback();
             //e.printStackTrace();
         }
-        User dbUser = null;
+       }finally {
+           HibernateUtil.close(session);
+       }
+        User dbUser;
         try {
             dbUser = userRepository.getUser(user);
         } catch (Exception e) {
@@ -75,7 +89,7 @@ public class TokenController {
             throw new SpaceCrackUnauthorizedException();
         }
 
-        AccessToken accessToken = null;
+        AccessToken accessToken;
         try {
             accessToken = tokenRepository.getAccessToken(dbUser);
         } catch (Exception e) {
