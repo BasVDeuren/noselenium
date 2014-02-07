@@ -23,11 +23,16 @@ public class UserRepository implements IUserRepository {
         try {
             Transaction tx = session.beginTransaction();
             try {
-                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from AccessToken a where a.accessTokenId = :id");
+                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from AccessToken a where a.accessTokenId = :id and a.value = :value");
                 q.setParameter("id", accessToken.getAccessTokenId());
+                q.setParameter("value", accessToken.getValue());
                 AccessToken dbAccessToken = (AccessToken) q.uniqueResult();
-                dbAccessToken.getUser().setToken(null);
-                session.delete(dbAccessToken);
+                if(dbAccessToken != null)
+                {
+                    dbAccessToken.getUser().setToken(null);
+                    session.delete(dbAccessToken);
+                }
+
                 tx.commit();
 
             } catch (Exception ex) {

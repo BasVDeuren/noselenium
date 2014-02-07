@@ -26,6 +26,7 @@ public class TokenRepository implements ITokenRepository {
         this.generator = generator;
     }
 
+
     @Override
     public AccessToken getAccessToken(User dbUser) throws Exception {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();

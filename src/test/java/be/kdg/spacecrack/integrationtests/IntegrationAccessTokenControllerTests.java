@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 
 
-public class IntegrationLoginTests extends BaseFilteredIntegrationTests {
+public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrationTests {
 
 
     private TokenController tokenControllerWithMockedGenerator;
@@ -67,7 +67,7 @@ public class IntegrationLoginTests extends BaseFilteredIntegrationTests {
 
 
     @Test
-    public void integrationTestLogin_ValidUser_Token() throws Exception {
+    public void login_ValidUser_Token() throws Exception {
 
         String userjson = objectMapper.writeValueAsString(testUser);
         System.out.println("Userjson : " + userjson);
@@ -80,7 +80,7 @@ public class IntegrationLoginTests extends BaseFilteredIntegrationTests {
     }
 
     @Test
-    public void testUserAlreadyLoggedRelogin() throws Exception {
+    public void login_SameValidUserTwice_SameToken() throws Exception {
         MockHttpServletRequestBuilder requestBuilder = post("/api/accesstokens");
 
         MvcResult firstResult = mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON).content("{\"username\":\"testUsername\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON))
@@ -95,7 +95,7 @@ public class IntegrationLoginTests extends BaseFilteredIntegrationTests {
     }
 
     @Test
-    public void PostToAccesstokens_InvalidUser_Unauthorized() throws Exception {
+    public void login_InvalidUser_Unauthorized() throws Exception {
 
         MockHttpServletRequestBuilder requestBuilder = post("/api/accesstokens").contentType(MediaType.APPLICATION_JSON).content("{\"username\":\"badUser\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON);
 
@@ -106,7 +106,7 @@ public class IntegrationLoginTests extends BaseFilteredIntegrationTests {
 
 
     @Test
-    public void Logout() throws Exception {
+    public void logout_validToken_nolongerauthorized() throws Exception {
 
 
 
@@ -123,6 +123,14 @@ public class IntegrationLoginTests extends BaseFilteredIntegrationTests {
         mockMvc.perform(get("/api/auth/hello").header("token", tokenJson)).andExpect(status().isUnauthorized());
 
       }
+
+
+
+    @Test
+    public void logout_invalidtoken_ok() throws Exception {
+        MockHttpServletRequestBuilder deleteRequestBuilder = delete("/api/accesstokens").contentType(MediaType.APPLICATION_JSON).header("token","{\"accessTokenId\":1,\"value\":\"invalidtoken123\"}");
+        mockMvc.perform(deleteRequestBuilder).andExpect(status().isOk());
+    }
 
     @After
     public void tearDown() throws Exception {
