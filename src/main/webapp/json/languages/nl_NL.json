@@ -10,5 +10,7 @@
     "REQUIRED":"Verplicht",
     "ERR_PASSWORD_MISMATCH":"Wachtwoorden komen niet overeen",
     "ERR_LOGIN_FAILED":"Aanmelden mislukt",
-    "ERR_REGISTRATION_FAILED":"Registratie mislukt"
+    "ERR_REGISTRATION_FAILED":"Registratie mislukt",
+    "EDIT_PROFILE":"Profiel bewerken",
+    "SAVE":"Opslaan"
 }

@@ -9,4 +9,12 @@ angular.module('spaceServices', ['ngResource'])
     .factory('Register', function ($resource) {
         return $resource('api/api/register')
     })
-    ;
+    .factory('UserService', function () {
+        return {
+            username: '',
+            email: '',
+            password: '',
+            accessToken: null
+        };
+    });
+;

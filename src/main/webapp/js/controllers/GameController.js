@@ -2,7 +2,6 @@
  * Created by Dimi on 3/02/14.
  */
 function GameController ($scope, $translate,Login) {
-
     var game = new Phaser.Game(800, 550, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render});
 
     function preload() {

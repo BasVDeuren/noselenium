@@ -10,5 +10,7 @@
     "REQUIRED":"Required",
     "ERR_PASSWORD_MISMATCH":"Passwords don't match",
     "ERR_LOGIN_FAILED":"Login Failed",
-    "ERR_REGISTRATION_FAILED":"Registration Failed"
+    "ERR_REGISTRATION_FAILED":"Registration Failed",
+    "EDIT_PROFILE":"Edit profile",
+    "SAVE":"Save"
 }
