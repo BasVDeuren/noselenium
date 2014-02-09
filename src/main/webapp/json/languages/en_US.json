@@ -10,5 +10,9 @@
     "REQUIRED":"Required",
     "ERR_PASSWORD_MISMATCH":"Passwords don't match",
     "ERR_LOGIN_FAILED":"Login Failed",
-    "ERR_REGISTRATION_FAILED":"Registration Failed"
+    "ERR_REGISTRATION_FAILED":"Registration Failed",
+    "NEWGAME": "New Game",
+    "ACTIVEGAMES": "Active Games",
+    "MATCHHISTORY": "Match History",
+    "ACCOUNT": "Account"
 }

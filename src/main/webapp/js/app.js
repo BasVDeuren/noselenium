@@ -20,6 +20,14 @@ function appRouter($routeProvider) {
             templateUrl: 'partials/register.html',
             controller: 'RegisterController'
         })
+        .when('/spacecrack/home', {
+            templateUrl: 'partials/navhome.html',
+            controller: 'NavHomeController'
+        })
+        .when('/spacecrack/activegames', {
+            templateUrl: 'partials/game.html',
+            controller: 'GameController'
+        })
 }
 
 //Translation
