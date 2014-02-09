@@ -6,6 +6,7 @@ import be.kdg.spacecrack.repositories.ITokenRepository;
 import be.kdg.spacecrack.repositories.TokenRepository;
 import be.kdg.spacecrack.utilities.HibernateUtil;
 import be.kdg.spacecrack.utilities.ITokenStringGenerator;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.After;
@@ -71,7 +72,8 @@ public class TokenRepositoryTests {
     public void tearDown() throws Exception {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
-        session.delete(testUser);
+        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User");
+        q.executeUpdate();
         tx.commit();
     }
 }
