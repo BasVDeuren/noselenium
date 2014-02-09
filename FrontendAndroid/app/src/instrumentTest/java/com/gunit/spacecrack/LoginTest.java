@@ -56,7 +56,7 @@ public class LoginTest extends ActivityInstrumentationTestCase2<LoginActivity> {
 
 //    public void testFacebookLogin() throws Exception {
 //        solo.clickOnButton(2);
-//        assertNotNull(activity.getUser());
+//        assertNotNull(activity.getUserByUsername());
 //    }
 
     @Override

@@ -73,8 +73,12 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
         System.out.println("Userjson : " + userjson);
 
         MockHttpServletRequestBuilder requestBuilder = post("/api/accesstokens");
-        mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON).content(userjson).accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()).andExpect(content().contentType("application/json;charset=UTF-8")).andExpect(jsonPath("$.value", CoreMatchers.notNullValue()));
+        mockMvc.perform(requestBuilder
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userjson)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(jsonPath("$.value", CoreMatchers.notNullValue()));
 
 
     }

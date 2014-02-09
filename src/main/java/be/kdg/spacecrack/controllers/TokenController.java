@@ -7,6 +7,8 @@ import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.ITokenRepository;
 import be.kdg.spacecrack.repositories.IUserRepository;
+import be.kdg.spacecrack.repositories.TokenRepository;
+import be.kdg.spacecrack.repositories.UserRepository;
 import be.kdg.spacecrack.utilities.HibernateUtil;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.hibernate.Query;
@@ -41,6 +43,8 @@ public class TokenController {
     static Logger logger = LoggerFactory.getLogger(TokenController.class);
 
     public TokenController() {
+        userRepository = new UserRepository();
+        tokenRepository = new TokenRepository();
     }
 
     public TokenController(IUserRepository userRepository, ITokenRepository tokenRepository) {

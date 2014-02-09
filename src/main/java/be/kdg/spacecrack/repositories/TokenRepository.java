@@ -4,6 +4,7 @@ import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.utilities.HibernateUtil;
 import be.kdg.spacecrack.utilities.ITokenStringGenerator;
+import be.kdg.spacecrack.utilities.TokenStringGenerator;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ public class TokenRepository implements ITokenRepository {
     private ITokenStringGenerator generator;
 
     public TokenRepository() {
+        generator = new TokenStringGenerator();
     }
 
     public TokenRepository(ITokenStringGenerator generator) {
