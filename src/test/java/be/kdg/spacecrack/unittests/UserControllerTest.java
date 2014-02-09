@@ -45,7 +45,27 @@ public class UserControllerTest {
         assertEquals("Should return first registered user", "password", userController.getUserByUsername("username").getPassword());
     }
 
+    @Test
+    public void testEditUser() throws Exception {
+        userController = new UserController(new UserRepository());
+        userController.registerUser(new UserWrapper("username", "password", "password", "email"));
 
+        userController.editUser("username", new UserWrapper("username", "newPassword", "newPassword", "newEmail"));
+        UserRepository userRepository = new UserRepository();
+        assertEquals("password should be changed", "newPassword", userRepository.getUserByUsername("username").getPassword());
+        assertEquals("email should be changed", "newEmail",userRepository.getUserByUsername("username").getEmail());
+    }
+
+    @Test
+    public void testEditUserBadPassword() throws Exception {
+        userController = new UserController(new UserRepository());
+        userController.registerUser(new UserWrapper("username", "password", "password", "email"));
+
+        userController.editUser("username", new UserWrapper("username", "newPassword", "newBadRepeatedPassword", "newEmail"));
+        UserRepository userRepository = new UserRepository();
+        assertEquals("password shouldn't be changed", "password", userRepository.getUserByUsername("username").getPassword());
+        assertEquals("email shouldn't be changed", "email",userRepository.getUserByUsername("username").getEmail());
+    }
 
     @After
     public void tearDown() throws Exception {

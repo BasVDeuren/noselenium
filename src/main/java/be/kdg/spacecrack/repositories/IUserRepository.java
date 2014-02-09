@@ -16,4 +16,6 @@ public interface IUserRepository {
     void registerUser(String username, String password, String email);
 
     User getUserByUsername(String username) throws Exception;
+
+    void editUser(User user);
 }

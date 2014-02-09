@@ -67,6 +67,10 @@ public class User implements Serializable {
         return token;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public void setUserId(int userId) {
         this.userId = userId;
     }
@@ -81,5 +85,9 @@ public class User implements Serializable {
 
     public void setToken(AccessToken token) {
         this.token = token;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

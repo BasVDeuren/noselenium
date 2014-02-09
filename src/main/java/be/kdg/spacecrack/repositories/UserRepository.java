@@ -99,4 +99,12 @@ public class UserRepository implements IUserRepository {
         }
             return user;
         }
+
+    @Override
+    public void editUser(User user) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction tx = session.beginTransaction();
+        session.saveOrUpdate(user);
+        tx.commit();
     }
+}

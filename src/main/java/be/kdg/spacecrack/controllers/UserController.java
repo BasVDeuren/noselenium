@@ -45,4 +45,13 @@ public class UserController {
     public User getUserByUsername(String username) throws Exception {
         return userRepository.getUserByUsername(username);
     }
+
+    public void editUser(String username, UserWrapper userWrapper) throws Exception {
+        User user = userRepository.getUserByUsername(username);
+        if (userWrapper.getPassword().equals(userWrapper.getPasswordRepeated())) {
+            user.setPassword(userWrapper.getPassword());
+            user.setEmail(userWrapper.getEmail());
+            userRepository.editUser(user);
+        }
+    }
 }
