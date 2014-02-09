@@ -8,16 +8,17 @@ spaceApp.controller("RegisterController", function ($scope, Register) {
         email: "",
         username: "",
         password: "",
-        repeatPassword: ""
+        passwordRepeated: ""
     };
-
+    $scope.hasRegistrationFailed = false;
     $scope.register = function () {
 //        alert($scope.registerData.firstname + ' ' + $scope.registerData.lastname + ' ' + $scope.registerData.email + ' ' + $scope.registerData.username + ' ' + $scope.registerData.password);
         Register.save($scope.registerData, function (data, headers) {
             $scope.accesToken = data.key;
-            $scope.go('/game');
+            $scope.go('/spacecrack/game');
+            $scope.hasRegistrationFailed = false;
         }, function (data, headers) {
-            alert('Failed');
+            $scope.hasRegistrationFailed = true;
         });
     };
 
@@ -26,8 +27,8 @@ spaceApp.controller("RegisterController", function ($scope, Register) {
     };
 
     $scope.validateRegister = function () {
-        if ($scope.registerData.email != '' && $scope.registerData.username != '' && $scope.registerData.password != '' && $scope.registerData.repeatPassword != ''
-            && $scope.checkPassword($scope.registerData.password, $scope.registerData.repeatPassword)) {
+        if ($scope.registerData.email != '' && $scope.registerData.username != '' && $scope.registerData.password != '' && $scope.registerData.passwordRepeated != ''
+            && $scope.checkPassword($scope.registerData.password, $scope.registerData.passwordRepeated)) {
             return false;
         } else {
             return true;
