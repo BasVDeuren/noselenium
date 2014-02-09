@@ -1,3 +1,13 @@
 {
-    "HELLO_WORLD": "Hallo Wereld!"
+    "HELLO_WORLD": "Hallo Wereld!",
+    "LOGIN": "Aanmelden",
+    "USERNAME": "Gebruikersnaam",
+    "PASSWORD": "Wachtwoord",
+    "REGISTER": "Registreer",
+    "FIRSTNAME": "Voornaam",
+    "LASTNAME": "Achternaam",
+    "REPEAT_PASSWORD":"Herhaal Wachtwoord",
+    "REQUIRED":"Verplicht",
+    "ERR_PASSWORD_MISMATCH":"Wachtwoorden komen niet overeen",
+    "ERR_LOGIN_FAILED":"Aanmelden mislukt"
 }
