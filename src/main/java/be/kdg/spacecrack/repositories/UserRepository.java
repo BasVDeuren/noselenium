@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("userRepository")
 public class UserRepository implements IUserRepository {
-      Logger logger = LoggerFactory.getLogger(UserRepository.class);
+    Logger logger = LoggerFactory.getLogger(UserRepository.class);
 
     @Override
     public void DeleteAccessToken(AccessToken accessToken) throws Exception {
@@ -28,8 +28,7 @@ public class UserRepository implements IUserRepository {
                 q.setParameter("id", accessToken.getAccessTokenId());
                 q.setParameter("value", accessToken.getValue());
                 AccessToken dbAccessToken = (AccessToken) q.uniqueResult();
-                if(dbAccessToken != null)
-                {
+                if (dbAccessToken != null) {
                     dbAccessToken.getUser().setToken(null);
                     session.delete(dbAccessToken);
                 }
@@ -69,4 +68,35 @@ public class UserRepository implements IUserRepository {
         }
         return dbUser;
     }
-}
+
+    @Override
+    public void registerUser(String username, String password, String email) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction tx = session.beginTransaction();
+        User user = new User(username, password, email);
+        session.saveOrUpdate(user);
+        tx.commit();
+    }
+
+    @Override
+    public User getUserByUsername(String username) throws Exception{
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        User user;
+        try {
+            Transaction tx = session.beginTransaction();
+            try {
+                Query q = session.createQuery("from User u where u.username = :username");
+                q.setParameter("username", username);
+                user = (User) q.uniqueResult();
+                tx.commit();
+            } catch (Exception ex) {
+                logger.error("Unexpected while retrieving user from database (getUser())", ex);
+                tx.rollback();
+                throw ex;
+            }
+        }finally {
+            HibernateUtil.close(session);
+        }
+            return user;
+        }
+    }
