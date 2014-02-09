@@ -13,7 +13,7 @@ public interface IUserRepository {
 
     User getUser(User user) throws Exception;
 
-    void registerUser(String username, String password, String email);
+    void addUser(String username, String password, String email);
 
     User getUserByUsername(String username) throws Exception;
 

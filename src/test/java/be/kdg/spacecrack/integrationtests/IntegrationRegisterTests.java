@@ -29,4 +29,18 @@ public class IntegrationRegisterTests extends BaseFilteredIntegrationTests {
                 .andExpect(status().isOk()).andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.value", CoreMatchers.notNullValue()));
     }
+
+    @Test
+    public void testRegisterUser_Badrepeat_NotAcceptable() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String invalidUserWrapper = objectMapper.writeValueAsString(new UserWrapper("username", "password", "badpassword", "email"));
+        MockHttpServletRequestBuilder postRequestBuilder = post("/api/register");
+        mockMvc.perform(postRequestBuilder
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(invalidUserWrapper))
+                .andExpect(status().isNotAcceptable());
+
+
+    }
 }

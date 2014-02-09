@@ -70,7 +70,7 @@ public class UserRepository implements IUserRepository {
     }
 
     @Override
-    public void registerUser(String username, String password, String email) {
+    public void addUser(String username, String password, String email) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
         User user = new User(username, password, email);
