@@ -5,12 +5,10 @@ import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.modelwrapper.UserWrapper;
 import be.kdg.spacecrack.repositories.IUserRepository;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by Ikke on 9-2-14.
@@ -52,12 +50,16 @@ public class UserController {
         return accessToken;
     }
 
-    public void editUser( UserWrapper userWrapper) throws Exception {
-        User user = userRepository.getUserByUsername(userWrapper.getUsername());
+    @RequestMapping(method = RequestMethod.PUT, consumes = "application/json")
+    public void editUser(@RequestBody UserWrapper userWrapper, @RequestHeader("token") String accessTokenJson) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        AccessToken accessToken = mapper.readValue(accessTokenJson, AccessToken.class);
+        User user = userRepository.getUserByAccessToken(accessToken);
+
         if (userWrapper.getPassword().equals(userWrapper.getPasswordRepeated())) {
             user.setPassword(userWrapper.getPassword());
             user.setEmail(userWrapper.getEmail());
-            userRepository.editUser(user);
+            userRepository.updateUser(user);
         }else{
             throw new SpaceCrackNotAcceptableException("Passwords should be the same!");
         }

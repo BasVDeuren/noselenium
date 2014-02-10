@@ -17,5 +17,8 @@ public interface IUserRepository {
 
     User getUserByUsername(String username) throws Exception;
 
-    void editUser(User user);
+    void updateUser(User user);
+
+
+    User getUserByAccessToken(AccessToken accessToken) throws Exception;
 }

@@ -79,13 +79,13 @@ public class UserRepository implements IUserRepository {
     }
 
     @Override
-    public User getUserByUsername(String username) throws Exception{
+    public User getUserByUsername(String username) throws Exception {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         User user;
         try {
             Transaction tx = session.beginTransaction();
             try {
-                Query q = session.createQuery("from User u where u.username = :username");
+                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from User u where u.username = :username");
                 q.setParameter("username", username);
                 user = (User) q.uniqueResult();
                 tx.commit();
@@ -94,17 +94,39 @@ public class UserRepository implements IUserRepository {
                 tx.rollback();
                 throw ex;
             }
-        }finally {
+        } finally {
             HibernateUtil.close(session);
         }
-            return user;
-        }
+        return user;
+    }
 
     @Override
-    public void editUser(User user) {
+    public void updateUser(User user) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
         session.saveOrUpdate(user);
         tx.commit();
+    }
+
+    @Override
+    public User getUserByAccessToken(AccessToken accessToken) throws Exception {
+        User user;
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        try {
+            Transaction tx = session.beginTransaction();
+            try{
+            @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from User u where u.token = :token");
+            q.setParameter("token", accessToken);
+                user = (User) q.uniqueResult();
+            tx.commit();
+            }catch(Exception ex){
+                logger.error("Unexpected while retrieving user from database (getUser())", ex);
+                tx.rollback();
+                throw ex;
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
+        return user;
     }
 }

@@ -70,7 +70,6 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
     public void login_ValidUser_Token() throws Exception {
 
         String userjson = objectMapper.writeValueAsString(testUser);
-        System.out.println("Userjson : " + userjson);
 
         MockHttpServletRequestBuilder requestBuilder = post("/accesstokens");
         mockMvc.perform(requestBuilder

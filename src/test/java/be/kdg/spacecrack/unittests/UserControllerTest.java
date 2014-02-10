@@ -10,6 +10,7 @@ import be.kdg.spacecrack.modelwrapper.UserWrapper;
 import be.kdg.spacecrack.repositories.IUserRepository;
 import be.kdg.spacecrack.repositories.UserRepository;
 import be.kdg.spacecrack.utilities.HibernateUtil;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -18,11 +19,14 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
+import org.mockito.internal.verification.VerificationModeFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.stub;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by Ikke on 9-2-14.
@@ -33,10 +37,14 @@ public class UserControllerTest {
 
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
+    private IUserRepository userRepository;
+    private ITokenController tokenController;
 
     @Before
     public void setUp() throws Exception {
-        userController = new UserController(new UserRepository(), new TokenController());
+        userRepository = mock(IUserRepository.class);
+        tokenController = mock(ITokenController.class);
+        userController = new UserController(userRepository, tokenController);
 
     }
 
@@ -66,9 +74,9 @@ public class UserControllerTest {
     public void RegisterUser_ExistingUsername_SpaceCrackNotAcceptableException() throws Exception {
         expectedEx.expect(SpaceCrackNotAcceptableException.class);
         expectedEx.expectMessage("Username already in use!");
-        //  userController = new UserController(new UserRepository());
-        userController.registerUser(new UserWrapper("username", "password", "password", "email"));
 
+        userController.registerUser(new UserWrapper("username", "password", "password", "email"));
+        stub(userRepository.getUserByUsername("username")).toReturn(new User());
         userController.registerUser(new UserWrapper("username", "password2", "password2", "email2"));
 
 
@@ -78,12 +86,15 @@ public class UserControllerTest {
     @Test
     public void editUser_ValidFields_UserEdited() throws Exception {
         //   userController = new UserController(new UserRepository());
-        userController.registerUser(new UserWrapper("username", "password", "password", "email"));
+        ObjectMapper objectMapper = new ObjectMapper();
 
-        userController.editUser( new UserWrapper("username", "newPassword", "newPassword", "newEmail"));
-        UserRepository userRepository = new UserRepository();
-        assertEquals("password should be changed", "newPassword", userRepository.getUserByUsername("username").getPassword());
-        assertEquals("email should be changed", "newEmail", userRepository.getUserByUsername("username").getEmail());
+
+        User user = new User("username", "password", "email");
+        when(userRepository.getUserByAccessToken(any(AccessToken.class))).thenReturn(user);
+
+        userController.editUser(new UserWrapper("username", "password", "password", "email"), objectMapper.writeValueAsString(new AccessToken("accesstoken1234")));
+
+        Mockito.verify(userRepository, VerificationModeFactory.times(1)).updateUser(user);
     }
 
     //Todo: fix
@@ -91,9 +102,13 @@ public class UserControllerTest {
     public void EditUser_BadRepeatPassword_SpaceCrackNotAcceptableException() throws Exception {
         expectedEx.expect(SpaceCrackNotAcceptableException.class);
         expectedEx.expectMessage("Passwords should be the same!");
-        //  userController = new UserController(new UserRepository());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        User user = new User("username", "password", "email");
+        when(userRepository.getUserByAccessToken(any(AccessToken.class))).thenReturn(user);
+
         userController.registerUser(new UserWrapper("username", "password", "password", "email"));
-        userController.editUser(new UserWrapper("username", "newPassword", "newBadRepeatedPassword", "newEmail"));
+        userController.editUser(new UserWrapper("username", "newPassword", "newBadRepeatedPassword", "newEmail"), objectMapper.writeValueAsString(new AccessToken("accesstoken1234")));
     }
 
     @After
