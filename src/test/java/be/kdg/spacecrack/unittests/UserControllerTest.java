@@ -80,7 +80,7 @@ public class UserControllerTest {
         //   userController = new UserController(new UserRepository());
         userController.registerUser(new UserWrapper("username", "password", "password", "email"));
 
-        userController.editUser("username", new UserWrapper("username", "newPassword", "newPassword", "newEmail"));
+        userController.editUser( new UserWrapper("username", "newPassword", "newPassword", "newEmail"));
         UserRepository userRepository = new UserRepository();
         assertEquals("password should be changed", "newPassword", userRepository.getUserByUsername("username").getPassword());
         assertEquals("email should be changed", "newEmail", userRepository.getUserByUsername("username").getEmail());
@@ -93,7 +93,7 @@ public class UserControllerTest {
         expectedEx.expectMessage("Passwords should be the same!");
         //  userController = new UserController(new UserRepository());
         userController.registerUser(new UserWrapper("username", "password", "password", "email"));
-        userController.editUser("username", new UserWrapper("username", "newPassword", "newBadRepeatedPassword", "newEmail"));
+        userController.editUser(new UserWrapper("username", "newPassword", "newBadRepeatedPassword", "newEmail"));
     }
 
     @After

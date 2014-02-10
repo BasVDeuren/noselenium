@@ -52,8 +52,8 @@ public class UserController {
         return accessToken;
     }
 
-    public void editUser(String username, UserWrapper userWrapper) throws Exception {
-        User user = userRepository.getUserByUsername(username);
+    public void editUser( UserWrapper userWrapper) throws Exception {
+        User user = userRepository.getUserByUsername(userWrapper.getUsername());
         if (userWrapper.getPassword().equals(userWrapper.getPasswordRepeated())) {
             user.setPassword(userWrapper.getPassword());
             user.setEmail(userWrapper.getEmail());
