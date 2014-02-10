@@ -21,7 +21,7 @@ public class IntegrationRegisterTests extends BaseFilteredIntegrationTests {
     public void testRegisterUser_NewUser_Token() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         String validUserWrapperJson = objectMapper.writeValueAsString(new UserWrapper("username", "password", "password", "email"));
-        MockHttpServletRequestBuilder postRequestBuilder = post("/api/register");
+        MockHttpServletRequestBuilder postRequestBuilder = post("/user");
         mockMvc.perform(postRequestBuilder
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -34,7 +34,7 @@ public class IntegrationRegisterTests extends BaseFilteredIntegrationTests {
     public void testRegisterUser_Badrepeat_NotAcceptable() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         String invalidUserWrapper = objectMapper.writeValueAsString(new UserWrapper("username", "password", "badpassword", "email"));
-        MockHttpServletRequestBuilder postRequestBuilder = post("/api/register");
+        MockHttpServletRequestBuilder postRequestBuilder = post("/user");
         mockMvc.perform(postRequestBuilder
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)

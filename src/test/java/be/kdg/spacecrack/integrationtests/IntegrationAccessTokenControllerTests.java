@@ -72,7 +72,7 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
         String userjson = objectMapper.writeValueAsString(testUser);
         System.out.println("Userjson : " + userjson);
 
-        MockHttpServletRequestBuilder requestBuilder = post("/api/accesstokens");
+        MockHttpServletRequestBuilder requestBuilder = post("/accesstokens");
         mockMvc.perform(requestBuilder
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(userjson)
@@ -85,7 +85,7 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
 
     @Test
     public void login_SameValidUserTwice_SameToken() throws Exception {
-        MockHttpServletRequestBuilder requestBuilder = post("/api/accesstokens");
+        MockHttpServletRequestBuilder requestBuilder = post("/accesstokens");
 
         MvcResult firstResult = mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON).content("{\"username\":\"testUsername\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON))
                 .andReturn();
@@ -101,7 +101,7 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
     @Test
     public void login_InvalidUser_Unauthorized() throws Exception {
 
-        MockHttpServletRequestBuilder requestBuilder = post("/api/accesstokens").contentType(MediaType.APPLICATION_JSON).content("{\"username\":\"badUser\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON);
+        MockHttpServletRequestBuilder requestBuilder = post("/accesstokens").contentType(MediaType.APPLICATION_JSON).content("{\"username\":\"badUser\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder).andExpect(status().isUnauthorized());
 
@@ -117,12 +117,12 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
         String userjson = objectMapper.writeValueAsString(testUser);
         System.out.println("Userjson : " + userjson);
 
-        MockHttpServletRequestBuilder requestBuilder = post("/api/accesstokens");
+        MockHttpServletRequestBuilder requestBuilder = post("/accesstokens");
         MvcResult mvcResult = mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON).content(userjson).accept(MediaType.APPLICATION_JSON)).andReturn();
         String tokenJson = mvcResult.getResponse().getContentAsString();
         mockMvc.perform(get("/api/auth/hello").header("token", tokenJson)).andExpect(status().isOk());
 
-        MockHttpServletRequestBuilder deleteRequestBuilder = delete("/api/accesstokens").contentType(MediaType.APPLICATION_JSON).header("token",tokenJson);
+        MockHttpServletRequestBuilder deleteRequestBuilder = delete("/accesstokens").contentType(MediaType.APPLICATION_JSON).header("token",tokenJson);
         mockMvc.perform(deleteRequestBuilder).andExpect(status().isOk());
         mockMvc.perform(get("/api/auth/hello").header("token", tokenJson)).andExpect(status().isUnauthorized());
 
@@ -132,7 +132,7 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
 
     @Test
     public void logout_invalidtoken_ok() throws Exception {
-        MockHttpServletRequestBuilder deleteRequestBuilder = delete("/api/accesstokens").contentType(MediaType.APPLICATION_JSON).header("token","{\"accessTokenId\":1,\"value\":\"invalidtoken123\"}");
+        MockHttpServletRequestBuilder deleteRequestBuilder = delete("/accesstokens").contentType(MediaType.APPLICATION_JSON).header("token","{\"accessTokenId\":1,\"value\":\"invalidtoken123\"}");
         mockMvc.perform(deleteRequestBuilder).andExpect(status().isOk());
     }
 

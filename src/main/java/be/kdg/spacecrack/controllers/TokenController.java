@@ -33,7 +33,7 @@ import java.io.IOException;
  */
 @Component("tokenController")
 @Controller
-@RequestMapping("/api/accesstokens")
+@RequestMapping("/accesstokens")
 public class TokenController implements ITokenController {
 
     @Autowired
