@@ -11,9 +11,9 @@ spaceApp.controller("ProfileController", function ($scope, Profile,UserService) 
         passwordRepeated: ""
     };
     $scope.hasRegistrationFailed = false;
-    $scope.register = function () {
+    $scope.editUser = function () {
 //        alert($scope.registerData.firstname + ' ' + $scope.registerData.lastname + ' ' + $scope.registerData.email + ' ' + $scope.registerData.username + ' ' + $scope.registerData.password);
-        Profile.save($scope.registerData, function (data, headers) {
+        Profile.get(function (data, headers) {
             UserService.accessToken = data.value;
             $scope.go('/spacecrack/game');
             $scope.hasRegistrationFailed = false;

@@ -6,6 +6,7 @@ import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.modelwrapper.UserWrapper;
 import be.kdg.spacecrack.repositories.IUserRepository;
+import be.kdg.spacecrack.repositories.TokenRepository;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,13 +68,14 @@ public class UserController {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET, consumes = "application/json")
+    @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public User getUserByToken(@RequestHeader("token") String accessTokenJson) throws Exception {
+    public User getUserByToken(@CookieValue("accessToken") String cookie) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         User user = null;
         try{
-        user = userRepository.getUserByAccessToken(objectMapper.readValue(accessTokenJson, AccessToken.class));
+            TokenRepository t = new TokenRepository();
+        user = userRepository.getUserByAccessToken(t.getAccessTokenByValue(cookie));
         }catch(JsonParseException ex){
             throw new SpaceCrackUnauthorizedException();
         }
