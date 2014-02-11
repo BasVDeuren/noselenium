@@ -53,12 +53,12 @@ public class UserControllerTest {
         IUserRepository userRepository = mock(IUserRepository.class);
         ITokenController tokenController = mock(ITokenController.class);
         AccessToken expected = new AccessToken("test1234");
-        stub(tokenController.getToken(any(User.class))).toReturn(expected);
+        stub(tokenController.login(any(User.class))).toReturn(expected);
         UserWrapper userWrapper = new UserWrapper("username", "password", "password", "email");
 
         UserController controllerWithMockedTokenController = new UserController(userRepository, tokenController);
         AccessToken actual = controllerWithMockedTokenController.registerUser(userWrapper);
-        assertEquals("Accesstoken should be returned after registrating. ",expected,actual);
+        assertEquals("Accesstoken should be returned after registrating. ", expected, actual);
 
     }
 

@@ -45,7 +45,7 @@ public class IntegrationTokenFilterTests extends BaseFilteredIntegrationTests {
         testUser = new User("testUsername", "testPassword");
         session.saveOrUpdate(testUser);
         tx.commit();
-        validToken = tokenController.getToken(testUser);
+        validToken = tokenController.login(testUser);
 
 
     }
