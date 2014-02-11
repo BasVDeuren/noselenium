@@ -42,7 +42,7 @@ public class UserController {
         if (userByUsername == null) {
             if (userWrapper.getPassword().equals(userWrapper.getPasswordRepeated())) {
                 userRepository.addUser(userWrapper.getUsername(), userWrapper.getPassword(), userWrapper.getEmail());
-                accessToken = tokenController.getToken(userRepository.getUserByUsername(userWrapper.getUsername()));
+                accessToken = tokenController.login(userRepository.getUserByUsername(userWrapper.getUsername()));
             }else{
                 throw new SpaceCrackNotAcceptableException("Password and repeat password aren't equal")    ;
             }

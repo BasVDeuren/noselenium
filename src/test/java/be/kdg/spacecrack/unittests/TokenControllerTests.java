@@ -48,7 +48,7 @@ public class TokenControllerTests{
         String name = "badUser";
         String pw = "badPw";
         User user = new User(name, pw);
-        tokenController.getToken(user);
+        tokenController.login(user);
 
     }
 
@@ -62,7 +62,7 @@ public class TokenControllerTests{
         User user = new User(name, pw);
         String expectedTokenValue = "testtokenvalue1234";
         Mockito.stub(mockTokenGenerator.generateTokenString()).toReturn(expectedTokenValue);
-        AccessToken token = tokenControllerWithMockedGenerator.getToken(user);
+        AccessToken token = tokenControllerWithMockedGenerator.login(user);
 
 
         assertEquals("Token value should be testtokenvalue1234", expectedTokenValue, token.getValue() );
@@ -74,7 +74,7 @@ public class TokenControllerTests{
         User user = new User("testUsername", "testPassword");
         Mockito.stub(repository.getUser(user)).toThrow(new Exception());
         TokenController tokenController1 = new TokenController(repository, new TokenRepository(fixedSeedGenerator));
-        tokenController1.getToken(user);
+        tokenController1.login(user);
 
     }
 

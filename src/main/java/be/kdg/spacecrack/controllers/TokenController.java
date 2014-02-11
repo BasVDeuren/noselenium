@@ -59,7 +59,7 @@ public class TokenController implements ITokenController {
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     public
     @ResponseBody
-    AccessToken getToken(@RequestBody User user) {
+    AccessToken login(@RequestBody User user) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
        try{
         Transaction tx = session.beginTransaction();
@@ -86,7 +86,7 @@ public class TokenController implements ITokenController {
             dbUser = userRepository.getUser(user);
         } catch (Exception e) {
 
-            logger.error("Exception while getting user in getToken: ", e);
+            logger.error("Exception while getting user in login: ", e);
 
             throw new SpaceCrackUnexpectedException("Unexpected exception occurred while logging in");
 

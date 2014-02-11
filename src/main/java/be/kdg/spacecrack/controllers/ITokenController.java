@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 public interface ITokenController {
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    AccessToken getToken(@RequestBody User user);
+    AccessToken login(@RequestBody User user);
 
     @RequestMapping(method = RequestMethod.DELETE, consumes = "application/json")
     void Logout(@RequestHeader("token") String tokenjson);

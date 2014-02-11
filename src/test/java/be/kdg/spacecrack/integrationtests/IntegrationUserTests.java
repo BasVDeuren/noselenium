@@ -123,7 +123,7 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
     public void testGetUser_TokenDeletedFromDb_SpaceCrackUnauthorisedException() throws Exception {
         testRegisterUser_NewUser_Token();
 
-        AccessToken accessToken = userRepository.getUserByUsername("username").getToken();
+        AccessToken accessToken = userRepository.getUserByUsername("username").login();
 
         userRepository.DeleteAccessToken(accessToken);
 
