@@ -3,7 +3,7 @@
  */
 var spaceApp = angular.module('spaceApp');
 
-spaceApp.controller("RegisterController", function ($scope, Register, UserService) {
+spaceApp.controller("RegisterController", function ($scope, Register) {
     $scope.registerData = {
         email: "",
         username: "",
