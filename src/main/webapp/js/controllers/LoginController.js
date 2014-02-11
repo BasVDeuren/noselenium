@@ -1,7 +1,7 @@
 /**
  * Created by Atheesan on 4/02/14.
  */
-function LoginController($scope,Login) {
+function LoginController($scope,Login,UserService,$cookieStore) {
     $scope.loginData = {
         username: "",
         password: ""
@@ -9,7 +9,8 @@ function LoginController($scope,Login) {
     $scope.hasLoginFailed = false;
     $scope.login = function () {
          Login.save($scope.loginData, function(data,headers) {
-             $scope.accesToken = data.value;
+             $cookieStore.put('accessToken',data.value);
+             //alert($cookies.accessToken);
              $scope.go('/spacecrack/home');
              $scope.hasLoginFailed = false;
          }, function(data,headers) {
