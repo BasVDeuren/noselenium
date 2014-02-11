@@ -16,5 +16,6 @@
     "MATCHHISTORY": "Geschiedenis",
     "ACCOUNT": "Account",
     "EDIT_PROFILE":"Profiel bewerken",
-    "SAVE":"Opslaan"
+    "SAVE":"Opslaan",
+    "INVALID_EMAIL":"Ongeldige email"
 }
