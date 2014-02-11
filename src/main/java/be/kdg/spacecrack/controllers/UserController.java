@@ -1,10 +1,12 @@
 package be.kdg.spacecrack.controllers;
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
+import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.modelwrapper.UserWrapper;
 import be.kdg.spacecrack.repositories.IUserRepository;
+import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -64,4 +66,27 @@ public class UserController {
             throw new SpaceCrackNotAcceptableException("Passwords should be the same!");
         }
     }
+
+    @RequestMapping(method = RequestMethod.GET, consumes = "application/json")
+    @ResponseBody
+    public User getUserByToken(@RequestHeader("token") String accessTokenJson) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        User user = null;
+        try{
+        user = userRepository.getUserByAccessToken(objectMapper.readValue(accessTokenJson, AccessToken.class));
+        }catch(JsonParseException ex){
+            throw new SpaceCrackUnauthorizedException();
+        }
+        if(user == null){
+            throw new SpaceCrackUnauthorizedException();
+        }
+        return user;
+    }
+
+    /*@RequestMapping(method = RequestMethod.GET)
+    @ResponseBody
+    public User getUserByToken() throws Exception {
+        boolean b = true;
+        return new User("username", "password", "email");
+    }*/
 }

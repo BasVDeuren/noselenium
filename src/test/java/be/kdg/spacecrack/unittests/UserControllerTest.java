@@ -1,6 +1,7 @@
 package be.kdg.spacecrack.unittests;
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
+import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.controllers.ITokenController;
 import be.kdg.spacecrack.controllers.TokenController;
 import be.kdg.spacecrack.controllers.UserController;
@@ -24,9 +25,7 @@ import org.mockito.internal.verification.VerificationModeFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.stub;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by Ikke on 9-2-14.
@@ -39,13 +38,14 @@ public class UserControllerTest {
     public ExpectedException expectedEx = ExpectedException.none();
     private IUserRepository userRepository;
     private ITokenController tokenController;
+    private ObjectMapper objectMapper;
 
     @Before
     public void setUp() throws Exception {
         userRepository = mock(IUserRepository.class);
         tokenController = mock(ITokenController.class);
         userController = new UserController(userRepository, tokenController);
-
+        objectMapper = new ObjectMapper();
     }
 
     @Test
@@ -110,6 +110,54 @@ public class UserControllerTest {
         userController.registerUser(new UserWrapper("username", "password", "password", "email"));
         userController.editUser(new UserWrapper("username", "newPassword", "newBadRepeatedPassword", "newEmail"), objectMapper.writeValueAsString(new AccessToken("accesstoken1234")));
     }
+
+    @Test
+    public void testGetUser_validToken_User() throws Exception {
+        User user = new User("username", "password", "email");
+        AccessToken accessToken = new AccessToken("accesstoken123");
+        user.setToken(accessToken);
+
+        when(userRepository.getUserByAccessToken(any(AccessToken.class))).thenReturn(user);
+
+        //User actual = userController.getUserByToken(accessToken);
+        User actual = userController.getUserByToken(objectMapper.writeValueAsString(accessToken));
+        //User actual = userController.getUserByToken();
+
+        User expected = user;
+
+        assertEquals("User from usercontroller should be the same as from db", expected, actual);
+    }
+
+    @Test
+    public void testGetUser_NotInDbToken_SpaceCrackNotAcceptableException() throws Exception {
+        expectedEx.expect(SpaceCrackUnauthorizedException.class);
+
+        AccessToken invalidAccessToken = new AccessToken("TokenNotInDb");
+
+        when(userRepository.getUserByAccessToken(any(AccessToken.class))).thenReturn(null);
+
+        //User actual = userController.getUserByToken(invalidAccessToken);
+        userController.getUserByToken(objectMapper.writeValueAsString(invalidAccessToken));
+        //userController.getUserByToken();
+    }
+
+    /*@Test
+    public void testGetUser_TokenInDbButNotFromLoggedOnUser_SpaceCrackNotAcceptableException() throws Exception {
+        expectedEx.expect(SpaceCrackNotAcceptableException.class);
+        expectedEx.expectMessage("This request is not acceptable!");
+
+        User notUserThatIsRequesting = new User("badUsername", "badPassword", "badEmail");
+        AccessToken invalidAccessToken = new AccessToken("TokenNotWithUser");
+        notUserThatIsRequesting.setToken(invalidAccessToken);
+
+        User user = new User("username", "password", "email");
+        AccessToken accessToken = new AccessToken("validAccessToken");
+        user.setToken(accessToken);
+
+        when(userRepository.getUserByAccessToken(any(AccessToken.class))).thenReturn(notUserThatIsRequesting);
+
+        userController.getUserByToken(invalidAccessToken);
+    }*/
 
     @After
     public void tearDown() throws Exception {

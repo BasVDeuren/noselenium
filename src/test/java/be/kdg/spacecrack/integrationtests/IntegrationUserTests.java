@@ -1,5 +1,6 @@
 package be.kdg.spacecrack.integrationtests;
 
+import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.modelwrapper.UserWrapper;
 import be.kdg.spacecrack.repositories.UserRepository;
@@ -10,10 +11,12 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -22,6 +25,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by Ikke on 10-2-14.
  */
 public class IntegrationUserTests extends BaseFilteredIntegrationTests {
+
+    private UserRepository userRepository;
+
+    @Before
+    public void setUp() throws Exception {
+        userRepository = new UserRepository();
+    }
+
     @Test
     public void testEditUser_validEditedUser_StatusOk() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -78,6 +89,51 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
                 .content(invalidUserWrapper))
                 .andExpect(status().isNotAcceptable());
     }
+
+    @Test
+    public void testGetUser_validToken_User() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        testRegisterUser_NewUser_Token();
+        User user = userRepository.getUserByUsername("username");
+        AccessToken accessToken = user.getToken();
+
+        String validToken = objectMapper.writeValueAsString(accessToken);
+        MockHttpServletRequestBuilder getUserRequestBuilder = get("/user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("token", validToken);
+
+        mockMvc.perform(getUserRequestBuilder).andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetUser_InvalidToken_SpaceCrackUnauthorisedException() throws Exception {
+        testRegisterUser_NewUser_Token();
+
+        MockHttpServletRequestBuilder getUserRequestBuilder = get("/user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("token", "invalidToken");
+
+        mockMvc.perform(getUserRequestBuilder).andExpect(status().isUnauthorized());
+    }
+
+    /*
+    @Test
+    public void testGetUser_TokenDeletedFromDb_SpaceCrackUnauthorisedException() throws Exception {
+        testRegisterUser_NewUser_Token();
+
+        AccessToken accessToken = userRepository.getUserByUsername("username").getToken();
+
+        userRepository.DeleteAccessToken(accessToken);
+
+        MockHttpServletRequestBuilder getUserRequestBuilder = get("/user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .header("token", accessToken);
+
+        mockMvc.perform(getUserRequestBuilder).andExpect(status().isUnauthorized());
+    }*/
 
     @After
     public void tearDown() throws Exception {
