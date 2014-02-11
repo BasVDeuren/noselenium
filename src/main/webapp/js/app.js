@@ -44,6 +44,7 @@ spaceApp.config(['$translateProvider', function ($translateProvider) {
 }]);
 
 spaceApp.controller("MainController", function ($scope, $cookies, $location, $timeout, $translate,UserService) {
+
     $scope.changeLanguage = function (key) {
         $translate.uses(key);
     };

@@ -27,8 +27,7 @@ function LoginController($scope,Login) {
         }else{
             return true;
         }
-    }
-
+    };
 
 
 }
