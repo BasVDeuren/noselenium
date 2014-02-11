@@ -3,7 +3,7 @@
  */
 var spaceApp = angular.module('spaceApp');
 
-spaceApp.controller("RegisterController", function ($scope, Register) {
+spaceApp.controller("RegisterController", function ($scope, Profile,UserService,$cookies) {
     $scope.registerData = {
         email: "",
         username: "",
@@ -13,8 +13,8 @@ spaceApp.controller("RegisterController", function ($scope, Register) {
     $scope.hasRegistrationFailed = false;
     $scope.register = function () {
 //        alert($scope.registerData.firstname + ' ' + $scope.registerData.lastname + ' ' + $scope.registerData.email + ' ' + $scope.registerData.username + ' ' + $scope.registerData.password);
-        Register.save($scope.registerData, function (data, headers) {
-            UserService.accessToken = data.key;
+        Profile.save($scope.registerData, function (data, headers) {
+            $cookies.accessToken = data.value;
             $scope.go('/spacecrack/game');
             $scope.hasRegistrationFailed = false;
         }, function (data, headers) {

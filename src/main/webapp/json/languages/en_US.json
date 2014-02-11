@@ -16,5 +16,6 @@
     "MATCHHISTORY": "Match History",
     "ACCOUNT": "Account",
     "EDIT_PROFILE":"Edit profile",
-    "SAVE":"Save"
+    "SAVE":"Save" ,
+    "INVALID_EMAIL": "Invalid email"
 }

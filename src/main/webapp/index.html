@@ -21,48 +21,6 @@
         <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
         <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
-    </head>
-    <body ng-controller="MainController">
-        <!--[if lt IE 7]>
-            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
-        <![endif]-->
-
-    <nav class="navbar navbar-inverse navbar-fixed-top" id="navigation">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Space crack</a>
-        </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-          </ul>
-          <form class="navbar-form navbar-right">
-              <div class="row">
-                  <button class="btn btn-default" ng-click="changeLanguage('en_US')">EN</button>
-                  <button class="btn btn-default" ng-click="changeLanguage('nl_NL')">NL</button>
-              </div>
-          </form>
-        </div><!--/.navbar-collapse -->
-      </div>
-    </nav>
-        <div class="view-container">
-            <div ng-view class="view-animation"></div>
-        </div>
-
-        <div class="container">
-
-        <hr>
-
-      <footer>
-        <p>&copy; Company 2013</p>
-      </footer>
-    </div> <!-- /container -->
 
         <!--Scripts-->
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
@@ -86,9 +44,164 @@
         <script src="js/controllers/LoginController.js"></script>
         <script src="js/controllers/RegisterController.js"></script>
         <script src="js/controllers/NavHomeController.js"></script>
+        <script src="js/controllers/ProfileController.js"></script>
         <!--Custom scripts-->
         <script src="js/services.js"></script>
         <script src="js/main.js"></script>
+        <!--<script src="js/facebook.js"></script>-->
+
+    </head>
+    <body ng-controller="MainController">
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+        <!--Facebook SDK-->
+        <div id="fb-root"></div>
+
+
+
+        <script>
+            window.fbAsyncInit = function() {
+                FB.init({
+                    appId      : '649165391811913', // Set YOUR APP ID
+                    channelUrl : 'http://localhost:8080/#/', // Channel File
+                    status     : true, // check login status
+                    cookie     : true, // enable cookies to allow the server to access the session
+                    xfbml      : true,  // parse XFBML
+                    redirect_uri : 'http://localhost:8080/#//'
+                });
+
+                FB.Event.subscribe('auth.authResponseChange', function(response)
+                {
+                    if (response.status === 'connected')
+                    {
+                        document.getElementById("message").innerHTML +=  "<br>Connected to Facebook";
+                        //SUCCESS
+
+                    }
+                    else if (response.status === 'not_authorized')
+                    {
+                        document.getElementById("message").innerHTML +=  "<br>Failed to Connect";
+
+                        //FAILED
+                    } else
+                    {
+                        document.getElementById("message").innerHTML +=  "<br>Logged Out";
+
+                        //UNKNOWN ERROR
+                    }
+                });
+
+            };
+
+            function Login()
+            {
+
+                FB.login(function(response) {
+                    if (response.authResponse)
+                    {
+                        getUserInfo();
+                    } else
+                    {
+                        console.log('User cancelled login or did not fully authorize.');
+                    }
+                },{scope: 'email,user_photos,user_videos'});
+
+            }
+
+            function getUserInfo() {
+                FB.api('/me', function(response) {
+
+                    var str="<b>Name</b> : "+response.name+"<br>";
+                    str +="<b>Link: </b>"+response.link+"<br>";
+                    str +="<b>Username:</b> "+response.username+"<br>";
+                    str +="<b>id: </b>"+response.id+"<br>";
+                    str +="<b>Email:</b> "+response.email+"<br>";
+                    str +="<input type='button' value='Get Photo' onclick='getPhoto();'/>";
+                    str +="<input type='button' value='Logout' onclick='Logout();'/>";
+                    document.getElementById("status").innerHTML=str;
+
+                });
+            }
+            function getPhoto()
+            {
+                FB.api('/me/picture?type=normal', function(response) {
+
+                    var str="<br/><b>Pic</b> : <img src='"+response.data.url+"'/>";
+                    document.getElementById("status").innerHTML+=str;
+
+                });
+
+            }
+            function Logout()
+            {
+                FB.logout(function(){document.location.reload();});
+            }
+
+            // Load the SDK asynchronously
+            (function(d){
+                var js, id = 'facebook-jssdk', ref = d.getElementsByTagName('script')[0];
+                if (d.getElementById(id)) {return;}
+                js = d.createElement('script'); js.id = id; js.async = true;
+                js.src = "//connect.facebook.net/en_US/all.js";
+                ref.parentNode.insertBefore(js, ref);
+            }(document));
+
+        </script>
+
+
+
+
+
+        <nav class="navbar navbar-inverse navbar-fixed-top" id="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Space crack</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><button onclick="Login()">Facebook</button></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+              <div class="row">
+                  <button class="btn btn-default" ng-click="changeLanguage('en_US')">EN</button>
+                  <button class="btn btn-default" ng-click="changeLanguage('nl_NL')">NL</button>
+                  <div class="btn-group">
+                      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                          Action <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu" role="menu">
+                          <li ng-show="isUserLoggedIn()"><a href="#/spacecrack/editProfile">{{'EDIT_PROFILE' | translate}}</a></li>
+                          <li ng-click="logout()"><a href="#">Logout</a></li>
+                      </ul>
+                  </div>
+              </div>
+          </form>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </nav>
+        <div class="view-container">
+            <div ng-view class="view-animation"></div>
+        </div>
+
+        <div class="container">
+
+        <hr>
+
+      <footer>
+        <p>&copy; Company 2013</p>
+      </footer>
+    </div> <!-- /container -->
+
+
 
     </body>
 </html>
