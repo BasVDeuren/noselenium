@@ -19,7 +19,8 @@ function appRouter($routeProvider) {
         .when('/spacecrack/register', {
             templateUrl: 'partials/register.html',
             controller: 'RegisterController'
-        }).when('/spacecrack/editProfile', {
+        })
+        .when('/spacecrack/editProfile', {
             templateUrl: 'partials/editProfile.html',
             controller: 'ProfileController'
         })
