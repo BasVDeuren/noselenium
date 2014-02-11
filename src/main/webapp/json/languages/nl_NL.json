@@ -11,10 +11,8 @@
     "ERR_PASSWORD_MISMATCH":"Wachtwoorden komen niet overeen",
     "ERR_LOGIN_FAILED":"Aanmelden mislukt",
     "ERR_REGISTRATION_FAILED":"Registratie mislukt",
-    "NEWGAME": "Nieuw Spel",
-    "ACTIVEGAMES": "Actieve Spelen",
-    "MATCHHISTORY": "Geschiedenis",
-    "ACCOUNT": "Account",
+    "REGISTER":"Register",
     "EDIT_PROFILE":"Profiel bewerken",
-    "SAVE":"Opslaan"
+    "SAVE":"Opslaan",
+    "ERR_EDIT_FAILED":"Editeren mislukt"
 }

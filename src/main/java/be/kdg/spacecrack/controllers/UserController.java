@@ -85,7 +85,7 @@ public class UserController {
 
     /*@RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public User getUserByToken() throws Exception {
+    public User getUserByToken(@RequestHeader("token") String accessTokenJson) throws Exception {
         boolean b = true;
         return new User("username", "password", "email");
     }*/

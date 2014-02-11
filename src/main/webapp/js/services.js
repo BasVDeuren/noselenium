@@ -6,7 +6,7 @@ angular.module('spaceServices', ['ngResource'])
     .factory('Login', function ($resource) {
         return $resource('/api/accesstokens')
     })
-    .factory('Register', function ($resource) {
+    .factory('Profile', function($resource){
         return $resource('/api/user')
     })
     .factory('UserService', function () {
@@ -16,5 +16,5 @@ angular.module('spaceServices', ['ngResource'])
             password: '',
             accessToken: null
         };
-    });
+    })
 ;
