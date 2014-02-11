@@ -1,5 +1,6 @@
 package be.kdg.spacecrack.repositories;
 
+import be.kdg.spacecrack.Exceptions.SpaceCrackUnexpectedException;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.utilities.HibernateUtil;
@@ -35,10 +36,10 @@ public class UserRepository implements IUserRepository {
 
                 tx.commit();
 
-            } catch (Exception ex) {
-                logger.error("Unexpected while retrieving user from database (getUser())", ex);
+            } catch (RuntimeException ex) {
+                logger.error("Unexpected while Deleting Accesstoken database (DeleteAccessToken)", ex);
                 tx.rollback();
-                throw ex;
+                throw new SpaceCrackUnexpectedException("Unexpected while retrieving user from database");
             }
         } finally {
             HibernateUtil.close(session);
@@ -58,10 +59,10 @@ public class UserRepository implements IUserRepository {
                 dbUser = (User) q.uniqueResult();
 
                 tx.commit();
-            } catch (Exception ex) {
+            } catch (RuntimeException ex) {
                 logger.error("Unexpected while retrieving user from database (getUser())", ex);
                 tx.rollback();
-                throw ex;
+                throw new SpaceCrackUnexpectedException("Unexpected while retrieving user from database");
             }
         } finally {
             HibernateUtil.close(session);

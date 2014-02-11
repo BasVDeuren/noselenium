@@ -35,6 +35,11 @@ public class User implements Serializable {
     @JsonManagedReference
     private AccessToken token;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name= "contactId", nullable = true)
+    private Contact contact;
+
+
 
 
     public User() {
@@ -90,4 +95,6 @@ public class User implements Serializable {
     public void setEmail(String email) {
         this.email = email;
     }
+
+
 }

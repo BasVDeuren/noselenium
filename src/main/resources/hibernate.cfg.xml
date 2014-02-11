@@ -22,8 +22,10 @@
         <property name="use_sql_comments">false</property>
 
         <!-- alle klasses om te persisten hier mappen-->
-        <mapping class="be.kdg.spacecrack.model.Game"/>
+
         <mapping class="be.kdg.spacecrack.model.User"/>
         <mapping class="be.kdg.spacecrack.model.AccessToken"/>
+        <mapping class="be.kdg.spacecrack.model.Contact"/>
+
     </session-factory>
 </hibernate-configuration>
