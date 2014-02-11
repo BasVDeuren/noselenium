@@ -70,7 +70,6 @@ public class IntegrationTokenFilterTests extends BaseFilteredIntegrationTests {
 
     @Test
     public void TokenFilter_validToken_OK() throws Exception {
-
         String validTokenjson = objectMapper.writeValueAsString(validToken);
         mockMvc.perform(helloGetRequestBuilder.header("token", validTokenjson)).andExpect(status().isOk());
     }

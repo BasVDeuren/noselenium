@@ -4,9 +4,17 @@
 
 angular.module('spaceServices', ['ngResource'])
     .factory('Login', function ($resource) {
-        return $resource('api/api/accesstokens')
+        return $resource('/api/accesstokens')
     })
     .factory('Register', function ($resource) {
-        return $resource('api/api/register')
+        return $resource('/api/user')
     })
-    ;
+    .factory('UserService', function () {
+        return {
+            username: '',
+            email: '',
+            password: '',
+            accessToken: null
+        };
+    });
+;

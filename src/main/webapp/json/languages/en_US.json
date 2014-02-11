@@ -14,5 +14,7 @@
     "NEWGAME": "New Game",
     "ACTIVEGAMES": "Active Games",
     "MATCHHISTORY": "Match History",
-    "ACCOUNT": "Account"
+    "ACCOUNT": "Account",
+    "EDIT_PROFILE":"Edit profile",
+    "SAVE":"Save"
 }

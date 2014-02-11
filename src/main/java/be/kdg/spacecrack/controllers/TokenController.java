@@ -17,6 +17,7 @@ import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,9 +31,10 @@ import java.io.IOException;
  * 2013-2014
  *
  */
+@Component("tokenController")
 @Controller
-@RequestMapping("/api/accesstokens")
-public class TokenController {
+@RequestMapping("/accesstokens")
+public class TokenController implements ITokenController {
 
     @Autowired
     private IUserRepository userRepository;
@@ -53,6 +55,7 @@ public class TokenController {
         this.tokenRepository = tokenRepository;
     }
 
+    @Override
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     public
     @ResponseBody
@@ -102,6 +105,7 @@ public class TokenController {
         return accessToken;
     }
 
+    @Override
     @RequestMapping(method = RequestMethod.DELETE, consumes = "application/json")
     public void Logout(@RequestHeader("token") String tokenjson) {
         ObjectMapper objectMapper = new ObjectMapper();

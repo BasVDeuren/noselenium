@@ -2,7 +2,6 @@
  * Created by Dimi on 3/02/14.
  */
 function GameController ($scope, $translate,Login) {
-
     var game = new Phaser.Game(800, 550, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render});
 
     function preload() {
@@ -29,10 +28,8 @@ function GameController ($scope, $translate,Login) {
         //  A simple background for our game
         game.add.sprite(0, 0, 'space');
 
-        //  The platforms group contains the ground and the 2 ledges we can jump on
         platforms = game.add.group();
 
-        //  Now let's create two ledges
         var planet1 = platforms.create(100, 100, 'planet1');
         planet1.body.immovable = true;
         planet1.inputEnabled = true;

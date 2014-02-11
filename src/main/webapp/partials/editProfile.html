@@ -3,10 +3,7 @@
         <div class="col-md-6 col-md-offset-3">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <ul id="myTab" class="nav nav-tabs">
-                        <li><a href="#/">{{'LOGIN' | translate}}</a></li>
-                        <li class="active"><a href="#/spacecrack/register"> {{'REGISTER' | translate}}</a></li>
-                    </ul>
+                {{'EDIT_PROFILE' | translate}}
                 </div>
                 <div class="panel-body">
 
@@ -48,14 +45,15 @@
                             <label for="password" class="col-sm-3 control-label"></label>
 
                             <div class="col-sm-8">
-                                <div class="alert alert-danger" >
+                                <div class="alert alert-danger alert-dismissable" >
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                                     <strong>{{'ERR_REGISTRATION_FAILED' | translate}}!</strong>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-3 col-sm-2">
-                                <button type="submit" class="btn btn-default" ng-disabled="validateRegister()">{{'REGISTER' |
+                                <button type="submit" class="btn btn-default" ng-disabled="validateRegister()">{{'SAVE' |
                                     translate}}
                                 </button>
                             </div>

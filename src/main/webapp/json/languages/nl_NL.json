@@ -14,5 +14,7 @@
     "NEWGAME": "Nieuw Spel",
     "ACTIVEGAMES": "Actieve Spelen",
     "MATCHHISTORY": "Geschiedenis",
-    "ACCOUNT": "Account"
+    "ACCOUNT": "Account",
+    "EDIT_PROFILE":"Profiel bewerken",
+    "SAVE":"Opslaan"
 }
