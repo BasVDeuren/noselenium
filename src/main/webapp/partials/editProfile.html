@@ -3,18 +3,21 @@
         <div class="col-md-6 col-md-offset-3">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                {{'EDIT_PROFILE' | translate}}
+                    <ul id="myTab" class="nav nav-tabs">
+                        <li><a href="#/spacecrack/editProfile">{{'EDIT_PROFILE' | translate}}</a></li>
+
+                    </ul>
                 </div>
                 <div class="panel-body">
 
-                    <form class="form-horizontal" role="form" ng-submit="register()">
+                    <form class="form-horizontal" role="form" ng-submit="editData()" ng-controller="ProfileController" ng-init="initialiseUser()">
 
                         <div class="form-group">
                             <label for="email" class="col-sm-3 control-label formLabel">Email *</label>
 
                             <div class="col-sm-8">
                                 <input type="text" class="form-control" id="email" placeholder="Email"
-                                       ng-model="registerData.email" required>
+                                       ng-model="editData.email" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -22,7 +25,7 @@
 
                             <div class="col-sm-8">
                                 <input type="text" class="form-control" id="username"
-                                       placeholder="{{'USERNAME' | translate}}" ng-model="registerData.username" required>
+                                       placeholder="{{'USERNAME' | translate}}" ng-model="editData.username" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -30,30 +33,30 @@
 
                             <div class="col-sm-8">
                                 <input type="password" class="form-control" id="password"
-                                       placeholder="{{'PASSWORD' | translate}}" ng-model="registerData.password" required>
+                                       placeholder="{{'PASSWORD' | translate}}" ng-model="editData.password" required>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="password" class="col-sm-3 control-label formLabel">{{'REPEAT_PASSWORD' | translate}} *</label>
                             <div class="col-sm-8">
                                 <input type="password" class="form-control" id="password2"
-                                       placeholder="{{'REPEAT_PASSWORD' | translate}}" ng-model="registerData.passwordRepeated" required>
-                                <span class="label label-danger" ng-hide="checkPassword(registerData.passwordRepeated,registerData.password)">{{'ERR_PASSWORD_MISMATCH' | translate}}</span>
+                                       placeholder="{{'REPEAT_PASSWORD' | translate}}" ng-model="editData.passwordRepeated" required>
+                                <span class="label label-danger" ng-hide="checkPassword(editData.passwordRepeated,editData.password)">{{'ERR_PASSWORD_MISMATCH' | translate}}</span>
                             </div>
                         </div>
-                        <div class="form-group" ng-show="hasRegistrationFailed">
+                        <div class="form-group" ng-show="hasEditChangeFailed">
                             <label for="password" class="col-sm-3 control-label"></label>
 
                             <div class="col-sm-8">
                                 <div class="alert alert-danger alert-dismissable" >
                                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                                    <strong>{{'ERR_REGISTRATION_FAILED' | translate}}!</strong>
+                                    <strong>{{'ERR_EDIT_FAILED' | translate}}!</strong>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-offset-3 col-sm-2">
-                                <button type="submit" class="btn btn-default" ng-disabled="validateRegister()">{{'SAVE' |
+                                <button type="submit" class="btn btn-default" ng-disabled="validateEdit()">{{'SAVE' |
                                     translate}}
                                 </button>
                             </div>
