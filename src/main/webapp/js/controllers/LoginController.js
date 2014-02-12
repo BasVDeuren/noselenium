@@ -23,7 +23,7 @@ function LoginController($scope,Login,UserService,$cookieStore) {
     };
 
     $scope.validateLogin = function(){
-        return ($scope.loginData.username != '' && $scope.loginData.password != '');
+        return !($scope.loginData.username != '' && $scope.loginData.password != '');
     };
 
 
