@@ -43,7 +43,7 @@ spaceApp.config(['$translateProvider', function ($translateProvider) {
     $translateProvider.preferredLanguage('en_US');
 }]);
 
-spaceApp.controller("MainController", function ($scope, $cookies, $location, $timeout, $translate,UserService,$cookieStore) {
+spaceApp.controller("MainController", function ($scope, $cookies, $location, $timeout, $translate, UserService, $cookieStore, Login) {
     $scope.changeLanguage = function (key) {
         $translate.uses(key);
     };
@@ -60,10 +60,15 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
         }
     };
 
-    $scope.logout = function(){
+    $scope.logout = function () {
         alert($cookieStore.get('accessToken'));
-        $cookieStore.remove('accessToken');
-        alert($cookieStore.get('accessToken'));
+        Login.delete(function () {
+            alert('Succeed');
+            $cookieStore.remove('accessToken');
+        }, function () {
+            alert('Failed')
+        });
+
     }
 
 });

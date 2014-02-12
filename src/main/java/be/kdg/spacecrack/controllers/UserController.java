@@ -45,43 +45,50 @@ public class UserController {
             if (userWrapper.getPassword().equals(userWrapper.getPasswordRepeated())) {
                 userRepository.addUser(userWrapper.getUsername(), userWrapper.getPassword(), userWrapper.getEmail());
                 accessToken = tokenController.login(userRepository.getUserByUsername(userWrapper.getUsername()));
-            }else{
-                throw new SpaceCrackNotAcceptableException("Password and repeat password aren't equal")    ;
+            } else {
+                throw new SpaceCrackNotAcceptableException("Password and repeat password aren't equal");
             }
-        }else{
-            throw new SpaceCrackNotAcceptableException("Username already in use!")    ;
+        } else {
+            throw new SpaceCrackNotAcceptableException("Username already in use!");
         }
         return accessToken;
     }
 
-    @RequestMapping(method = RequestMethod.PUT, consumes = "application/json")
-    public void editUser(@RequestBody UserWrapper userWrapper, @RequestHeader("token") String accessTokenJson) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        AccessToken accessToken = mapper.readValue(accessTokenJson, AccessToken.class);
-        User user = userRepository.getUserByAccessToken(accessToken);
+    @RequestMapping(value = "/auth", method = RequestMethod.POST, consumes = "application/json")
+    @ResponseBody
+    public void editUser(@RequestBody UserWrapper userWrapper, @CookieValue("accessToken") String accessTokenValue) throws Exception {
+
+        User user = null;
+
+        TokenRepository tokenRepository = new TokenRepository();
+        AccessToken accessToken = tokenRepository.getAccessTokenByValue(accessTokenValue.substring(1, accessTokenValue.length() - 1));
+        user = userRepository.getUserByAccessToken(accessToken);
+
 
         if (userWrapper.getPassword().equals(userWrapper.getPasswordRepeated())) {
             user.setPassword(userWrapper.getPassword());
             user.setEmail(userWrapper.getEmail());
+            user.setUsername(userWrapper.getUsername());
             userRepository.updateUser(user);
-        }else{
+        } else {
             throw new SpaceCrackNotAcceptableException("Passwords should be the same!");
         }
+
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "/auth",method = RequestMethod.GET)
     @ResponseBody
     public User getUserByToken(@CookieValue("accessToken") String cookie) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         User user = null;
-        try{
+        try {
             TokenRepository tokenRepository = new TokenRepository();
-            AccessToken accessToken = tokenRepository.getAccessTokenByValue(cookie.substring(1, cookie.length()-1));
-        user = userRepository.getUserByAccessToken(accessToken);
-        }catch(JsonParseException ex){
+            AccessToken accessToken = tokenRepository.getAccessTokenByValue(cookie.substring(1, cookie.length() - 1));
+            user = userRepository.getUserByAccessToken(accessToken);
+        } catch (JsonParseException ex) {
             throw new SpaceCrackUnauthorizedException();
         }
-        if(user == null){
+        if (user == null) {
             throw new SpaceCrackUnauthorizedException();
         }
         return user;

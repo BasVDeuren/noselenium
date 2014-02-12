@@ -107,13 +107,12 @@ public class TokenController implements ITokenController {
     }
 
     @Override
-    @RequestMapping(method = RequestMethod.DELETE, consumes = "application/json")
-    public void Logout(@RequestHeader("token") String tokenjson) {
-        ObjectMapper objectMapper = new ObjectMapper();
-
+    @RequestMapping(method = RequestMethod.DELETE)
+    @ResponseBody
+    public void Logout(@CookieValue("accessToken") String accessTokenValue) throws Exception {
         AccessToken accessToken;
         try {
-            accessToken = objectMapper.readValue(tokenjson, AccessToken.class);
+            accessToken = tokenRepository.getAccessTokenByValue(accessTokenValue.substring(1, accessTokenValue.length() - 1));
         } catch (IOException e) {
             throw new InvalidTokenHeaderException();
         }
