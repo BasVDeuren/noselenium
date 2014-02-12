@@ -4,9 +4,10 @@
 function GameController ($scope, $translate,Map) {
     var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render});
 
-    $scope.map = {
-        planets: [{x:"",y:""}]
-};
+    /*$scope.map = {
+     planets: [{x:"",y:""}]
+     };*/
+    $scope.planetArray = [{x:"",y:""}]
     function preload() {
 
         game.load.image('space', 'assets/space.jpg');
@@ -30,22 +31,29 @@ function GameController ($scope, $translate,Map) {
         var platforms;
 
         //  A simple background for our game
-    //    game.add.sprite(0, 0, 'space');
+        game.add.sprite(0, 0, 'space');
 
 
         Map.get(function(data,header){
-          $scope.map = data.planets;
-            console.log(data);
+            $scope.planetArray = data.planets;
+            console.log("planetArray:" + $scope.planetArray[0].x);
+            var graphics = game.add.graphics(0,0);
+            graphics.beginFill(0x00FF00);
+            graphics.lineStyle(3, 0x00FF00, 1);
+            graphics.moveTo(50,50);
+            graphics.lineTo(50, 200);
+            // graphics.drawCircle($scope.map.planets[0].x,$scope.map.planets[0].y, 5);
 
+
+            var planets = $scope.planetArray;
+            for(var i =0; i < planets.length ;i++) {
+                console.log("i = ", i);
+                console.log("planet X="+ $scope.planetArray[i].x + ", Y=" + $scope.planetArray[i].y);
+                graphics.drawCircle($scope.planetArray[i].x, $scope.planetArray[i].y, 30);
+            }
         });
-console.log("map:" + $scope.map.planets[0].x);
-        var graphics = game.add.graphics(0,0);
-        graphics.beginFill(0x999999);
-        graphics.lineStyle(3, 0x999999, 1);
-        for(var planet in $scope.map.planets) {
-            graphics.drawCircle(planet.x, planet.y, 5);
-        }
-       // platforms = game.add.group();
+
+        // platforms = game.add.group();
 
 //        var x = 100;
 //        var y = 100;

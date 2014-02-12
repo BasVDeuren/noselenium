@@ -6,7 +6,6 @@
  * To change this template use File | Settings | File Templates.
  */
 
-
 window.fbAsyncInit = function() {
     FB.init({
         appId      : '649165391811913',
@@ -25,7 +24,7 @@ window.fbAsyncInit = function() {
             // The response object is returned with a status field that lets the app know the current
             // login status of the person. In this case, we're handling the situation where they
             // have logged in to the app.
-            testAPI();
+            getUser();
         } else if (response.status === 'not_authorized') {
             // In this case, the person is logged into Facebook, but not into the app, so we call
             // FB.login() to prompt them to do so.
@@ -34,17 +33,30 @@ window.fbAsyncInit = function() {
             // (1) JavaScript created popup windows are blocked by most browsers unless they
             // result from direct interaction from people using the app (such as a mouse click)
             // (2) it is a bad experience to be continually prompted to login upon page load.
-            FB.login();
+            fbLogin()
         } else {
             // In this case, the person is not logged into Facebook, so we call the login()
             // function to prompt them to do so. Note that at this stage there is no indication
             // of whether they are logged into the app. If they aren't then they'll see the Login
             // dialog right after they log in to Facebook.
             // The same caveats as above apply to the FB.login() call here.
-            FB.login();
+            fbLogin()
         }
     });
 };
+
+function fbLogin() {
+    FB.login(function(response) {
+        if (response.authResponse) {
+            console.log('Welcome!  Fetching your information.... ');
+            FB.api('/me', function(response) {
+                console.log('Good to see you, ' + response.name + '.');
+            });
+        } else {
+            console.log('User cancelled login or did not fully authorize.');
+        }
+    }, {scope: 'email'});
+}
 
 // Load the SDK asynchronously
 (function(d){
@@ -57,13 +69,20 @@ window.fbAsyncInit = function() {
 
 // Here we run a very simple test of the Graph API after login is successful.
 // This testAPI() function is only called in those cases.
-function testAPI() {
-    console.log('Welcome!  Fetching your information.... ');
+//function testAPI() {
+//    console.log('Welcome!  Fetching your information.... ');
+//    FB.api('/me', function(response) {
+//        console.log('Good to see you, ' + response.name + '.');
+//    });
+//}
+
+
+function getUser() {
+    //Get info about the current logged in user
     FB.api('/me', function(response) {
-        console.log('Good to see you, ' + response.name + '.');
+        alert("Welkom " + response.name + ", je email adres is: " +  response.email);
     });
 }
-
 
 
 //window.fbAsyncInit = function() {
