@@ -13,5 +13,5 @@ public interface ITokenController {
     AccessToken login(@RequestBody User user);
 
     @RequestMapping(method = RequestMethod.DELETE, consumes = "application/json")
-    void Logout(@RequestHeader("token") String tokenjson);
+    void Logout(@RequestHeader("token") String tokenjson) throws Exception;
 }

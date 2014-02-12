@@ -58,11 +58,11 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
         String userMapperJsonValid = objectMapper.writeValueAsString(new UserWrapper("username", "password", "password", "newEmail"));
         String accessTokenJsonValid = objectMapper.writeValueAsString(new UserRepository().getUserByUsername(testUser.getUsername()).getToken());
 
-        MockHttpServletRequestBuilder putRequestBuilder = put("/user").contentType(MediaType.APPLICATION_JSON).content(userMapperJsonValid).header("token", accessTokenJsonValid);
+        MockHttpServletRequestBuilder putRequestBuilder = post("/user/auth");
         mockMvc.perform(putRequestBuilder
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(userMapperJsonValid)
-                .header("token", accessTokenJsonValid)
+                .cookie(new Cookie("accessToken", "\"" + userRepository.getUserByUsername(testUser.getUsername()).getToken().getValue() + "\"")      )
         ).andExpect(status().isOk());
     }
 
@@ -94,13 +94,12 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
 
     @Test
     public void testGetUser_validToken_User() throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
         testRegisterUser_NewUser_Token();
         User user = userRepository.getUserByUsername("username");
         AccessToken accessToken = user.getToken();
 
         String tokenValue = accessToken.getValue();
-        MockHttpServletRequestBuilder getUserRequestBuilder = get("/user")
+        MockHttpServletRequestBuilder getUserRequestBuilder = get("/user/auth")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .cookie(new Cookie("accessToken", "\"" + tokenValue + "\""));
@@ -112,7 +111,7 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
     public void testGetUser_InvalidToken_SpaceCrackUnauthorisedException() throws Exception {
         testRegisterUser_NewUser_Token();
 
-        MockHttpServletRequestBuilder getUserRequestBuilder = get("/user")
+        MockHttpServletRequestBuilder getUserRequestBuilder = get("/user/auth")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .cookie(new Cookie("accessToken", "invalidToken"));

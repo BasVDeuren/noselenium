@@ -4,22 +4,31 @@
 var spaceApp = angular.module('spaceApp');
 
 spaceApp.controller("ProfileController", function ($scope, $cookies, Profile) {
-    $scope.registerData = {
+
+    $scope.editUserData = {
         email: "",
-        username: "BASSSS",
+        username: "",
         password: "",
         passwordRepeated: ""
     };
+
+
+    Profile.get(function (data, headers) {
+        $scope.editUserData.username = data.username;
+        $scope.editUserData.email = data.email;
+        $scope.editUserData.password = data.password;
+        $scope.editUserData.passwordRepeated = data.password;
+    }, function (data, headers) {
+                alert('Failed!');
+    });
+
+
     $scope.hasRegistrationFailed = false;
     $scope.editUser = function () {
-//        alert($scope.registerData.firstname + ' ' + $scope.registerData.lastname + ' ' + $scope.registerData.email + ' ' + $scope.registerData.username + ' ' + $scope.registerData.password);
-        Profile.get(function (data, headers) {
-            $cookies.username = data.username;
-            $cookies.email = data.email;
-            $scope.go('/spacecrack/game');
-            $scope.hasRegistrationFailed = false;
+        Profile.save($scope.editUserData,function () {
+
         }, function (data, headers) {
-            $scope.hasRegistrationFailed = true;
+
         });
     };
 
@@ -36,17 +45,4 @@ spaceApp.controller("ProfileController", function ($scope, $cookies, Profile) {
         }
     };
 
-    $scope.getUserData = function(data){
-        Profile.get(function(data) {
-            $scope.registerData = {
-                email: data.email,
-                username: data.username,
-                password: data.password,
-                passwordRepeated: data.password
-            };
-            alert("Succeeded" + $scope.registerData.username);
-        },function(){
-            alert("FAIL!!");
-        });
-    };
 });
