@@ -19,6 +19,5 @@ public interface IUserRepository {
 
     void updateUser(User user);
 
-
     User getUserByAccessToken(AccessToken accessToken) throws Exception;
 }
