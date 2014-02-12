@@ -16,6 +16,8 @@ import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import javax.servlet.http.Cookie;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -97,11 +99,11 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
         User user = userRepository.getUserByUsername("username");
         AccessToken accessToken = user.getToken();
 
-        String validToken = objectMapper.writeValueAsString(accessToken);
+        String tokenValue = accessToken.getValue();
         MockHttpServletRequestBuilder getUserRequestBuilder = get("/user")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .header("token", validToken);
+                .cookie(new Cookie("accessToken", "\"" + tokenValue + "\""));
 
         mockMvc.perform(getUserRequestBuilder).andExpect(status().isOk());
     }
@@ -113,7 +115,7 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
         MockHttpServletRequestBuilder getUserRequestBuilder = get("/user")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .header("token", "invalidToken");
+                .cookie(new Cookie("accessToken", "invalidToken"));
 
         mockMvc.perform(getUserRequestBuilder).andExpect(status().isUnauthorized());
     }

@@ -102,6 +102,7 @@ public class TokenController implements ITokenController {
         } catch (Exception e) {
             throw new SpaceCrackUnexpectedException("Unexpected exception occurred while logging in");
         }
+
         return accessToken;
     }
 

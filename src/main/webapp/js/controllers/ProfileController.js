@@ -3,10 +3,10 @@
  */
 var spaceApp = angular.module('spaceApp');
 
-spaceApp.controller("ProfileController", function ($scope, Profile,UserService) {
+spaceApp.controller("ProfileController", function ($scope, $cookies, Profile) {
     $scope.registerData = {
         email: "",
-        username: "",
+        username: "BASSSS",
         password: "",
         passwordRepeated: ""
     };
@@ -14,7 +14,8 @@ spaceApp.controller("ProfileController", function ($scope, Profile,UserService) 
     $scope.editUser = function () {
 //        alert($scope.registerData.firstname + ' ' + $scope.registerData.lastname + ' ' + $scope.registerData.email + ' ' + $scope.registerData.username + ' ' + $scope.registerData.password);
         Profile.get(function (data, headers) {
-            UserService.accessToken = data.value;
+            $cookies.username = data.username;
+            $cookies.email = data.email;
             $scope.go('/spacecrack/game');
             $scope.hasRegistrationFailed = false;
         }, function (data, headers) {
@@ -33,5 +34,19 @@ spaceApp.controller("ProfileController", function ($scope, Profile,UserService) 
         } else {
             return true;
         }
-    }
+    };
+
+    $scope.getUserData = function(data){
+        Profile.get(function(data) {
+            $scope.registerData = {
+                email: data.email,
+                username: data.username,
+                password: data.password,
+                passwordRepeated: data.password
+            };
+            alert("Succeeded" + $scope.registerData.username);
+        },function(){
+            alert("FAIL!!");
+        });
+    };
 });
