@@ -9,4 +9,6 @@ import be.kdg.spacecrack.model.User;
 public interface ITokenRepository {
 
     AccessToken getAccessToken(User dbUser) throws Exception;
+
+    AccessToken getAccessTokenByValue(String value) throws Exception;
 }

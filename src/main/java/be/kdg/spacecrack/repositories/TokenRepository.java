@@ -5,6 +5,7 @@ import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.utilities.HibernateUtil;
 import be.kdg.spacecrack.utilities.ITokenStringGenerator;
 import be.kdg.spacecrack.utilities.TokenStringGenerator;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,4 +57,28 @@ public class TokenRepository implements ITokenRepository {
         }
         return accessToken;
     }
+
+    @Override
+    public AccessToken getAccessTokenByValue(String value) throws Exception {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        AccessToken accessToken = null;
+        try {
+            Transaction tx = session.beginTransaction();
+            try {
+                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from AccessToken a where a.value = :value");
+                q.setParameter("value", value);
+                accessToken = (AccessToken) q.uniqueResult();
+                tx.commit();
+            } catch (Exception ex) {
+                tx.rollback();
+                throw ex;
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
+
+        return accessToken;
+    }
+
+
 }
