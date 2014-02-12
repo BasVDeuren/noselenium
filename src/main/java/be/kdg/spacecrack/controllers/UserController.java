@@ -40,6 +40,7 @@ public class UserController {
     public AccessToken registerUser(@RequestBody UserWrapper userWrapper) throws Exception {
         AccessToken accessToken = null;
         User userByUsername = userRepository.getUserByUsername(userWrapper.getUsername());
+
         if (userByUsername == null) {
             if (userWrapper.getPassword().equals(userWrapper.getPasswordRepeated())) {
                 userRepository.addUser(userWrapper.getUsername(), userWrapper.getPassword(), userWrapper.getEmail());
@@ -74,8 +75,9 @@ public class UserController {
         ObjectMapper objectMapper = new ObjectMapper();
         User user = null;
         try{
-            TokenRepository t = new TokenRepository();
-        user = userRepository.getUserByAccessToken(t.getAccessTokenByValue(cookie));
+            TokenRepository tokenRepository = new TokenRepository();
+            AccessToken accessToken = tokenRepository.getAccessTokenByValue(cookie.substring(1, cookie.length()-1));
+        user = userRepository.getUserByAccessToken(accessToken);
         }catch(JsonParseException ex){
             throw new SpaceCrackUnauthorizedException();
         }
@@ -84,11 +86,4 @@ public class UserController {
         }
         return user;
     }
-
-    /*@RequestMapping(method = RequestMethod.GET)
-    @ResponseBody
-    public User getUserByToken(@RequestHeader("token") String accessTokenJson) throws Exception {
-        boolean b = true;
-        return new User("username", "password", "email");
-    }*/
 }

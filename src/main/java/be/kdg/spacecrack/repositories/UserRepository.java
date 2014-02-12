@@ -115,12 +115,12 @@ public class UserRepository implements IUserRepository {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         try {
             Transaction tx = session.beginTransaction();
-            try{
-            @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from User u where u.token = :token");
-            q.setParameter("token", accessToken);
+            try {
+                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from User u where u.token = :token");
+                q.setParameter("token", accessToken);
                 user = (User) q.uniqueResult();
-            tx.commit();
-            }catch(Exception ex){
+                tx.commit();
+            } catch (Exception ex) {
                 logger.error("Unexpected while retrieving user from database (getUser())", ex);
                 tx.rollback();
                 throw ex;
