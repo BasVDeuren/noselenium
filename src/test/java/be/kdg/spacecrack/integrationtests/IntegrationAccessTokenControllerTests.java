@@ -4,6 +4,8 @@ package be.kdg.spacecrack.integrationtests;
 import be.kdg.spacecrack.controllers.TokenController;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
+import be.kdg.spacecrack.repositories.TokenRepository;
+import be.kdg.spacecrack.repositories.UserRepository;
 import be.kdg.spacecrack.utilities.HibernateUtil;
 import be.kdg.spacecrack.utilities.ITokenStringGenerator;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -17,6 +19,8 @@ import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+
+import javax.servlet.http.Cookie;
 
 import static junit.framework.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -44,7 +48,6 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
     public void setUp() throws Exception {
 
 
-
         mockTokenGenerator = Mockito.mock(ITokenStringGenerator.class);
 
         objectMapper = new ObjectMapper();
@@ -61,9 +64,6 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
     public void testLoginIntegrated() throws Exception {
         ResultActions resultActions = mockMvc.perform(post("/tokens").param("username", "testUser").param("password", "testPassword")).andExpect(jsonPath("token", notNullValue()));
     }*/
-
-
-
 
 
     @Test
@@ -94,7 +94,7 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
         String expected = objectMapper.readValue(firstResult.getResponse().getContentAsString(), AccessToken.class).getValue();
         String actual = objectMapper.readValue(secondResult.getResponse().getContentAsString(), AccessToken.class).getValue();
 
-        assertEquals("Same token should be retrieved", expected,actual);
+        assertEquals("Same token should be retrieved", expected, actual);
     }
 
     @Test
@@ -107,32 +107,35 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
     }
 
 
-
     @Test
     public void logout_validToken_nolongerauthorized() throws Exception {
-
-
-
         String userjson = objectMapper.writeValueAsString(testUser);
-        System.out.println("Userjson : " + userjson);
 
         MockHttpServletRequestBuilder requestBuilder = post("/accesstokens");
-        MvcResult mvcResult = mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON).content(userjson).accept(MediaType.APPLICATION_JSON)).andReturn();
-        String tokenJson = mvcResult.getResponse().getContentAsString();
-        mockMvc.perform(get("/api/auth/hello").header("token", tokenJson)).andExpect(status().isOk());
+        mockMvc.perform(requestBuilder
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userjson)
+                .accept(MediaType.APPLICATION_JSON))  ;
+        UserRepository userRepository = new UserRepository();
+        TokenRepository tokenRepository = new TokenRepository();
+        AccessToken accessToken = tokenRepository.getAccessTokenByValue(userRepository.getUserByUsername(testUser.getUsername()).getToken().getValue());
 
-        MockHttpServletRequestBuilder deleteRequestBuilder = delete("/accesstokens").contentType(MediaType.APPLICATION_JSON).header("token",tokenJson);
-        mockMvc.perform(deleteRequestBuilder).andExpect(status().isOk());
-        mockMvc.perform(get("/api/auth/hello").header("token", tokenJson)).andExpect(status().isUnauthorized());
+        userRepository.DeleteAccessToken(accessToken);
 
-      }
+        MockHttpServletRequestBuilder logoutRequestBuilder = delete("/accesstokens");
+        mockMvc.perform(logoutRequestBuilder
+            .cookie(new Cookie("accessToken", "\"" + accessToken.getValue() + "\"")))
+        .andExpect(status().isBadRequest());
 
+
+    }
 
 
     @Test
     public void logout_invalidtoken_ok() throws Exception {
-        MockHttpServletRequestBuilder deleteRequestBuilder = delete("/accesstokens").contentType(MediaType.APPLICATION_JSON).header("token","{\"accessTokenId\":1,\"value\":\"invalidtoken123\"}");
-        mockMvc.perform(deleteRequestBuilder).andExpect(status().isOk());
+        MockHttpServletRequestBuilder deleteRequestBuilder = delete("/accesstokens")
+                .cookie(new Cookie("accessToken", "\"" + new AccessToken("invalid").getValue() + "\""));
+        mockMvc.perform(deleteRequestBuilder).andExpect(status().isBadRequest());
     }
 
     @After
@@ -140,7 +143,7 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
 
-     session.delete(testUser);
+        session.delete(testUser);
         tx.commit();
 
 
