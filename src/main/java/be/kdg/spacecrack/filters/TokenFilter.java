@@ -23,7 +23,6 @@ import java.util.List;
  * 2013-2014
  *
  */
-
 public class TokenFilter implements Filter {
 
     public static final String URLPATTERN = "/api/auth/*";

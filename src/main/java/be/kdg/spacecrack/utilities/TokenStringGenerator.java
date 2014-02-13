@@ -5,8 +5,12 @@ import org.springframework.stereotype.Component;
 import java.math.BigInteger;
 import java.util.Random;
 
-/**
- * Created by Tim on 4/02/14.
+/* Git $Id$
+ *
+ * Project Application Development
+ * Karel de Grote-Hogeschool
+ * 2013-2014
+ *
  */
 @Component("generator")
 public class TokenStringGenerator implements ITokenStringGenerator {

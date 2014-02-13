@@ -4,8 +4,12 @@ import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import org.springframework.stereotype.Component;
 
-/**
- * Created by Ikke on 6-2-14.
+/* Git $Id$
+ *
+ * Project Application Development
+ * Karel de Grote-Hogeschool
+ * 2013-2014
+ *
  */
 @Component("userRepository")
 public interface IUserRepository {

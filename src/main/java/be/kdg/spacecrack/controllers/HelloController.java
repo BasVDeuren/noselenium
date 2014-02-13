@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * 2013-2014
  *
  */
-
 @Controller
 @RequestMapping("/api/auth/hello")
 public class HelloController {

@@ -8,8 +8,12 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Component;
 
-/**
- * Created by Arno on 13/02/14.
+/* Git $Id$
+ *
+ * Project Application Development
+ * Karel de Grote-Hogeschool
+ * 2013-2014
+ *
  */
 @Component("contactRepository")
 public class ContactRepository implements IContactRepository{

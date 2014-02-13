@@ -33,8 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 2013-2014
  *
  */
-
-
 public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrationTests {
 
 

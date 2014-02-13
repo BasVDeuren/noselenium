@@ -18,9 +18,12 @@ import org.mockito.internal.verification.VerificationModeFactory;
 
 import static org.mockito.Mockito.mock;
 
-
-/**
- * Created by Arno on 13/02/14.
+/* Git $Id$
+ *
+ * Project Application Development
+ * Karel de Grote-Hogeschool
+ * 2013-2014
+ *
  */
 public class ContactServiceTest {
 

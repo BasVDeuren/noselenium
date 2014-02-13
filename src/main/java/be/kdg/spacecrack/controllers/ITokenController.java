@@ -4,8 +4,12 @@ import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * Created by Atheesan on 9/02/14.
+/* Git $Id$
+ *
+ * Project Application Development
+ * Karel de Grote-Hogeschool
+ * 2013-2014
+ *
  */
 public interface ITokenController {
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")

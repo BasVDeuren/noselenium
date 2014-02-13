@@ -1,7 +1,11 @@
 package be.kdg.spacecrack.modelwrapper;
 
-/**
- * Created by Ikke on 9-2-14.
+/* Git $Id$
+ *
+ * Project Application Development
+ * Karel de Grote-Hogeschool
+ * 2013-2014
+ *
  */
 public class UserWrapper {
     private String username;

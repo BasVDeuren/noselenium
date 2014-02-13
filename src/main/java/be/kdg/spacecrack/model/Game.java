@@ -3,8 +3,12 @@ package be.kdg.spacecrack.model;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Tim on 13/02/14.
+/* Git $Id$
+ *
+ * Project Application Development
+ * Karel de Grote-Hogeschool
+ * 2013-2014
+ *
  */
 public class Game {
 

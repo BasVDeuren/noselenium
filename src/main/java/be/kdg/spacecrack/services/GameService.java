@@ -3,8 +3,12 @@ package be.kdg.spacecrack.services;
 import be.kdg.spacecrack.controllers.MapController;
 import be.kdg.spacecrack.model.*;
 
-/**
- * Created by Tim on 13/02/14.
+/* Git $Id$
+ *
+ * Project Application Development
+ * Karel de Grote-Hogeschool
+ * 2013-2014
+ *
  */
 public class GameService {
     public Game createGame(Contact creator, Contact opponent) {
