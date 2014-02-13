@@ -20,7 +20,7 @@ public class Planet {
 
     @JsonIgnore
     private List<Planet> connectedPlanets;
-
+    private Player player;
 
 
     public Planet(String name, int x, int y) {
@@ -64,5 +64,13 @@ public class Planet {
 
     public String getName() {
         return name;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 }

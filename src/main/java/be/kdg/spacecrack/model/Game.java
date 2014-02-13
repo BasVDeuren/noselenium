@@ -1,24 +1,28 @@
 package be.kdg.spacecrack.model;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Tim on 13/02/14.
  */
 public class Game {
-    private Set<Contact> players;
-    private Contact gameOwner;
 
-    public Game(Contact gameOwner, Contact... opponents) {
-        this.gameOwner = gameOwner;
+    private List<Player> players;
+    private SpaceCrackMap spaceCrackMap;
 
-        this.players = new HashSet<Contact>(Arrays.asList(opponents));
-        players.add(gameOwner);
+    public Game(Player creatingPlayer, Player oppenentPlayer, SpaceCrackMap spaceCrackMap) {
+        this.spaceCrackMap = spaceCrackMap;
+        players = new ArrayList<Player>();
+        players.add(creatingPlayer);
+        players.add(oppenentPlayer);
     }
 
-    public Set<Contact> getPlayers() {
+    public List<Player> getPlayers() {
         return players;
+    }
+
+    public SpaceCrackMap getSpaceCrackMap() {
+        return spaceCrackMap;
     }
 }

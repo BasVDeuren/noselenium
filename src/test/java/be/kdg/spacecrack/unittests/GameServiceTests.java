@@ -2,10 +2,12 @@ package be.kdg.spacecrack.unittests;
 
 import be.kdg.spacecrack.model.Contact;
 import be.kdg.spacecrack.model.Game;
+import be.kdg.spacecrack.model.Player;
+import be.kdg.spacecrack.model.SpaceCrackMap;
 import be.kdg.spacecrack.services.GameService;
 import org.junit.Test;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -22,12 +24,13 @@ public class GameServiceTests {
         Contact opponent = new Contact();
 
         Game game = gameService.createGame(creator, opponent);
-        Set<Contact> contacts = game.getPlayers();
-        assertEquals("size() of contacts should be 2", 2 ,contacts.size());
-        assertTrue(contacts.contains(creator));
-        assertTrue(contacts.contains(opponent));
-
-
-
+        List<Player> players = game.getPlayers();
+        assertEquals("size() of players should be 2", 2, players.size());
+        Player creatorPlayer = players.get(0);
+        assertTrue(creatorPlayer.getContact() == creator);
+        Player opponentplayer = players.get(1);
+        assertTrue(opponentplayer.getContact() == opponent);
+        SpaceCrackMap map = game.getSpaceCrackMap();
+        assertEquals(map.getPlanets()[0].getPlayer(), creatorPlayer);
     }
 }
