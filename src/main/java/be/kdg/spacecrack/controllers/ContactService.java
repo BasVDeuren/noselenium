@@ -30,9 +30,15 @@ public class ContactService {
     public void createContact(Contact contact, AccessToken accessToken) throws Exception {
         UserRepository userRepository = new UserRepository();
         User user = userRepository.getUserByAccessToken(accessToken);
-        contact.user = user;
 
+        if(user.getContact() == null){
+            contact.setUser(user);
+            user.setContact(contact);
+            userRepository.updateUser(user);
             contactRepository.addContact(contact);
+        }else{
+            throw new SpaceCrackAlreadyExistException();
+        }
 
     }
 }

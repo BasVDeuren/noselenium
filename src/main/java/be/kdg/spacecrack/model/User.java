@@ -97,5 +97,11 @@ public class User implements Serializable {
         this.email = email;
     }
 
+    public Contact getContact() {
+        return contact;
+    }
 
+    public void setContact(Contact contact) {
+        this.contact = contact;
+    }
 }

@@ -1,6 +1,11 @@
 package be.kdg.spacecrack.model;
 
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.CascadeType;
+
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * Created by Arno on 13/02/14.
@@ -23,8 +28,17 @@ public class Contact {
     @Column
     private String image;
 
+    @Cascade(CascadeType.ALL)
     @OneToOne(mappedBy = "contact")
-    public User user;
+    private User user;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public Contact() {
     }
