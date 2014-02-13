@@ -46,14 +46,14 @@ public class Planet {
         this.y = y;
     }
 
-    @JsonProperty("connectedPlanetNames")
-    public List<String> getConnectedPlanetNames() {
-        List<String> connectedPlanetNames1= new ArrayList<String>();
+    @JsonProperty("connectedPlanets")
+    public List<Planet> getConnectedPlanetNames() {
+        List<Planet> connectedPlanetWraps= new ArrayList<Planet>();
         for (Planet p : connectedPlanets) {
-            connectedPlanetNames1.add(p.getName());
+            connectedPlanetWraps.add(new Planet(p.name, p.x, p.y));
         }
 
-        return connectedPlanetNames1;
+        return connectedPlanetWraps;
     }
 
 
