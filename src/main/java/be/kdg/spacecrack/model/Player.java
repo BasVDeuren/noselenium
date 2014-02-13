@@ -4,18 +4,18 @@ package be.kdg.spacecrack.model;
  * Created by Tim on 13/02/14.
  */
 public class Player {
-    private Contact opponent;
+    private Contact contact;
 
-    public Player(Contact opponent) {
+    public Player(Contact contact) {
 
-        this.opponent = opponent;
+        this.contact = contact;
     }
 
     public Contact getContact() {
-        return opponent;
+        return contact;
     }
 
     public void setContact(Contact contact) {
-        this.opponent = contact;
+        this.contact = contact;
     }
 }
