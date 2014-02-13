@@ -18,13 +18,43 @@ public class MapController {
     public @ResponseBody SpaceCrackMap getMap()
     {
 
-        Planet leftStartPlanet = new Planet(50, 250);
+        Planet a = new Planet("a", 50, 250);
+
+        Planet b = new Planet("b",100, 205);
+        Planet b2 = new Planet("b2",100, 295);
+        Planet c = new Planet("c",175,155);
+        Planet c2 = new Planet("c2",175, 345);
+
+        Planet d = new Planet("d",165,240);
+        Planet d2 = new Planet("d2",165, 260);
+
+        connectPlanets(a, b);
+        connectPlanets(a, b2);
+        connectPlanets(b, b2);
+        connectPlanets(b, c);
+        connectPlanets(d, b);
+        connectPlanets(c, d);
+        connectPlanets(b2, d);
+        connectPlanets(c2, b2);
+        connectPlanets(d2, d);
+        connectPlanets(d2, c2);
+
+
+
+
+
+
         Planet[] planets = {
-                leftStartPlanet
+                a, b, b2, c, c2, d, d2
     };
          SpaceCrackMap spaceCrackMap = new SpaceCrackMap( planets);
 
 
         return spaceCrackMap;
+    }
+
+    private void connectPlanets(Planet leftStartPlanet, Planet planet1) {
+        leftStartPlanet.getConnectedPlanets().add(planet1);
+        planet1.getConnectedPlanets().add(leftStartPlanet);
     }
 }

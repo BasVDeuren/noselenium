@@ -7,11 +7,10 @@ function GameController ($scope, $translate,Map) {
     /*$scope.map = {
      planets: [{x:"",y:""}]
      };*/
-    $scope.planetArray = [{x:"",y:""}]
+    $scope.planetArray = [{x:"",y:"",connectedPlanetNames:[{name:""}]}]
     function preload() {
-
         game.load.image('space', 'assets/space.jpg');
-        game.load.image('planet1', 'assets/planet1.png');
+        game.load.image('planet1', 'assets/planet1_small.png');
         game.load.image('planet2', 'assets/planet2.png');
         game.load.image('planet3', 'assets/planet3.png');
         game.load.image('planet4', 'assets/planet4.png');
@@ -38,49 +37,31 @@ function GameController ($scope, $translate,Map) {
             $scope.planetArray = data.planets;
             console.log("planetArray:" + $scope.planetArray[0].x);
             var graphics = game.add.graphics(0,0);
-            graphics.beginFill(0x00FF00);
+            //graphics.beginFill(0x00FF00);
             graphics.lineStyle(3, 0x00FF00, 1);
-            graphics.moveTo(50,50);
-            graphics.lineTo(50, 200);
-            // graphics.drawCircle($scope.map.planets[0].x,$scope.map.planets[0].y, 5);
 
+            // graphics.drawCircle($scope.map.planets[0].x,$scope.map.planets[0].y, 5);
+            var platforms = game.add.group();
 
             var planets = $scope.planetArray;
             for(var i =0; i < planets.length ;i++) {
+
                 console.log("i = ", i);
-                console.log("planet X="+ $scope.planetArray[i].x + ", Y=" + $scope.planetArray[i].y);
-                graphics.drawCircle($scope.planetArray[i].x, $scope.planetArray[i].y, 30);
+                var x = $scope.planetArray[i].x;
+                var y = $scope.planetArray[i].y;
+                console.log("planet X="+ x + ", Y=" + y);
+                var image = game.cache.getImage('planet1');
+                var width = image.width;
+                var height = image.height;
+                var planetSprite = platforms.create(x-width/2,y-height/2,'planet1');
+                planetSprite.body.immovable = true;
+                planetSprite.inputEnabled = true;
+                planetSprite.events.onInputDown.add(planetListener, this);
+
             }
         });
 
-        // platforms = game.add.group();
 
-//        var x = 100;
-//        var y = 100;
-//        var planet1 = platforms.create(x, y, 'planet1');
-//        planet1.body.immovable = true;
-//        planet1.inputEnabled = true;
-//        planet1.events.onInputDown.add(planetListener, this);
-//        graphics.moveTo(x,y);
-//
-//
-//        var x2 = 600;
-//        var y2 = 100;
-//        var planet2 = platforms.create(x2, y2, 'planet2');
-//        planet2.body.immovable = true;
-//        planet2.inputEnabled = true;
-//        planet2.events.onInputDown.add(planetListener, this);
-//
-//        var planet3 = platforms.create(100, 400, 'planet3');
-//        planet3.body.immovable = true;
-//        planet3.inputEnabled = true;
-//        planet3.events.onInputDown.add(planetListener, this);
-//
-//        var planet4 = platforms.create(500, 400, 'planet4');
-//        planet4.body.immovable = true;
-//        planet4.inputEnabled = true;
-//        planet4.events.onInputDown.add(planetListener, this);
-//
 //        spaceship = game.add.sprite(0, 0, 'spaceship');
 //        //enables all kind of input actions on this image (click, etc)
 //        spaceship.inputEnabled = true;
