@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
 
@@ -35,9 +36,8 @@ public class MapControllerTests {
         out.add(startPlanet);
         for(Planet planet : startPlanet.getConnectedPlanets())
         {
-            if(planet!= null){
+            if(planet != null){
                 if(!out.contains(planet)){
-
                     getConnectedPlanets(planet, out);
                 }
             }
@@ -47,19 +47,19 @@ public class MapControllerTests {
 
     @Test
     public void testGetConnectedPlanets() throws Exception {
-        Planet planet1 = new Planet("a",0, 0);
-        Planet planet2 = new Planet("b",0, 0);
+        Planet planet1 = new Planet("a", 0, 0);
+        Planet planet2 = new Planet("b", 0, 0);
         Planet planet3 = new Planet("c", 0, 0);
 
-        List<Planet> connectedPlanets1 = planet1.getConnectedPlanets();
+        Set<Planet> connectedPlanets1 = planet1.getConnectedPlanets();
         connectedPlanets1.add(planet2);
         connectedPlanets1.add(planet3);
 
-        List<Planet> connectedPlanets2 = planet2.getConnectedPlanets();
+        Set<Planet> connectedPlanets2 = planet2.getConnectedPlanets();
         connectedPlanets1.add(planet1);
         connectedPlanets1.add(planet3);
 
-        List<Planet> connectedPlanets3 = planet3.getConnectedPlanets();
+        Set<Planet> connectedPlanets3 = planet3.getConnectedPlanets();
         connectedPlanets1.add(planet2);
         connectedPlanets1.add(planet1);
 

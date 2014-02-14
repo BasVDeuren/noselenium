@@ -4,7 +4,9 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /* Git $Id$
  *
@@ -17,17 +19,16 @@ public class Planet {
     private String name;
     private int x;
     private int y;
-
-    @JsonIgnore
-    private List<Planet> connectedPlanets;
     private Player player;
 
+    @JsonIgnore
+    private Set<Planet> connectedPlanets;
 
     public Planet(String name, int x, int y) {
         this.name = name;
         this.x = x;
         this.y = y;
-        connectedPlanets = new ArrayList<Planet>();
+        connectedPlanets = new HashSet<Planet>();
     }
 
     public int getX() {
@@ -46,8 +47,15 @@ public class Planet {
         this.y = y;
     }
 
+    public void addConnection(Planet planet) {
+        if(planet != this) {
+            connectedPlanets.add(planet);
+            planet.getConnectedPlanets().add(this);
+        }
+    }
+
     @JsonProperty("connectedPlanets")
-    public List<Planet> getConnectedPlanetNames() {
+    public List<Planet> getConnectedPlanetWraps() {
         List<Planet> connectedPlanetWraps= new ArrayList<Planet>();
         for (Planet p : connectedPlanets) {
             connectedPlanetWraps.add(new Planet(p.name, p.x, p.y));
@@ -57,7 +65,7 @@ public class Planet {
     }
 
 
-    public List<Planet> getConnectedPlanets() {
+    public Set<Planet> getConnectedPlanets() {
         return connectedPlanets;
     }
 

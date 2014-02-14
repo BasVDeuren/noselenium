@@ -29,7 +29,7 @@ function GameController ($scope, $translate,Map) {
 
         var platforms;
 
-        //  A simple background for our game
+        // A simple background for our game
         game.add.sprite(0, 0, 'space');
 
 
@@ -41,22 +41,39 @@ function GameController ($scope, $translate,Map) {
             graphics.lineStyle(3, 0x00FF00, 1);
 
             // graphics.drawCircle($scope.map.planets[0].x,$scope.map.planets[0].y, 5);
-            var platforms = game.add.group();
+            var planetSprites = game.add.group();
 
             var planets = $scope.planetArray;
             for(var i =0; i < planets.length ;i++) {
-
-                console.log("i = ", i);
+                var name = $scope.planetArray[i].name;
                 var x = $scope.planetArray[i].x;
                 var y = $scope.planetArray[i].y;
-                console.log("planet X="+ x + ", Y=" + y);
+
+                // Debugging
+                console.log("i = ", i);
+                console.log("planet: name=" + name + "X=" + x + ", Y=" + y);
+
+                // Add sprite
                 var image = game.cache.getImage('planet1');
                 var width = image.width;
                 var height = image.height;
-                var planetSprite = platforms.create(x-width/2,y-height/2,'planet1');
+                var planetSprite = planetSprites.create(x-width/2,y-height/2,'planet1');
                 planetSprite.body.immovable = true;
                 planetSprite.inputEnabled = true;
                 planetSprite.events.onInputDown.add(planetListener, this);
+
+                // Add text
+                var text = game.add.text(x-width/2, y-height/2, name, { font : '12px', fill : '#ff0000' }, planetSprites);
+
+                // Draw planet connections (optimalisation possible)
+
+                var connectedPlanets = $scope.planetArray[i].connectedPlanets;
+                for(var j=0; j < connectedPlanets.length; j++) {
+                    var toX = connectedPlanets[j].x;
+                    var toY = connectedPlanets[j].y;
+                    graphics.moveTo(x, y);
+                    graphics.lineTo(toX, toY);
+                }
 
             }
         });
