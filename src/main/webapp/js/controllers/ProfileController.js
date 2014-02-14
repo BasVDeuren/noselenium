@@ -21,7 +21,7 @@ spaceApp.controller("ProfileController", function ($scope, $cookies, Profile,Con
         $scope.editUserData.password = data.password;
         $scope.editUserData.passwordRepeated = data.password;
     }, function (data, headers) {
-                alert('Failed!');
+
     });
 
 
@@ -30,7 +30,7 @@ spaceApp.controller("ProfileController", function ($scope, $cookies, Profile,Con
         Profile.save($scope.editUserData,function () {
 
         }, function (data, headers) {
-            alert('Save failed');
+
         });
     };
 
@@ -83,7 +83,7 @@ spaceApp.controller("ProfileController", function ($scope, $cookies, Profile,Con
         }
         //$scope.contactData.dateOfBirth = $scope.contactData.dateOfBirth.toLocaleDateString();
         Contact.save($scope.contactData, function () {
-            alert('save succeed');
+
         }, function () {
 
 
