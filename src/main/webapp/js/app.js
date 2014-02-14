@@ -61,7 +61,6 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
     };
 
     $scope.logout = function () {
-        alert($cookieStore.get('accessToken'));
         Login.delete(function () {
             alert('Succeed');
             $cookieStore.remove('accessToken');
