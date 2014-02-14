@@ -6,16 +6,22 @@
     "REGISTER": "Registreer",
     "FIRSTNAME": "Voornaam",
     "LASTNAME": "Achternaam",
+    "DATE_OF_BIRTH":"Geboortedatum",
+    "GENDER":"Geslacht",
+    "PHOTO":"Foto",
     "REPEAT_PASSWORD":"Herhaal Wachtwoord",
     "REQUIRED":"Verplicht",
     "ERR_PASSWORD_MISMATCH":"Wachtwoorden komen niet overeen",
     "ERR_LOGIN_FAILED":"Aanmelden mislukt",
     "ERR_REGISTRATION_FAILED":"Registratie mislukt",
+    "SAVE_FAILED":"Opslaan mislukt",
     "NEWGAME": "Nieuw Spel",
     "ACTIVEGAMES": "Actieve Spelen",
     "MATCHHISTORY": "Geschiedenis",
     "ACCOUNT": "Account",
     "EDIT_PROFILE":"Profiel bewerken",
     "SAVE":"Opslaan" ,
-    "INVALID_EMAIL": "Ongeldige email"
+    "INVALID_EMAIL": "Ongeldige email",
+    "MALE":"Man",
+    "FEMALE":"Vrouw"
 }

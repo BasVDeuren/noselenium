@@ -23,9 +23,9 @@ angular.module('spaceServices', ['ngResource'])
     .factory('Profile',function($resource){
         return $resource('/api/user/auth')
     })
-//    .factory('Room', function ($resource) {
-//        return $resource('rooms/:roomName', {roomName: '@roomName'}, {'get': { method: 'GET', params: {roomName: '@roomName'}, format: 'json', isArray: false }})
-//    })
+    .factory('Contact',function($resource){
+        return $resource('/api/auth/contact')
+    })
     .factory('UserService', function () {
         return {
             username: '',

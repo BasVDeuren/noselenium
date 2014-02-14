@@ -6,16 +6,22 @@
     "REGISTER": "Register",
     "FIRSTNAME": "Firstname",
     "LASTNAME": "Lastname",
+    "DATE_OF_BIRTH":"Date of birth",
+    "GENDER":"Gender",
+    "PHOTO":"Photo",
     "REPEAT_PASSWORD":"Repeat Password",
     "REQUIRED":"Required",
     "ERR_PASSWORD_MISMATCH":"Passwords don't match",
     "ERR_LOGIN_FAILED":"Login Failed",
     "ERR_REGISTRATION_FAILED":"Registration Failed",
+    "SAVE_FAILED":"Save Failed",
     "NEWGAME": "New Game",
     "ACTIVEGAMES": "Active Games",
     "MATCHHISTORY": "Match History",
     "ACCOUNT": "Account",
     "EDIT_PROFILE":"Edit profile",
     "SAVE":"Save" ,
-    "INVALID_EMAIL": "Invalid email"
+    "INVALID_EMAIL": "Invalid email",
+    "MALE":"Male",
+    "FEMALE":"Female"
 }
