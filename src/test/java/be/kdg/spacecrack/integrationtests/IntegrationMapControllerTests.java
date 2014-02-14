@@ -20,8 +20,8 @@ public class IntegrationMapControllerTests extends BaseFilteredIntegrationTests 
     public void getMap_validRequest_mapWithPlanets() throws Exception {
         mockMvc.perform(get("/map").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.planets[0].x", CoreMatchers.is(50)))
-                .andExpect(jsonPath("$.planets[0].y", CoreMatchers.is(250)))
+                .andExpect(jsonPath("$.planets[0].x", CoreMatchers.is(100)))
+                .andExpect(jsonPath("$.planets[0].y", CoreMatchers.is(500)))
                 .andExpect(jsonPath("$.planets[0].connectedPlanets[0].name", CoreMatchers.notNullValue()));
     }
 
