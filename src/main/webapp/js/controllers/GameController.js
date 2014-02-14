@@ -2,7 +2,7 @@
  * Created by Dimi on 3/02/14.
  */
 function GameController ($scope, $translate,Map) {
-    var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render});
+    var game = new Phaser.Game(600, 500, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render});
 
     /*$scope.map = {
      planets: [{x:"",y:""}]
@@ -15,8 +15,6 @@ function GameController ($scope, $translate,Map) {
         game.load.image('planet3', 'assets/planet3.png');
         game.load.image('planet4', 'assets/planet4.png');
         game.load.image('spaceship', 'assets/spaceship.png');
-
-
     }
 
     var platforms;
@@ -24,13 +22,15 @@ function GameController ($scope, $translate,Map) {
     var scoreText;
     var spaceship;
     var spaceshipSelected = true;
+    var cursors;
 
     function create() {
-
-        var platforms;
-
         // A simple background for our game
         game.add.sprite(0, 0, 'space');
+
+        var bgImg = game.cache.getImage('space');
+        console.log("width: " + bgImg.width + " height:" + bgImg.height)
+        game.world.setBounds(0, 0, bgImg.width, bgImg.height);
 
 
         Map.get(function(data,header){
@@ -38,7 +38,7 @@ function GameController ($scope, $translate,Map) {
             console.log("planetArray:" + $scope.planetArray[0].x);
             var graphics = game.add.graphics(0,0);
             //graphics.beginFill(0x00FF00);
-            graphics.lineStyle(3, 0x00FF00, 1);
+            graphics.lineStyle(3, 0x0000FF, 1);
 
             // graphics.drawCircle($scope.map.planets[0].x,$scope.map.planets[0].y, 5);
             var planetSprites = game.add.group();
@@ -48,10 +48,6 @@ function GameController ($scope, $translate,Map) {
                 var name = $scope.planetArray[i].name;
                 var x = $scope.planetArray[i].x;
                 var y = $scope.planetArray[i].y;
-
-                // Debugging
-                console.log("i = ", i);
-                console.log("planet: name=" + name + "X=" + x + ", Y=" + y);
 
                 // Add sprite
                 var image = game.cache.getImage('planet1');
@@ -74,10 +70,11 @@ function GameController ($scope, $translate,Map) {
                     graphics.moveTo(x, y);
                     graphics.lineTo(toX, toY);
                 }
-
             }
         });
 
+        // Move camera with cursors
+        cursors = game.input.keyboard.createCursorKeys();
 
 //        spaceship = game.add.sprite(0, 0, 'spaceship');
 //        //enables all kind of input actions on this image (click, etc)
@@ -87,7 +84,16 @@ function GameController ($scope, $translate,Map) {
     }
 
     function update() {
-
+        if (cursors.up.isDown) {
+            game.camera.y -= 4;
+        } else if (cursors.down.isDown) {
+            game.camera.y += 4;
+        }
+        if (cursors.left.isDown) {
+            game.camera.x -= 4;
+        } else if (cursors.right.isDown) {
+            game.camera.x += 4;
+        }
     }
 
     function render() {
