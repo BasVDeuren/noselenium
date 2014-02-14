@@ -37,6 +37,7 @@ public class User implements Serializable {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name= "contactId", nullable = true)
+    @JsonManagedReference
     private Contact contact;
 
 

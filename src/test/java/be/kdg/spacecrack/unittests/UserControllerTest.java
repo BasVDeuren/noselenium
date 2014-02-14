@@ -3,13 +3,14 @@ package be.kdg.spacecrack.unittests;
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.controllers.ITokenController;
-import be.kdg.spacecrack.controllers.TokenController;
 import be.kdg.spacecrack.controllers.UserController;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.modelwrapper.UserWrapper;
 import be.kdg.spacecrack.repositories.IUserRepository;
-import be.kdg.spacecrack.repositories.UserRepository;
+import be.kdg.spacecrack.services.ITokenService;
+import be.kdg.spacecrack.services.IUserService;
+import be.kdg.spacecrack.services.UserService;
 import be.kdg.spacecrack.utilities.HibernateUtil;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.hibernate.Query;
@@ -42,36 +43,36 @@ public class UserControllerTest {
     public ExpectedException expectedEx = ExpectedException.none();
     private IUserRepository userRepository;
     private ITokenController tokenController;
+    private ITokenService tokenService;
+    private IUserService userService;
     private ObjectMapper objectMapper;
 
     @Before
     public void setUp() throws Exception {
         userRepository = mock(IUserRepository.class);
         tokenController = mock(ITokenController.class);
-        userController = new UserController(userRepository, tokenController);
+        tokenService = mock(ITokenService.class);
+
+        userService = mock(UserService.class);
+        userController = new UserController(userService, tokenController, tokenService);
         objectMapper = new ObjectMapper();
     }
 
     @Test
     public void RegisterUser_validUser_usercreated() throws Exception {
-        IUserRepository userRepository = mock(IUserRepository.class);
-        ITokenController tokenController = mock(ITokenController.class);
         AccessToken expected = new AccessToken("test1234");
         stub(tokenController.login(any(User.class))).toReturn(expected);
         UserWrapper userWrapper = new UserWrapper("username", "password", "password", "email");
 
-        UserController controllerWithMockedTokenController = new UserController(userRepository, tokenController);
-        AccessToken actual = controllerWithMockedTokenController.registerUser(userWrapper);
+        AccessToken actual = userController.registerUser(userWrapper);
         assertEquals("Accesstoken should be returned after registrating. ", expected, actual);
 
     }
 
     @Test(expected = SpaceCrackNotAcceptableException.class)
     public void RegisterUser_BadRepeatPassword_SpaceCrackNotAcceptableException() throws Exception {
-        userController = new UserController(new UserRepository(), new TokenController());
         User user = new User("username", "password", "email");
         userController.registerUser(new UserWrapper("username", "password", "badRepeat", "email"));
-
     }
 
     @Test
@@ -80,7 +81,7 @@ public class UserControllerTest {
         expectedEx.expectMessage("Username already in use!");
 
         userController.registerUser(new UserWrapper("username", "password", "password", "email"));
-        stub(userRepository.getUserByUsername("username")).toReturn(new User());
+        stub(userService.getUserByUsername("username")).toReturn(new User());
         userController.registerUser(new UserWrapper("username", "password2", "password2", "email2"));
 
 
@@ -94,11 +95,11 @@ public class UserControllerTest {
 
 
         User user = new User("username", "password", "email");
-        when(userRepository.getUserByAccessToken(any(AccessToken.class))).thenReturn(user);
+        when(userService.getUserByAccessToken(any(AccessToken.class))).thenReturn(user);
 
         userController.editUser(new UserWrapper("username", "password", "password", "email"), objectMapper.writeValueAsString(new AccessToken("accesstoken1234")));
 
-        Mockito.verify(userRepository, VerificationModeFactory.times(1)).updateUser(user);
+        Mockito.verify(userService, VerificationModeFactory.times(1)).updateUser(user);
     }
 
     //Todo: fix
@@ -121,10 +122,11 @@ public class UserControllerTest {
         AccessToken accessToken = new AccessToken("accesstoken123");
         user.setToken(accessToken);
 
-        when(userRepository.getUserByAccessToken(any(AccessToken.class))).thenReturn(user);
+        stub(userService.getUserByAccessToken(accessToken)).toReturn(user);
+        stub(tokenService.getAccessTokenByValue(accessToken.getValue())).toReturn(accessToken);
 
         //User actual = userController.getUserByToken(accessToken);
-        User actual = userController.getUserByToken(objectMapper.writeValueAsString(accessToken));
+        User actual = userController.getUserByToken(accessToken.getValue());
         //User actual = userController.getUserByToken();
 
         User expected = user;
@@ -141,7 +143,7 @@ public class UserControllerTest {
         when(userRepository.getUserByAccessToken(any(AccessToken.class))).thenReturn(null);
 
         //User actual = userController.getUserByToken(invalidAccessToken);
-        userController.getUserByToken(objectMapper.writeValueAsString(invalidAccessToken));
+        userController.getUserByToken(invalidAccessToken.getValue());
         //userController.getUserByToken();
     }
 

@@ -1,11 +1,11 @@
 package be.kdg.spacecrack.model;
 
-import org.hibernate.annotations.*;
+import org.codehaus.jackson.annotate.JsonBackReference;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import java.util.Date;
 
 /* Git $Id$
  *
@@ -23,17 +23,22 @@ public class Contact {
 
     @Column
     private String firstname;
+
     @Column
     private String lastname;
+
     @Column
     private String email;
+
     @Column
-    private String dayOfBirth;
+    private Date dayOfBirth;
+
     @Column
     private String image;
 
     @Cascade(CascadeType.ALL)
     @OneToOne(mappedBy = "contact")
+    @JsonBackReference
     private User user;
 
     public User getUser() {
@@ -47,7 +52,7 @@ public class Contact {
     public Contact() {
     }
 
-    public Contact(String firstname, String lastname, String email, String dayOfBirth, String image) {
+    public Contact(String firstname, String lastname, String email, Date dayOfBirth, String image) {
 
         this.firstname = firstname;
         this.lastname = lastname;
@@ -80,11 +85,11 @@ public class Contact {
         this.email = email;
     }
 
-    public String getDayOfBirth() {
+    public Date getDayOfBirth() {
         return dayOfBirth;
     }
 
-    public void setDayOfBirth(String dayOfBirth) {
+    public void setDayOfBirth(Date dayOfBirth) {
         this.dayOfBirth = dayOfBirth;
     }
 
@@ -107,4 +112,6 @@ public class Contact {
     public void setContactId(int contactId) {
         this.contactId = contactId;
     }
+
+
 }

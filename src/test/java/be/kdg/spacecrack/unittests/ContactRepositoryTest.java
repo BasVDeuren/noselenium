@@ -8,6 +8,9 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.Test;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 import static org.junit.Assert.assertEquals;
 
 /* Git $Id$
@@ -20,7 +23,8 @@ import static org.junit.Assert.assertEquals;
 public class ContactRepositoryTest {
     @Test
     public void testAddContact() throws Exception {
-        Contact contact = new Contact("email", "image", "firstname", "lastname", "birthdate");
+        Calendar calendar = new GregorianCalendar(2014,2,12);
+        Contact contact = new Contact("firstname","lastname","email", calendar.getTime(),"image");
         ContactRepository contactRepository = new ContactRepository();
         contactRepository.addContact(contact);
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();

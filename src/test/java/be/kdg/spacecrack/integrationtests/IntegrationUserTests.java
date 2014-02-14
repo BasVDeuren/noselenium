@@ -1,6 +1,5 @@
 package be.kdg.spacecrack.integrationtests;
 
-import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.modelwrapper.UserWrapper;
 import be.kdg.spacecrack.repositories.UserRepository;
@@ -97,15 +96,21 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
 
     @Test
     public void testGetUser_validToken_User() throws Exception {
-        testRegisterUser_NewUser_Token();
-        User user = userRepository.getUserByUsername("username");
-        AccessToken accessToken = user.getToken();
+        ObjectMapper objectMapper = new ObjectMapper();
 
-        String tokenValue = accessToken.getValue();
-        MockHttpServletRequestBuilder getUserRequestBuilder = get("/user/auth")
+        String UserWrapper = objectMapper.writeValueAsString(new UserWrapper("username", "password", "password", "email"));
+        MockHttpServletRequestBuilder postRequestBuilder = post("/user");
+        mockMvc.perform(postRequestBuilder
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .cookie(new Cookie("accessToken", "\"" + tokenValue + "\""));
+                .content(UserWrapper));
+
+
+        User user = userRepository.getUserByUsername("username");
+
+        MockHttpServletRequestBuilder getUserRequestBuilder = get("/user/auth")
+                .accept(MediaType.APPLICATION_JSON)
+                .cookie(new Cookie("accessTokenvalue", user.getToken().getValue()));
 
         mockMvc.perform(getUserRequestBuilder).andExpect(status().isOk());
     }
@@ -117,27 +122,10 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
         MockHttpServletRequestBuilder getUserRequestBuilder = get("/user/auth")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .cookie(new Cookie("accessToken", "invalidToken"));
+                .cookie(new Cookie("accessTokenvalue", "invalidToken"));
 
         mockMvc.perform(getUserRequestBuilder).andExpect(status().isUnauthorized());
     }
-
-    /*
-    @Test
-    public void testGetUser_TokenDeletedFromDb_SpaceCrackUnauthorisedException() throws Exception {
-        testRegisterUser_NewUser_Token();
-
-        AccessToken accessToken = userRepository.getUserByUsername("username").login();
-
-        userRepository.DeleteAccessToken(accessToken);
-
-        MockHttpServletRequestBuilder getUserRequestBuilder = get("/user")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .header("token", accessToken);
-
-        mockMvc.perform(getUserRequestBuilder).andExpect(status().isUnauthorized());
-    }*/
 
     @After
     public void tearDown() throws Exception {

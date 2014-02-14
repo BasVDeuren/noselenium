@@ -10,6 +10,7 @@ import be.kdg.spacecrack.utilities.HibernateUtil;
 import be.kdg.spacecrack.utilities.ITokenStringGenerator;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.hamcrest.CoreMatchers;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.After;
@@ -23,7 +24,8 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import javax.servlet.http.Cookie;
 
 import static junit.framework.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /* Git $Id$
@@ -116,6 +118,7 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
                 .accept(MediaType.APPLICATION_JSON))  ;
         UserRepository userRepository = new UserRepository();
         TokenRepository tokenRepository = new TokenRepository();
+
         AccessToken accessToken = tokenRepository.getAccessTokenByValue(userRepository.getUserByUsername(testUser.getUsername()).getToken().getValue());
 
         userRepository.DeleteAccessToken(accessToken);
@@ -140,10 +143,9 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
     public void tearDown() throws Exception {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
-
-        session.delete(testUser);
+        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User");
+        q.executeUpdate();
         tx.commit();
-
-
+        HibernateUtil.close(session);
     }
 }
