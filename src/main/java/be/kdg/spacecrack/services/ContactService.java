@@ -1,4 +1,4 @@
-package be.kdg.spacecrack.controllers;
+package be.kdg.spacecrack.services;
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackAlreadyExistException;
 import be.kdg.spacecrack.model.AccessToken;

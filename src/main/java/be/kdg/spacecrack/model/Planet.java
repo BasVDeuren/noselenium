@@ -23,6 +23,7 @@ public class Planet {
 
     @JsonIgnore
     private Set<Planet> connectedPlanets;
+    private Ship ship;
 
     public Planet(String name, int x, int y) {
         this.name = name;
@@ -80,5 +81,13 @@ public class Planet {
 
     public void setPlayer(Player player) {
         this.player = player;
+    }
+
+    public Ship getShip() {
+        return ship;
+    }
+
+    public void setShip(Ship ship) {
+        this.ship = ship;
     }
 }

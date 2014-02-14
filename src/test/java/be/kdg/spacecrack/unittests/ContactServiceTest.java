@@ -1,7 +1,7 @@
 package be.kdg.spacecrack.unittests;
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackAlreadyExistException;
-import be.kdg.spacecrack.controllers.ContactService;
+import be.kdg.spacecrack.services.ContactService;
 import be.kdg.spacecrack.controllers.TokenController;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.Contact;
