@@ -40,7 +40,6 @@ function LoginController($scope,Login,UserService,$cookieStore) {
 
                     Login.save(user, function(data,headers) {
                         $cookieStore.put('accessToken',data.value);
-                        //alert($cookies.accessToken);
                         $scope.go('/spacecrack/home');
                         $scope.hasLoginFailed = false;
                     }, function(data,headers) {
