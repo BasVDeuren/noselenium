@@ -48,7 +48,7 @@ spaceApp.controller("RegisterController", function ($scope, Register,UserService
                         passwordRepeated: 'facebook' + response.id
                     };
 
-                    Profile.save(user, function (data, headers) {
+                    Register.save(user, function (data, headers) {
                         $cookieStore.put('accessToken',data.value);
                         $scope.go('/spacecrack/game');
                         $scope.hasRegistrationFailed = false;
