@@ -30,7 +30,7 @@ function GameController ($scope, $translate,Map) {
 
         var bgImg = game.cache.getImage('space');
         console.log("width: " + bgImg.width + " height:" + bgImg.height)
-        game.world.setBounds(0, 0, bgImg.width, bgImg.height);
+        game.world.setBounds(0, 0, 1600, 1000);
 
 
         Map.get(function(data,header){
