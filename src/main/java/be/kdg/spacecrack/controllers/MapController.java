@@ -53,20 +53,20 @@ public class MapController {
         Planet f3 = new Planet("f3", MAP_LENGTH - 200, 40);
         Planet f4 = new Planet("f4", MAP_LENGTH - 200, MAP_HEIGHT - 40);
 
-        Planet g = new Planet("g", 205, 230);
-        Planet g2 = new Planet("g2", 205, MAP_HEIGHT - 230);
-        Planet g3 = new Planet("g3", MAP_LENGTH - 205, 230);
-        Planet g4 = new Planet("g4", MAP_LENGTH - 205, MAP_HEIGHT - 230);
+        Planet g = new Planet("g", 205, 130);
+        Planet g2 = new Planet("g2", 205, MAP_HEIGHT - 130);
+        Planet g3 = new Planet("g3", MAP_LENGTH - 205, 130);
+        Planet g4 = new Planet("g4", MAP_LENGTH - 205, MAP_HEIGHT - 130);
 
         Planet h = new Planet("h", 250, 75);
         Planet h2 = new Planet("h2", 250, MAP_HEIGHT - 75);
         Planet h3 = new Planet("h3", MAP_LENGTH - 250, 75);
         Planet h4 = new Planet("h4", MAP_LENGTH - 250, MAP_HEIGHT - 75);
 
-        Planet i = new Planet("i", 235, 270);
-        Planet i2 = new Planet("i2", 235, MAP_HEIGHT - 270);
-        Planet i3 = new Planet("i3", MAP_LENGTH - 235, 270);
-        Planet i4 = new Planet("i4", MAP_LENGTH - 235, MAP_HEIGHT - 270);
+        Planet i = new Planet("i", 235, 170);
+        Planet i2 = new Planet("i2", 235, MAP_HEIGHT - 170);
+        Planet i3 = new Planet("i3", MAP_LENGTH - 235, 170);
+        Planet i4 = new Planet("i4", MAP_LENGTH - 235, MAP_HEIGHT - 170);
 
         Planet j = new Planet("j", 240, 235);
         Planet j2 = new Planet("j2", 240, MAP_HEIGHT - 235);
