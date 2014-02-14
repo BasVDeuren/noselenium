@@ -3,7 +3,9 @@
  */
 var spaceApp = angular.module('spaceApp');
 
-spaceApp.controller("ProfileController", function ($scope, $cookies, Profile) {
+spaceApp.controller("ProfileController", function ($scope, $cookies, Profile,Contact) {
+
+    /**PAssword**/
 
     $scope.editUserData = {
         email: "",
@@ -19,7 +21,7 @@ spaceApp.controller("ProfileController", function ($scope, $cookies, Profile) {
         $scope.editUserData.password = data.password;
         $scope.editUserData.passwordRepeated = data.password;
     }, function (data, headers) {
-                alert('Failed!');
+
     });
 
 
@@ -36,13 +38,98 @@ spaceApp.controller("ProfileController", function ($scope, $cookies, Profile) {
         return password1 == password2;
     };
 
-    $scope.validateRegister = function () {
-        if ($scope.registerData.email != '' && $scope.registerData.username != '' && $scope.registerData.password != '' && $scope.registerData.passwordRepeated != ''
-            && $scope.checkPassword($scope.registerData.password, $scope.registerData.passwordRepeated)) {
+    $scope.validateForm = function () {
+        if ($scope.editUserData.password != '' && $scope.editUserData.passwordRepeated != ''
+            && $scope.checkPassword($scope.editUserData.password, $scope.editUserData.passwordRepeated)) {
             return false;
         } else {
             return true;
         }
+    };
+
+//--------------------------------------------------------------------------------------------------
+    /**CONTACT**/
+        //Image Upload
+    function convertImgToBase64(url, callback, outputFormat){
+        var canvas = document.createElement('CANVAS');
+        var ctx = canvas.getContext('2d');
+        var img = new Image;
+        img.crossOrigin = 'Anonymous';
+        img.onload = function(){
+            canvas.height = img.height;
+            canvas.width = img.width;
+            ctx.drawImage(img,0,0);
+            var dataURL = canvas.toDataURL(outputFormat || 'image/png');
+            callback.call(this, dataURL);
+            // Clean up
+            canvas = null;
+        };
+        img.src = url;
+    }
+
+    $scope.contactData = {
+        firstname: "",
+        lastname: "",
+        gender: "true",
+        dateOfBirth: "",
+        image: ""
+    };
+
+    $scope.editContact = function () {
+        if($scope.contactData.gender == "true"){
+            $scope.contactData.gender = true;
+        }else{
+            $scope.contactData.gender = false;
+        }
+        //$scope.contactData.dateOfBirth = $scope.contactData.dateOfBirth.toLocaleDateString();
+        Contact.save($scope.contactData, function () {
+
+        }, function () {
+
+
+        })
+    };
+
+
+
+
+
+    //DatePicker
+    $scope.today = function() {
+        $scope.dt = new Date();
+    };
+    $scope.today();
+
+    $scope.showWeeks = true;
+    $scope.toggleWeeks = function () {
+        $scope.showWeeks = ! $scope.showWeeks;
+    };
+
+    $scope.clear = function () {
+        $scope.dt = null;
+    };
+
+//    // Disable weekend selection
+//    $scope.disabled = function(date, mode) {
+//        //return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
+//        return false;
+//    };
+
+    $scope.toggleMin = function() {
+        $scope.minDate = ( $scope.minDate ) ? null : new Date();
+    };
+    $scope.toggleMin();
+
+    $scope.open = function($event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+
+        $scope.opened = true;
+    };
+
+    $scope.dateOptions = {
+        'year-format': "'yy'",
+        'starting-day': 1
     };
 
 });

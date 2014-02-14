@@ -141,7 +141,13 @@ public class MapController {
                 q, q2, q3, q4
         };
 
-        connectPlanetsByRadius(planets, 105);
+        // Add more space between planets
+        for(Planet planet : planets) {
+            planet.setX((int) (planet.getX() * 2));
+            planet.setY((int) (planet.getY() * 2));
+        }
+
+        connectPlanetsByRadius(planets, 105 * 2);
 
         SpaceCrackMap spaceCrackMap = new SpaceCrackMap(planets);
 

@@ -2,7 +2,6 @@ package be.kdg.spacecrack.repositories;
 
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
-import org.springframework.stereotype.Component;
 
 /* Git $Id$
  *
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component;
  * 2013-2014
  *
  */
-@Component("userRepository")
 public interface IUserRepository {
     void DeleteAccessToken(AccessToken accessToken) throws Exception;
 

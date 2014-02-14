@@ -45,4 +45,9 @@ public class ContactRepository implements IContactRepository{
 
         return contact;
     }
+
+    @Override
+    public void editContact(Contact contact) {
+
+    }
 }

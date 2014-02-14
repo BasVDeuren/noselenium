@@ -2,7 +2,7 @@
  * Created by Dimi on 3/02/14.
  */
 
-var spaceApp = angular.module('spaceApp', ['ngRoute', 'spaceServices', 'ngCookies', 'ngAnimate', 'pascalprecht.translate'])
+var spaceApp = angular.module('spaceApp', ['ngRoute', 'spaceServices', 'ngCookies', 'ngAnimate', 'pascalprecht.translate','ui.bootstrap'])
     .config(appRouter);
 
 //Navigation
@@ -60,12 +60,12 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
         }
     };
 
+
     $scope.logout = function () {
         Login.delete(function () {
-            alert('Succeed');
             $cookieStore.remove('accessToken');
         }, function () {
-            alert('Failed')
+
         });
 
     }

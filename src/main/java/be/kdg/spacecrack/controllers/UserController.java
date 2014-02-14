@@ -5,11 +5,12 @@ import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.modelwrapper.UserWrapper;
-import be.kdg.spacecrack.repositories.IUserRepository;
 import be.kdg.spacecrack.repositories.TokenRepository;
+import be.kdg.spacecrack.services.ITokenService;
+import be.kdg.spacecrack.services.IUserService;
 import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,35 +21,40 @@ import org.springframework.web.bind.annotation.*;
  * 2013-2014
  *
  */
+@Component("userController")
 @Controller
 @RequestMapping("/user")
 public class UserController {
 
     @Autowired
-    private IUserRepository userRepository;
+    private IUserService userService;
     @Autowired
     private ITokenController tokenController;
+
+    @Autowired
+    private ITokenService tokenService;
 
 
     public UserController() {
 
     }
 
-    public UserController(IUserRepository userRepository, ITokenController tokenController) {
-        this.userRepository = userRepository;
+    public UserController(IUserService userService, ITokenController tokenController, ITokenService tokenService) {
+        this.userService = userService;
         this.tokenController = tokenController;
+        this.tokenService = tokenService;
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public AccessToken registerUser(@RequestBody UserWrapper userWrapper) throws Exception {
         AccessToken accessToken = null;
-        User userByUsername = userRepository.getUserByUsername(userWrapper.getUsername());
+        User userByUsername = userService.getUserByUsername(userWrapper.getUsername());
 
         if (userByUsername == null) {
             if (userWrapper.getPassword().equals(userWrapper.getPasswordRepeated())) {
-                userRepository.addUser(userWrapper.getUsername(), userWrapper.getPassword(), userWrapper.getEmail());
-                accessToken = tokenController.login(userRepository.getUserByUsername(userWrapper.getUsername()));
+                userService.addUser(userWrapper.getUsername(), userWrapper.getPassword(), userWrapper.getEmail());
+                accessToken = tokenController.login(userService.getUserByUsername(userWrapper.getUsername()));
             } else {
                 throw new SpaceCrackNotAcceptableException("Password and repeat password aren't equal");
             }
@@ -66,14 +72,14 @@ public class UserController {
 
         TokenRepository tokenRepository = new TokenRepository();
         AccessToken accessToken = tokenRepository.getAccessTokenByValue(accessTokenValue.substring(1, accessTokenValue.length() - 1));
-        user = userRepository.getUserByAccessToken(accessToken);
+        user = userService.getUserByAccessToken(accessToken);
 
 
         if (userWrapper.getPassword().equals(userWrapper.getPasswordRepeated())) {
             user.setPassword(userWrapper.getPassword());
             user.setEmail(userWrapper.getEmail());
             user.setUsername(userWrapper.getUsername());
-            userRepository.updateUser(user);
+            userService.updateUser(user);
         } else {
             throw new SpaceCrackNotAcceptableException("Passwords should be the same!");
         }
@@ -82,13 +88,10 @@ public class UserController {
 
     @RequestMapping(value = "/auth",method = RequestMethod.GET)
     @ResponseBody
-    public User getUserByToken(@CookieValue("accessToken") String cookie) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
+    public User getUserByToken(@CookieValue("accessTokenvalue") String cookieAccessTokenvalue) throws Exception {
         User user = null;
         try {
-            TokenRepository tokenRepository = new TokenRepository();
-            AccessToken accessToken = tokenRepository.getAccessTokenByValue(cookie.substring(1, cookie.length() - 1));
-            user = userRepository.getUserByAccessToken(accessToken);
+            user = userService.getUserByAccessToken(tokenService.getAccessTokenByValue(cookieAccessTokenvalue));
         } catch (JsonParseException ex) {
             throw new SpaceCrackUnauthorizedException();
         }

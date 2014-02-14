@@ -14,4 +14,6 @@ public interface IContactRepository {
     public void addContact(Contact contact) throws Exception;
 
     public Contact getContact(User user);
+
+    void editContact(Contact contact);
 }

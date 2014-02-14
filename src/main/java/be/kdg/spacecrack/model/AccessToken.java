@@ -23,7 +23,7 @@ public class AccessToken {
 
     /*@OneToOne
     @JoinColumn(name="userId")*/
-    @OneToOne(mappedBy = "token")
+    @OneToOne(mappedBy = "token", cascade = CascadeType.ALL)
     @JsonBackReference
     User user;
     public AccessToken() {

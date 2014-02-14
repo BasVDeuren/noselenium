@@ -1,12 +1,12 @@
 package be.kdg.spacecrack.unittests;
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackAlreadyExistException;
-import be.kdg.spacecrack.services.ContactService;
 import be.kdg.spacecrack.controllers.TokenController;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.Contact;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.ContactRepository;
+import be.kdg.spacecrack.services.ContactService;
 import be.kdg.spacecrack.utilities.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -15,6 +15,9 @@ import org.junit.After;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.VerificationModeFactory;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import static org.mockito.Mockito.mock;
 
@@ -44,8 +47,10 @@ public class ContactServiceTest {
         TokenController tokenController = new TokenController();
         AccessToken accessToken = tokenController.login(user);
 
-        Contact contact = new Contact("email", "image", "firstname", "lastname", "birthdate");
-        contactService.createContact(contact, accessToken);
+        Calendar calendar = new GregorianCalendar(2013,1,5);
+
+        Contact contact = new Contact("firstname","lastname","email", calendar.getTime(),"image");
+        contactService.createContact(contact, user);
         Mockito.verify(contactRepository, VerificationModeFactory.times(1)).addContact(contact);
     }
 
@@ -65,11 +70,12 @@ public class ContactServiceTest {
 
         TokenController tokenController = new TokenController();
         AccessToken accessToken = tokenController.login(user);
+        Calendar calendar = new GregorianCalendar(2013,1,5);
 
-        Contact contact = new Contact("email", "image", "firstname", "lastname", "dayOfBirth");
-        Contact contact2 = new Contact("email", "image", "firstname", "lastname", "dayOfBirth");
-        contactService.createContact(contact, accessToken);
-        contactService.createContact(contact2, accessToken);
+        Contact contact = new Contact("firstname","lastname","email", calendar.getTime(),"image");
+        Contact contact2 = new Contact("firstname","lastname","email", calendar.getTime(),"image");
+        contactService.createContact(contact, user);
+        contactService.createContact(contact2, user);
 
 
     }

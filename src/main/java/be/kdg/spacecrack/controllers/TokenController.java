@@ -10,7 +10,6 @@ import be.kdg.spacecrack.repositories.IUserRepository;
 import be.kdg.spacecrack.repositories.TokenRepository;
 import be.kdg.spacecrack.repositories.UserRepository;
 import be.kdg.spacecrack.utilities.HibernateUtil;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -18,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -32,7 +30,6 @@ import java.io.IOException;
  *
  */
 @Component("tokenController")
-@Controller
 @RequestMapping("/accesstokens")
 public class TokenController implements ITokenController {
 
@@ -61,23 +58,20 @@ public class TokenController implements ITokenController {
     @ResponseBody
     AccessToken login(@RequestBody User user) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-       try{
-        Transaction tx = session.beginTransaction();
         try {
+            Transaction tx = session.beginTransaction();
+            try {
+                @SuppressWarnings("JpaQlInspection") Query query = session.createQuery("from User u where u.username = :testusername");
+                query.setParameter("testusername", "test");
+                if (query.list().size() < 1) {
+                    session.saveOrUpdate(new User("test", "test"));
+                }
+                tx.commit();
 
-
-            @SuppressWarnings("JpaQlInspection") Query query = session.createQuery("from User u where u.username = :testusername");
-            query.setParameter("testusername", "test");
-            if(query.list().size() <1)
-            {
-                session.saveOrUpdate(new User("test","test"));
+            } catch (Exception e) {
+                tx.rollback();
+                //e.printStackTrace();
             }
-            tx.commit();
-
-        } catch (Exception e) {
-            tx.rollback();
-            //e.printStackTrace();
-        }
        }finally {
            HibernateUtil.close(session);
        }
