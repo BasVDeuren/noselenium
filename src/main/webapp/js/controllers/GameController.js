@@ -9,7 +9,7 @@ function GameController ($scope, $translate,Map) {
      };*/
     $scope.planetArray = [{x:"",y:"",connectedPlanetNames:[{name:""}]}]
     function preload() {
-        game.load.image('space', 'assets/space.jpg');
+        game.load.image('bg', 'assets/SpaceCrackBackground.jpg');
         game.load.image('planet1', 'assets/planet1_small.png');
         game.load.image('planet2', 'assets/planet2.png');
         game.load.image('planet3', 'assets/planet3.png');
@@ -26,9 +26,9 @@ function GameController ($scope, $translate,Map) {
 
     function create() {
         // A simple background for our game
-        game.add.sprite(0, 0, 'space');
+        game.add.sprite(0, 0, 'bg');
 
-        var bgImg = game.cache.getImage('space');
+        var bgImg = game.cache.getImage('bg');
         console.log("width: " + bgImg.width + " height:" + bgImg.height)
         game.world.setBounds(0, 0, 1600, 1000);
 
@@ -38,7 +38,7 @@ function GameController ($scope, $translate,Map) {
             console.log("planetArray:" + $scope.planetArray[0].x);
             var graphics = game.add.graphics(0,0);
             //graphics.beginFill(0x00FF00);
-            graphics.lineStyle(3, 0x0000FF, 1);
+            graphics.lineStyle(3, 0x999999, 1);
 
             // graphics.drawCircle($scope.map.planets[0].x,$scope.map.planets[0].y, 5);
             var planetSprites = game.add.group();
@@ -59,7 +59,7 @@ function GameController ($scope, $translate,Map) {
                 planetSprite.events.onInputDown.add(planetListener, this);
 
                 // Add text
-                var text = game.add.text(x-width/2, y-height/2, name, { font : '12px', fill : '#ff0000' }, planetSprites);
+                var text = game.add.text(x-width/2, y-height/2, name, { font : '16px', fill : '#ff0000' }, planetSprites);
 
                 // Draw planet connections (optimalisation possible)
 
