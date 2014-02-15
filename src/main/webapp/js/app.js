@@ -9,21 +9,22 @@ var spaceApp = angular.module('spaceApp', ['ngRoute', 'spaceServices', 'ngCookie
 function appRouter($routeProvider  ,$httpProvider) {
 
     var interceptor = ['$rootScope', '$q', '$location', function ( $rootScope, $q,$location) {
-
         function success(response) {
             return response;
         }
 
         function error(response, $scope) {
             var status = response.status;
+            if($location.path() !=="/"){
+                if (status == 401) {
 
-            if (status == 401) {
+                    console.info("unauthorized");
+                    console.info($location.path());
+                    console.info("back to loginpage");
+                    $location.path("/");
 
-                console.info("unauthorized");
-                $location.path("/");
-             //   $.go(");
-            //   window.location = "./index.html";
-                return;
+                    return;
+                }
             }
             // otherwise
             return $q.reject(response);
