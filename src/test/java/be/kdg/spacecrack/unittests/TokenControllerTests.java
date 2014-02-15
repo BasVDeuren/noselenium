@@ -41,7 +41,7 @@ public class TokenControllerTests{
 
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
-        testUser = new User("testUsername", "testPassword");
+        testUser = new User("testUsername2", "testPassword2");
         session.saveOrUpdate(testUser);
         tx.commit();
     }
@@ -61,8 +61,8 @@ public class TokenControllerTests{
     {
         ITokenStringGenerator mockTokenGenerator = Mockito.mock(ITokenStringGenerator.class);
         TokenController tokenControllerWithMockedGenerator = new TokenController(new UserRepository(),new TokenRepository(mockTokenGenerator));
-        String name ="testUsername";
-        String pw = "testPassword";
+        String name ="testUsername2";
+        String pw = "testPassword2";
         User user = new User(name, pw);
         String expectedTokenValue = "testtokenvalue1234";
         Mockito.stub(mockTokenGenerator.generateTokenString()).toReturn(expectedTokenValue);
@@ -75,7 +75,7 @@ public class TokenControllerTests{
     @Test(expected = SpaceCrackUnexpectedException.class)
     public void testgetUser() throws Exception {
         IUserRepository repository = Mockito.mock(IUserRepository.class);
-        User user = new User("testUsername", "testPassword");
+        User user = new User("testUsername2", "testPassword2");
         Mockito.stub(repository.getUser(user)).toThrow(new Exception());
         TokenController tokenController1 = new TokenController(repository, new TokenRepository(fixedSeedGenerator));
         tokenController1.login(user);

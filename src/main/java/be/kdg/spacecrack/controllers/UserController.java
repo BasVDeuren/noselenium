@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
  */
 @Component("userController")
 @Controller
-@RequestMapping("/user")
 public class UserController {
 
     @Autowired
@@ -45,7 +44,7 @@ public class UserController {
         this.tokenService = tokenService;
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
+    @RequestMapping(value="/user",method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public AccessToken registerUser(@RequestBody UserWrapper userWrapper) throws Exception {
         AccessToken accessToken = null;
@@ -64,14 +63,14 @@ public class UserController {
         return accessToken;
     }
 
-    @RequestMapping(value = "/auth", method = RequestMethod.POST, consumes = "application/json")
+    @RequestMapping(value = "/auth/user", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public void editUser(@RequestBody UserWrapper userWrapper, @CookieValue("accessToken") String accessTokenValue) throws Exception {
 
         User user = null;
 
         TokenRepository tokenRepository = new TokenRepository();
-        AccessToken accessToken = tokenRepository.getAccessTokenByValue(accessTokenValue.substring(1, accessTokenValue.length() - 1));
+        AccessToken accessToken = tokenRepository.getAccessTokenByValue(accessTokenValue);
         user = userService.getUserByAccessToken(accessToken);
 
 
@@ -86,10 +85,11 @@ public class UserController {
 
     }
 
-    @RequestMapping(value = "/auth",method = RequestMethod.GET)
+    @RequestMapping(value = "/auth/user",method = RequestMethod.GET)
     @ResponseBody
-    public User getUserByToken(@CookieValue("accessTokenvalue") String cookieAccessTokenvalue) throws Exception {
+    public User getUserByToken(@CookieValue("accessToken") String cookieAccessTokenvalue) throws Exception {
         User user = null;
+
         try {
             user = userService.getUserByAccessToken(tokenService.getAccessTokenByValue(cookieAccessTokenvalue));
         } catch (JsonParseException ex) {

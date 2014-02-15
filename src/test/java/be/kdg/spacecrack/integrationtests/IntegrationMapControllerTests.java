@@ -24,6 +24,4 @@ public class IntegrationMapControllerTests extends BaseFilteredIntegrationTests 
                 .andExpect(jsonPath("$.planets[0].y", CoreMatchers.is(500)))
                 .andExpect(jsonPath("$.planets[0].connectedPlanets[0].name", CoreMatchers.notNullValue()));
     }
-
-
 }

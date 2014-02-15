@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import javax.servlet.http.Cookie;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -43,21 +42,21 @@ public class IntegrationContactTests extends BaseFilteredIntegrationTests{
 
     @Test
     public void testPostAddContact_ValidContact_StatusOk() throws Exception {
-        MockHttpServletRequestBuilder getRequestBuilder = get("/user/auth")
+     /*     MockHttpServletRequestBuilder getRequestBuilder = get("/user/auth")
                 .accept(MediaType.APPLICATION_JSON)
                 .cookie(new Cookie("accessTokenvalue", accessToken.getValue()));
 
         String stringUser = mockMvc.perform(getRequestBuilder).andReturn().getResponse().getContentAsString();
         String[] userPartvalues = stringUser.split(":");
 
-        String valuesToUse = "";
+      String valuesToUse = "";
         for(String s : userPartvalues){
             valuesToUse += s.split(",")[0] + ",";
-        }
+        }*/
 
-        String[] uservalues = valuesToUse.split(",");
+//        String[] uservalues = valuesToUse.split(",");
 
-        User user = new User(uservalues[2], uservalues[3], uservalues[4]);
+//        User user = new User(uservalues[2], uservalues[3], uservalues[4]);
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -69,6 +68,6 @@ public class IntegrationContactTests extends BaseFilteredIntegrationTests{
         mockMvc.perform(postRequestBuilder
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(contactJson)
-                .cookie(new Cookie("accessToken",accessToken.getValue()))).andExpect(status().isOk());
+                .cookie(new Cookie("accessToken","%22"+ accessToken.getValue() + "%22"))).andExpect(status().isOk());
     }
 }

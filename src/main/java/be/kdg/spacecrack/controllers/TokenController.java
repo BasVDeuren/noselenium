@@ -1,6 +1,5 @@
 package be.kdg.spacecrack.controllers;
 
-import be.kdg.spacecrack.Exceptions.InvalidTokenHeaderException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackUnexpectedException;
 import be.kdg.spacecrack.model.AccessToken;
@@ -18,8 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 
 /* Git $Id$
@@ -105,11 +102,9 @@ public class TokenController implements ITokenController {
     @ResponseBody
     public void Logout(@CookieValue("accessToken") String accessTokenValue) throws Exception {
         AccessToken accessToken;
-        try {
+
             accessToken = tokenRepository.getAccessTokenByValue(accessTokenValue.substring(1, accessTokenValue.length() - 1));
-        } catch (IOException e) {
-            throw new InvalidTokenHeaderException();
-        }
+
         try {
             userRepository.DeleteAccessToken(accessToken);
         } catch (Exception ex) {

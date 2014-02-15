@@ -35,7 +35,7 @@ public class TokenRepository implements ITokenRepository {
 
 
     @Override
-    public AccessToken getAccessToken(User dbUser) throws Exception {
+    public AccessToken getAccessToken(User dbUser) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         AccessToken accessToken;
         try {
@@ -49,11 +49,12 @@ public class TokenRepository implements ITokenRepository {
                     dbUser.setToken(accessToken);
                 }
                 session.saveOrUpdate(accessToken);
+
                 session.saveOrUpdate(dbUser);
                 tx.commit();
             } catch (Exception ex) {
                 tx.rollback();
-                throw ex;
+                throw new RuntimeException(ex);
             }
 
         } finally {
@@ -63,7 +64,7 @@ public class TokenRepository implements ITokenRepository {
     }
 
     @Override
-    public AccessToken getAccessTokenByValue(String value) throws Exception {
+    public AccessToken getAccessTokenByValue(String value) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         AccessToken accessToken = null;
         try {
@@ -75,7 +76,7 @@ public class TokenRepository implements ITokenRepository {
                 tx.commit();
             } catch (Exception ex) {
                 tx.rollback();
-                throw ex;
+                throw new RuntimeException(ex);
             }
         } finally {
             HibernateUtil.close(session);
