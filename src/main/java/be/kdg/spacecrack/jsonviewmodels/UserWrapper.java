@@ -1,4 +1,4 @@
-package be.kdg.spacecrack.modelwrapper;
+package be.kdg.spacecrack.jsonviewmodels;
 
 /* Git $Id$
  *

@@ -8,37 +8,88 @@ package be.kdg.spacecrack.services;/* Git $Id$
 
 import be.kdg.spacecrack.controllers.MapController;
 import be.kdg.spacecrack.model.Planet;
+import be.kdg.spacecrack.model.PlanetConnection;
 import be.kdg.spacecrack.model.SpaceCrackMap;
+import be.kdg.spacecrack.utilities.HibernateUtil;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.stereotype.Component;
 
-@Component("mapService")
-public class MapService implements  IMapService {
-    @Override
-    public void connectPlanetsByRadius(Planet[] planets, int radius) {
-        for(Planet checkPlanet : planets) {
-            for(Planet planet : planets) {
-                // Point coords
-                int pX = planet.getX();
-                int pY = planet.getY();
-                // Circle centre coords
-                int cX = checkPlanet.getX();
-                int cY = checkPlanet.getY();
+import java.util.List;
 
-                double distance = Math.sqrt((pX - cX) * (pX - cX) + (pY - cY) * (pY - cY));
-                if(distance < radius) { // In in circle
-                    checkPlanet.addConnection(planet);
+@Component("mapService")
+public class MapService implements IMapService {
+
+
+
+    private void connectPlanetsByRadius(Planet[] planets, int radius, Session session) {
+
+
+                for (Planet checkPlanet : planets) {
+                    for (Planet planet : planets) {
+                        // Point coords
+                        int pX = planet.getX();
+                        int pY = planet.getY();
+                        // Circle centre coords
+                        int cX = checkPlanet.getX();
+                        int cY = checkPlanet.getY();
+
+                        double distance = Math.sqrt((pX - cX) * (pX - cX) + (pY - cY) * (pY - cY));
+                        if (distance < radius) { // In in circle
+                            PlanetConnection planetConnection = new PlanetConnection(checkPlanet, planet);
+                            session.saveOrUpdate(planetConnection);
+
+
+                            checkPlanet.addConnection(planetConnection);
+                        }
+                    }
+
                 }
-            }
-        }
+
+
     }
 
     @Override
     public SpaceCrackMap getSpaceCrackMap() {
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Planet[] planets;
+        List result;
+        try {
+            Transaction tx = session.beginTransaction();
+            try {
+                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Planet");
+                result = q.list();
+                tx.commit();
+            } catch (RuntimeException ex) {
+                tx.rollback();
+                throw ex;
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
+        int size = result.size();
+        planets = new Planet[size];
+        for (int i = 0; i < size; i++) {
+            planets[i] = (Planet) result.get(i);
+        }
+        if (planets.length == 0) {
+            planets = createPlanets();
+        }
+
+        SpaceCrackMap spaceCrackMap = new SpaceCrackMap(planets);
+
+
+        return spaceCrackMap;
+    }
+
+    private Planet[] createPlanets() {
         Planet a = new Planet("a", 50, 250);
         Planet a3 = new Planet("a3", 750, 250);
 
         Planet b = new Planet("b", 100, 205);
-        Planet b2 = new Planet("b2",100, 295);
+        Planet b2 = new Planet("b2", 100, 295);
         Planet b3 = new Planet("b3", MapController.MAP_LENGTH - 100, 205);
         Planet b4 = new Planet("b4", MapController.MAP_LENGTH - 100, MapController.MAP_HEIGHT - 205);
 
@@ -139,16 +190,30 @@ public class MapService implements  IMapService {
         };
 
         // Add more space between planets
-        for(Planet planet : planets) {
+        for (Planet planet : planets) {
             planet.setX((int) (planet.getX() * 2));
             planet.setY((int) (planet.getY() * 2));
         }
 
-        connectPlanetsByRadius(planets, 105 * 2);
-
-        SpaceCrackMap spaceCrackMap = new SpaceCrackMap(planets);
 
 
-        return spaceCrackMap;
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        try {
+            Transaction tx = session.beginTransaction();
+            try {
+                for (Planet planet : planets) {
+                    session.saveOrUpdate(planet);
+                }
+                connectPlanetsByRadius(planets, 105 * 2, session);
+                tx.commit();
+            } catch (RuntimeException ex) {
+                tx.rollback();
+                throw ex;
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
+
+        return planets;
     }
 }

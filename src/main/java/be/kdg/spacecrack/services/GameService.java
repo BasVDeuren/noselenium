@@ -1,6 +1,5 @@
 package be.kdg.spacecrack.services;
 
-import be.kdg.spacecrack.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +23,7 @@ public class GameService {
     }
 
 
-    public Game createGame(Contact creator, Contact opponent) {
+    /*public Game createGame(Contact creator, Contact opponent) {
         Player player1 = new Player(creator);
         Player player2 = new Player(opponent);
 
@@ -46,7 +45,7 @@ public class GameService {
         player2.getShips().add(player2StartingShip);
 
         return new Game(player1, player2, map);
-    }
+    }*/
 
 
 //    public void moveShip(Player player, Ship ship, Planet targetPlanet) {

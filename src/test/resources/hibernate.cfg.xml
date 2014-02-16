@@ -26,6 +26,8 @@
         <mapping class="be.kdg.spacecrack.model.Contact"/>
         <mapping class="be.kdg.spacecrack.model.User"/>
         <mapping class="be.kdg.spacecrack.model.AccessToken"/>
+        <mapping class="be.kdg.spacecrack.model.Planet"/>
+        <mapping class="be.kdg.spacecrack.model.PlanetConnection"/>
 
     </session-factory>
 </hibernate-configuration>

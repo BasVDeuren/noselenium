@@ -6,12 +6,9 @@ package be.kdg.spacecrack.services;/* Git $Id$
  *
  */
 
-import be.kdg.spacecrack.model.Planet;
 import be.kdg.spacecrack.model.SpaceCrackMap;
 
 public interface IMapService {
-
-    void connectPlanetsByRadius(Planet[] planets, int radius);
 
     SpaceCrackMap getSpaceCrackMap();
 }

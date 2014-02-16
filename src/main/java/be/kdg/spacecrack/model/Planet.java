@@ -3,6 +3,7 @@ package be.kdg.spacecrack.model;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -15,21 +16,31 @@ import java.util.Set;
  * 2013-2014
  *
  */
+@Entity
+@Table(name = "T_Planet")
 public class Planet {
+    @GeneratedValue
+    @Id
+    private int planetId;
+    @Column(unique = true)
     private String name;
+    @Column
     private int x;
+    @Column
     private int y;
-    private Player player;
-
     @JsonIgnore
-    private Set<Planet> connectedPlanets;
-    private Ship ship;
+    @OneToMany(fetch=FetchType.EAGER, mappedBy = "planetConnectionId")
+    private Set<PlanetConnection> planetConnections;
+
 
     public Planet(String name, int x, int y) {
         this.name = name;
         this.x = x;
         this.y = y;
-        connectedPlanets = new HashSet<Planet>();
+        planetConnections = new HashSet<PlanetConnection>();
+    }
+
+    public Planet() {
     }
 
     public int getX() {
@@ -48,46 +59,43 @@ public class Planet {
         this.y = y;
     }
 
-    public void addConnection(Planet planet) {
-        if(planet != this) {
-            connectedPlanets.add(planet);
-            planet.getConnectedPlanets().add(this);
-        }
+    public int getPlanetId() {
+        return planetId;
+    }
+
+    public void setPlanetId(int planetId) {
+        this.planetId = planetId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPlanetConnections(Set<PlanetConnection> planetConnections) {
+        this.planetConnections = planetConnections;
+    }
+
+    public Set<PlanetConnection> getPlanetConnections() {
+        return planetConnections;
+    }
+
+    public void addConnection(PlanetConnection planetConnection) {
+        planetConnections.add(planetConnection);
     }
 
     @JsonProperty("connectedPlanets")
     public List<Planet> getConnectedPlanetWraps() {
         List<Planet> connectedPlanetWraps= new ArrayList<Planet>();
-        for (Planet p : connectedPlanets) {
+        for (PlanetConnection planetConnection: planetConnections) {
+            Planet p = planetConnection.getChildPlanet();
             connectedPlanetWraps.add(new Planet(p.name, p.x, p.y));
         }
 
         return connectedPlanetWraps;
     }
 
-
-    public Set<Planet> getConnectedPlanets() {
-        return connectedPlanets;
-    }
-
-
     public String getName() {
         return name;
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
-    public Ship getShip() {
-        return ship;
-    }
-
-    public void setShip(Ship ship) {
-        this.ship = ship;
-    }
 }

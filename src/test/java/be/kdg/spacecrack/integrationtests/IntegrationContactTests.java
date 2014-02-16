@@ -8,8 +8,8 @@ package be.kdg.spacecrack.integrationtests;/* Git $Id
 
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
-import be.kdg.spacecrack.modelwrapper.ContactWrapper;
-import be.kdg.spacecrack.modelwrapper.UserWrapper;
+import be.kdg.spacecrack.jsonviewmodels.ContactWrapper;
+import be.kdg.spacecrack.jsonviewmodels.UserWrapper;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;

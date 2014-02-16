@@ -33,7 +33,7 @@ public class SeleniumLoginTests {
         System.setProperty("webdriver.chrome.driver", path);
         driver = new ChromeDriver();
 
-        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(4, TimeUnit.SECONDS);
 
 
     }
@@ -48,7 +48,7 @@ public class SeleniumLoginTests {
         password.sendKeys("test");
         WebElement loginbutton = driver.findElement(By.name("login"));
         loginbutton.click();
-        WebDriverWait wait = new WebDriverWait(driver, 1);
+        WebDriverWait wait = new WebDriverWait(driver, 4);
         wait.until(ExpectedConditions.elementToBeClickable(By.name("newgame")));
         assertEquals("http://localhost:8080/#/spacecrack/home", driver.getCurrentUrl());
 
@@ -65,7 +65,7 @@ public class SeleniumLoginTests {
         password.sendKeys("invalidPassword");
         WebElement loginbutton = driver.findElement(By.name("login"));
         loginbutton.click();
-        WebDriverWait wait = new WebDriverWait(driver, 1);
+        WebDriverWait wait = new WebDriverWait(driver,4);
         WebElement loginfailedDiv = driver.findElement(By.name("loginfailed"));
         wait.until(ExpectedConditions.visibilityOf(loginfailedDiv));
         assertEquals("http://localhost:8080/#/", driver.getCurrentUrl());

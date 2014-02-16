@@ -8,7 +8,7 @@ package be.kdg.spacecrack.controllers;/* Git $Id
 
 import be.kdg.spacecrack.model.Contact;
 import be.kdg.spacecrack.model.User;
-import be.kdg.spacecrack.modelwrapper.ContactWrapper;
+import be.kdg.spacecrack.jsonviewmodels.ContactWrapper;
 import be.kdg.spacecrack.repositories.TokenRepository;
 import be.kdg.spacecrack.services.*;
 import org.springframework.beans.factory.annotation.Autowired;

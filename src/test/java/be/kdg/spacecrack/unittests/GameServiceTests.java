@@ -1,15 +1,8 @@
 package be.kdg.spacecrack.unittests;
 
-import be.kdg.spacecrack.model.*;
 import be.kdg.spacecrack.services.GameService;
 import be.kdg.spacecrack.services.MapService;
 import org.junit.Before;
-import org.junit.Test;
-
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /* Git $Id$
  *
@@ -28,7 +21,7 @@ public class GameServiceTests {
 
     }
 
-    @Test
+    /*@Test
     public void createGame_validParams_gameCreated() throws Exception {
 
         Contact creator = new Contact();
@@ -55,11 +48,26 @@ public class GameServiceTests {
         assertTrue("player 1 should have a starting ship", player1.getShips().contains(player1StartingPlanetShip));
         Ship player2StartingPlanetShip = player2StartingPlanet.getShip();
         assertTrue("player 2 should have a starting ship", player2getShips().contains(player2StartingPlanetShip));*/
-    }
+  //  }
+
+    /*@Test
+    public void moveShip_player1ToPlanetBvalidmove_shipmoved() throws Exception {
+        Contact creator = new Contact();
+        Contact opponent = new Contact();
+
+        Game game = gameService.createGame(creator, opponent);
+        List<Player> players = game.getPlayers();
+
+        Ship starterShipshipPlayer1 = players.get(0).getShips().get(0);
+        Planet planetB = game.getSpaceCrackMap().getPlanetByName("b");
 
 
+        gameService.moveShip(starterShipshipPlayer1, planetB);
 
-//    @Test
+
+    }*/
+
+    //    @Test
 //    public void moveShip_connectedPlanet_shipMoved()
 //    {
 //        Contact creator = new Contact();
