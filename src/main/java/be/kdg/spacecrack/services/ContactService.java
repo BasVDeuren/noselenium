@@ -1,6 +1,6 @@
 package be.kdg.spacecrack.services;
 
-import be.kdg.spacecrack.Exceptions.SpaceCrackAlreadyExistException;
+import be.kdg.spacecrack.Exceptions.SpaceCrackAlreadyExistsException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.Contact;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component("contactService")
-public class ContactService {
+public class ContactService implements IContactService {
     @Autowired
     IContactRepository contactRepository;
 
@@ -34,6 +34,7 @@ public class ContactService {
         this.contactRepository = contactRepository;
     }
 
+    @Override
     public void createContact(Contact contact, User user) throws Exception {
 
         if(user.getContact() == null){
@@ -42,11 +43,12 @@ public class ContactService {
             userRepository.updateUser(user);
             contactRepository.addContact(contact);
         }else{
-            throw new SpaceCrackAlreadyExistException();
+            throw new SpaceCrackAlreadyExistsException();
         }
 
     }
 
+    @Override
     public void editContact(Contact contact, AccessToken accessToken) throws Exception {
         User user = userRepository.getUserByAccessToken(accessToken);
         if(user.getContact() == contact){

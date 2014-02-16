@@ -6,7 +6,7 @@ import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.modelwrapper.UserWrapper;
 import be.kdg.spacecrack.repositories.TokenRepository;
-import be.kdg.spacecrack.services.ITokenService;
+import be.kdg.spacecrack.services.IAuthorizationService;
 import be.kdg.spacecrack.services.IUserService;
 import org.codehaus.jackson.JsonParseException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,14 +31,14 @@ public class UserController {
     private ITokenController tokenController;
 
     @Autowired
-    private ITokenService tokenService;
+    private IAuthorizationService tokenService;
 
 
     public UserController() {
 
     }
 
-    public UserController(IUserService userService, ITokenController tokenController, ITokenService tokenService) {
+    public UserController(IUserService userService, ITokenController tokenController, IAuthorizationService tokenService) {
         this.userService = userService;
         this.tokenController = tokenController;
         this.tokenService = tokenService;

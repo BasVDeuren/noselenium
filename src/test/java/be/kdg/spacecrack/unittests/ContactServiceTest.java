@@ -1,17 +1,22 @@
 package be.kdg.spacecrack.unittests;
 
-import be.kdg.spacecrack.Exceptions.SpaceCrackAlreadyExistException;
+import be.kdg.spacecrack.Exceptions.SpaceCrackAlreadyExistsException;
 import be.kdg.spacecrack.controllers.TokenController;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.Contact;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.ContactRepository;
+import be.kdg.spacecrack.repositories.TokenRepository;
+import be.kdg.spacecrack.repositories.UserRepository;
+import be.kdg.spacecrack.services.AuthorizationService;
 import be.kdg.spacecrack.services.ContactService;
 import be.kdg.spacecrack.utilities.HibernateUtil;
+import be.kdg.spacecrack.utilities.TokenStringGenerator;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.VerificationModeFactory;
@@ -30,6 +35,19 @@ import static org.mockito.Mockito.mock;
  */
 public class ContactServiceTest {
 
+
+    private TokenController tokenController;
+
+    @Before
+    public void setUp() throws Exception {
+
+        TokenStringGenerator generator = new TokenStringGenerator();
+        TokenRepository tokenRepository = new TokenRepository(generator);
+        UserRepository userRepository = new UserRepository();
+        tokenController = new TokenController(new AuthorizationService(tokenRepository, userRepository, generator ));
+
+    }
+
     @Test
     public void testCreateContact() throws Exception {
         Session session;
@@ -44,7 +62,7 @@ public class ContactServiceTest {
         session.saveOrUpdate(user);
         tx.commit();
 
-        TokenController tokenController = new TokenController();
+
         AccessToken accessToken = tokenController.login(user);
 
         Calendar calendar = new GregorianCalendar(2013,1,5);
@@ -54,7 +72,7 @@ public class ContactServiceTest {
         Mockito.verify(contactRepository, VerificationModeFactory.times(1)).addContact(contact);
     }
 
-    @Test(expected = SpaceCrackAlreadyExistException.class)
+    @Test(expected = SpaceCrackAlreadyExistsException.class)
     public void testCreateExtraContact_notPossible() throws Exception {
         Session session;
         Transaction tx;
@@ -68,7 +86,7 @@ public class ContactServiceTest {
         session.saveOrUpdate(user);
         tx.commit();
 
-        TokenController tokenController = new TokenController();
+
         AccessToken accessToken = tokenController.login(user);
         Calendar calendar = new GregorianCalendar(2013,1,5);
 

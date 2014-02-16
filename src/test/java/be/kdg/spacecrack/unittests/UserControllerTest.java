@@ -8,7 +8,7 @@ import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.modelwrapper.UserWrapper;
 import be.kdg.spacecrack.repositories.IUserRepository;
-import be.kdg.spacecrack.services.ITokenService;
+import be.kdg.spacecrack.services.IAuthorizationService;
 import be.kdg.spacecrack.services.IUserService;
 import be.kdg.spacecrack.services.UserService;
 import be.kdg.spacecrack.utilities.HibernateUtil;
@@ -43,7 +43,7 @@ public class UserControllerTest {
     public ExpectedException expectedEx = ExpectedException.none();
     private IUserRepository userRepository;
     private ITokenController tokenController;
-    private ITokenService tokenService;
+    private IAuthorizationService tokenService;
     private IUserService userService;
     private ObjectMapper objectMapper;
 
@@ -51,7 +51,7 @@ public class UserControllerTest {
     public void setUp() throws Exception {
         userRepository = mock(IUserRepository.class);
         tokenController = mock(ITokenController.class);
-        tokenService = mock(ITokenService.class);
+        tokenService = mock(IAuthorizationService.class);
 
         userService = mock(UserService.class);
         userController = new UserController(userService, tokenController, tokenService);

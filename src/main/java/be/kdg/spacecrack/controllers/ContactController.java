@@ -10,8 +10,8 @@ import be.kdg.spacecrack.model.Contact;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.modelwrapper.ContactWrapper;
 import be.kdg.spacecrack.repositories.TokenRepository;
-import be.kdg.spacecrack.services.ContactService;
-import be.kdg.spacecrack.services.UserService;
+import be.kdg.spacecrack.services.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,30 +21,34 @@ import java.util.Date;
 @Controller
 @RequestMapping("/auth/contact")
 public class ContactController {
+    @Autowired
     ContactService contactService;
-    UserService userService;
-    TokenRepository tokenRepository;
+    @Autowired
+    IUserService userService;
+    @Autowired
+    IAuthorizationService tokenService;
 
     public ContactController() {
-        contactService = new ContactService();
-        userService = new UserService();
-        tokenRepository = new TokenRepository();
+
     }
 
-    public ContactController(ContactService contactService, UserService userService, TokenRepository tokenRepository){
+    public ContactController(ContactService contactService, UserService userService, TokenRepository tokenRepository, IAuthorizationService tokenService){
         this.contactService = contactService;
         this.userService = userService;
-        this.tokenRepository = tokenRepository;
+        this.tokenService = tokenService;
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public void createContact(@RequestBody ContactWrapper contactWrapper, @CookieValue("accessToken") String accessTokenValue) throws Exception {
-        User user = userService.getUserByAccessToken(tokenRepository.getAccessTokenByValue(accessTokenValue));
+
+
+        User user = tokenService.getUserByAccessToken(accessTokenValue, this);
 
         Date date = new SimpleDateFormat("dd-mm-yyyy").parse(contactWrapper.getDayOfBirth());
         Contact contact = new Contact(contactWrapper.getFirstname(), contactWrapper.getLastname(), contactWrapper.getEmail(), date, contactWrapper.getImage());
 
         contactService.createContact(contact, user);
     }
+
 }

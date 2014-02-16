@@ -5,6 +5,7 @@ import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.TokenRepository;
 import be.kdg.spacecrack.repositories.UserRepository;
+import be.kdg.spacecrack.services.AuthorizationService;
 import be.kdg.spacecrack.utilities.HibernateUtil;
 import be.kdg.spacecrack.utilities.TokenStringGenerator;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -78,7 +79,10 @@ public class IntegrationTokenFilterTests extends BaseFilteredIntegrationTests {
 
     @Test
     public void TokenFilter_validToken_OK() throws Exception {
-        TokenController tokenController = new TokenController(new UserRepository(), new TokenRepository( new TokenStringGenerator(12345)));
+        TokenStringGenerator generator = new TokenStringGenerator(12345);
+        TokenRepository tokenRepository = new TokenRepository(generator);
+        UserRepository userRepository = new UserRepository();
+        TokenController tokenController = new TokenController(new AuthorizationService(tokenRepository, userRepository, generator));
         AccessToken validToken = tokenController.login(testUser);
         mockMvc.perform(requestBuilder.cookie(new Cookie("accessToken", "%22"+validToken.getValue()+"%22"))).andExpect(status().isOk());
     }

@@ -8,6 +8,7 @@ import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.IUserRepository;
 import be.kdg.spacecrack.repositories.TokenRepository;
 import be.kdg.spacecrack.repositories.UserRepository;
+import be.kdg.spacecrack.services.AuthorizationService;
 import be.kdg.spacecrack.utilities.HibernateUtil;
 import be.kdg.spacecrack.utilities.ITokenStringGenerator;
 import be.kdg.spacecrack.utilities.TokenStringGenerator;
@@ -37,7 +38,9 @@ public class TokenControllerTests{
     @Before
     public void setUp() throws Exception {
         fixedSeedGenerator = new TokenStringGenerator(1234);
-        tokenController = new TokenController(new UserRepository(), new TokenRepository(fixedSeedGenerator));
+        TokenRepository tokenRepository = new TokenRepository(fixedSeedGenerator);
+        UserRepository userRepository = new UserRepository();
+        tokenController = new TokenController(new AuthorizationService(tokenRepository,  userRepository, fixedSeedGenerator));
 
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
@@ -60,7 +63,9 @@ public class TokenControllerTests{
     public void testRequestAccessToken_ValidUser_Ok()
     {
         ITokenStringGenerator mockTokenGenerator = Mockito.mock(ITokenStringGenerator.class);
-        TokenController tokenControllerWithMockedGenerator = new TokenController(new UserRepository(),new TokenRepository(mockTokenGenerator));
+        TokenRepository tokenRepository = new TokenRepository(mockTokenGenerator);
+        UserRepository userRepository = new UserRepository();
+        TokenController tokenControllerWithMockedGenerator = new TokenController(new AuthorizationService(tokenRepository, userRepository, mockTokenGenerator));
         String name ="testUsername2";
         String pw = "testPassword2";
         User user = new User(name, pw);
@@ -74,10 +79,11 @@ public class TokenControllerTests{
 
     @Test(expected = SpaceCrackUnexpectedException.class)
     public void testgetUser() throws Exception {
-        IUserRepository repository = Mockito.mock(IUserRepository.class);
+        IUserRepository userRepository = Mockito.mock(IUserRepository.class);
         User user = new User("testUsername2", "testPassword2");
-        Mockito.stub(repository.getUser(user)).toThrow(new Exception());
-        TokenController tokenController1 = new TokenController(repository, new TokenRepository(fixedSeedGenerator));
+        Mockito.stub(userRepository.getUser(user)).toThrow(new SpaceCrackUnexpectedException("UnexpectedException"));
+        TokenRepository tokenRepository = new TokenRepository(fixedSeedGenerator);
+        TokenController tokenController1 = new TokenController(new AuthorizationService(tokenRepository, userRepository, fixedSeedGenerator));
         tokenController1.login(user);
 
     }

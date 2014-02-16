@@ -1,5 +1,6 @@
 package be.kdg.spacecrack.repositories;
 
+import be.kdg.spacecrack.Exceptions.SpaceCrackUnexpectedException;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.utilities.HibernateUtil;
@@ -35,35 +36,6 @@ public class TokenRepository implements ITokenRepository {
 
 
     @Override
-    public AccessToken getAccessToken(User dbUser) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        AccessToken accessToken;
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-
-                accessToken = dbUser.getToken();
-                if (accessToken == null) {
-                    String tokenvalue = generator.generateTokenString();
-                    accessToken = new AccessToken(tokenvalue);
-                    dbUser.setToken(accessToken);
-                }
-                session.saveOrUpdate(accessToken);
-
-                session.saveOrUpdate(dbUser);
-                tx.commit();
-            } catch (Exception ex) {
-                tx.rollback();
-                throw new RuntimeException(ex);
-            }
-
-        } finally {
-            HibernateUtil.close(session);
-        }
-        return accessToken;
-    }
-
-    @Override
     public AccessToken getAccessTokenByValue(String value) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         AccessToken accessToken = null;
@@ -86,4 +58,26 @@ public class TokenRepository implements ITokenRepository {
     }
 
 
+    @Override
+    public void saveAccessToken(User dbUser, AccessToken accessToken) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+
+        try {
+            Transaction tx = session.beginTransaction();
+            try {
+
+
+                session.saveOrUpdate(accessToken);
+
+                session.saveOrUpdate(dbUser);
+                tx.commit();
+            } catch (Exception ex) {
+                tx.rollback();
+                throw new SpaceCrackUnexpectedException("Unexpected exception in saveAccessToken()");
+            }
+
+        } finally {
+            HibernateUtil.close(session);
+        }
+    }
 }

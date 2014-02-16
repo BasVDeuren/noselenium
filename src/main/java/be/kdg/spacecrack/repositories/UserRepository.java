@@ -51,7 +51,7 @@ public class UserRepository implements IUserRepository {
     }
 
     @Override
-    public User getUser(User user) throws Exception {
+    public User getUser(User user) {
         User dbUser;
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         try {

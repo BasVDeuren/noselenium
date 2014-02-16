@@ -13,7 +13,7 @@ import be.kdg.spacecrack.model.User;
 public interface IUserRepository {
     void DeleteAccessToken(AccessToken accessToken) throws Exception;
 
-    User getUser(User user) throws Exception;
+    User getUser(User user);
 
     void addUser(String username, String password, String email);
 
