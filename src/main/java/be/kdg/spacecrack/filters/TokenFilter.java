@@ -1,12 +1,13 @@
 package be.kdg.spacecrack.filters;
 
 import be.kdg.spacecrack.model.AccessToken;
-import be.kdg.spacecrack.utilities.HibernateUtil;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
+import be.kdg.spacecrack.services.AuthorizationService;
+import be.kdg.spacecrack.services.IAuthorizationService;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +15,6 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
-import java.util.List;
 
 /* Git $Id$
  *
@@ -23,14 +23,24 @@ import java.util.List;
  * 2013-2014
  *
  */
+@Component
 public class TokenFilter implements Filter {
 
-    public static final String URLPATTERN = "/api/auth/*";
+    public static final String URLPATTERN = "auth/*";
+    private static final String BEAN_NAME = "tokenfilterbean";
 
+    public IAuthorizationService authorizationService;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
+        ServletContext servletContext = filterConfig.getServletContext();
+        WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+
+        AutowireCapableBeanFactory autowireCapableBeanFactory = webApplicationContext.getAutowireCapableBeanFactory();
+
+
+        authorizationService = (IAuthorizationService) autowireCapableBeanFactory.autowire(AuthorizationService.class, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
     }
 
     @Override
@@ -40,42 +50,49 @@ public class TokenFilter implements Filter {
         HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper((HttpServletResponse) servletResponse);
         HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper((HttpServletRequest) servletRequest);
 
-        String tokenjson = requestWrapper.getHeader("token");
-
-
-        if(tokenjson == null || tokenjson.isEmpty())
+        if(requestWrapper.getCookies() == null || requestWrapper.getCookies().length < 1)
         {
             unauthorized = true;
-            System.out.println("token was null");
-
         }else{
-            ObjectMapper objectMapper = new ObjectMapper();
-            AccessToken accessToken = objectMapper.readValue(tokenjson, AccessToken.class);
-            Session currentSession = HibernateUtil.getSessionFactory().getCurrentSession();
-            Transaction tx = currentSession.beginTransaction();
-            @SuppressWarnings("JpaQlInspection") Query q = currentSession.createQuery("from AccessToken a where a.accessTokenId = :id and a.value = :tokenvalue");
-           q.setParameter("id", accessToken.getAccessTokenId());
-            q.setParameter("tokenvalue", accessToken.getValue());
-            List list = q.list();
-            tx.commit();
-
-            if(!list.isEmpty())
+            String tokenValue = requestWrapper.getCookies()[0].getValue();
+            tokenValue = tokenValue.substring(3, tokenValue.length()-3);
+            requestWrapper.getCookies()[0].setValue(tokenValue);
+            if(requestWrapper.getCookies().length < 1||tokenValue == null || tokenValue.isEmpty())
             {
-                System.out.println(list.size());
-                unauthorized = false;
+                unauthorized = true;
+                System.out.println("token was null");
 
             }else{
-                unauthorized = true;
 
+                AccessToken token = authorizationService.getAccessTokenByValue(tokenValue);
+
+                if(token != null)
+                {
+                    unauthorized = false;
+
+                }else{
+                    unauthorized = true;
+
+                }
             }
         }
-
         if(unauthorized == true){
-           responseWrapper.sendError(HttpServletResponse.SC_UNAUTHORIZED,"You are unauthorized for this request");
+            responseWrapper.sendError(HttpServletResponse.SC_UNAUTHORIZED,"You are unauthorized for this request");
+
             return;
         }
         filterChain.doFilter(servletRequest,servletResponse);
     }
+
+//    private AccessToken getAccessTokenByValue(String tokenValue) {
+//        Session currentSession = HibernateUtil.getSessionFactory().getCurrentSession();
+//        Transaction tx = currentSession.beginTransaction();
+//        @SuppressWarnings("JpaQlInspection") Query q = currentSession.createQuery("from AccessToken a where a.value = :tokenvalue");
+//        q.setParameter("tokenvalue", tokenValue);
+//        AccessToken token = (AccessToken) q.uniqueResult();
+//        tx.commit();
+//        return token;
+//    }
 
     @Override
     public void destroy() {

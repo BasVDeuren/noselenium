@@ -4,6 +4,7 @@ import be.kdg.spacecrack.filters.TokenFilter;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -11,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -34,6 +36,10 @@ public abstract class BaseFilteredIntegrationTests {
     @Before
     public void setupMockMVC() throws Exception {
                ctx = WebApplicationContextUtils.getWebApplicationContext(servletContext);
-        mockMvc = webAppContextSetup(ctx).addFilter(new TokenFilter(), TokenFilter.URLPATTERN ).build();
+        TokenFilter filter = new TokenFilter();
+        FilterConfig filterConfig = new MockFilterConfig(servletContext);
+
+        filter.init(filterConfig);
+        mockMvc = webAppContextSetup(ctx).addFilter(filter, "/auth/*" ).build();
     }
 }

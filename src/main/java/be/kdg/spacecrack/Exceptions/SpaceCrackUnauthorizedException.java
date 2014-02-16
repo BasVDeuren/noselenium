@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
 public class SpaceCrackUnauthorizedException extends RuntimeException{
     public SpaceCrackUnauthorizedException() {
+        super();
+    }
 
+    public SpaceCrackUnauthorizedException(String message) {
+        super(message);
     }
 }

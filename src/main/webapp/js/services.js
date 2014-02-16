@@ -19,9 +19,8 @@ angular.module('spaceServices', ['ngResource'])
     .factory('Register', function($resource){
         return $resource('/api/user')
     })
-
     .factory('Profile',function($resource){
-        return $resource('/api/user/auth')
+        return $resource('/api/auth/user')
     })
     .factory('Contact',function($resource){
         return $resource('/api/auth/contact')

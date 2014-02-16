@@ -6,7 +6,38 @@ var spaceApp = angular.module('spaceApp', ['ngRoute', 'spaceServices', 'ngCookie
     .config(appRouter);
 
 //Navigation
-function appRouter($routeProvider) {
+function appRouter($routeProvider  ,$httpProvider) {
+
+    var interceptor = ['$rootScope', '$q', '$location', function ( $rootScope, $q,$location) {
+        function success(response) {
+            return response;
+        }
+
+        function error(response, $scope) {
+            var status = response.status;
+            if($location.path() !=="/"){
+                if (status == 401) {
+
+                    console.info("unauthorized");
+                    console.info($location.path());
+                    console.info("back to loginpage");
+                    $location.path("/");
+
+                    return;
+                }
+            }
+            // otherwise
+            return $q.reject(response);
+
+        }
+
+        return function (promise) {
+            return promise.then(success, error);
+        }
+
+    }];
+    $httpProvider.responseInterceptors.push(interceptor);
+
     $routeProvider
         .when('/', {
             templateUrl: 'partials/login.html',
@@ -71,6 +102,7 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
     }
 
 });
+
 
 
 

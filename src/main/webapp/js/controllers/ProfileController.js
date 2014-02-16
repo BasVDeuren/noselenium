@@ -3,7 +3,7 @@
  */
 var spaceApp = angular.module('spaceApp');
 
-spaceApp.controller("ProfileController", function ($scope, $cookies, Profile,Contact) {
+spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile,Contact) {
 
     /**PAssword**/
 
@@ -16,6 +16,8 @@ spaceApp.controller("ProfileController", function ($scope, $cookies, Profile,Con
 
 
     Profile.get(function (data, headers) {
+        console.log("get api/auth/user");
+
         $scope.editUserData.username = data.username;
         $scope.editUserData.email = data.email;
         $scope.editUserData.password = data.password;
@@ -28,6 +30,7 @@ spaceApp.controller("ProfileController", function ($scope, $cookies, Profile,Con
     $scope.hasRegistrationFailed = false;
     $scope.editUser = function () {
         Profile.save($scope.editUserData,function () {
+            console.log("post api/auth/user");
 
         }, function (data, headers) {
 

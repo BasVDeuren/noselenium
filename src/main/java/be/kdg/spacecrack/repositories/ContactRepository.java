@@ -24,7 +24,7 @@ public class ContactRepository implements IContactRepository{
         try{
         session.saveOrUpdate(contact);
         tx.commit();
-        }catch (Exception ex){
+        }catch (RuntimeException ex){
             tx.rollback();
             throw ex;
         }

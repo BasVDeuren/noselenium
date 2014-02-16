@@ -16,7 +16,6 @@ import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -48,7 +47,7 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
     public void setUp() throws Exception {
 
 
-        mockTokenGenerator = Mockito.mock(ITokenStringGenerator.class);
+        //mockTokenGenerator = mock(ITokenStringGenerator.class);
 
         objectMapper = new ObjectMapper();
 
@@ -121,7 +120,7 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
 
         AccessToken accessToken = tokenRepository.getAccessTokenByValue(userRepository.getUserByUsername(testUser.getUsername()).getToken().getValue());
 
-        userRepository.DeleteAccessToken(accessToken);
+        tokenRepository.deleteAccessToken(accessToken);
 
         MockHttpServletRequestBuilder logoutRequestBuilder = delete("/accesstokens");
         mockMvc.perform(logoutRequestBuilder

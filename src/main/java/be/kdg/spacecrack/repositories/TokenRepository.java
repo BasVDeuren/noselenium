@@ -1,5 +1,6 @@
 package be.kdg.spacecrack.repositories;
 
+import be.kdg.spacecrack.Exceptions.SpaceCrackUnexpectedException;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.utilities.HibernateUtil;
@@ -8,6 +9,8 @@ import be.kdg.spacecrack.utilities.TokenStringGenerator;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +23,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("tokenRepository")
 public class TokenRepository implements ITokenRepository {
-
+    Logger logger = LoggerFactory.getLogger(TokenRepository.class);
     @Autowired
     private ITokenStringGenerator generator;
 
@@ -35,35 +38,7 @@ public class TokenRepository implements ITokenRepository {
 
 
     @Override
-    public AccessToken getAccessToken(User dbUser) throws Exception {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        AccessToken accessToken;
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-
-                accessToken = dbUser.getToken();
-                if (accessToken == null) {
-                    String tokenvalue = generator.generateTokenString();
-                    accessToken = new AccessToken(tokenvalue);
-                    dbUser.setToken(accessToken);
-                }
-                session.saveOrUpdate(accessToken);
-                session.saveOrUpdate(dbUser);
-                tx.commit();
-            } catch (Exception ex) {
-                tx.rollback();
-                throw ex;
-            }
-
-        } finally {
-            HibernateUtil.close(session);
-        }
-        return accessToken;
-    }
-
-    @Override
-    public AccessToken getAccessTokenByValue(String value) throws Exception {
+    public AccessToken getAccessTokenByValue(String value) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         AccessToken accessToken = null;
         try {
@@ -75,7 +50,7 @@ public class TokenRepository implements ITokenRepository {
                 tx.commit();
             } catch (Exception ex) {
                 tx.rollback();
-                throw ex;
+                throw new RuntimeException(ex);
             }
         } finally {
             HibernateUtil.close(session);
@@ -85,4 +60,54 @@ public class TokenRepository implements ITokenRepository {
     }
 
 
+    @Override
+    public void saveAccessToken(User dbUser, AccessToken accessToken) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+
+        try {
+            Transaction tx = session.beginTransaction();
+            try {
+
+
+                session.saveOrUpdate(accessToken);
+
+                session.saveOrUpdate(dbUser);
+                tx.commit();
+            } catch (Exception ex) {
+                tx.rollback();
+                throw new SpaceCrackUnexpectedException("Unexpected exception in saveAccessToken()");
+            }
+
+        } finally {
+            HibernateUtil.close(session);
+        }
+    }
+
+    @Override
+    public void deleteAccessToken(AccessToken accessToken) throws Exception {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+
+        try {
+            Transaction tx = session.beginTransaction();
+            try {
+                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from AccessToken a where a.accessTokenId = :id and a.value = :value");
+                q.setParameter("id", accessToken.getAccessTokenId());
+                q.setParameter("value", accessToken.getValue());
+                AccessToken dbAccessToken = (AccessToken) q.uniqueResult();
+                if (dbAccessToken != null) {
+                    dbAccessToken.getUser().setToken(null);
+                    session.delete(dbAccessToken);
+                }
+
+                tx.commit();
+
+            } catch (RuntimeException ex) {
+                logger.error("Unexpected while Deleting Accesstoken database (deleteAccessToken)", ex);
+                tx.rollback();
+                throw new SpaceCrackUnexpectedException("Unexpected while retrieving user from database");
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
+    }
 }
