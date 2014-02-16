@@ -45,7 +45,7 @@ public class AuthorizationService implements IAuthorizationService {
     }
 
     @Override
-    public AccessToken getAccessTokenByValue(String accessTokenValue) throws Exception {
+    public AccessToken getAccessTokenByValue(String accessTokenValue) {
         return tokenRepository.getAccessTokenByValue(accessTokenValue);
     }
 
@@ -99,14 +99,14 @@ public class AuthorizationService implements IAuthorizationService {
         AccessToken accessToken = tokenRepository.getAccessTokenByValue(accessTokenValue);
 
         try {
-           userRepository.DeleteAccessToken(accessToken);
+           tokenRepository.deleteAccessToken(accessToken);
         } catch (Exception ex) {
             throw new SpaceCrackUnexpectedException("Unexpected exception happened while logging out");
         }
     }
 
     @Override
-    public User getUserByAccessToken(String accessTokenValue, ContactController contactController) throws Exception {
+    public User getUserByAccessToken(String accessTokenValue, ContactController contactController) {
         return userRepository.getUserByAccessToken(getAccessTokenByValue(accessTokenValue));
     }
 }

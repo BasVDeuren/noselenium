@@ -1,8 +1,8 @@
 package be.kdg.spacecrack.filters;
 
 import be.kdg.spacecrack.model.AccessToken;
-import be.kdg.spacecrack.repositories.ITokenRepository;
-import be.kdg.spacecrack.repositories.TokenRepository;
+import be.kdg.spacecrack.services.AuthorizationService;
+import be.kdg.spacecrack.services.IAuthorizationService;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -29,7 +29,7 @@ public class TokenFilter implements Filter {
     public static final String URLPATTERN = "auth/*";
     private static final String BEAN_NAME = "tokenfilterbean";
 
-    public ITokenRepository tokenRepository;
+    public IAuthorizationService authorizationService;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -39,8 +39,8 @@ public class TokenFilter implements Filter {
 
         AutowireCapableBeanFactory autowireCapableBeanFactory = webApplicationContext.getAutowireCapableBeanFactory();
 
-//        autowireCapableBeanFactory.configureBean(this, BEAN_NAME);
-        tokenRepository = (ITokenRepository) autowireCapableBeanFactory.autowire(TokenRepository.class, AutowireCapableBeanFactory.AUTOWIRE_BY_NAME, true);
+
+        authorizationService = (IAuthorizationService) autowireCapableBeanFactory.autowire(AuthorizationService.class, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class TokenFilter implements Filter {
 
             }else{
 
-                AccessToken token = tokenRepository.getAccessTokenByValue(tokenValue);
+                AccessToken token = authorizationService.getAccessTokenByValue(tokenValue);
 
                 if(token != null)
                 {

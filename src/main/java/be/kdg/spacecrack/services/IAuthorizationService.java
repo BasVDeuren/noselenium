@@ -11,7 +11,7 @@ import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 
 public interface IAuthorizationService {
-    public AccessToken getAccessTokenByValue(String accessTokenValue) throws Exception;
+    public AccessToken getAccessTokenByValue(String accessTokenValue);
 
     void createTestUser();
 
@@ -19,5 +19,5 @@ public interface IAuthorizationService {
 
     void logout(String accessTokenValue);
 
-    User getUserByAccessToken(String accessTokenValue, ContactController contactController) throws Exception;
+    User getUserByAccessToken(String accessTokenValue, ContactController contactController);
 }

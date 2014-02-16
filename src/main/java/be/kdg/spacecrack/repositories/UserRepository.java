@@ -23,34 +23,6 @@ public class UserRepository implements IUserRepository {
     Logger logger = LoggerFactory.getLogger(UserRepository.class);
 
     @Override
-    public void DeleteAccessToken(AccessToken accessToken) throws Exception {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from AccessToken a where a.accessTokenId = :id and a.value = :value");
-                q.setParameter("id", accessToken.getAccessTokenId());
-                q.setParameter("value", accessToken.getValue());
-                AccessToken dbAccessToken = (AccessToken) q.uniqueResult();
-                if (dbAccessToken != null) {
-                    dbAccessToken.getUser().setToken(null);
-                    session.delete(dbAccessToken);
-                }
-
-                tx.commit();
-
-            } catch (RuntimeException ex) {
-                logger.error("Unexpected while Deleting Accesstoken database (DeleteAccessToken)", ex);
-                tx.rollback();
-                throw new SpaceCrackUnexpectedException("Unexpected while retrieving user from database");
-            }
-        } finally {
-            HibernateUtil.close(session);
-        }
-    }
-
-    @Override
     public User getUser(User user) {
         User dbUser;
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -114,7 +86,7 @@ public class UserRepository implements IUserRepository {
     }
 
     @Override
-    public User getUserByAccessToken(AccessToken accessToken) throws Exception {
+    public User getUserByAccessToken(AccessToken accessToken) {
         User user;
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         try {
@@ -125,9 +97,9 @@ public class UserRepository implements IUserRepository {
                 user = (User) q.uniqueResult();
                 tx.commit();
             } catch (Exception ex) {
-                logger.error("Unexpected while retrieving user from database (getUser())", ex);
+                logger.error("Unexpected error while retrieving user from database (getUser())", ex);
                 tx.rollback();
-                throw ex;
+                throw new SpaceCrackUnexpectedException("Unexpected error");
             }
         } finally {
             HibernateUtil.close(session);

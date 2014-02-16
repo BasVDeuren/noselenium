@@ -11,7 +11,6 @@ import be.kdg.spacecrack.model.User;
  *
  */
 public interface IUserRepository {
-    void DeleteAccessToken(AccessToken accessToken) throws Exception;
 
     User getUser(User user);
 
@@ -21,5 +20,5 @@ public interface IUserRepository {
 
     void updateUser(User user);
 
-    User getUserByAccessToken(AccessToken accessToken) throws Exception;
+    User getUserByAccessToken(AccessToken accessToken);
 }

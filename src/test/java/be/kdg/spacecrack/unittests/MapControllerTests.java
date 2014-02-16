@@ -2,6 +2,7 @@ package be.kdg.spacecrack.unittests;
 
 import be.kdg.spacecrack.controllers.MapController;
 import be.kdg.spacecrack.model.Planet;
+import be.kdg.spacecrack.services.MapService;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import static org.junit.Assert.assertTrue;
 public class MapControllerTests {
     @Test
     public void getMap_valid_AllPlanetsConnected() throws Exception {
-        MapController mapController = new MapController();
+        MapController mapController = new MapController(new MapService());
         Planet[] planets = mapController.getMap().getPlanets();
         Planet startPlanet = planets[0];
 

@@ -1,7 +1,8 @@
 package be.kdg.spacecrack.services;
 
-import be.kdg.spacecrack.controllers.MapController;
 import be.kdg.spacecrack.model.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /* Git $Id$
  *
@@ -10,13 +11,24 @@ import be.kdg.spacecrack.model.*;
  * 2013-2014
  *
  */
+@Component
 public class GameService {
+    @Autowired
+    IMapService mapService;
+
+    public GameService() {
+    }
+
+    public GameService(IMapService mapService) {
+        this.mapService = mapService;
+    }
+
+
     public Game createGame(Contact creator, Contact opponent) {
         Player player1 = new Player(creator);
         Player player2 = new Player(opponent);
-        //TODO: CHANGE THIS ASAP THIS IS RLY RLY BAD
-        MapController controller = new MapController();
-        SpaceCrackMap map = controller.getMap();
+
+        SpaceCrackMap map = mapService.getSpaceCrackMap();
 
         map.getPlanets()[0].setPlayer(player1);
         Planet player1StartingPlanet = map.getPlanets()[0];

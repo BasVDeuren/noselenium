@@ -33,7 +33,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void addUser(String username, String password, String email) {
+    public void registerUser(String username, String password, String email) {
         userRepository.addUser(username, password, email);
     }
 

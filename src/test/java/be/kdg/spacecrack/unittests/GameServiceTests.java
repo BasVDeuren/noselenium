@@ -2,6 +2,7 @@ package be.kdg.spacecrack.unittests;
 
 import be.kdg.spacecrack.model.*;
 import be.kdg.spacecrack.services.GameService;
+import be.kdg.spacecrack.services.MapService;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,7 +24,7 @@ public class GameServiceTests {
 
     @Before
     public void setUp() throws Exception {
-        gameService = new GameService();
+        gameService = new GameService(new MapService());
 
     }
 

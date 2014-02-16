@@ -2,7 +2,6 @@ package be.kdg.spacecrack.unittests;
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
-import be.kdg.spacecrack.controllers.ITokenController;
 import be.kdg.spacecrack.controllers.UserController;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
@@ -42,7 +41,7 @@ public class UserControllerTest {
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
     private IUserRepository userRepository;
-    private ITokenController tokenController;
+
     private IAuthorizationService tokenService;
     private IUserService userService;
     private ObjectMapper objectMapper;
@@ -50,22 +49,22 @@ public class UserControllerTest {
     @Before
     public void setUp() throws Exception {
         userRepository = mock(IUserRepository.class);
-        tokenController = mock(ITokenController.class);
+
         tokenService = mock(IAuthorizationService.class);
 
         userService = mock(UserService.class);
-        userController = new UserController(userService, tokenController, tokenService);
+        userController = new UserController(userService, tokenService);
         objectMapper = new ObjectMapper();
     }
 
     @Test
     public void RegisterUser_validUser_usercreated() throws Exception {
         AccessToken expected = new AccessToken("test1234");
-        stub(tokenController.login(any(User.class))).toReturn(expected);
+        stub(tokenService.login(any(User.class))).toReturn(expected);
         UserWrapper userWrapper = new UserWrapper("username", "password", "password", "email");
 
         AccessToken actual = userController.registerUser(userWrapper);
-        assertEquals("Accesstoken should be returned after registrating. ", expected, actual);
+        assertEquals("Accesstoken should be returned after registering. ", expected, actual);
 
     }
 

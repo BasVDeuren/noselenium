@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @Component("tokenController")
 @RequestMapping("/accesstokens")
-public class TokenController implements ITokenController {
+public class TokenController{
 
 
     @Autowired
@@ -37,7 +37,6 @@ public class TokenController implements ITokenController {
         this.tokenService = tokenService;
     }
 
-    @Override
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     public
     @ResponseBody
@@ -48,13 +47,11 @@ public class TokenController implements ITokenController {
         return accessToken;
     }
 
-    @Override
     @RequestMapping(method = RequestMethod.DELETE)
     @ResponseBody
     public void Logout(@CookieValue("accessToken") String accessTokenValue) throws Exception {
         String substring = accessTokenValue.substring(1, accessTokenValue.length() - 1);
         tokenService.logout(substring);
-
     }
 
 

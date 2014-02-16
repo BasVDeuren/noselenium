@@ -9,6 +9,8 @@ import be.kdg.spacecrack.utilities.TokenStringGenerator;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +23,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("tokenRepository")
 public class TokenRepository implements ITokenRepository {
-
+    Logger logger = LoggerFactory.getLogger(TokenRepository.class);
     @Autowired
     private ITokenStringGenerator generator;
 
@@ -76,6 +78,34 @@ public class TokenRepository implements ITokenRepository {
                 throw new SpaceCrackUnexpectedException("Unexpected exception in saveAccessToken()");
             }
 
+        } finally {
+            HibernateUtil.close(session);
+        }
+    }
+
+    @Override
+    public void deleteAccessToken(AccessToken accessToken) throws Exception {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+
+        try {
+            Transaction tx = session.beginTransaction();
+            try {
+                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from AccessToken a where a.accessTokenId = :id and a.value = :value");
+                q.setParameter("id", accessToken.getAccessTokenId());
+                q.setParameter("value", accessToken.getValue());
+                AccessToken dbAccessToken = (AccessToken) q.uniqueResult();
+                if (dbAccessToken != null) {
+                    dbAccessToken.getUser().setToken(null);
+                    session.delete(dbAccessToken);
+                }
+
+                tx.commit();
+
+            } catch (RuntimeException ex) {
+                logger.error("Unexpected while Deleting Accesstoken database (deleteAccessToken)", ex);
+                tx.rollback();
+                throw new SpaceCrackUnexpectedException("Unexpected while retrieving user from database");
+            }
         } finally {
             HibernateUtil.close(session);
         }

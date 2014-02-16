@@ -120,7 +120,7 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
 
         AccessToken accessToken = tokenRepository.getAccessTokenByValue(userRepository.getUserByUsername(testUser.getUsername()).getToken().getValue());
 
-        userRepository.DeleteAccessToken(accessToken);
+        tokenRepository.deleteAccessToken(accessToken);
 
         MockHttpServletRequestBuilder logoutRequestBuilder = delete("/accesstokens");
         mockMvc.perform(logoutRequestBuilder
