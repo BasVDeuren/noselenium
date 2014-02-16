@@ -15,11 +15,11 @@ public class PlanetConnection {
     @GeneratedValue
     private int planetConnectionId;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="parentPlanetId")
     private Planet parentPlanet;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="childPlanetId")
     private Planet childPlanet;
 

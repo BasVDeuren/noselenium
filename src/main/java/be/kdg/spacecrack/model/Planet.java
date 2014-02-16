@@ -29,7 +29,7 @@ public class Planet {
     @Column
     private int y;
     @JsonIgnore
-    @OneToMany(fetch=FetchType.EAGER, mappedBy = "planetConnectionId")
+    @OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<PlanetConnection> planetConnections;
 
 
@@ -86,6 +86,7 @@ public class Planet {
     @JsonProperty("connectedPlanets")
     public List<Planet> getConnectedPlanetWraps() {
         List<Planet> connectedPlanetWraps= new ArrayList<Planet>();
+
         for (PlanetConnection planetConnection: planetConnections) {
             Planet p = planetConnection.getChildPlanet();
             connectedPlanetWraps.add(new Planet(p.name, p.x, p.y));
