@@ -6,11 +6,16 @@ package be.kdg.spacecrack.controllers;/* Git $Id
  *
  */
 
+import be.kdg.spacecrack.jsonviewmodels.Action;
 import be.kdg.spacecrack.services.IGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-@Controller("/auth/actions")
+@Controller
+@RequestMapping("/auth/action")
 public class ActionController {
     public static final String MOVESHIP = "MOVESHIP";
 
@@ -24,10 +29,10 @@ public class ActionController {
         this.gameService = gameService;
     }
 
-    /*@RequestMapping(method = RequestMethod.POST)
-    public void executeAction(Action action){
+    @RequestMapping(method = RequestMethod.POST)
+    public void executeAction(@RequestBody Action action){
         if(action.getActionType().equals(MOVESHIP)){
             gameService.moveShip(action.getShip(), action.getDestinationPlanet());
         }
-    }*/
+    }
 }

@@ -47,9 +47,10 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
 
         String moveShipActionJson = objectMapper.writeValueAsString(moveShipAction);
 
-        mockMvc.perform(post("/auth/actions")
+        mockMvc.perform(post("/auth/action")
             .contentType(MediaType.APPLICATION_JSON)
             .content(moveShipActionJson)
-            .cookie(new Cookie("accessToken", accessToken))).andExpect(status().isOk());
+            .cookie(new Cookie("accessToken", accessToken)))
+                .andExpect(status().isOk());
     }
 }
