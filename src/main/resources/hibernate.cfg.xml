@@ -25,9 +25,12 @@
 
         <mapping class="be.kdg.spacecrack.model.User"/>
         <mapping class="be.kdg.spacecrack.model.AccessToken"/>
-        <mapping class="be.kdg.spacecrack.model.Contact"/>
+        <mapping class="be.kdg.spacecrack.model.Profile"/>
         <mapping class="be.kdg.spacecrack.model.Planet"/>
         <mapping class="be.kdg.spacecrack.model.PlanetConnection"/>
+        <mapping class="be.kdg.spacecrack.model.Player"/>
+        <mapping class="be.kdg.spacecrack.model.Colony"/>
+        <mapping class="be.kdg.spacecrack.model.Ship"/>
 
     </session-factory>
 </hibernate-configuration>

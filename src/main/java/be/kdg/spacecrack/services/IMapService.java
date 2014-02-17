@@ -11,4 +11,6 @@ import be.kdg.spacecrack.model.SpaceCrackMap;
 public interface IMapService {
 
     SpaceCrackMap getSpaceCrackMap();
+
+
 }

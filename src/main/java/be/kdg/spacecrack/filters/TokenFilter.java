@@ -55,7 +55,8 @@ public class TokenFilter implements Filter {
             unauthorized = true;
         }else{
             String tokenValue = requestWrapper.getCookies()[0].getValue();
-            tokenValue = tokenValue.substring(3, tokenValue.length()-3);
+           tokenValue =  tokenValue.replaceAll("%22", "");
+         //   tokenValue = tokenValue.substring(3, tokenValue.length()-3);
             requestWrapper.getCookies()[0].setValue(tokenValue);
             if(requestWrapper.getCookies().length < 1||tokenValue == null || tokenValue.isEmpty())
             {

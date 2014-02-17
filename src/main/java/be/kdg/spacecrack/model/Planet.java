@@ -32,6 +32,12 @@ public class Planet {
     @OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<PlanetConnection> planetConnections;
 
+    @OneToMany
+    private Set<Colony> colonies;
+
+    @OneToMany
+    private Set<Ship> ships;
+
 
     public Planet(String name, int x, int y) {
         this.name = name;

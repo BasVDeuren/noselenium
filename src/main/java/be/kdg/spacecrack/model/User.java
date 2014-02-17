@@ -36,9 +36,9 @@ public class User implements Serializable {
     private AccessToken token;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name= "contactId", nullable = true)
+    @JoinColumn(name= "profileId", nullable = true)
     @JsonManagedReference
-    private Contact contact;
+    private Profile profile;
 
 
 
@@ -98,11 +98,11 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public Contact getContact() {
-        return contact;
+    public Profile getProfile() {
+        return profile;
     }
 
-    public void setContact(Contact contact) {
-        this.contact = contact;
+    public void setProfile(Profile profile) {
+        this.profile = profile;
     }
 }

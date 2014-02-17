@@ -17745,7 +17745,7 @@ var ngCloakDirective = ngDirective({
       <div id="ctrl-as-exmpl" ng-controller="SettingsController1 as settings">
         Name: <input type="text" ng-model="settings.name"/>
         [ <a href="" ng-click="settings.greet()">greet</a> ]<br/>
-        Contact:
+        Profile:
         <ul>
           <li ng-repeat="contact in settings.contacts">
             <select ng-model="contact.type">
@@ -17822,7 +17822,7 @@ var ngCloakDirective = ngDirective({
       <div id="ctrl-exmpl" ng-controller="SettingsController2">
         Name: <input type="text" ng-model="name"/>
         [ <a href="" ng-click="greet()">greet</a> ]<br/>
-        Contact:
+        Profile:
         <ul>
           <li ng-repeat="contact in contacts">
             <select ng-model="contact.type">

@@ -64,7 +64,7 @@ public class IntegrationContactTests extends BaseFilteredIntegrationTests{
 
         String contactJson = objectMapper.writeValueAsString(contact);
 
-        MockHttpServletRequestBuilder postRequestBuilder = post("/auth/contact");
+        MockHttpServletRequestBuilder postRequestBuilder = post("/auth/profile");
         mockMvc.perform(postRequestBuilder
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(contactJson)

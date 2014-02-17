@@ -1,6 +1,6 @@
 package be.kdg.spacecrack.unittests;
 
-import be.kdg.spacecrack.model.Contact;
+import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.repositories.ContactRepository;
 import be.kdg.spacecrack.utilities.HibernateUtil;
 import org.hibernate.Query;
@@ -20,21 +20,21 @@ import static org.junit.Assert.assertEquals;
  * 2013-2014
  *
  */
-public class ContactRepositoryTest {
+public class ProfileRepositoryTest {
     @Test
     public void testAddContact() throws Exception {
         Calendar calendar = new GregorianCalendar(2014,2,12);
-        Contact contact = new Contact("firstname","lastname","email", calendar.getTime(),"image");
+        Profile profile = new Profile("firstname","lastname","email", calendar.getTime(),"image");
         ContactRepository contactRepository = new ContactRepository();
-        contactRepository.addContact(contact);
+        contactRepository.addContact(profile);
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
 
-        @SuppressWarnings("JpaQlInspection")Query q = session.createQuery("FROM Contact c WHERE c = :contact");
-        q.setParameter("contact", contact);
+        @SuppressWarnings("JpaQlInspection")Query q = session.createQuery("FROM Profile p WHERE p = :profile");
+        q.setParameter("profile", profile);
 
-        Contact actual = (Contact) q.uniqueResult();
+        Profile actual = (Profile) q.uniqueResult();
         tx.commit();
-        assertEquals("Should be in the db",contact.getContactId(), actual.getContactId());
+        assertEquals("Should be in the db", profile.getContactId(), actual.getContactId());
     }
 }

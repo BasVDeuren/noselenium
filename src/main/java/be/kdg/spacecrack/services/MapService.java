@@ -15,7 +15,6 @@ import be.kdg.spacecrack.utilities.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -24,7 +23,9 @@ import java.util.List;
 public class MapService implements IMapService {
 
 
-    private void connectPlanetsByRadius(Planet[] planets, int radius, Session session) {
+    private void connectPlanetsByRadius(Planet[] planets, int radius) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction tx = session.beginTransaction();
         for (int i = 0; i < planets.length; i++) {
             Planet checkPlanet = planets[i];
             for (int j = 0; j < planets.length; j++) {
@@ -38,22 +39,19 @@ public class MapService implements IMapService {
 
                 double distance = Math.sqrt((pX - cX) * (pX - cX) + (pY - cY) * (pY - cY));
                 if (checkPlanet != planet) {
-                    if (distance < radius) { // In in circle
+                    if (distance < radius) {
 
                         PlanetConnection planetConnection = new PlanetConnection(checkPlanet, planet);
-                        try{
 
-                            session.saveOrUpdate(planetConnection);
-                            checkPlanet.addConnection(planetConnection);
-                            session.saveOrUpdate(checkPlanet);
-                            System.out.println("connection: " + checkPlanet.getName() + ", " + planet.getName());
-                        }catch(ConstraintViolationException ex){
-                            System.out.println("EXCEPTION: connection: " + checkPlanet.getName() + ", " + planet.getName());
-                        }
+                        session.saveOrUpdate(planetConnection);
+                        checkPlanet.addConnection(planetConnection);
+                        session.saveOrUpdate(checkPlanet);
+
                     }
                 }
             }
         }
+        tx.commit();
     }
 
     @Override
@@ -69,6 +67,8 @@ public class MapService implements IMapService {
 
         return spaceCrackMap;
     }
+
+
 
     private Planet[] getPlanetsFromDb() {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -223,10 +223,9 @@ public class MapService implements IMapService {
         } finally {
             HibernateUtil.close(session);
         }
-        Session session1 = HibernateUtil.getSessionFactory().getCurrentSession();
-        Transaction tx1 = session1.beginTransaction();
-        connectPlanetsByRadius(planets, 105 * 2, session1);
-        tx1.commit();
+
+        connectPlanetsByRadius(planets, 105 * 2);
+
         return planets;
     }
 }

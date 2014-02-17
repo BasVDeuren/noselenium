@@ -38,7 +38,7 @@ public class TokenRepository implements ITokenRepository {
 
 
     @Override
-    public AccessToken getAccessTokenByValue(String value) {
+    public AccessToken getAccessTokenByValue(String value) throws Exception {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         AccessToken accessToken = null;
         try {
@@ -50,7 +50,7 @@ public class TokenRepository implements ITokenRepository {
                 tx.commit();
             } catch (Exception ex) {
                 tx.rollback();
-                throw new RuntimeException(ex);
+                throw ex;
             }
         } finally {
             HibernateUtil.close(session);

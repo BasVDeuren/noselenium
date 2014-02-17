@@ -23,7 +23,7 @@ angular.module('spaceServices', ['ngResource'])
         return $resource('/api/auth/user')
     })
     .factory('Contact',function($resource){
-        return $resource('/api/auth/contact')
+        return $resource('/api/auth/profile')
     })
     .factory('UserService', function () {
         return {

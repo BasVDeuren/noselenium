@@ -8,9 +8,9 @@ package be.kdg.spacecrack.services;/* Git $Id
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackUnexpectedException;
-import be.kdg.spacecrack.controllers.ContactController;
 import be.kdg.spacecrack.controllers.TokenController;
 import be.kdg.spacecrack.model.AccessToken;
+import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.ITokenRepository;
 import be.kdg.spacecrack.repositories.IUserRepository;
@@ -46,12 +46,17 @@ public class AuthorizationService implements IAuthorizationService {
 
     @Override
     public AccessToken getAccessTokenByValue(String accessTokenValue) {
-        return tokenRepository.getAccessTokenByValue(accessTokenValue);
+        try {
+            return tokenRepository.getAccessTokenByValue(accessTokenValue);
+        } catch (Exception e) {
+            throw new SpaceCrackUnauthorizedException("Unauthorized Request");
+        }
     }
 
 
     @Override
     public void createTestUser() {
+
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         try {
             Transaction tx = session.beginTransaction();
@@ -59,7 +64,12 @@ public class AuthorizationService implements IAuthorizationService {
                 @SuppressWarnings("JpaQlInspection") Query query = session.createQuery("from User u where u.username = :testusername");
                 query.setParameter("testusername", "test");
                 if (query.list().size() < 1) {
-                    session.saveOrUpdate(new User("test", "test"));
+
+                    User user = new User("test", "test");
+                    Profile profile = new Profile();
+                    session.saveOrUpdate(profile);
+                    user.setProfile(profile);
+                    session.saveOrUpdate(user);
                 }
                 tx.commit();
 
@@ -96,7 +106,12 @@ public class AuthorizationService implements IAuthorizationService {
 
     @Override
     public void logout(String accessTokenValue) {
-        AccessToken accessToken = tokenRepository.getAccessTokenByValue(accessTokenValue);
+        AccessToken accessToken = null;
+        try {
+            accessToken = tokenRepository.getAccessTokenByValue(accessTokenValue);
+        } catch (Exception e) {
+
+        }
 
         try {
            tokenRepository.deleteAccessToken(accessToken);
@@ -106,7 +121,7 @@ public class AuthorizationService implements IAuthorizationService {
     }
 
     @Override
-    public User getUserByAccessToken(String accessTokenValue, ContactController contactController) {
+    public User getUserByAccessTokenValue(String accessTokenValue) {
         return userRepository.getUserByAccessToken(getAccessTokenByValue(accessTokenValue));
     }
 }

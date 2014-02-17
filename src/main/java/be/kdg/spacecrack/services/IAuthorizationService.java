@@ -6,7 +6,6 @@ package be.kdg.spacecrack.services;/* Git $Id
  *
  */
 
-import be.kdg.spacecrack.controllers.ContactController;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 
@@ -19,5 +18,5 @@ public interface IAuthorizationService {
 
     void logout(String accessTokenValue);
 
-    User getUserByAccessToken(String accessTokenValue, ContactController contactController);
+    User getUserByAccessTokenValue(String accessTokenValue);
 }

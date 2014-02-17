@@ -1,6 +1,6 @@
 package be.kdg.spacecrack.repositories;
 
-import be.kdg.spacecrack.model.Contact;
+import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
 
 /* Git $Id$
@@ -11,9 +11,9 @@ import be.kdg.spacecrack.model.User;
  *
  */
 public interface IContactRepository {
-    public void addContact(Contact contact) throws Exception;
+    public void addContact(Profile profile) throws Exception;
 
-    public Contact getContact(User user);
+    public Profile getContact(User user);
 
-    void editContact(Contact contact);
+    void editContact(Profile profile);
 }

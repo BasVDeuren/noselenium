@@ -1,6 +1,6 @@
 package be.kdg.spacecrack.repositories;
 
-import be.kdg.spacecrack.model.Contact;
+import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.utilities.HibernateUtil;
 import org.hibernate.Query;
@@ -17,12 +17,12 @@ import org.springframework.stereotype.Component;
  */
 @Component("contactRepository")
 public class ContactRepository implements IContactRepository{
-    public void addContact(Contact contact) throws Exception {
+    public void addContact(Profile profile) throws Exception {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         try{
         Transaction tx = session.beginTransaction();
         try{
-        session.saveOrUpdate(contact);
+        session.saveOrUpdate(profile);
         tx.commit();
         }catch (RuntimeException ex){
             tx.rollback();
@@ -35,19 +35,19 @@ public class ContactRepository implements IContactRepository{
     }
 
     @Override
-    public Contact getContact(User user) {
+    public Profile getContact(User user) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Contact c where c.user = :user");
         q.setParameter("user", user);
-        Contact contact = (Contact) q.uniqueResult();
+        Profile profile = (Profile) q.uniqueResult();
         tx.commit();
 
-        return contact;
+        return profile;
     }
 
     @Override
-    public void editContact(Contact contact) {
+    public void editContact(Profile profile) {
 
     }
 }

@@ -1,32 +1,19 @@
-package be.kdg.spacecrack.model;
-
-import java.util.ArrayList;
-import java.util.List;
-
-/* Git $Id$
+package be.kdg.spacecrack.model;/* Git $Id
  *
  * Project Application Development
  * Karel de Grote-Hogeschool
  * 2013-2014
  *
  */
+
 public class Game {
+    private Player player1;
 
-    private List<Player> players;
-    private SpaceCrackMap spaceCrackMap;
-
-    public Game(Player creatingPlayer, Player oppenentPlayer, SpaceCrackMap spaceCrackMap) {
-        this.spaceCrackMap = spaceCrackMap;
-        players = new ArrayList<Player>();
-        players.add(creatingPlayer);
-        players.add(oppenentPlayer);
+    public Player getPlayer1() {
+        return player1;
     }
 
-    public List<Player> getPlayers() {
-        return players;
-    }
-
-    public SpaceCrackMap getSpaceCrackMap() {
-        return spaceCrackMap;
+    public void setPlayer1(Player player1) {
+        this.player1 = player1;
     }
 }

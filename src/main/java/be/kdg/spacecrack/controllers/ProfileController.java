@@ -6,7 +6,7 @@ package be.kdg.spacecrack.controllers;/* Git $Id
  *
  */
 
-import be.kdg.spacecrack.model.Contact;
+import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.jsonviewmodels.ContactWrapper;
 import be.kdg.spacecrack.repositories.TokenRepository;
@@ -19,8 +19,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Controller
-@RequestMapping("/auth/contact")
-public class ContactController {
+@RequestMapping("/auth/profile")
+public class ProfileController {
     @Autowired
     ContactService contactService;
     @Autowired
@@ -28,11 +28,11 @@ public class ContactController {
     @Autowired
     IAuthorizationService tokenService;
 
-    public ContactController() {
+    public ProfileController() {
 
     }
 
-    public ContactController(ContactService contactService, UserService userService, TokenRepository tokenRepository, IAuthorizationService tokenService){
+    public ProfileController(ContactService contactService, UserService userService, TokenRepository tokenRepository, IAuthorizationService tokenService){
         this.contactService = contactService;
         this.userService = userService;
         this.tokenService = tokenService;
@@ -40,15 +40,15 @@ public class ContactController {
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public void createContact(@RequestBody ContactWrapper contactWrapper, @CookieValue("accessToken") String accessTokenValue) throws Exception {
+    public void createProfile(@RequestBody ContactWrapper contactWrapper, @CookieValue("accessToken") String accessTokenValue) throws Exception {
 
 
-        User user = tokenService.getUserByAccessToken(accessTokenValue, this);
+        User user = tokenService.getUserByAccessTokenValue(accessTokenValue);
 
         Date date = new SimpleDateFormat("dd-mm-yyyy").parse(contactWrapper.getDayOfBirth());
-        Contact contact = new Contact(contactWrapper.getFirstname(), contactWrapper.getLastname(), contactWrapper.getEmail(), date, contactWrapper.getImage());
+        Profile profile = new Profile(contactWrapper.getFirstname(), contactWrapper.getLastname(), contactWrapper.getEmail(), date, contactWrapper.getImage());
 
-        contactService.createContact(contact, user);
+        contactService.createContact(profile, user);
     }
 
 }
