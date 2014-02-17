@@ -1,7 +1,7 @@
 package be.kdg.spacecrack.unittests;
 
 import be.kdg.spacecrack.model.Profile;
-import be.kdg.spacecrack.repositories.ContactRepository;
+import be.kdg.spacecrack.repositories.ProfileRepository;
 import be.kdg.spacecrack.utilities.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -25,8 +25,8 @@ public class ProfileRepositoryTest {
     public void testAddContact() throws Exception {
         Calendar calendar = new GregorianCalendar(2014,2,12);
         Profile profile = new Profile("firstname","lastname","email", calendar.getTime(),"image");
-        ContactRepository contactRepository = new ContactRepository();
-        contactRepository.addContact(profile);
+        ProfileRepository contactRepository = new ProfileRepository();
+        contactRepository.createProfile(profile);
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
 
@@ -35,6 +35,6 @@ public class ProfileRepositoryTest {
 
         Profile actual = (Profile) q.uniqueResult();
         tx.commit();
-        assertEquals("Should be in the db", profile.getContactId(), actual.getContactId());
+        assertEquals("Should be in the db", profile.getProfileId(), actual.getProfileId());
     }
 }

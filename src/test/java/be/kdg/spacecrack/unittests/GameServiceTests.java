@@ -1,8 +1,10 @@
 package be.kdg.spacecrack.unittests;
 
+import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.model.Game;
 import be.kdg.spacecrack.model.Player;
 import be.kdg.spacecrack.model.Profile;
+import be.kdg.spacecrack.model.Ship;
 import be.kdg.spacecrack.repositories.PlanetRepository;
 import be.kdg.spacecrack.services.GameService;
 import be.kdg.spacecrack.services.MapService;
@@ -11,6 +13,7 @@ import org.junit.Test;
 
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /* Git $Id$
@@ -46,8 +49,30 @@ public class GameServiceTests {
 
     }
 
+    private Game creategame()
+    {
+        Profile profile =new Profile();
+        Game game = gameService.createGame(profile);
+        return game;
+    }
     @Test
-    public void testMoveShip() throws Exception {
+    public void moveShip_validPlanet_shipmoved() throws Exception {
+        Game game = creategame();
+
+        Ship ship = game.getPlayer1().getShips().get(0);
+
+        gameService.moveShip(ship, "b");
+        assertEquals("b",ship.getPlanet().getName());
+
+    }
+
+    @Test(expected = SpaceCrackNotAcceptableException.class)
+    public void moveShip_invalidPlanet_shipNotMoved() throws Exception {
+        Game game = creategame();
+
+        Ship ship = game.getPlayer1().getShips().get(0);
+        gameService.moveShip(ship, "f");
+        //assertEquals("a", ship.getPlanet().getName());
 
     }
 }

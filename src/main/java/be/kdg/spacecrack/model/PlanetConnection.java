@@ -55,4 +55,13 @@ public class PlanetConnection {
     public void setChildPlanet(Planet childPlanet) {
         this.childPlanet = childPlanet;
     }
+
+    @Override
+    public String toString() {
+        return "PlanetConnection{" +
+                "planetConnectionId=" + planetConnectionId +
+                ", parentPlanet=" + parentPlanet +
+                ", childPlanet=" + childPlanet +
+                '}';
+    }
 }

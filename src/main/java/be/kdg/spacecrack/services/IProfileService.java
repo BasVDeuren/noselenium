@@ -10,8 +10,8 @@ import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
 
-public interface IContactService {
-    void createContact(Profile profile, User user) throws Exception;
+public interface IProfileService {
+    void createProfile(Profile profile, User user) throws Exception;
 
-    void editContact(Profile profile, AccessToken accessToken) throws Exception;
+    void editProfile(Profile profile, AccessToken accessToken) throws Exception;
 }

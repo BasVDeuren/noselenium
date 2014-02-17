@@ -27269,7 +27269,7 @@ var ngCloakDirective = ngDirective({
           alert(this.name);
         };
 
-        SettingsController1.prototype.addContact = function() {
+        SettingsController1.prototype.addProfile = function() {
           this.contacts.push({type: 'email', value: 'yourname@example.org'});
         };
 
@@ -27297,7 +27297,7 @@ var ngCloakDirective = ngDirective({
             [ <a href="" ng-click="settings.clearContact(contact)">clear</a>
             | <a href="" ng-click="settings.removeContact(contact)">X</a> ]
           </li>
-          <li>[ <a href="" ng-click="settings.addContact()">add</a> ]</li>
+          <li>[ <a href="" ng-click="settings.addProfile()">add</a> ]</li>
        </ul>
       </div>
      </doc:source>
@@ -27331,7 +27331,7 @@ var ngCloakDirective = ngDirective({
            alert(this.name);
           };
 
-          $scope.addContact = function() {
+          $scope.addProfile = function() {
            this.contacts.push({type:'email', value:'yourname@example.org'});
           };
 
@@ -27360,7 +27360,7 @@ var ngCloakDirective = ngDirective({
             [ <a href="" ng-click="clearContact(contact)">clear</a>
             | <a href="" ng-click="removeContact(contact)">X</a> ]
           </li>
-          <li>[ <a href="" ng-click="addContact()">add</a> ]</li>
+          <li>[ <a href="" ng-click="addProfile()">add</a> ]</li>
        </ul>
       </div>
      </doc:source>

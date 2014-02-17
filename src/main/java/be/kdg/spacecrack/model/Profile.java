@@ -2,10 +2,12 @@ package be.kdg.spacecrack.model;
 
 import org.codehaus.jackson.annotate.JsonBackReference;
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.*;
 import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,7 +24,7 @@ import java.util.List;
 public class Profile {
     @Id
     @GeneratedValue
-    private int contactId;
+    private int profileId;
 
     @Column
     private String firstname;
@@ -39,7 +41,8 @@ public class Profile {
     @Column
     private String image;
 
-    @Cascade(CascadeType.ALL)
+
+    @Cascade(value = CascadeType.ALL)
     @OneToOne(mappedBy = "profile")
     @JsonBackReference
     private User user;
@@ -47,6 +50,7 @@ public class Profile {
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "profile")
     @JsonIgnore
     private List<Player> players;
+
 
     public User getUser() {
         return user;
@@ -109,16 +113,14 @@ public class Profile {
         this.image = image;
     }
 
-    public int getId() {
-        return contactId;
+
+
+    public int getProfileId() {
+        return profileId;
     }
 
-    public int getContactId() {
-        return contactId;
-    }
-
-    public void setContactId(int contactId) {
-        this.contactId = contactId;
+    public void setProfileId(int profileId) {
+        this.profileId = profileId;
     }
 
 

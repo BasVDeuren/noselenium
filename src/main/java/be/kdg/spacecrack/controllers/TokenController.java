@@ -33,7 +33,6 @@ public class TokenController{
     }
 
     public TokenController(IAuthorizationService tokenService) {
-
         this.tokenService = tokenService;
     }
 

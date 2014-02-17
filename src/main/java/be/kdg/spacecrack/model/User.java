@@ -1,8 +1,12 @@
 package be.kdg.spacecrack.model;
 
 import org.codehaus.jackson.annotate.JsonManagedReference;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 
 /* Git $Id$
@@ -35,6 +39,7 @@ public class User implements Serializable {
     @JsonManagedReference
     private AccessToken token;
 
+    @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name= "profileId", nullable = true)
     @JsonManagedReference

@@ -5,9 +5,9 @@ import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
-import be.kdg.spacecrack.repositories.ContactRepository;
-import be.kdg.spacecrack.repositories.IContactRepository;
-import be.kdg.spacecrack.repositories.UserRepository;
+import be.kdg.spacecrack.repositories.IProfileRepository;
+import be.kdg.spacecrack.repositories.IUserRepository;
+import be.kdg.spacecrack.repositories.ProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,29 +19,32 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component("contactService")
-public class ContactService implements IContactService {
+public class ProfileService implements IProfileService {
     @Autowired
-    IContactRepository contactRepository;
+    IProfileRepository contactRepository;
 
-    UserRepository userRepository = new UserRepository();;
+    @Autowired
+    IUserRepository userRepository;
 
 
-    public ContactService() {
-        contactRepository = new ContactRepository();
+    public ProfileService() {
+        contactRepository = new ProfileRepository();
     }
 
-    public ContactService(ContactRepository contactRepository) {
+    public ProfileService(ProfileRepository contactRepository, IUserRepository userRepository) {
         this.contactRepository = contactRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public void createContact(Profile profile, User user) throws Exception {
+    public void createProfile(Profile profile, User user) throws Exception {
 
         if(user.getProfile() == null){
             profile.setUser(user);
             user.setProfile(profile);
+            contactRepository.createProfile(profile);
             userRepository.updateUser(user);
-            contactRepository.addContact(profile);
+
         }else{
             throw new SpaceCrackAlreadyExistsException();
         }
@@ -49,7 +52,7 @@ public class ContactService implements IContactService {
     }
 
     @Override
-    public void editContact(Profile profile, AccessToken accessToken) throws Exception {
+    public void editProfile(Profile profile, AccessToken accessToken) throws Exception {
         User user = userRepository.getUserByAccessToken(accessToken);
         if(user.getProfile() == profile){
             contactRepository.editContact(profile);
@@ -57,4 +60,6 @@ public class ContactService implements IContactService {
             throw new SpaceCrackUnauthorizedException();
         }
     }
+
+
 }

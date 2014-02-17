@@ -39,7 +39,7 @@ public abstract class BaseFilteredIntegrationTests {
     @Autowired
     private ServletContext servletContext;
     private WebApplicationContext ctx;
-    private ObjectMapper objectMapper;
+    protected ObjectMapper objectMapper;
 
     @Before
     public void setupMockMVC() throws Exception {

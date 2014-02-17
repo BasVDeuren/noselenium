@@ -80,9 +80,18 @@ public class UserRepository implements IUserRepository {
     @Override
     public void updateUser(User user) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        Transaction tx = session.beginTransaction();
-        session.saveOrUpdate(user);
-        tx.commit();
+        try {
+            Transaction tx = session.beginTransaction();
+            try {
+                session.saveOrUpdate(user);
+                tx.commit();
+            } catch (RuntimeException ex) {
+                tx.rollback();
+                throw ex;
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
     }
 
     @Override

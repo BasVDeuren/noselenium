@@ -16,8 +16,8 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component("contactRepository")
-public class ContactRepository implements IContactRepository{
-    public void addContact(Profile profile) throws Exception {
+public class ProfileRepository implements IProfileRepository {
+    public void createProfile(Profile profile) throws Exception {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         try{
         Transaction tx = session.beginTransaction();
