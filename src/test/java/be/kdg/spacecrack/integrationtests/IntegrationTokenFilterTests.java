@@ -80,7 +80,7 @@ public class IntegrationTokenFilterTests extends BaseFilteredIntegrationTests {
     @Test
     public void TokenFilter_validToken_OK() throws Exception {
         TokenStringGenerator generator = new TokenStringGenerator(12345);
-        TokenRepository tokenRepository = new TokenRepository(generator);
+        TokenRepository tokenRepository = new TokenRepository();
         UserRepository userRepository = new UserRepository();
         TokenController tokenController = new TokenController(new AuthorizationService(tokenRepository, userRepository, generator));
         AccessToken validToken = tokenController.login(testUser);

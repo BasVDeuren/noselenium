@@ -42,7 +42,7 @@ public class ProfileServiceTest {
     public void setUp() throws Exception {
 
         TokenStringGenerator generator = new TokenStringGenerator();
-        TokenRepository tokenRepository = new TokenRepository(generator);
+        TokenRepository tokenRepository = new TokenRepository();
         UserRepository userRepository = new UserRepository();
         tokenController = new TokenController(new AuthorizationService(tokenRepository, userRepository, generator ));
 

@@ -3,6 +3,7 @@ package be.kdg.spacecrack.filters;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.services.AuthorizationService;
 import be.kdg.spacecrack.services.IAuthorizationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -29,6 +30,7 @@ public class TokenFilter implements Filter {
     public static final String URLPATTERN = "auth/*";
     private static final String BEAN_NAME = "tokenfilterbean";
 
+    @Autowired
     public IAuthorizationService authorizationService;
 
     @Override
@@ -55,8 +57,8 @@ public class TokenFilter implements Filter {
             unauthorized = true;
         }else{
             String tokenValue = requestWrapper.getCookies()[0].getValue();
-           tokenValue =  tokenValue.replaceAll("%22", "");
-         //   tokenValue = tokenValue.substring(3, tokenValue.length()-3);
+        //  tokenValue =  tokenValue.replaceAll("%22", "");
+            tokenValue = tokenValue.substring(3, tokenValue.length()-3);
             requestWrapper.getCookies()[0].setValue(tokenValue);
             if(requestWrapper.getCookies().length < 1||tokenValue == null || tokenValue.isEmpty())
             {

@@ -38,7 +38,7 @@ public class TokenControllerTests{
     @Before
     public void setUp() throws Exception {
         fixedSeedGenerator = new TokenStringGenerator(1234);
-        TokenRepository tokenRepository = new TokenRepository(fixedSeedGenerator);
+        TokenRepository tokenRepository = new TokenRepository();
         UserRepository userRepository = new UserRepository();
         tokenController = new TokenController(new AuthorizationService(tokenRepository,  userRepository, fixedSeedGenerator));
 
@@ -63,7 +63,7 @@ public class TokenControllerTests{
     public void testRequestAccessToken_ValidUser_Ok()
     {
         ITokenStringGenerator mockTokenGenerator = Mockito.mock(ITokenStringGenerator.class);
-        TokenRepository tokenRepository = new TokenRepository(mockTokenGenerator);
+        TokenRepository tokenRepository = new TokenRepository();
         UserRepository userRepository = new UserRepository();
         TokenController tokenControllerWithMockedGenerator = new TokenController(new AuthorizationService(tokenRepository, userRepository, mockTokenGenerator));
         String name ="testUsername2";
@@ -82,7 +82,7 @@ public class TokenControllerTests{
         IUserRepository userRepository = Mockito.mock(IUserRepository.class);
         User user = new User("testUsername2", "testPassword2");
         Mockito.stub(userRepository.getUser(user)).toThrow(new SpaceCrackUnexpectedException("UnexpectedException"));
-        TokenRepository tokenRepository = new TokenRepository(fixedSeedGenerator);
+        TokenRepository tokenRepository = new TokenRepository();
         TokenController tokenController1 = new TokenController(new AuthorizationService(tokenRepository, userRepository, fixedSeedGenerator));
         tokenController1.login(user);
 

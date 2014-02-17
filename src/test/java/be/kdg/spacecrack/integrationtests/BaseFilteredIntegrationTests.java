@@ -56,7 +56,7 @@ public abstract class BaseFilteredIntegrationTests {
 
 
       User testUser = new User("test","test");
-        String userjson = objectMapper.writeValueAsString(testUser);
+        String userjson =  objectMapper.writeValueAsString(testUser);
 
         MockHttpServletRequestBuilder requestBuilder = post("/accesstokens");
         String accessTokenJson = mockMvc.perform(requestBuilder
@@ -64,7 +64,7 @@ public abstract class BaseFilteredIntegrationTests {
                 .content(userjson)
                 .accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         AccessToken accessToken = objectMapper.readValue(accessTokenJson, AccessToken.class);
-        return accessToken.getValue();
+        return "%22"+accessToken.getValue()+"%22";
 
     }
 }

@@ -24,17 +24,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component("tokenService")
+@Component("authorizationService")
 public class AuthorizationService implements IAuthorizationService {
 
     @Autowired
     ITokenRepository tokenRepository;
     @Autowired
     IUserRepository userRepository;
-    static Logger logger = LoggerFactory.getLogger(TokenController.class);
+
     @Autowired
     private ITokenStringGenerator tokenStringGenerator;
-
+    static Logger logger = LoggerFactory.getLogger(TokenController.class);
     public AuthorizationService() {
     }
 
