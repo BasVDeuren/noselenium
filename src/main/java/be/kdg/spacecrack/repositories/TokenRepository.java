@@ -4,14 +4,11 @@ import be.kdg.spacecrack.Exceptions.SpaceCrackUnexpectedException;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.utilities.HibernateUtil;
-import be.kdg.spacecrack.utilities.ITokenStringGenerator;
-import be.kdg.spacecrack.utilities.TokenStringGenerator;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /* Git $Id$
@@ -24,21 +21,16 @@ import org.springframework.stereotype.Component;
 @Component("tokenRepository")
 public class TokenRepository implements ITokenRepository {
     Logger logger = LoggerFactory.getLogger(TokenRepository.class);
-    @Autowired
-    private ITokenStringGenerator generator;
+
 
     public TokenRepository() {
-        generator = new TokenStringGenerator();
+
     }
 
-    public TokenRepository(ITokenStringGenerator generator) {
-
-        this.generator = generator;
-    }
 
 
     @Override
-    public AccessToken getAccessTokenByValue(String value) {
+    public AccessToken getAccessTokenByValue(String value) throws Exception {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         AccessToken accessToken = null;
         try {
@@ -50,7 +42,7 @@ public class TokenRepository implements ITokenRepository {
                 tx.commit();
             } catch (Exception ex) {
                 tx.rollback();
-                throw new RuntimeException(ex);
+                throw ex;
             }
         } finally {
             HibernateUtil.close(session);

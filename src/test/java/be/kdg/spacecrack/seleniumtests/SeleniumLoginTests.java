@@ -6,37 +6,16 @@ package be.kdg.spacecrack.seleniumtests;/* Git $Id$
  *
  */
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.concurrent.TimeUnit;
-
 import static org.junit.Assert.assertEquals;
 
-public class SeleniumLoginTests {
-    private WebDriver driver;
-    private String baseUrl="http://localhost:8080/#/";
-    private WebElement uname;
+public class SeleniumLoginTests extends SeleniumBaseTestCase {
 
-    @Before
-    public void setUp() throws Exception {
-
-        String path = this.getClass().getResource("/chromedriver.exe").getPath();
-        path = path.replaceAll("%20", " ");
-        System.setProperty("webdriver.chrome.driver", path);
-        driver = new ChromeDriver();
-
-        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
-
-
-    }
 
     @Test
     public void Login_validCredentials_spacecrackhome() throws Exception {
@@ -48,7 +27,7 @@ public class SeleniumLoginTests {
         password.sendKeys("test");
         WebElement loginbutton = driver.findElement(By.name("login"));
         loginbutton.click();
-        WebDriverWait wait = new WebDriverWait(driver, 1);
+        WebDriverWait wait = new WebDriverWait(driver, 4);
         wait.until(ExpectedConditions.elementToBeClickable(By.name("newgame")));
         assertEquals("http://localhost:8080/#/spacecrack/home", driver.getCurrentUrl());
 
@@ -65,16 +44,12 @@ public class SeleniumLoginTests {
         password.sendKeys("invalidPassword");
         WebElement loginbutton = driver.findElement(By.name("login"));
         loginbutton.click();
-        WebDriverWait wait = new WebDriverWait(driver, 1);
+        WebDriverWait wait = new WebDriverWait(driver,4);
         WebElement loginfailedDiv = driver.findElement(By.name("loginfailed"));
         wait.until(ExpectedConditions.visibilityOf(loginfailedDiv));
         assertEquals("http://localhost:8080/#/", driver.getCurrentUrl());
 
     }
 
-    @After
-    public void tearDown() throws Exception {
-        driver.close();
 
-    }
 }

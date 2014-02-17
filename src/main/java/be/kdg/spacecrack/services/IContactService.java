@@ -7,11 +7,11 @@ package be.kdg.spacecrack.services;/* Git $Id$
  */
 
 import be.kdg.spacecrack.model.AccessToken;
-import be.kdg.spacecrack.model.Contact;
+import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
 
 public interface IContactService {
-    void createContact(Contact contact, User user) throws Exception;
+    void createContact(Profile profile, User user) throws Exception;
 
-    void editContact(Contact contact, AccessToken accessToken) throws Exception;
+    void editContact(Profile profile, AccessToken accessToken) throws Exception;
 }

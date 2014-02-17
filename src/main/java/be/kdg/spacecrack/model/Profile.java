@@ -1,11 +1,14 @@
 package be.kdg.spacecrack.model;
 
 import org.codehaus.jackson.annotate.JsonBackReference;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /* Git $Id$
  *
@@ -15,8 +18,8 @@ import java.util.Date;
  *
  */
 @Entity
-@Table(name = "T_Contact")
-public class Contact {
+@Table(name = "T_Profile")
+public class Profile {
     @Id
     @GeneratedValue
     private int contactId;
@@ -37,9 +40,13 @@ public class Contact {
     private String image;
 
     @Cascade(CascadeType.ALL)
-    @OneToOne(mappedBy = "contact")
+    @OneToOne(mappedBy = "profile")
     @JsonBackReference
     private User user;
+
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "profile")
+    @JsonIgnore
+    private List<Player> players;
 
     public User getUser() {
         return user;
@@ -49,16 +56,17 @@ public class Contact {
         this.user = user;
     }
 
-    public Contact() {
+    public Profile() {
     }
 
-    public Contact(String firstname, String lastname, String email, Date dayOfBirth, String image) {
+    public Profile(String firstname, String lastname, String email, Date dayOfBirth, String image) {
 
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.dayOfBirth = dayOfBirth;
         this.image = image;
+        players = new ArrayList<Player>();
     }
 
     public String getFirstname() {
@@ -114,4 +122,19 @@ public class Contact {
     }
 
 
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public void addPlayer(Player player) {
+        if(players == null)
+        {
+            players = new ArrayList<Player>();
+        }
+        players.add(player);
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
+    }
 }

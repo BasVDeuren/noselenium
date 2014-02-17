@@ -81,11 +81,11 @@
                   <button class="btn btn-default" ng-click="changeLanguage('en_US')">EN</button>
                   <button class="btn btn-default" ng-click="changeLanguage('nl_NL')">NL</button>
                   <div class="btn-group" ng-show="isUserLoggedIn()">
-                      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                      <button type="button" name="btnAction" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                           Action <span class="caret"></span>
                       </button>
                       <ul class="dropdown-menu" role="menu">
-                          <li ><a href="#/spacecrack/editProfile">{{'EDIT_PROFILE' | translate}}</a></li>
+                          <li ><a name="lnkEditProfile" href="#/spacecrack/editProfile">{{'EDIT_PROFILE' | translate}}</a></li>
                           <li ng-click="logout()"><a href="#">Logout</a></li>
                       </ul>
                   </div>

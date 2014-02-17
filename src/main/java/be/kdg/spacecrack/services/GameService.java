@@ -1,6 +1,7 @@
 package be.kdg.spacecrack.services;
 
 import be.kdg.spacecrack.model.*;
+import be.kdg.spacecrack.repositories.IPlanetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,20 +12,42 @@ import org.springframework.stereotype.Component;
  * 2013-2014
  *
  */
-@Component
-public class GameService {
+@Component(value = "gameService")
+public class GameService implements IGameService {
+
+
+    @Autowired
+    IPlanetRepository planetRepository;
     @Autowired
     IMapService mapService;
-
     public GameService() {
     }
 
-    public GameService(IMapService mapService) {
+    public GameService(IMapService mapService, IPlanetRepository planetRepository)
+    {
         this.mapService = mapService;
+
+
+        this.planetRepository = planetRepository;
+    }
+
+    @Override
+    public Game createGame(Profile profile) {
+        mapService.getSpaceCrackMap();
+        Game game = new Game();
+        Player player1 = new Player(profile);
+        profile.addPlayer(player1);
+        game.setPlayer1(player1);
+        Planet planetA = planetRepository.getPlanetByName("a");
+
+        player1.getColonies().add(new Colony(planetA));
+        player1.getShips().add(new Ship(planetA));
+
+        return  game;
     }
 
 
-    public Game createGame(Contact creator, Contact opponent) {
+    /*public Game createGame(Profile creator, Profile opponent) {
         Player player1 = new Player(creator);
         Player player2 = new Player(opponent);
 
@@ -46,7 +69,7 @@ public class GameService {
         player2.getShips().add(player2StartingShip);
 
         return new Game(player1, player2, map);
-    }
+    }*/
 
 
 //    public void moveShip(Player player, Ship ship, Planet targetPlanet) {

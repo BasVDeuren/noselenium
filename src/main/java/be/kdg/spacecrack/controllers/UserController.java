@@ -4,7 +4,7 @@ import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
-import be.kdg.spacecrack.modelwrapper.UserWrapper;
+import be.kdg.spacecrack.jsonviewmodels.UserWrapper;
 import be.kdg.spacecrack.services.IAuthorizationService;
 import be.kdg.spacecrack.services.IUserService;
 import org.codehaus.jackson.JsonParseException;

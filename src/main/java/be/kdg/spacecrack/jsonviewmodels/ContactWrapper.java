@@ -1,4 +1,4 @@
-package be.kdg.spacecrack.modelwrapper;/* Git $Id
+package be.kdg.spacecrack.jsonviewmodels;/* Git $Id
  *
  * Project Application Development
  * Karel de Grote-Hogeschool

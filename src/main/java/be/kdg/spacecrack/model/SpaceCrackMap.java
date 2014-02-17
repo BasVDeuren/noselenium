@@ -14,8 +14,6 @@ public class SpaceCrackMap {
     private Planet player2StartingPlanet;
 
     public SpaceCrackMap(Planet[] planets ) {
-
-
         this.planets = planets;
     }
 

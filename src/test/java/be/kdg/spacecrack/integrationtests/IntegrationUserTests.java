@@ -1,7 +1,7 @@
 package be.kdg.spacecrack.integrationtests;
 
 import be.kdg.spacecrack.model.User;
-import be.kdg.spacecrack.modelwrapper.UserWrapper;
+import be.kdg.spacecrack.jsonviewmodels.UserWrapper;
 import be.kdg.spacecrack.repositories.UserRepository;
 import be.kdg.spacecrack.utilities.HibernateUtil;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -43,7 +43,7 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
 
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
-        User testUser = new User("username", "password", "email");
+        User testUser = new User("usernameTest²", "password", "email");
         session.saveOrUpdate(testUser);
         tx.commit();
 
@@ -57,7 +57,7 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
                 .andReturn();
 
 
-        String userMapperJsonValid = objectMapper.writeValueAsString(new UserWrapper("username", "password", "password", "newEmail"));
+        String userMapperJsonValid = objectMapper.writeValueAsString(new UserWrapper("usernameTest", "password", "password", "newEmail"));
 
         MockHttpServletRequestBuilder putRequestBuilder = post("/auth/user");
         String tokenOfEditedUser = userRepository.getUserByUsername(testUser.getUsername()).getToken().getValue();
@@ -72,7 +72,7 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
     @Test
     public void testRegisterUser_NewUser_Token() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        String validUserWrapperJson = objectMapper.writeValueAsString(new UserWrapper("username", "password", "password", "email"));
+        String validUserWrapperJson = objectMapper.writeValueAsString(new UserWrapper("usernameTest", "password", "password", "emailTest"));
         MockHttpServletRequestBuilder postRequestBuilder = post("/user");
         mockMvc.perform(postRequestBuilder
                 .contentType(MediaType.APPLICATION_JSON)

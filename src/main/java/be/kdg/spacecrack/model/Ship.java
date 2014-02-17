@@ -6,9 +6,26 @@ package be.kdg.spacecrack.model;/* Git $Id$
  *
  */
 
+import javax.persistence.*;
+
+@Entity
+@Table(name= "T_Ship")
 public class Ship {
+    @Id
+    @GeneratedValue
+    private int shipId;
+
+    @ManyToOne
+    @JoinColumn(name="playerId")
     private Player player;
+
+    @ManyToOne
+    @JoinColumn(name="planetId")
     private Planet planet;
+
+    public Ship(Planet planet) {
+        this.planet = planet;
+    }
 
     public Player getPlayer() {
         return player;

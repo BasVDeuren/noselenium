@@ -3,7 +3,7 @@ package be.kdg.spacecrack.unittests;
 import be.kdg.spacecrack.Exceptions.SpaceCrackAlreadyExistsException;
 import be.kdg.spacecrack.controllers.TokenController;
 import be.kdg.spacecrack.model.AccessToken;
-import be.kdg.spacecrack.model.Contact;
+import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.ContactRepository;
 import be.kdg.spacecrack.repositories.TokenRepository;
@@ -33,7 +33,7 @@ import static org.mockito.Mockito.mock;
  * 2013-2014
  *
  */
-public class ContactServiceTest {
+public class ProfileServiceTest {
 
 
     private TokenController tokenController;
@@ -42,7 +42,7 @@ public class ContactServiceTest {
     public void setUp() throws Exception {
 
         TokenStringGenerator generator = new TokenStringGenerator();
-        TokenRepository tokenRepository = new TokenRepository(generator);
+        TokenRepository tokenRepository = new TokenRepository();
         UserRepository userRepository = new UserRepository();
         tokenController = new TokenController(new AuthorizationService(tokenRepository, userRepository, generator ));
 
@@ -67,9 +67,9 @@ public class ContactServiceTest {
 
         Calendar calendar = new GregorianCalendar(2013,1,5);
 
-        Contact contact = new Contact("firstname","lastname","email", calendar.getTime(),"image");
-        contactService.createContact(contact, user);
-        Mockito.verify(contactRepository, VerificationModeFactory.times(1)).addContact(contact);
+        Profile profile = new Profile("firstname","lastname","email", calendar.getTime(),"image");
+        contactService.createContact(profile, user);
+        Mockito.verify(contactRepository, VerificationModeFactory.times(1)).addContact(profile);
     }
 
     @Test(expected = SpaceCrackAlreadyExistsException.class)
@@ -90,10 +90,10 @@ public class ContactServiceTest {
         AccessToken accessToken = tokenController.login(user);
         Calendar calendar = new GregorianCalendar(2013,1,5);
 
-        Contact contact = new Contact("firstname","lastname","email", calendar.getTime(),"image");
-        Contact contact2 = new Contact("firstname","lastname","email", calendar.getTime(),"image");
-        contactService.createContact(contact, user);
-        contactService.createContact(contact2, user);
+        Profile profile = new Profile("firstname","lastname","email", calendar.getTime(),"image");
+        Profile profile2 = new Profile("firstname","lastname","email", calendar.getTime(),"image");
+        contactService.createContact(profile, user);
+        contactService.createContact(profile2, user);
 
 
     }

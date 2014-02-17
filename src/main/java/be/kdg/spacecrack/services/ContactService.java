@@ -3,7 +3,7 @@ package be.kdg.spacecrack.services;
 import be.kdg.spacecrack.Exceptions.SpaceCrackAlreadyExistsException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.model.AccessToken;
-import be.kdg.spacecrack.model.Contact;
+import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.ContactRepository;
 import be.kdg.spacecrack.repositories.IContactRepository;
@@ -35,13 +35,13 @@ public class ContactService implements IContactService {
     }
 
     @Override
-    public void createContact(Contact contact, User user) throws Exception {
+    public void createContact(Profile profile, User user) throws Exception {
 
-        if(user.getContact() == null){
-            contact.setUser(user);
-            user.setContact(contact);
+        if(user.getProfile() == null){
+            profile.setUser(user);
+            user.setProfile(profile);
             userRepository.updateUser(user);
-            contactRepository.addContact(contact);
+            contactRepository.addContact(profile);
         }else{
             throw new SpaceCrackAlreadyExistsException();
         }
@@ -49,10 +49,10 @@ public class ContactService implements IContactService {
     }
 
     @Override
-    public void editContact(Contact contact, AccessToken accessToken) throws Exception {
+    public void editContact(Profile profile, AccessToken accessToken) throws Exception {
         User user = userRepository.getUserByAccessToken(accessToken);
-        if(user.getContact() == contact){
-            contactRepository.editContact(contact);
+        if(user.getProfile() == profile){
+            contactRepository.editContact(profile);
         }else{
             throw new SpaceCrackUnauthorizedException();
         }
