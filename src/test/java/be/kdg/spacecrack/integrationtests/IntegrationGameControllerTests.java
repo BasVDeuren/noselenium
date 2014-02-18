@@ -26,9 +26,11 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
         mockMvc.perform(post("/auth/game")
                 .accept(MediaType.APPLICATION_JSON)
                 .cookie(new Cookie("accessToken", accessToken)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.player1.colonies[0].planetName", CoreMatchers.is("a")))
-            .andExpect(jsonPath("$.player1.ships[0].planetName", CoreMatchers.is("a")));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.player1.colonies[0].planetName", CoreMatchers.is("a")))
+                .andExpect(jsonPath("$.player1.ships[0].planetName", CoreMatchers.is("a")))
+                /*.andExpect(jsonPath("$.player1.ships[0].shipId", CoreMatchers.notNullValue()))
+                .andExpect(jsonPath("$.player1.ships[0].shipId", CoreMatchers.not(0)))*/;
     }
 
     @Test
@@ -48,9 +50,9 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
         String moveShipActionJson = objectMapper.writeValueAsString(moveShipAction);
 
         mockMvc.perform(post("/auth/action")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(moveShipActionJson)
-            .cookie(new Cookie("accessToken", accessToken)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(moveShipActionJson)
+                .cookie(new Cookie("accessToken", accessToken)))
                 .andExpect(status().isOk());
     }
 }
