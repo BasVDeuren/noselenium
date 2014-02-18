@@ -83,6 +83,7 @@ public class GameService implements IGameService {
         if(connected)
         {
             shipDb.setPlanet(destinationPlanet);
+
             shipRepository.updateShip(shipDb);
         }else{
             throw new SpaceCrackNotAcceptableException("Ship cannot be moved to that planet!");
@@ -94,4 +95,6 @@ public class GameService implements IGameService {
         Ship shipDb = shipRepository.getShipByShipId(shipId);
         return shipDb.getPlanet();
     }
+
+
 }

@@ -24,7 +24,7 @@ public class Player {
 
     @OneToMany
     private List<Colony> colonies;
-@OneToMany
+    @OneToMany
     private List<Ship> ships;
 
     public Player() {

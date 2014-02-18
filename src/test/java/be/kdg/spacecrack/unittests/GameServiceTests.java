@@ -78,4 +78,15 @@ public class GameServiceTests {
         assertEquals("a", shipLocation.getName());
 
     }
+
+    /*@Test
+    public void MoveShipAndCreateColony_validPlanetNoColonyOnPlanet_ColonyPlaced() throws Exception {
+        Game game = creategame();
+
+        Ship ship = game.getPlayer1().getShips().get(0);
+
+        gameService.moveShip(ship, "b");
+
+        assertEquals(2, game.getPlayer1().getColonies().size());
+    }*/
 }
