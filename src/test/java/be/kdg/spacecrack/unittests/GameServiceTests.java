@@ -73,7 +73,9 @@ public class GameServiceTests {
 
         Ship ship = game.getPlayer1().getShips().get(0);
         gameService.moveShip(ship, "f");
-        //assertEquals("a", ship.getPlanet().getName());
+        Planet shipLocation = gameService.getShipLocationByShipId(ship.getShipId());
+
+        assertEquals("a", shipLocation.getName());
 
     }
 }

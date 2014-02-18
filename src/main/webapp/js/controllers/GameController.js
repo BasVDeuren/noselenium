@@ -20,6 +20,9 @@ function GameController($scope, $translate, Map, Game, Action) {
             {shipId: "", planetName: ""}
         ]
     };
+    $scope.changedPlanetSprites = [
+        {planetXSprite: {planetSprite: null, name: ""}}
+    ];
 
 //extending sprite with planet name so we can use it in the listener
     var PlanetExtendedSprite = function (game, x, y, name) {
@@ -207,26 +210,29 @@ function GameController($scope, $translate, Map, Game, Action) {
         game.debug.renderInputInfo(0, 0);
     }
 
+    function changePlanetOnSpaceShipClicked(spaceShipXSprite, i) {
+        if (spaceShipXSprite.ship.planetName == $scope.planetArray[i].name) {
+            console.log("planet found in planetArray " + spaceShipXSprite.ship.planetName + " " + $scope.planetArray[i].name);
+            var arrayPlanet = $scope.planetArray[i];
+            console.log(arrayPlanet.name);
+            console.log("connectedPlanets: " + arrayPlanet.connectedPlanets);
+            for (var j = 0; j < $scope.planetArray[i].connectedPlanets.length; j++) {
+                for (var k = 0; k < $scope.planetSprites.length; k++) {
+                    if (arrayPlanet.connectedPlanets[j].name == $scope.planetSprites[k].name) {
+                        console.log($scope.planetSprites[k]);
+                        $scope.planetSprites[k].loadTexture('planet2');
+                    }
+                }
+            }
+
+        }
+    }
+
     function spaceshipListener(spaceShipXSprite) {
         console.log("ship clicked!!" + spaceShipXSprite.ship.shipId);
         for (var i = 0; i < $scope.planetArray.length; i++) {
-            if(spaceShipXSprite.ship.planetName == $scope.planetArray[i].name){
-                console.log("planet found in planetArray " + spaceShipXSprite.ship.planetName + " "+ $scope.planetArray[i].name);
-                var arrayPlanet = $scope.planetArray[i];
-                console.log(arrayPlanet.name);
-                console.log("connectedPlanets: "+ arrayPlanet.connectedPlanets);
-                for(var j = 0; j < $scope.planetArray[i].connectedPlanets.length; j++){
-                    for(var k = 0; k < $scope.planetSprites.length;k++){
-                        if(arrayPlanet.connectedPlanets[j].name == $scope.planetSprites[k].name){
-                            console.log($scope.planetSprites[k]);
-                            $scope.planetSprites[k].loadTexture('planet2');
-                        }
-                    }
-                }
-
-            }
+            var change = changePlanetOnSpaceShipClicked(spaceShipXSprite, i);
         }
-
         selectedSpaceShipSprite = spaceShipXSprite;
 
     }
@@ -243,22 +249,31 @@ function GameController($scope, $translate, Map, Game, Action) {
             $scope.action.ship = selectedSpaceShipSprite.ship;
 
             Action.save($scope.action, function () {
+                allPlanetsNormal();
                 game.physics.moveToXY(selectedSpaceShipSprite, sprite.center.x - 25 + xExtraByCamera, sprite.center.y - 10 + yExtraByCamera, 60, 1000);
                 setTimeout(function () {
                     selectedSpaceShipSprite.body.velocity.x = 0;
                     selectedSpaceShipSprite.body.velocity.y = 0;
                 }, 1000);
                 console.log("moveship was acceptable");
+                selectedSpaceShipSprite.ship.planetName = sprite.name;
+                spaceshipListener(selectedSpaceShipSprite);
             }, function () {
                 alert("moveship was unAcceptable");
             })
         }
     }
 
+    function allPlanetsNormal() {
+        for (var i = 0; i < $scope.planetSprites.length; i++) {
+            $scope.planetSprites[i].loadTexture('planet1');
+        }
+    }
+
     function backgroundlistener() {
         console.log("clicked on background!");
         selectedSpaceShipSprite = null;
-
+        allPlanetsNormal();
     }
 
 
