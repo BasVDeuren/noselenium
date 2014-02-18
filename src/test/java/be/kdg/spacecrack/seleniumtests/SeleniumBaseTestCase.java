@@ -29,7 +29,7 @@ public abstract class SeleniumBaseTestCase  {
         System.setProperty("webdriver.chrome.driver", path);
         driver = new ChromeDriver();
 
-        driver.manage().timeouts().implicitlyWait(4, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
 
     }
@@ -41,9 +41,19 @@ public abstract class SeleniumBaseTestCase  {
         password.sendKeys("test");
         WebElement loginbutton = driver.findElement(By.name("login"));
         loginbutton.click();
-        WebDriverWait wait = new WebDriverWait(driver, 4);
+        WebDriverWait wait = new WebDriverWait(driver, 10);
         wait.until(ExpectedConditions.elementToBeClickable(By.name("newgame")));
     }
+
+    protected void EditProfile() {
+        driver.get(baseUrl);
+        WebElement btnAction = driver.findElement(By.name("btnAction"));
+        btnAction.click();
+        WebElement lnkEditProfile = driver.findElement(By.name("lnkEditProfile"));
+        lnkEditProfile.click();
+    }
+
+
 
     @After
     public void tearDown() throws Exception {
