@@ -7,22 +7,32 @@
                 </div>
                 <div class="panel-body">
                     <accordion close-others="true">
-                        <accordion-group heading="{{'PASSWORD' | translate}}" is-open="true">
+                        <accordion-group heading="{{'CHANGE_PASSWORD' | translate}}" is-open="true">
 
                             <form class="form-horizontal" role="form" ng-submit="editUser()" name="registerForm"
                                   novalidate>
+                                <!--<div class="form-group">-->
+                                    <!--<label for="old_password" class="col-sm-3 control-label formLabel">{{'OLD_PASSWORD' |-->
+                                        <!--translate}} *</label>-->
+
+                                    <!--<div class="col-sm-8">-->
+                                        <!--<input type="password" class="form-control" id="old_password"-->
+                                               <!--placeholder="{{'PASSWORD' | translate}}" ng-model="editUserData.password"-->
+                                               <!--required>-->
+                                    <!--</div>-->
+                                <!--</div>-->
                                 <div class="form-group">
-                                    <label for="password" class="col-sm-3 control-label formLabel">{{'PASSWORD' |
+                                    <label for="new_password" class="col-sm-3 control-label formLabel">{{'NEW_PASSWORD' |
                                         translate}} *</label>
 
                                     <div class="col-sm-8">
-                                        <input type="password" class="form-control" id="password"
-                                               placeholder="{{'PASSWORD' | translate}}" ng-model="editUserData.password"
+                                        <input type="password" class="form-control" id="new_password"
+                                               placeholder="{{'NEW_PASSWORD' | translate}}" ng-model="editUserData.password"
                                                required>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="password" class="col-sm-3 control-label formLabel">{{'REPEAT_PASSWORD' |
+                                    <label for="password2" class="col-sm-3 control-label formLabel">{{'REPEAT_PASSWORD' |
                                         translate}} *</label>
 
                                     <div class="col-sm-8">
@@ -36,17 +46,23 @@
                                         * {{'REQUIRED' | translate}}
                                     </div>
                                 </div>
-                                <div class="form-group" ng-show="hasRegistrationFailed">
-                                    <label for="password" class="col-sm-3 control-label"></label>
-
+                                <div class="form-group" ng-show="showSuccesMsg()" id="profileSuccesMsg">
+                                    <label for="profileSuccesMsg" class="col-sm-3 control-label"></label>
+                                    <div class="col-sm-8" id="">
+                                        <div class="alert alert-success">
+                                            <strong>{{'SUCCESSFULLY_SAVED' | translate}}!</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-show="showErrorMsg()" id="profileErrorMsg">
+                                    <label for="profileErrorMsg" class="col-sm-3 control-label"></label>
                                     <div class="col-sm-8">
                                         <div class="alert alert-danger">
-                                            <strong>{{'ERR_REGISTRATION_FAILED' | translate}}!</strong>
+                                            <strong>{{'SAVE_FAILED' | translate}}!</strong>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
-
                                     <div class="col-sm-offset-3 col-sm-2">
                                         <button type="submit" id="save" name="save" class="btn btn-default"
                                                 ng-disabled="validateForm()">
@@ -57,7 +73,9 @@
                                 </div>
                             </form>
                         </accordion-group>
-                        <!--<accordion-group heading="Profile">-->
+
+
+                        <!--<accordion-group heading="{{'PROFILE'}}">-->
                             <!--<form class="form-horizontal" role="form" ng-submit="editContact()" name="contactForm"-->
                                   <!--novalidate>-->
                                 <!--<div class="form-group">-->
