@@ -24,8 +24,8 @@ public class SeleniumEditPasswordTests extends SeleniumBaseTestCase {
 
         passwordTextBox.sendKeys("test");
         password2TextBox.sendKeys("test");
-        WebElement saveButton = driver.findElement(By.id("save"));
-        saveButton.click();
+        WebElement btnSave = driver.findElement(By.id("save"));
+        btnSave.click();
 
         WebElement profileSuccesMsg = driver.findElement(By.id("profileSuccesMsg"));
 
@@ -48,8 +48,8 @@ public class SeleniumEditPasswordTests extends SeleniumBaseTestCase {
         passwordTextBox.sendKeys("gelukt");
         password2TextBox.sendKeys("nietgelukt");
 
-        WebElement saveButton = driver.findElement(By.id("save"));
+        WebElement btnSave = driver.findElement(By.id("save"));
 
-        assertEquals(false,saveButton.isEnabled());
+        assertEquals(false,btnSave.isEnabled());
     }
 }
