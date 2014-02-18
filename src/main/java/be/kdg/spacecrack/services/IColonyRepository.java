@@ -6,5 +6,8 @@ package be.kdg.spacecrack.services;/* Git $Id
  *
  */
 
+import be.kdg.spacecrack.model.Colony;
+
 public interface IColonyRepository {
+    void createColony(Colony colony);
 }

@@ -6,5 +6,13 @@ package be.kdg.spacecrack.repositories;/* Git $Id
  *
  */
 
+import be.kdg.spacecrack.model.Ship;
+
 public interface IShipRepository {
+    void createShip(Ship ship);
+
+    Ship getShipByShipId(int shipId);
+
+    void updateShip(Ship ship);
+
 }

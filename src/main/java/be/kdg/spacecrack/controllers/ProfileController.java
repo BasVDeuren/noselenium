@@ -41,8 +41,6 @@ public class ProfileController {
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public void createProfile(@RequestBody ProfileWrapper profileWrapper, @CookieValue("accessToken") String accessTokenValue) throws Exception {
-
-
         User user = tokenService.getUserByAccessTokenValue(accessTokenValue);
 
         Date date = new SimpleDateFormat("dd-mm-yyyy").parse(profileWrapper.getDayOfBirth());

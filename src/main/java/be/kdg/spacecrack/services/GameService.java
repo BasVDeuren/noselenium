@@ -2,7 +2,10 @@ package be.kdg.spacecrack.services;
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.model.*;
+import be.kdg.spacecrack.repositories.ColonyRepository;
 import be.kdg.spacecrack.repositories.IPlanetRepository;
+import be.kdg.spacecrack.repositories.IShipRepository;
+import be.kdg.spacecrack.repositories.ShipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,22 +26,22 @@ public class GameService implements IGameService {
     IPlanetRepository planetRepository;
     @Autowired
     IMapService mapService;
-/*
+
     @Autowired
     IShipRepository shipRepository;
 
     @Autowired
-    IColonyRepository colonyRepository;*/
+    IColonyRepository colonyRepository;
 
     public GameService() {
     }
 
-    public GameService(IMapService mapService, IPlanetRepository planetRepository/*, IShipRepository shipRepository, IColonyRepository colonyRepository*/)
+    public GameService(IMapService mapService, IPlanetRepository planetRepository, ColonyRepository colonyRepository, ShipRepository shipRepository)
     {
         this.mapService = mapService;
         this.planetRepository = planetRepository;
-        /*this.shipRepository = shipRepository;
-        this.colonyRepository = colonyRepository;*/
+        this.shipRepository = shipRepository;
+        this.colonyRepository = colonyRepository;
     }
 
     @Override
@@ -49,17 +52,23 @@ public class GameService implements IGameService {
         profile.addPlayer(player1);
         game.setPlayer1(player1);
         Planet planetA = planetRepository.getPlanetByName("a");
+        Ship ship = new Ship(planetA);
+        Colony colony = new Colony(planetA);
 
-        player1.getColonies().add(new Colony(planetA));
-        player1.getShips().add(new Ship(planetA));
+        shipRepository.createShip(ship);
+        colonyRepository.createColony(colony);
+
+        player1.getColonies().add(colony);
+
+        player1.getShips().add(ship);
 
         return  game;
     }
 
     @Override
     public void moveShip(Ship ship, String planetName) {
-
-        Planet sourcePlanet = ship.getPlanet();
+        Ship shipDb = shipRepository.getShipByShipId(ship.getShipId());
+        Planet sourcePlanet = shipDb.getPlanet();
         boolean connected = false;
         Set<PlanetConnection> planetConnections = sourcePlanet.getPlanetConnections();
         Planet destinationPlanet = null;
@@ -73,9 +82,16 @@ public class GameService implements IGameService {
         }
         if(connected)
         {
-            ship.setPlanet(destinationPlanet);
+            shipDb.setPlanet(destinationPlanet);
+            shipRepository.updateShip(shipDb);
         }else{
             throw new SpaceCrackNotAcceptableException("Ship cannot be moved to that planet!");
         }
+    }
+
+    @Override
+    public Planet getShipLocationByShipId(int shipId) {
+        Ship shipDb = shipRepository.getShipByShipId(shipId);
+        return shipDb.getPlanet();
     }
 }

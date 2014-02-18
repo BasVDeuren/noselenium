@@ -29,8 +29,8 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.player1.colonies[0].planetName", CoreMatchers.is("a")))
                 .andExpect(jsonPath("$.player1.ships[0].planetName", CoreMatchers.is("a")))
-                /*.andExpect(jsonPath("$.player1.ships[0].shipId", CoreMatchers.notNullValue()))
-                .andExpect(jsonPath("$.player1.ships[0].shipId", CoreMatchers.not(0)))*/;
+                .andExpect(jsonPath("$.player1.ships[0].shipId", CoreMatchers.notNullValue()))
+                .andExpect(jsonPath("$.player1.ships[0].shipId", CoreMatchers.not(0)));
     }
 
     @Test

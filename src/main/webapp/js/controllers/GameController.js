@@ -20,6 +20,7 @@ function GameController($scope, $translate, Map, Game, Action) {
             {shipId: "", planetName: ""}
         ]
     };
+
 //extending sprite with planet name so we can use it in the listener
     var PlanetExtendedSprite = function (game, x, y, name) {
         Phaser.Sprite.call(this, game, x, y, 'planet1');
@@ -27,6 +28,11 @@ function GameController($scope, $translate, Map, Game, Action) {
     }
     PlanetExtendedSprite.prototype = Object.create(Phaser.Sprite.prototype);
     PlanetExtendedSprite.prototype.constructor = PlanetExtendedSprite;
+
+    $scope.planetSprites = [
+        {planetXSprite: {planetSprite: null, name: ""}}
+    ];
+
 //extending sprite with ship so we can use it in the listener
     var ShipExtendedSprite = function (game, x, y, ship) {
         Phaser.Sprite.call(this, game, x, y, 'spaceship');
@@ -90,6 +96,8 @@ function GameController($scope, $translate, Map, Game, Action) {
                 var width = image.width;
                 var height = image.height;
                 var planetSprite = new PlanetExtendedSprite(game, planets[i].x - width / 2, planets[i].y - height / 2, planets[i].name);
+                $scope.planetSprites[i] = planetSprite;
+                console.log("in get, planetSprite name: " + $scope.planetSprites[i].name);
                 game.add.existing(planetSprite);
 //                var planetSprite = sprites.create(x - width / 2, y - height / 2, 'planet1');
                 planetSprite.body.immovable = true;
@@ -116,7 +124,7 @@ function GameController($scope, $translate, Map, Game, Action) {
                 $scope.game.player1colonies = data.player1.colonies;
                 var player1colonies = $scope.game.player1colonies;
 
-              //Create colonysprites
+                //Create colonysprites
                 for (var i = 0; i < player1colonies.length; i++) {
                     var x;
                     var y;
@@ -156,15 +164,14 @@ function GameController($scope, $translate, Map, Game, Action) {
                     var width = image.width;
                     var height = image.height;
 
-                    var player1shipsprite = new ShipExtendedSprite(game, planets[i].x - width / 2+10, planets[i].y - height / 2, player1ships[i]);
+                    var player1shipsprite = new ShipExtendedSprite(game, planets[i].x - width / 2 + 10, planets[i].y - height / 2, player1ships[i]);
                     game.add.existing(player1shipsprite);
 
 
                     player1shipsprite.body.immovable = true;
 
                     player1shipsprite.inputEnabled = true;
-                    player1shipsprite.events.onInputDown.add(spaceshipListener
-                        , this);
+                    player1shipsprite.events.onInputDown.add(spaceshipListener, this);
                 }
             })
         });
@@ -201,7 +208,25 @@ function GameController($scope, $translate, Map, Game, Action) {
     }
 
     function spaceshipListener(spaceShipXSprite) {
-        console.log("ship clicked!!"+ spaceShipXSprite.ship.shipId);
+        console.log("ship clicked!!" + spaceShipXSprite.ship.shipId);
+        for (var i = 0; i < $scope.planetArray.length; i++) {
+            if(spaceShipXSprite.ship.planetName == $scope.planetArray[i].name){
+                console.log("planet found in planetArray " + spaceShipXSprite.ship.planetName + " "+ $scope.planetArray[i].name);
+                var arrayPlanet = $scope.planetArray[i];
+                console.log(arrayPlanet.name);
+                console.log("connectedPlanets: "+ arrayPlanet.connectedPlanets);
+                for(var j = 0; j < $scope.planetArray[i].connectedPlanets.length; j++){
+                    for(var k = 0; k < $scope.planetSprites.length;k++){
+                        if(arrayPlanet.connectedPlanets[j].name == $scope.planetSprites[k].name){
+                            console.log($scope.planetSprites[k]);
+                            $scope.planetSprites[k].loadTexture('planet2');
+                        }
+                    }
+                }
+
+            }
+        }
+
         selectedSpaceShipSprite = spaceShipXSprite;
 
     }
@@ -211,20 +236,21 @@ function GameController($scope, $translate, Map, Game, Action) {
         if (selectedSpaceShipSprite != null) {
 
             console.log("selectedShipSprite was not null!!");
-            game.physics.moveToXY(selectedSpaceShipSprite, sprite.center.x -25 + xExtraByCamera, sprite.center.y -10 + yExtraByCamera, 60, 1000);
-            setTimeout(function () {
-                selectedSpaceShipSprite.body.velocity.x = 0;
-                selectedSpaceShipSprite.body.velocity.y = 0;
-            }, 1000);
+
             $scope.action.actionType = "MOVESHIP";
 
             $scope.action.destinationPlanet = sprite.name;
             $scope.action.ship = selectedSpaceShipSprite.ship;
 
             Action.save($scope.action, function () {
-                alert("bots!!");
-            }, function(){
-                alert("fail!!");
+                game.physics.moveToXY(selectedSpaceShipSprite, sprite.center.x - 25 + xExtraByCamera, sprite.center.y - 10 + yExtraByCamera, 60, 1000);
+                setTimeout(function () {
+                    selectedSpaceShipSprite.body.velocity.x = 0;
+                    selectedSpaceShipSprite.body.velocity.y = 0;
+                }, 1000);
+                console.log("moveship was acceptable");
+            }, function () {
+                alert("moveship was unAcceptable");
             })
         }
     }

@@ -1,11 +1,10 @@
 package be.kdg.spacecrack.unittests;
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
-import be.kdg.spacecrack.model.Game;
-import be.kdg.spacecrack.model.Player;
-import be.kdg.spacecrack.model.Profile;
-import be.kdg.spacecrack.model.Ship;
+import be.kdg.spacecrack.model.*;
+import be.kdg.spacecrack.repositories.ColonyRepository;
 import be.kdg.spacecrack.repositories.PlanetRepository;
+import be.kdg.spacecrack.repositories.ShipRepository;
 import be.kdg.spacecrack.services.GameService;
 import be.kdg.spacecrack.services.MapService;
 import org.junit.Before;
@@ -30,7 +29,7 @@ public class GameServiceTests {
     @Before
     public void setUp() throws Exception {
 
-        gameService = new GameService(new MapService(),new PlanetRepository() );
+        gameService = new GameService(new MapService(),new PlanetRepository(), new ColonyRepository(), new ShipRepository());
 
     }
 
@@ -62,7 +61,9 @@ public class GameServiceTests {
         Ship ship = game.getPlayer1().getShips().get(0);
 
         gameService.moveShip(ship, "b");
-        assertEquals("b",ship.getPlanet().getName());
+        Planet shipLocation = gameService.getShipLocationByShipId(ship.getShipId());
+
+        assertEquals("b", shipLocation.getName());
 
     }
 
