@@ -38,5 +38,8 @@ angular.module('spaceServices', ['ngResource'])
     }).factory('Game', function($resource)
     {
         return $resource('/api/auth/game')
+    }).factory('Action', function($resource)
+    {
+        return $resource('/api/auth/action')
     });
 

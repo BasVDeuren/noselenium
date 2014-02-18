@@ -23,15 +23,22 @@ public class GameService implements IGameService {
     IPlanetRepository planetRepository;
     @Autowired
     IMapService mapService;
+/*
+    @Autowired
+    IShipRepository shipRepository;
+
+    @Autowired
+    IColonyRepository colonyRepository;*/
+
     public GameService() {
     }
 
-    public GameService(IMapService mapService, IPlanetRepository planetRepository)
+    public GameService(IMapService mapService, IPlanetRepository planetRepository/*, IShipRepository shipRepository, IColonyRepository colonyRepository*/)
     {
         this.mapService = mapService;
-
-
         this.planetRepository = planetRepository;
+        /*this.shipRepository = shipRepository;
+        this.colonyRepository = colonyRepository;*/
     }
 
     @Override

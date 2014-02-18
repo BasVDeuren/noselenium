@@ -71,4 +71,6 @@ public class Ship {
     public void setPlayer(Player player) {
         this.player = player;
     }
+
+
 }

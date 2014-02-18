@@ -12,7 +12,7 @@ public class Action {
     private String actionType;
     private Ship ship;
     private String destinationPlanet;
-
+//actionType, ship, destinationPlanet
     public Action(String actionType, Ship ship, String destinationPlanet) {
 
         this.actionType = actionType;
