@@ -7,22 +7,32 @@
                 </div>
                 <div class="panel-body">
                     <accordion close-others="true">
-                        <accordion-group heading="{{'PASSWORD' | translate}}" is-open="true">
+                        <accordion-group heading="{{'CHANGE_PASSWORD' | translate}}" is-open="true">
 
                             <form class="form-horizontal" role="form" ng-submit="editUser()" name="registerForm"
                                   novalidate>
+                                <!--<div class="form-group">-->
+                                    <!--<label for="old_password" class="col-sm-3 control-label formLabel">{{'OLD_PASSWORD' |-->
+                                        <!--translate}} *</label>-->
+
+                                    <!--<div class="col-sm-8">-->
+                                        <!--<input type="password" class="form-control" id="old_password"-->
+                                               <!--placeholder="{{'PASSWORD' | translate}}" ng-model="editUserData.password"-->
+                                               <!--required>-->
+                                    <!--</div>-->
+                                <!--</div>-->
                                 <div class="form-group">
-                                    <label for="password" class="col-sm-3 control-label formLabel">{{'PASSWORD' |
+                                    <label for="new_password" class="col-sm-3 control-label formLabel">{{'NEW_PASSWORD' |
                                         translate}} *</label>
 
                                     <div class="col-sm-8">
-                                        <input type="password" class="form-control" id="password"
-                                               placeholder="{{'PASSWORD' | translate}}" ng-model="editUserData.password"
+                                        <input type="password" class="form-control" id="new_password"
+                                               placeholder="{{'NEW_PASSWORD' | translate}}" ng-model="editUserData.password"
                                                required>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="password" class="col-sm-3 control-label formLabel">{{'REPEAT_PASSWORD' |
+                                    <label for="password2" class="col-sm-3 control-label formLabel">{{'REPEAT_PASSWORD' |
                                         translate}} *</label>
 
                                     <div class="col-sm-8">
@@ -36,17 +46,23 @@
                                         * {{'REQUIRED' | translate}}
                                     </div>
                                 </div>
-                                <div class="form-group" ng-show="hasRegistrationFailed">
-                                    <label for="password" class="col-sm-3 control-label"></label>
-
+                                <div class="form-group" ng-show="showSuccesMsg()" id="profileSuccesMsg">
+                                    <label for="profileSuccesMsg" class="col-sm-3 control-label"></label>
+                                    <div class="col-sm-8" id="">
+                                        <div class="alert alert-success">
+                                            <strong>{{'SUCCESSFULLY_SAVED' | translate}}!</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group" ng-show="showErrorMsg()" id="profileErrorMsg">
+                                    <label for="profileErrorMsg" class="col-sm-3 control-label"></label>
                                     <div class="col-sm-8">
                                         <div class="alert alert-danger">
-                                            <strong>{{'ERR_REGISTRATION_FAILED' | translate}}!</strong>
+                                            <strong>{{'SAVE_FAILED' | translate}}!</strong>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
-
                                     <div class="col-sm-offset-3 col-sm-2">
                                         <button type="submit" id="save" name="save" class="btn btn-default"
                                                 ng-disabled="validateForm()">
@@ -57,41 +73,43 @@
                                 </div>
                             </form>
                         </accordion-group>
-                        <!--<accordion-group heading="Profile">-->
-                            <!--<form class="form-horizontal" role="form" ng-submit="editContact()" name="contactForm"-->
-                                  <!--novalidate>-->
-                                <!--<div class="form-group">-->
-                                    <!--<label for="dateOfBirth" class="col-sm-3 control-label formLabel">{{'DATE_OF_BIRTH'-->
-                                        <!--|-->
-                                        <!--translate}}</label>-->
 
-                                    <!--<div class="col-sm-8" id="dateOfBirth">-->
-                                        <!--<input type="text" class="form-control" datepicker-popup="dd/MM/yyyy"-->
-                                               <!--ng-model="contactData.dateOfBirth"-->
-                                               <!--is-open="opened" max="'2050-06-22'"-->
-                                               <!--datepicker-options="dateOptions"-->
-                                               <!--close-text="Close"/>-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                                <!--<div class="form-group">-->
-                                    <!--<label for="firstname" class="col-sm-3 control-label formLabel">{{'FIRSTNAME' |-->
-                                        <!--translate}}</label>-->
 
-                                    <!--<div class="col-sm-8">-->
-                                        <!--<input type="text" class="form-control" id="firstname"-->
-                                               <!--placeholder="{{'FIRSTNAME' | translate}}"-->
-                                               <!--ng-model="contactData.firstname">-->
-                                    <!--</div>-->
-                                <!--</div>-->
-                                <!--<div class="form-group">-->
-                                    <!--<label for="lastName" class="col-sm-3 control-label formLabel">{{'LASTNAME' |-->
-                                        <!--translate}}</label>-->
+                        <accordion-group heading="{{'PROFILE'}}">
+                            <form class="form-horizontal" role="form" ng-submit="editContact()" name="contactForm"
+                                  novalidate>
+                                <div class="form-group">
+                                    <label for="dateOfBirth" class="col-sm-3 control-label formLabel">{{'DATE_OF_BIRTH'
+                                        |
+                                        translate}}</label>
 
-                                    <!--<div class="col-sm-8">-->
-                                        <!--<input type="text" class="form-control" id="lastName"-->
-                                               <!--placeholder="{{'LASTNAME' | translate}}" ng-model="contactData.lastname">-->
-                                    <!--</div>-->
-                                <!--</div>-->
+                                    <div class="col-sm-8" id="dateOfBirth">
+                                        <input type="text" class="form-control" datepicker-popup="dd/MM/yyyy"
+                                               ng-model="contactData.dayOfBirth"
+                                               is-open="opened" max="'2050-06-22'"
+                                               datepicker-options="dateOptions"
+                                               close-text="Close"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="firstname" class="col-sm-3 control-label formLabel">{{'FIRSTNAME' |
+                                        translate}}</label>
+
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="firstname"
+                                               placeholder="{{'FIRSTNAME' | translate}}"
+                                               ng-model="contactData.firstname">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastName" class="col-sm-3 control-label formLabel">{{'LASTNAME' |
+                                        translate}}</label>
+
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" id="lastName"
+                                               placeholder="{{'LASTNAME' | translate}}" ng-model="contactData.lastname">
+                                    </div>
+                                </div>
                                 <!--<div class="form-group">-->
                                     <!--<label for="gender" class="col-sm-3 control-label formLabel">{{'GENDER' |-->
                                         <!--translate}}</label>-->
@@ -108,29 +126,29 @@
                                     <!--</div>-->
                                 <!--</div>-->
 
-                                <!--&lt;!&ndash;<div class="form-group">&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<label for="photo" class="col-sm-3 control-label formLabel">{{'PHOTO' |&ndash;&gt;-->
-                                        <!--&lt;!&ndash;translate}}</label>&ndash;&gt;-->
-
-                                    <!--&lt;!&ndash;<div class="col-sm-8">&ndash;&gt;-->
-                                        <!--&lt;!&ndash;<input&ndash;&gt;-->
-                                                <!--&lt;!&ndash;type="file"&ndash;&gt;-->
-                                                <!--&lt;!&ndash;name="url"&ndash;&gt;-->
-                                                <!--&lt;!&ndash;class="form-control"&ndash;&gt;-->
-                                                <!--&lt;!&ndash;placeholder="Insert an IMAGE-URL" ng-model="contactData.image"/>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
-                                <!--&lt;!&ndash;</div>&ndash;&gt;-->
                                 <!--<div class="form-group">-->
+                                    <!--<label for="photo" class="col-sm-3 control-label formLabel">{{'PHOTO' |-->
+                                        <!--translate}}</label>-->
 
-                                    <!--<div class="col-sm-offset-3 col-sm-2">-->
-                                        <!--<button type="submit" class="btn btn-default">{{'SAVE' |-->
-                                            <!--translate}}-->
-                                        <!--</button>-->
+                                    <!--<div class="col-sm-8">-->
+                                        <!--<input-->
+                                                <!--type="file"-->
+                                                <!--name="url"-->
+                                                <!--class="form-control"-->
+                                                <!--placeholder="Insert an IMAGE-URL" ng-model="contactData.image"/>-->
                                     <!--</div>-->
                                 <!--</div>-->
-                            <!--</form>-->
+                                <div class="form-group">
 
-                        <!--</accordion-group>-->
+                                    <div class="col-sm-offset-3 col-sm-2">
+                                        <button type="submit" class="btn btn-default">{{'SAVE' |
+                                            translate}}
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </accordion-group>
                     </accordion>
                 </div>
             </div>

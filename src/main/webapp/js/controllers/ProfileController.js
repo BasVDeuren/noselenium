@@ -14,14 +14,13 @@ spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile
         passwordRepeated: ""
     };
 
+    $scope.isSaveSuccess = false;
+    $scope.isSaveDone = false;
 
     Profile.get(function (data, headers) {
         console.log("get api/auth/user");
         $scope.editUserData.username = data.username;
         $scope.editUserData.email = data.email;
-        $scope.editUserData.password = data.password;
-        $scope.editUserData.passwordRepeated = data.password;
-
     }, function (data, headers) {
 
     });
@@ -30,10 +29,13 @@ spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile
     $scope.hasRegistrationFailed = false;
     $scope.editUser = function () {
         Profile.save($scope.editUserData,function () {
-            console.log("post api/auth/user");
-
+            console.log("post api/auth/user succeed");
+            $scope.isSaveDone = true;
+            $scope.isSaveSuccess = true;
         }, function (data, headers) {
-
+            console.log("post api/auth/user failed");
+            $scope.isSaveDone = true;
+            $scope.isSaveSuccess = false;
         });
     };
 
@@ -48,6 +50,14 @@ spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile
         } else {
             return true;
         }
+    };
+
+    $scope.showErrorMsg = function(){
+
+        return ($scope.isSaveDone && !$scope.isSaveSuccess);
+    };
+    $scope.showSuccesMsg = function(){
+        return ($scope.isSaveDone && $scope.isSaveSuccess);
     };
 
 //--------------------------------------------------------------------------------------------------
@@ -73,18 +83,19 @@ spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile
     $scope.contactData = {
         firstname: "",
         lastname: "",
-        gender: "true",
-        dateOfBirth: "",
-        image: ""
+        dayOfBirth: "",
+        image: "",
+        email:""
     };
 
     $scope.editContact = function () {
-        if($scope.contactData.gender == "true"){
-            $scope.contactData.gender = true;
-        }else{
-            $scope.contactData.gender = false;
-        }
+//        if($scope.contactData.gender == "true"){
+//            $scope.contactData.gender = true;
+//        }else{
+//            $scope.contactData.gender = false;
+//        }
         //$scope.contactData.dateOfBirth = $scope.contactData.dateOfBirth.toLocaleDateString();
+        $scope.contactData.dayOfBirth = '1-2-2001';
         Contact.save($scope.contactData, function () {
 
         }, function () {

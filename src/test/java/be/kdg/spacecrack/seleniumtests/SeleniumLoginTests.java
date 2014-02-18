@@ -27,7 +27,7 @@ public class SeleniumLoginTests extends SeleniumBaseTestCase {
         password.sendKeys("test");
         WebElement loginbutton = driver.findElement(By.name("login"));
         loginbutton.click();
-        WebDriverWait wait = new WebDriverWait(driver, 4);
+        WebDriverWait wait = new WebDriverWait(driver, 10);
         wait.until(ExpectedConditions.elementToBeClickable(By.name("newgame")));
         assertEquals("http://localhost:8080/#/spacecrack/home", driver.getCurrentUrl());
 
@@ -44,7 +44,7 @@ public class SeleniumLoginTests extends SeleniumBaseTestCase {
         password.sendKeys("invalidPassword");
         WebElement loginbutton = driver.findElement(By.name("login"));
         loginbutton.click();
-        WebDriverWait wait = new WebDriverWait(driver,4);
+        WebDriverWait wait = new WebDriverWait(driver,10);
         WebElement loginfailedDiv = driver.findElement(By.name("loginfailed"));
         wait.until(ExpectedConditions.visibilityOf(loginfailedDiv));
         assertEquals("http://localhost:8080/#/", driver.getCurrentUrl());

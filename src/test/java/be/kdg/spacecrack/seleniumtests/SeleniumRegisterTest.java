@@ -29,7 +29,7 @@ public class SeleniumRegisterTest extends SeleniumBaseTestCase{
         txtPasswordRepeated.sendKeys("passwordSeleniumTest");
 
         btnRegister.click();
-        WebDriverWait wait = new WebDriverWait(driver,4);
+        WebDriverWait wait = new WebDriverWait(driver,10);
 
         WebElement btnNewGame =  driver.findElement(By.name("newgame"));
 
