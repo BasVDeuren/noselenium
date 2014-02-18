@@ -17,6 +17,7 @@ module.exports = function (config) {
             'lib/angular/angular.js',
             'lib/angular/angular-*.js',
             'js/vendor/angular-translate-min.js',
+            'js/vendor/angular-translate-loader-static-files.min.js',
             'test/lib/angular/angular-mocks.js',
             'js/*.js',
             'js/controllers/*js',
@@ -28,7 +29,8 @@ module.exports = function (config) {
         exclude: [
             'lib/angular/angular-loader.js',
             'lib/angular/*.min.js',
-            'lib/angular/angular-scenario.js'
+            'lib/angular/angular-scenario.js' ,
+            'js/bootstrap-datepicker.js'
         ],
 
 
