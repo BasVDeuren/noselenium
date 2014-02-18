@@ -39,7 +39,7 @@ public class GameController {
     public Game getGame(@CookieValue("accessToken") String accessTokenValue){
         User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
         Game game = gameService.createGame(user.getProfile());
-        return  game;
+        return game;
 
     }
 }

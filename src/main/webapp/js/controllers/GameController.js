@@ -1,13 +1,17 @@
 /**
  * Created by Dimi on 3/02/14.
  */
-function GameController ($scope, $translate,Map) {
+function GameController ($scope, $translate,Map, Game) {
     var game = new Phaser.Game(600, 500, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render});
 
     /*$scope.map = {
      planets: [{x:"",y:""}]
      };*/
-    $scope.planetArray = [{x:"",y:"",connectedPlanetNames:[{name:""}]}]
+    $scope.planetArray = [{name:"",x:"",y:"",connectedPlanetNames:[{name:""}]}];
+    $scope.game = {
+        player1colonies:[{colonyId:"", planet:{name:"", x:"",y:""}}],
+        player1ships:[{shipId:"", planet:{name:"", x:"",y:""}}]
+    };
     function preload() {
         game.load.image('bg', 'assets/SpaceCrackBackground.jpg');
         game.load.image('planet1', 'assets/planet1_small.png');
@@ -15,6 +19,7 @@ function GameController ($scope, $translate,Map) {
         game.load.image('planet3', 'assets/planet3.png');
         game.load.image('planet4', 'assets/planet4.png');
         game.load.image('spaceship', 'assets/spaceship.png');
+        game.load.image('player1flag','assets/player1flag.png');
     }
 
     var platforms;
@@ -32,16 +37,19 @@ function GameController ($scope, $translate,Map) {
         console.log("width: " + bgImg.width + " height:" + bgImg.height)
         game.world.setBounds(0, 0, 1600, 1000);
 
+        var graphics = game.add.graphics(0,0);
+        //graphics.beginFill(0x00FF00);
+        graphics.lineStyle(3, 0x999999, 1);
+
+        // graphics.drawCircle($scope.map.planets[0].x,$scope.map.planets[0].y, 5);
+        var sprites = game.add.group();
+
+
 
         Map.get(function(data,header){
             $scope.planetArray = data.planets;
             console.log("planetArray:" + $scope.planetArray[0].x);
-            var graphics = game.add.graphics(0,0);
-            //graphics.beginFill(0x00FF00);
-            graphics.lineStyle(3, 0x999999, 1);
 
-            // graphics.drawCircle($scope.map.planets[0].x,$scope.map.planets[0].y, 5);
-            var planetSprites = game.add.group();
 
             var planets = $scope.planetArray;
             for(var i =0; i < planets.length ;i++) {
@@ -53,13 +61,13 @@ function GameController ($scope, $translate,Map) {
                 var image = game.cache.getImage('planet1');
                 var width = image.width;
                 var height = image.height;
-                var planetSprite = planetSprites.create(x-width/2,y-height/2,'planet1');
+                var planetSprite = sprites.create(x-width/2,y-height/2,'planet1');
                 planetSprite.body.immovable = true;
                 planetSprite.inputEnabled = true;
                 planetSprite.events.onInputDown.add(planetListener, this);
 
                 // Add text
-                var text = game.add.text(x-width/2, y-height/2, name, { font : '16px', fill : '#ff0000' }, planetSprites);
+                var text = game.add.text(x-width/2, y-height/2, name, { font : '16px', fill : '#ff0000' }, sprites);
 
                 // Draw planet connections (optimalisation possible)
 
@@ -71,7 +79,46 @@ function GameController ($scope, $translate,Map) {
                     graphics.lineTo(toX, toY);
                 }
             }
+            Game.save(function(data){
+                //  "$.player1.colonies[0].planet.name"
+
+                $scope.game.player1ships= data.player1.ships;
+                $scope.game.player1colonies = data.player1.colonies;
+                var player1colonies = $scope.game.player1colonies;
+
+                for(var i = 0; i < player1colonies.length ; i++)
+                {
+                    var x = player1colonies[i].planet.x;
+                    var y =player1colonies[i].planet.y;
+                    // Add sprite
+                    var image = game.cache.getImage('player1flag');
+                    var width = image.width;
+                    var height = image.height;
+                    var player1flagsprite = sprites.create(x-width/2+10,y-height/2-22,'player1flag');
+
+                    player1flagsprite.body.immovable = true;
+                }
+                var player1ships = $scope.game.player1ships;
+                for(var i = 0; i < player1ships.length ; i++)
+                {
+                    var x = player1ships[i].planet.x;
+                    var y =player1ships[i].planet.y;
+                    // Add sprite
+                    var image = game.cache.getImage('spaceship');
+                    var width = image.width;
+                    var height = image.height;
+                    var player1shipsprite = sprites.create(x-width/2+20,y-height/2,'spaceship');
+
+                    player1shipsprite.body.immovable = true;
+
+                    player1shipsprite.inputEnabled = true;
+                    player1shipsprite.events.onInputDown.add(spaceshipListener, this)
+                }
+            })
         });
+
+
+
 
         // Move camera with cursors
         cursors = game.input.keyboard.createCursorKeys();
@@ -102,13 +149,11 @@ function GameController ($scope, $translate,Map) {
     }
 
     function spaceshipListener() {
-        spaceshipSelected = !spaceshipSelected;
-        if (spaceshipSelected) {
-            alert('clicked');
-        }
+        alert('clicked');
     }
 
     function planetListener(planet){
+        alert('clicked on planet! ');
         if(spaceshipSelected){
             game.physics.moveToXY(spaceship,planet.center.x,planet.center.y,60,1000);
             setTimeout(function() {

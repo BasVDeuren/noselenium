@@ -8,7 +8,7 @@ package be.kdg.spacecrack.jsonviewmodels;/* Git $Id
 
 import be.kdg.spacecrack.model.User;
 
-public class ContactWrapper {
+public class ProfileWrapper {
     private int contactId;
 
     private String firstname;
@@ -79,7 +79,7 @@ public class ContactWrapper {
         this.user = user;
     }
 
-    public ContactWrapper(String firstname, String lastname, String email, String dayOfBirth, String image) {
+    public ProfileWrapper(String firstname, String lastname, String email, String dayOfBirth, String image) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -87,7 +87,7 @@ public class ContactWrapper {
         this.image = image;
     }
 
-    public ContactWrapper(){
+    public ProfileWrapper(){
 
     }
 }

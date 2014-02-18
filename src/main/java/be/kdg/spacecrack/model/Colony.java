@@ -6,6 +6,8 @@ package be.kdg.spacecrack.model;/* Git $Id
  *
  */
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -17,8 +19,11 @@ public class Colony {
 
     @ManyToOne
     @JoinColumn(name="planetId")
+    @JsonIgnore
     private Planet planet;
 
+    @Transient
+    private String planetName;
     public Colony() {
     }
 
@@ -34,4 +39,17 @@ public class Colony {
     public void setPlanet(Planet planet) {
         this.planet = planet;
     }
+
+
+    public String getPlanetName(){
+      return planet.getName();
+    }
+
+    public void setPlanetName(String planetName){
+        this.planetName = planetName;
+    }
+
+
+
+
 }

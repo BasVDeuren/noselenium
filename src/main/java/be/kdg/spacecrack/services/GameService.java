@@ -1,9 +1,12 @@
 package be.kdg.spacecrack.services;
 
+import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.model.*;
 import be.kdg.spacecrack.repositories.IPlanetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
 
 /* Git $Id$
  *
@@ -46,42 +49,26 @@ public class GameService implements IGameService {
         return  game;
     }
 
+    @Override
+    public void moveShip(Ship ship, String planetName) {
 
-    /*public Game createGame(Profile creator, Profile opponent) {
-        Player player1 = new Player(creator);
-        Player player2 = new Player(opponent);
-
-        SpaceCrackMap map = mapService.getSpaceCrackMap();
-
-        map.getPlanets()[0].setPlayer(player1);
-        Planet player1StartingPlanet = map.getPlanets()[0];
-        player1StartingPlanet.setPlayer(player1);
-
-        map.setPlayer1StartingPlanet(player1StartingPlanet);
-        Planet player2StartingPlanet = map.getPlanets()[2];
-        player2StartingPlanet.setPlayer(player2);
-        map.setPlayer2StartingPlanet(player2StartingPlanet);
-        Ship player1StartingShip = new Ship();
-        player1StartingShip.setPlanet(player1StartingPlanet);
-        Ship player2StartingShip = new Ship();
-        player2StartingShip.setPlanet(player2StartingPlanet);
-        player1.getShips().add(player1StartingShip);
-        player2.getShips().add(player2StartingShip);
-
-        return new Game(player1, player2, map);
-    }*/
-
-
-//    public void moveShip(Player player, Ship ship, Planet targetPlanet) {
-//        if(ship.getPlayer() == player){
-//        if(ship.getPlanet().getConnectedPlanets().contains(targetPlanet))
-//        {
-//            ship.setPlanet(targetPlanet);
-//        }else{
-//            throw new SpaceCrackNotAcceptableException("Illegal move, ships can only move to connected planets");
-//        }
-//        }else{
-//            throw new SpaceCrackNotAcceptableException("Illegal move, ship is from another player");
-//        }
-//    }
+        Planet sourcePlanet = ship.getPlanet();
+        boolean connected = false;
+        Set<PlanetConnection> planetConnections = sourcePlanet.getPlanetConnections();
+        Planet destinationPlanet = null;
+        for(PlanetConnection planetConnection : planetConnections)
+        {
+            System.out.println(planetConnection.toString());
+            if(planetConnection.getChildPlanet().getName().equals( planetName) ){
+               destinationPlanet = planetConnection.getChildPlanet();
+                connected = true;
+            }
+        }
+        if(connected)
+        {
+            ship.setPlanet(destinationPlanet);
+        }else{
+            throw new SpaceCrackNotAcceptableException("Ship cannot be moved to that planet!");
+        }
+    }
 }

@@ -35,6 +35,7 @@ public class User implements Serializable {
     @JsonManagedReference
     private AccessToken token;
 
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name= "profileId", nullable = true)
     @JsonManagedReference

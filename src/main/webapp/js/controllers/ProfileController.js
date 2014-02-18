@@ -5,7 +5,7 @@ var spaceApp = angular.module('spaceApp');
 
 spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile,Contact) {
 
-    /**PAssword**/
+    /**Password**/
 
     $scope.editUserData = {
         email: "",
@@ -17,11 +17,11 @@ spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile
 
     Profile.get(function (data, headers) {
         console.log("get api/auth/user");
-
         $scope.editUserData.username = data.username;
         $scope.editUserData.email = data.email;
         $scope.editUserData.password = data.password;
         $scope.editUserData.passwordRepeated = data.password;
+
     }, function (data, headers) {
 
     });

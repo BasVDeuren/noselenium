@@ -59,7 +59,7 @@ function appRouter($routeProvider  ,$httpProvider) {
             templateUrl: 'partials/navhome.html',
             controller: 'NavHomeController'
         })
-        .when('/spacecrack/activegames', {
+        .when('/spacecrack/newgame', {
             templateUrl: 'partials/game.html',
             controller: 'GameController'
         })

@@ -35,6 +35,22 @@ public class Player {
 
     }
 
+    public int getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
+    }
+
+    public void setColonies(List<Colony> colonies) {
+        this.colonies = colonies;
+    }
+
+    public void setShips(List<Ship> ships) {
+        this.ships = ships;
+    }
+
     public Profile getProfile() {
         return profile;
     }

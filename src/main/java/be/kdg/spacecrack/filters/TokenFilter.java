@@ -1,8 +1,12 @@
 package be.kdg.spacecrack.filters;
 
+import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.model.AccessToken;
+import be.kdg.spacecrack.repositories.TokenRepository;
+import be.kdg.spacecrack.repositories.UserRepository;
 import be.kdg.spacecrack.services.AuthorizationService;
 import be.kdg.spacecrack.services.IAuthorizationService;
+import be.kdg.spacecrack.utilities.TokenStringGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Component;
@@ -24,7 +28,7 @@ import java.io.IOException;
  * 2013-2014
  *
  */
-@Component
+@Component("tokenFilter")
 public class TokenFilter implements Filter {
 
     public static final String URLPATTERN = "auth/*";
@@ -42,7 +46,8 @@ public class TokenFilter implements Filter {
         AutowireCapableBeanFactory autowireCapableBeanFactory = webApplicationContext.getAutowireCapableBeanFactory();
 
 
-        authorizationService = (IAuthorizationService) autowireCapableBeanFactory.autowire(AuthorizationService.class, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
+     //   authorizationService = (IAuthorizationService) autowireCapableBeanFactory.autowire(AuthorizationService.class, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
+        authorizationService = new AuthorizationService(new TokenRepository(), new UserRepository(), new TokenStringGenerator());
     }
 
     @Override
@@ -65,15 +70,19 @@ public class TokenFilter implements Filter {
                 unauthorized = true;
                 System.out.println("token was null");
 
-            }else{
+            }else {
 
-                AccessToken token = authorizationService.getAccessTokenByValue(tokenValue);
+                AccessToken token = null;
+                try {
+                    token = authorizationService.getAccessTokenByValue(tokenValue);
+                } catch (SpaceCrackUnauthorizedException ex) {
+                    responseWrapper.sendError(HttpServletResponse.SC_UNAUTHORIZED,"You are unauthorized for this request");
+                }
 
-                if(token != null)
-                {
+                if (token != null) {
                     unauthorized = false;
 
-                }else{
+                } else {
                     unauthorized = true;
 
                 }

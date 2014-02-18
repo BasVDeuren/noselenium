@@ -15,7 +15,7 @@ spaceApp.controller("RegisterController", function ($scope, Register,UserService
 //        alert($scope.registerData.firstname + ' ' + $scope.registerData.lastname + ' ' + $scope.registerData.email + ' ' + $scope.registerData.username + ' ' + $scope.registerData.password);
         Register.save($scope.registerData, function (data, headers) {
             $cookieStore.put('accessToken',data.value);
-            $scope.go('/spacecrack/game');
+            $scope.go('/spacecrack/home');
             $scope.hasRegistrationFailed = false;
         }, function (data, headers) {
             $scope.hasRegistrationFailed = true;
