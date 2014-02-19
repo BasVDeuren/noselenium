@@ -3,7 +3,7 @@
  */
 function GameController($scope, $translate, Map, Game, Action) {
     var game = new Phaser.Game(600, 500, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render});
-
+    var commandpointsText;
     /*$scope.map = {
      planets: [{x:"",y:""}]
      };*/
@@ -131,6 +131,7 @@ function GameController($scope, $translate, Map, Game, Action) {
             }
             Game.save(function (data) {
                 //  "$.player1.colonies[0].planet.name"
+                commandpointsText = game.add.text(game.camera.x + 5, game.camera.y + 5, "Commandpoints: " + data.player1.commandPoints, { font: '50xp', fill: '#FF0000', backgroundColor: '#000000' }, sprites);
 
                 $scope.game.player1ships = data.player1.ships;
                 $scope.game.player1colonies = data.player1.colonies;
