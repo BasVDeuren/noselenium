@@ -23,7 +23,7 @@ public class SeleniumLoginTests extends SeleniumBaseTestCase {
         driver.get(baseUrl);
         WebElement uname = driver.findElement(By.name("uname"));
         WebElement password = driver.findElement(By.name("password"));
-        uname.sendKeys("test");
+        uname.sendKeys("test@gmail.com ");
         password.sendKeys("test");
         WebElement loginbutton = driver.findElement(By.name("login"));
         loginbutton.click();

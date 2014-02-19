@@ -1,8 +1,9 @@
 /**
  * Created by Dimi on 3/02/14.
  */
-function GameController($scope, $translate, Map, Game, Action) {
-    var game = new Phaser.Game(600, 500, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render});
+var spaceApp = angular.module('spaceApp');
+spaceApp.controller("GameController", function($scope, $translate, Map, Game, Action) {
+    var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, create: $scope.create, update: update, render: render});
     var commandpointsText;
     /*$scope.map = {
      planets: [{x:"",y:""}]
@@ -51,6 +52,8 @@ function GameController($scope, $translate, Map, Game, Action) {
     // actionType, ship, destinationPlanet
     $scope.action = { actionType: "", ship: {shipId: "", planetName: ""}, destinationPlanet: "" };
     function preload() {
+        game.load.spritesheet('button', 'assets/buttons/button_sprite_sheet.png', 193, 71);
+
         game.load.image('bg', 'assets/SpaceCrackBackground.jpg');
         game.load.image('planet1', 'assets/planet1_small.png');
         game.load.image('planet2', 'assets/planet2.png');
@@ -70,12 +73,15 @@ function GameController($scope, $translate, Map, Game, Action) {
     var sprites;
 
 
+    function btnEndTurnClick() {
+        alert('bonzai!!')
+    }
 
-    function create() {
+    $scope.create = function() {
         // A simple background for our game
         var backgroundsprite = game.add.sprite(0, 0, 'bg');
         backgroundsprite.inputEnabled = true;
-
+        var button = game.add.button(game.world.centerX, 400,'button', btnEndTurnClick,this, 2,1,0);
 
         backgroundsprite.events.onInputDown.add(backgroundlistener, this);
         var bgImg = game.cache.getImage('bg');
@@ -192,7 +198,8 @@ function GameController($scope, $translate, Map, Game, Action) {
 //        spaceship.inputEnabled = true;
 //        //spaceship.events.onInputDown.add(spaceshipListener, this);*/
 
-    }
+    };
+    $scope.create();
 
     function update() {
         if (cursors.up.isDown) {
@@ -296,4 +303,4 @@ function GameController($scope, $translate, Map, Game, Action) {
     }
 
 
-}
+});

@@ -17,11 +17,15 @@ module.exports = function (config) {
             'lib/angular/angular.js',
             'lib/angular/angular-*.js',
             'js/vendor/angular-translate-min.js',
+            'js/vendor/phaser.min.js',
+            'js/vendor/jquery-1.10.1.min.js',
+            'js/vendor/bootstrap.min.js',
             'js/vendor/angular-translate-loader-static-files.min.js',
             'test/lib/angular/angular-mocks.js',
             'js/*.js',
             'js/controllers/*js',
-            'test/unit/*.js'
+            'test/unit/*.js',
+
         ],
 
 

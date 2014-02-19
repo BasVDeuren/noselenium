@@ -31,7 +31,7 @@ public class Player {
     @OneToMany
     private List<Ship> ships;
 
-    @Column
+    @Column(name="commandPoints")
     private int commandPoints;
 
     public int getCommandPoints() {
@@ -90,4 +90,6 @@ public class Player {
         }
         return ships;
     }
+
+
 }

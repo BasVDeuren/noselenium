@@ -6,13 +6,18 @@ package be.kdg.spacecrack.seleniumtests;/* Git $Id
  *
  */
 
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.junit.After;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class SeleniumRegisterTest extends SeleniumBaseTestCase{
+
+public class SeleniumRegisterTest extends SeleniumBaseTestCase {
     @Test
     public void RegisterUser() throws Exception {
         driver.get(baseUrl);
@@ -29,10 +34,33 @@ public class SeleniumRegisterTest extends SeleniumBaseTestCase{
         txtPasswordRepeated.sendKeys("passwordSeleniumTest");
 
         btnRegister.click();
-        WebDriverWait wait = new WebDriverWait(driver,10);
+        WebDriverWait wait = new WebDriverWait(driver, 10);
 
-        WebElement btnNewGame =  driver.findElement(By.name("newgame"));
+        WebElement btnNewGame = driver.findElement(By.name("newgame"));
 
         wait.until(ExpectedConditions.visibilityOf(btnNewGame));
+    }
+
+
+    @After
+    public void tearDown2() throws Exception {
+        Session session = SeleniumHibernateUtil.getSessionFactory().getCurrentSession();
+        try {
+            Transaction tx = session.beginTransaction();
+
+            try {
+                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User u where u.email = :email");
+                q.setParameter("email", "emailSeleniumTest@email.be");
+                q.executeUpdate();
+                tx.commit();
+            } catch (RuntimeException e) {
+                tx.rollback();
+                throw e;
+            }
+        } finally {
+            SeleniumHibernateUtil.close(session);
+        }
+
+
     }
 }

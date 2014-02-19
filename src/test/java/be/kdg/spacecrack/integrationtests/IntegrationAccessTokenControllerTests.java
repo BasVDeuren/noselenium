@@ -51,11 +51,22 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
 
         objectMapper = new ObjectMapper();
 
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        Transaction tx = session.beginTransaction();
-        testUser = new User("testUsername", "testPassword", "testEmail");
-        session.saveOrUpdate(testUser);
-        tx.commit();
+        Session session= HibernateUtil.getSessionFactory().getCurrentSession();
+        try {
+
+            Transaction tx = null;
+            try {
+                tx = session.beginTransaction();
+                testUser = new User("testUsername", "testPassword", "testEmail@gmail.com");
+                session.saveOrUpdate(testUser);
+                tx.commit();
+            } catch (Exception e) {
+                tx.rollback();
+                throw new RuntimeException(e);
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
 
     }
 
@@ -85,9 +96,11 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
     public void login_SameValidUserTwice_SameToken() throws Exception {
         MockHttpServletRequestBuilder requestBuilder = post("/accesstokens");
 
-        MvcResult firstResult = mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON).content("{\"username\":\"testUsername\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON))
+        MvcResult firstResult = mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON).content("{\"email\":\"testEmail@gmail.com\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andReturn();
-        MvcResult secondResult = mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON).content("{\"username\":\"testUsername\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON))
+        MvcResult secondResult = mockMvc.perform(requestBuilder.contentType(MediaType.APPLICATION_JSON).content("{\"email\":\"testEmail@gmail.com\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andReturn();
 
         String expected = objectMapper.readValue(firstResult.getResponse().getContentAsString(), AccessToken.class).getValue();
@@ -140,11 +153,23 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
 
     @After
     public void tearDown() throws Exception {
+
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        Transaction tx = session.beginTransaction();
-        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User");
-        q.executeUpdate();
-        tx.commit();
-        HibernateUtil.close(session);
+
+        try {
+            Transaction   tx = session.beginTransaction();
+            try {
+
+                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User");
+                q.executeUpdate();
+                tx.commit();
+            } catch (RuntimeException e) {
+                tx.rollback();
+                throw e;
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
+
     }
 }

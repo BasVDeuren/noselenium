@@ -3,6 +3,7 @@ package be.kdg.spacecrack.unittests;
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.repositories.ProfileRepository;
 import be.kdg.spacecrack.utilities.HibernateUtil;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -28,13 +29,23 @@ public class ProfileRepositoryTest {
         ProfileRepository contactRepository = new ProfileRepository();
         contactRepository.createProfile(profile);
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        Transaction tx = session.beginTransaction();
+        Profile actual;
+        try {
+            Transaction tx = session.beginTransaction();
 
-        @SuppressWarnings("JpaQlInspection")Query q = session.createQuery("FROM Profile p WHERE p = :profile");
-        q.setParameter("profile", profile);
+            try {
+                @SuppressWarnings("JpaQlInspection")Query q = session.createQuery("FROM Profile p WHERE p = :profile");
+                q.setParameter("profile", profile);
 
-        Profile actual = (Profile) q.uniqueResult();
-        tx.commit();
+                actual = (Profile) q.uniqueResult();
+                tx.commit();
+            } catch (RuntimeException e) {
+                tx.rollback();
+                throw e;
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
         assertEquals("Should be in the db", profile.getProfileId(), actual.getProfileId());
     }
 }
