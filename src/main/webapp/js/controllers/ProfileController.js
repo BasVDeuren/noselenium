@@ -3,7 +3,7 @@
  */
 var spaceApp = angular.module('spaceApp');
 
-spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile,Contact) {
+spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile, Contact, Spinner) {
 
     /**Password**/
 
@@ -22,17 +22,19 @@ spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile
         $scope.editUserData.username = data.username;
         $scope.editUserData.email = data.email;
     }, function (data, headers) {
-
     });
 
 
     $scope.hasRegistrationFailed = false;
     $scope.editUser = function () {
-        Profile.save($scope.editUserData,function () {
+        Spinner.spinner.spin(Spinner.target);
+        Profile.save($scope.editUserData, function () {
+            Spinner.spinner.stop();
             console.log("post api/auth/user succeed");
             $scope.isSaveDone = true;
             $scope.isSaveSuccess = true;
         }, function (data, headers) {
+            Spinner.spinner.stop();
             console.log("post api/auth/user failed");
             $scope.isSaveDone = true;
             $scope.isSaveSuccess = false;
@@ -52,26 +54,26 @@ spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile
         }
     };
 
-    $scope.showErrorMsg = function(){
+    $scope.showErrorMsg = function () {
 
         return ($scope.isSaveDone && !$scope.isSaveSuccess);
     };
-    $scope.showSuccesMsg = function(){
+    $scope.showSuccesMsg = function () {
         return ($scope.isSaveDone && $scope.isSaveSuccess);
     };
 
 //--------------------------------------------------------------------------------------------------
     /**CONTACT**/
         //Image Upload
-    function convertImgToBase64(url, callback, outputFormat){
+    function convertImgToBase64(url, callback, outputFormat) {
         var canvas = document.createElement('CANVAS');
         var ctx = canvas.getContext('2d');
         var img = new Image;
         img.crossOrigin = 'Anonymous';
-        img.onload = function(){
+        img.onload = function () {
             canvas.height = img.height;
             canvas.width = img.width;
-            ctx.drawImage(img,0,0);
+            ctx.drawImage(img, 0, 0);
             var dataURL = canvas.toDataURL(outputFormat || 'image/png');
             callback.call(this, dataURL);
             // Clean up
@@ -85,64 +87,68 @@ spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile
         lastname: "",
         dayOfBirth: "",
         image: "",
-        email:""
+        email: ""
+    };
+    $scope.convertedDate = {
+        value: ""
     };
 
+    $scope.isContactSaveSuccess = false;
+    $scope.isContactSaveDone = false;
+    $scope.showContactErrorMsg = function () {
+        return ($scope.isContactSaveDone && !$scope.isContactSaveSuccess);
+    };
+    $scope.showContactSuccesMsg = function () {
+        return ($scope.isContactSaveDone && $scope.isContactSaveSuccess);
+    };
+
+    Spinner.spinner.spin(Spinner.target);
     Contact.get(function (data) {
+        Spinner.spinner.stop();
         $scope.contactData.firstname = data.firstname;
         $scope.contactData.lastname = data.lastname;
+        $scope.convertedDate.value = new Date(data.dayOfBirth);
+        $scope.contactData.image = data.image;
     }, function () {
-
-
+        Spinner.spinner.stop();
     });
 
     $scope.editContact = function () {
-//        if($scope.contactData.gender == "true"){
-//            $scope.contactData.gender = true;
-//        }else{
-//            $scope.contactData.gender = false;
-//        }
-        //$scope.contactData.dateOfBirth = $scope.contactData.dateOfBirth.toLocaleDateString();
-        $scope.contactData.dayOfBirth = '1-2-2001';
+        Spinner.spinner.spin(Spinner.target);
+        $scope.contactData.dayOfBirth = $scope.convertedDate.value.toLocaleDateString();
         Contact.save($scope.contactData, function () {
-
+            Spinner.spinner.stop();
+            $scope.isContactSaveDone = true;
+            $scope.isContactSaveSuccess = true;
         }, function () {
-
-
+            Spinner.spinner.stop();
+            $scope.isContactSaveDone = true;
+            $scope.isContactSaveSuccess = false;
         })
     };
 
 
-
-
-
-    //DatePicker
-    $scope.today = function() {
+    $scope.today = function () {
         $scope.dt = new Date();
     };
     $scope.today();
 
     $scope.showWeeks = true;
     $scope.toggleWeeks = function () {
-        $scope.showWeeks = ! $scope.showWeeks;
+        $scope.showWeeks = !$scope.showWeeks;
     };
 
     $scope.clear = function () {
         $scope.dt = null;
     };
 
-//    // Disable weekend selection
-//    $scope.disabled = function(date, mode) {
-//        //return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
-//        return false;
-//    };
 
-    $scope.toggleMin = function() {
+    $scope.toggleMin = function () {
         $scope.minDate = ( $scope.minDate ) ? null : new Date();
     };
     $scope.toggleMin();
 
-    $scope.open = function($event) {
+    $scope.open = function ($event) {
         $event.preventDefault();
         $event.stopPropagation();
 

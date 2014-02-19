@@ -43,7 +43,7 @@ public class ProfileController {
     @ResponseBody
     public void updateProfile(@RequestBody ProfileWrapper profileWrapper, @CookieValue("accessToken") String accessTokenValue) throws Exception {
         User user = tokenService.getUserByAccessTokenValue(accessTokenValue);
-        Date date = new SimpleDateFormat("dd-mm-yyyy").parse(profileWrapper.getDayOfBirth());
+        Date date = new SimpleDateFormat("dd-MM-yyyy").parse(profileWrapper.getDayOfBirth());
 
         Profile profile = contactService.getProfileByUser(user);
         profile.setFirstname(profileWrapper.getFirstname());
