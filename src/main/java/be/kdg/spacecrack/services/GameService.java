@@ -110,5 +110,10 @@ public class GameService implements IGameService {
         return shipDb.getPlanet();
     }
 
+    @Override
+    public void endTurn(Player player) {
+
+    }
+
 
 }

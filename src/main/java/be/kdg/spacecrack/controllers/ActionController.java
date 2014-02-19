@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/auth/action")
 public class ActionController {
     public static final String MOVESHIP = "MOVESHIP";
+    public static final String ENDTURN = "ENDTURN";
 
     @Autowired
     IGameService gameService;
@@ -35,6 +36,8 @@ public class ActionController {
     public void executeAction(@RequestBody Action action){
         if(action.getActionType().equals(MOVESHIP)){
             gameService.moveShip(action.getShip(), action.getDestinationPlanet());
+        }else if(action.getActionType().equals(ENDTURN)){
+            gameService.endTurn(action.getShip().getPlayer());
         }
     }
 }
