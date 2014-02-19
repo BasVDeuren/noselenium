@@ -10,4 +10,6 @@ import be.kdg.spacecrack.model.Colony;
 
 public interface IColonyRepository {
     void createColony(Colony colony);
+
+    void updateColony(Colony colony);
 }

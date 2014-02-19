@@ -22,7 +22,7 @@ import java.util.Date;
 @RequestMapping("/auth/profile")
 public class ProfileController {
     @Autowired
-    ProfileService contactService;
+    ProfileService profileService;
     @Autowired
     IUserService userService;
     @Autowired
@@ -32,8 +32,8 @@ public class ProfileController {
 
     }
 
-    public ProfileController(ProfileService contactService, UserService userService, TokenRepository tokenRepository, IAuthorizationService tokenService){
-        this.contactService = contactService;
+    public ProfileController(ProfileService profileService, UserService userService, TokenRepository tokenRepository, IAuthorizationService tokenService){
+        this.profileService = profileService;
         this.userService = userService;
         this.tokenService = tokenService;
     }
@@ -46,7 +46,7 @@ public class ProfileController {
         Date date = new SimpleDateFormat("dd-mm-yyyy").parse(profileWrapper.getDayOfBirth());
         Profile profile = new Profile(profileWrapper.getFirstname(), profileWrapper.getLastname(), profileWrapper.getEmail(), date, profileWrapper.getImage());
 
-        contactService.createProfile(profile, user);
+        profileService.createProfile(profile, user);
     }
 
 }

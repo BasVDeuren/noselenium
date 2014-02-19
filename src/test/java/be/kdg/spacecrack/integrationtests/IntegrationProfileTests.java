@@ -45,7 +45,7 @@ public class IntegrationProfileTests extends BaseFilteredIntegrationTests{
     }
 
     @Test
-    public void testPostAddProfile_ValidContact_StatusOk() throws Exception {
+    public void testPostAddProfile_ValidProfile_StatusOk() throws Exception {
 
         ObjectMapper objectMapper = new ObjectMapper();
 

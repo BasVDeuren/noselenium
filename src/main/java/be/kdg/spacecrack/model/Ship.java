@@ -19,6 +19,7 @@ public class Ship {
 
     @ManyToOne
     @JoinColumn(name="playerId")
+    @JsonIgnore
     private Player player;
 
     @ManyToOne

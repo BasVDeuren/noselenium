@@ -33,4 +33,22 @@ public class ColonyRepository implements IColonyRepository {
             HibernateUtil.close(session);
         }
     }
+
+    @Override
+    public void updateColony(Colony colony) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        try {
+            Transaction tx = null;
+            try {
+                tx = session.beginTransaction();
+                session.saveOrUpdate(colony);
+                tx.commit();
+            } catch (RuntimeException e) {
+                tx.rollback();
+                throw e;
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
+    }
 }

@@ -1,5 +1,8 @@
 package be.kdg.spacecrack.model;
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +25,7 @@ public class Player {
     @JoinColumn(name = "profileId")
     private Profile profile;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany
     private List<Colony> colonies;
     @OneToMany
@@ -69,7 +73,10 @@ public class Player {
     }
 
     public List<Ship> getShips() {
-        if(ships == null){ships = new ArrayList<Ship>();}
+        if(ships == null)
+        {
+            ships = new ArrayList<Ship>();
+        }
         return ships;
     }
 }
