@@ -75,6 +75,9 @@ public class GameService implements IGameService {
     @Override
     public void moveShip(Ship ship, String planetName) {
         Ship shipDb = shipRepository.getShipByShipId(ship.getShipId());
+        if(shipDb.getPlayer().getCommandPoints() < 1){
+            throw new SpaceCrackNotAcceptableException("Insufficient command points");
+        }
         Planet sourcePlanet = shipDb.getPlanet();
         boolean connected = false;
         Set<PlanetConnection> planetConnections = sourcePlanet.getPlanetConnections();
@@ -93,6 +96,7 @@ public class GameService implements IGameService {
             Colony colony = new Colony(destinationPlanet);
             colonyRepository.createColony(colony);
             player.getColonies().add(colony);
+            player.setCommandPoints(player.getCommandPoints() - 1);
             playerRepository.updatePlayer(player);
             shipRepository.updateShip(shipDb);
         }else{

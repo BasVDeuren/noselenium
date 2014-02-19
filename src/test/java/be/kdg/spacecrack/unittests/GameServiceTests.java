@@ -104,15 +104,15 @@ public class GameServiceTests {
         assertEquals("The second colony the player should have is on planet b.", "b", colonies.get(1).getPlanetName());
     }
 
-    /*@Test(expected = SpaceCrackNotAcceptableException.class, timeout = 20000)
+    @Test(expected = SpaceCrackNotAcceptableException.class, timeout = 20000)
     public void MoveShipWithNoCommandPoints_SpaceCrackNotAcceptableException() throws Exception {
         Game game = creategame();
 
         Ship ship = game.getPlayer1().getShips().get(0);
 
         while(true){
-        gameService.moveShip(ship, "b");
-        gameService.moveShip(ship, "c");
+            gameService.moveShip(ship, "b");
+            gameService.moveShip(ship, "c");
         }
-    }*/
+    }
 }

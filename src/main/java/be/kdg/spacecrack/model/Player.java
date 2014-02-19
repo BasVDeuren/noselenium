@@ -31,12 +31,23 @@ public class Player {
     @OneToMany
     private List<Ship> ships;
 
+    @Column
+    private int commandPoints;
+
+    public int getCommandPoints() {
+        return commandPoints;
+    }
+
+    public void setCommandPoints(int commandPoints) {
+        this.commandPoints = commandPoints;
+    }
+
     public Player() {
     }
 
     public Player(Profile profile) {
         this.profile = profile;
-
+        this.commandPoints = 5;
     }
 
     public int getPlayerId() {
