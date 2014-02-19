@@ -29,5 +29,6 @@
     "SAVE":"Opslaan" ,
     "INVALID_EMAIL": "Ongeldige email",
     "MALE":"Man",
-    "FEMALE":"Vrouw"
+    "FEMALE":"Vrouw",
+    "CHOOSE_USERNAME": "Keuze gebruikersnaam"
 }

@@ -46,7 +46,7 @@ public class IntegrationTokenFilterTests extends BaseFilteredIntegrationTests {
 
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
-        testUser = new User("testUsername", "testPassword");
+        testUser = new User("testUsername", "testPassword", "testEmail");
         session.saveOrUpdate(testUser);
         tx.commit();
 

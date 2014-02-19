@@ -9,10 +9,9 @@
         <property name="connection.username">root</property>
         <property name="connection.password"/>
 <!-- moet aanstaan om tables automatisch te genereren, uitzetten eenmaal tables gegenereerd zijn -->
-        <property name="hbm2ddl.auto">create</property>
+        <!--<property name="hbm2ddl.auto">create</property>-->
 
         <property name="dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>
-
 
         <!-- Enable Hibernate's automatic session context management -->
         <property name="current_session_context_class">thread</property>

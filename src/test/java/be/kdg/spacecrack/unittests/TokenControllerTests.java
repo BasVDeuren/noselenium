@@ -44,7 +44,7 @@ public class TokenControllerTests{
 
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
-        testUser = new User("testUsername2", "testPassword2");
+        testUser = new User("testUsername2", "testPassword2", "testEmail2");
         session.saveOrUpdate(testUser);
         tx.commit();
     }
@@ -54,7 +54,8 @@ public class TokenControllerTests{
 
         String name = "badUser";
         String pw = "badPw";
-        User user = new User(name, pw);
+        String email = "badEmail";
+        User user = new User(name, pw, email);
         tokenController.login(user);
 
     }
@@ -66,9 +67,10 @@ public class TokenControllerTests{
         TokenRepository tokenRepository = new TokenRepository();
         UserRepository userRepository = new UserRepository();
         TokenController tokenControllerWithMockedGenerator = new TokenController(new AuthorizationService(tokenRepository, userRepository, mockTokenGenerator));
+        String email = "testEmail2";
         String name ="testUsername2";
         String pw = "testPassword2";
-        User user = new User(name, pw);
+        User user = new User(name, pw, email);
         String expectedTokenValue = "testtokenvalue1234";
         Mockito.stub(mockTokenGenerator.generateTokenString()).toReturn(expectedTokenValue);
         AccessToken token = tokenControllerWithMockedGenerator.login(user);
@@ -80,7 +82,7 @@ public class TokenControllerTests{
     @Test(expected = SpaceCrackUnexpectedException.class)
     public void testgetUser() throws Exception {
         IUserRepository userRepository = Mockito.mock(IUserRepository.class);
-        User user = new User("testUsername2", "testPassword2");
+        User user = new User("testUsername2", "testPassword2", "testEmail2");
         Mockito.stub(userRepository.getUser(user)).toThrow(new SpaceCrackUnexpectedException("UnexpectedException"));
         TokenRepository tokenRepository = new TokenRepository();
         TokenController tokenController1 = new TokenController(new AuthorizationService(tokenRepository, userRepository, fixedSeedGenerator));

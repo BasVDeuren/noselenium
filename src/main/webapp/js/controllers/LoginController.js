@@ -3,7 +3,7 @@
  */
 function LoginController($scope,Login,Register,UserService,$cookieStore) {
     $scope.loginData = {
-        username: "",
+        email: "",
         password: ""
     };
     $scope.hasLoginFailed = false;
@@ -23,7 +23,7 @@ function LoginController($scope,Login,Register,UserService,$cookieStore) {
     };
 
     $scope.validateLogin = function(){
-        return !($scope.loginData.username != '' && $scope.loginData.password != '');
+        return !($scope.loginData.email != '' && $scope.loginData.password != '');
     };
 
     $scope.fbLogin = function() {
@@ -34,7 +34,7 @@ function LoginController($scope,Login,Register,UserService,$cookieStore) {
                 FB.api('/me', function(response) {
                     console.log(response);
                     user = {
-                        username: response.name,
+                        email: response.email,
                         password: 'facebook' + response.id
                     };
 
@@ -43,20 +43,7 @@ function LoginController($scope,Login,Register,UserService,$cookieStore) {
                         $scope.go('/spacecrack/home');
                         $scope.hasLoginFailed = false;
                     }, function(data,headers) {
-                        var user = {
-                                email: response.email,
-                                username: response.name,
-                                password: 'facebook' + response.id,
-                                passwordRepeated: 'facebook' + response.id
-                            };
-
-                            Register.save(user, function (data, headers) {
-                                $cookieStore.put('accessToken',data.value);
-                                $scope.go('/spacecrack/home');
-                                $scope.alreadyRegistered = false;
-                            }, function (data, headers) {
-                                $scope.alreadyRegistered = true;
-                            });
+                        $scope.registerFB(response);
                     });
                 });
 
@@ -64,7 +51,22 @@ function LoginController($scope,Login,Register,UserService,$cookieStore) {
                 console.log('User cancelled login or did not fully authorize.');
             }
         }, {scope: 'email'});
-    }
+    };
 
+    $scope.registerFB = function(response) {
+        var user = {
+            email: response.email,
+            username: response.name,
+            password: 'facebook' + response.id,
+            passwordRepeated: 'facebook' + response.id
+        };
 
+        Register.save(user, function (data, headers) {
+            $cookieStore.put('accessToken',data.value);
+            $scope.go('/spacecrack/home');
+            $scope.alreadyRegistered = false;
+        }, function (data, headers) {
+            $scope.alreadyRegistered = true;
+        });
+    };
 }

@@ -55,7 +55,7 @@ public abstract class BaseFilteredIntegrationTests {
     protected String login() throws Exception {
 
 
-      User testUser = new User("test","test");
+      User testUser = new User("test","test", "test@gmail.com");
         String userjson =  objectMapper.writeValueAsString(testUser);
 
         MockHttpServletRequestBuilder requestBuilder = post("/accesstokens");

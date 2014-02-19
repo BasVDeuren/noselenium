@@ -29,8 +29,8 @@ public class UserRepository implements IUserRepository {
         try {
             Transaction tx = session.beginTransaction();
             try {
-                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from User u where u.username = :username and u.password = :password");
-                q.setParameter("username", user.getUsername());
+                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from User u where u.email = :email and u.password = :password");
+                q.setParameter("email", user.getEmail());
                 q.setParameter("password", user.getPassword());
                 dbUser = (User) q.uniqueResult();
 

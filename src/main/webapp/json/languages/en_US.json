@@ -29,5 +29,6 @@
     "SAVE":"Save" ,
     "INVALID_EMAIL": "Invalid email",
     "MALE":"Male",
-    "FEMALE":"Female"
+    "FEMALE":"Female",
+    "CHOOSE_USERNAME": "Choose username"
 }

@@ -61,11 +61,11 @@ public class AuthorizationService implements IAuthorizationService {
         try {
             Transaction tx = session.beginTransaction();
             try {
-                @SuppressWarnings("JpaQlInspection") Query query = session.createQuery("from User u where u.username = :testusername");
-                query.setParameter("testusername", "test");
+                @SuppressWarnings("JpaQlInspection") Query query = session.createQuery("from User u where u.email = :testemail");
+                query.setParameter("testemail", "test@gmail.com");
                 if (query.list().size() < 1) {
 
-                    User user = new User("test", "test");
+                    User user = new User("test", "test", "test@gmail.com");
                     Profile profile = new Profile();
                     session.saveOrUpdate(profile);
                     user.setProfile(profile);

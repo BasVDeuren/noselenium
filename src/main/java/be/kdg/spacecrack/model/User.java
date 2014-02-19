@@ -26,7 +26,7 @@ public class User implements Serializable {
     @Column
     private String password;
 
-    @Column
+    @Column(unique = true)
     private String email;
 
     //@OneToOne(mappedBy = "user")
