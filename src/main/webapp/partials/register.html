@@ -4,8 +4,8 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <ul id="myTab" class="nav nav-tabs">
-                        <li><a href="#/">{{'LOGIN' | translate}}</a></li>
-                        <li class="active"><a href="#/spacecrack/register"> {{'REGISTER' | translate}}</a></li>
+                        <li><a href="#/"><i class="fa fa-sign-in"></i> {{'LOGIN' | translate}}</a></li>
+                        <li class="active"><a href="#/spacecrack/register"><i class="fa fa-pencil"></i> {{'REGISTER' | translate}}</a></li>
                     </ul>
                 </div>
                 <div class="panel-body">
@@ -60,8 +60,8 @@
                         <div class="form-group">
 
                             <div class="col-sm-offset-3 col-sm-2">
-                                <button type="submit" name="btnRegister" class="btn btn-default" ng-disabled="validateRegister() || registerForm.email.$error.email">{{'REGISTER' |
-                                    translate}}
+                                <button type="submit" name="btnRegister" class="btn btn-default" ng-disabled="validateRegister() || registerForm.email.$error.email">
+                                    <i class="fa fa-pencil"></i> {{'REGISTER' | translate}}
                                 </button>
                             </div>
 

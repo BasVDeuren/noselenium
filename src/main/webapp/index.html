@@ -14,7 +14,7 @@
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/bootstrap.css">
         <link rel="stylesheet" href="css/bootstrap-custom.css">
-        <!--<link rel="stylesheet" href="css/bootstrap-theme.min.css">-->
+        <link rel="stylesheet" href="css/font-awesome.min.css">
         <link rel="stylesheet" href="css/main.css">
 
         <!--Fonts-->
@@ -84,11 +84,11 @@
                   <button name="dutch" class="btn btn-default" ng-click="changeLanguage('nl_NL')">NL</button>
                   <div class="btn-group" ng-show="isUserLoggedIn()">
                       <button type="button" name="btnAction" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                          Action <span class="caret"></span>
+                          <i class="fa fa-cog"></i> Settings <span class="caret"></span>
                       </button>
                       <ul class="dropdown-menu" role="menu">
-                          <li ><a name="lnkEditProfile" href="#/spacecrack/editProfile">{{'EDIT_PROFILE' | translate}}</a></li>
-                          <li name="btnLogout" ng-click="logout()"><a href="#">Logout</a></li>
+                          <li ><a name="lnkEditProfile" href="#/spacecrack/editProfile"><i class="fa fa-user fa-fw"></i> {{'EDIT_PROFILE' | translate}}</a></li>
+                          <li name="btnLogout" ng-click="logout()"><a href="#"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li>
                       </ul>
                   </div>
               </div>
@@ -107,7 +107,7 @@
         <hr>
 
       <footer>
-        <p>&copy; Company 2013</p>
+        <p>&copy;2014 - Created by Team G - All Rights Reserved.</p>
       </footer>
     </div> <!-- /container -->
 

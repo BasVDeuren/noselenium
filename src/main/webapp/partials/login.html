@@ -5,8 +5,8 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <ul id="myTab" class="nav nav-tabs">
-                        <li class="active" ><a href="/">{{'LOGIN' | translate}}</a></li>
-                        <li><a name="lnkRegister" href="#/spacecrack/register"> {{'REGISTER' | translate}}</a></li>
+                        <li class="active" ><a href="/"><i class="fa fa-sign-in"></i> {{'LOGIN' | translate}}</a></li>
+                        <li><a name="lnkRegister" href="#/spacecrack/register"><i class="fa fa-pencil "></i> {{'REGISTER' | translate}}</a></li>
                     </ul>
                 </div>
                 <div class="panel-body">
@@ -54,12 +54,12 @@
 
                         <div class="row">
                             <div class="col-sm-offset-3 col-sm-2">
-                                <button type="submit" class="btn btn-default" name="login" ng-disabled="validateLogin()">{{'LOGIN' |
+                                <button type="submit" class="btn btn-default" name="login" ng-disabled="validateLogin()"><i class="fa fa-sign-in"></i> {{'LOGIN' |
                                     translate}}
                                 </button>
                             </div>
                             <span class="col-sm-2">
-                                <button type="button" class="btn btn-default" ng-click="fbLogin()">Facebook</button>
+                                <button type="button" class="btn btn-default" ng-click="fbLogin()"><i class="fa fa-facebook-square"></i> Facebook</button>
                                 <!--<fb:login-button show-faces="true" width="200" max-rows="1"></fb:login-button>-->
                             </span>
                         </div>
