@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 public class SeleniumLogOutTests extends SeleniumBaseTestCase {
 
     @Test
-    public void LogOutOK(){
+    public void LogOutOK() throws InterruptedException {
         login();
 
         WebElement btnAction = driver.findElement(By.name("btnAction"));
@@ -25,6 +25,8 @@ public class SeleniumLogOutTests extends SeleniumBaseTestCase {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("login")));
 
         assertEquals("http://localhost:8080/#/", driver.getCurrentUrl());
+
+        Thread.sleep(2000);
         assertEquals(false, btnAction.isDisplayed());
 
     }

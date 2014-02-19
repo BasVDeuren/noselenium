@@ -1,12 +1,13 @@
 /**
  * Created by Atheesan on 4/02/14.
  */
-function LoginController($scope,Login,UserService,$cookieStore) {
+function LoginController($scope,Login,Register,UserService,$cookieStore) {
     $scope.loginData = {
         username: "",
         password: ""
     };
     $scope.hasLoginFailed = false;
+    $scope.alreadyRegistered = false;
     $scope.login = function () {
          Login.save($scope.loginData, function(data,headers) {
              $cookieStore.put('accessToken',data.value);
@@ -42,7 +43,20 @@ function LoginController($scope,Login,UserService,$cookieStore) {
                         $scope.go('/spacecrack/home');
                         $scope.hasLoginFailed = false;
                     }, function(data,headers) {
-                        $scope.hasLoginFailed = true;
+                        var user = {
+                                email: response.email,
+                                username: response.name,
+                                password: 'facebook' + response.id,
+                                passwordRepeated: 'facebook' + response.id
+                            };
+
+                            Register.save(user, function (data, headers) {
+                                $cookieStore.put('accessToken',data.value);
+                                $scope.go('/spacecrack/home');
+                                $scope.alreadyRegistered = false;
+                            }, function (data, headers) {
+                                $scope.alreadyRegistered = true;
+                            });
                     });
                 });
 
