@@ -36,30 +36,30 @@ spaceApp.controller("RegisterController", function ($scope, Register,UserService
     };
 
 
-    $scope.fbRegister = function() {
-        FB.login(function(response) {
-            if (response.authResponse) {
-                var user;
-                FB.api('/me', function(response) {
-                    user = {
-                        email: response.email,
-                        username: response.name,
-                        password: 'facebook' + response.id,
-                        passwordRepeated: 'facebook' + response.id
-                    };
-
-                    Register.save(user, function (data, headers) {
-                        $cookieStore.put('accessToken',data.value);
-                        $scope.go('/spacecrack/game');
-                        $scope.hasRegistrationFailed = false;
-                    }, function (data, headers) {
-                        $scope.hasRegistrationFailed = true;
-                    });
-                });
-
-            } else {
-                console.log('User cancelled login or did not fully authorize.');
-            }
-        }, {scope: 'email'});
-    }
+//    $scope.fbRegister = function() {
+//        FB.login(function(response) {
+//            if (response.authResponse) {
+//                var user;
+//                FB.api('/me', function(response) {
+//                    user = {
+//                        email: response.email,
+//                        username: response.name,
+//                        password: 'facebook' + response.id,
+//                        passwordRepeated: 'facebook' + response.id
+//                    };
+//
+//                    Register.save(user, function (data, headers) {
+//                        $cookieStore.put('accessToken',data.value);
+//                        $scope.go('/spacecrack/home');
+//                        $scope.hasRegistrationFailed = false;
+//                    }, function (data, headers) {
+//                        $scope.hasRegistrationFailed = true;
+//                    });
+//                });
+//
+//            } else {
+//                console.log('User cancelled login or did not fully authorize.');
+//            }
+//        }, {scope: 'email'});
+//    }
 });

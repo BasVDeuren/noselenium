@@ -15,6 +15,7 @@
     "PROFILE":"Profiel",
     "REPEAT_PASSWORD":"Herhaal Wachtwoord",
     "REQUIRED":"Verplicht",
+    "ERR_ALREADY_REGISTERED":"Email al geregistreerd",
     "ERR_PASSWORD_MISMATCH":"Wachtwoorden komen niet overeen",
     "ERR_LOGIN_FAILED":"Aanmelden mislukt",
     "ERR_REGISTRATION_FAILED":"Registratie mislukt",
