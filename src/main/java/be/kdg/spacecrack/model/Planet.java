@@ -4,10 +4,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /* Git $Id$
  *
@@ -105,4 +102,28 @@ public class Planet {
         return name;
     }
 
+    public void removeConnection(PlanetConnection connection) {
+        planetConnections.remove(connection);
+    }
+
+    public void removeConnectionToPlanet(Planet planet) {
+        Iterator iterator = planetConnections.iterator();
+        while(iterator.hasNext()) {
+            PlanetConnection connection = (PlanetConnection) iterator.next();
+            if(connection.getChildPlanet() == planet) {
+                iterator.remove();
+            }
+        }
+    }
+
+    public PlanetConnection getConnectionToPlanet(Planet planet) {
+        Iterator iterator = planetConnections.iterator();
+        while(iterator.hasNext()) {
+            PlanetConnection connection = (PlanetConnection) iterator.next();
+            if(connection.getChildPlanet() == planet) {
+                return connection;
+            }
+        }
+        return null;
+    }
 }

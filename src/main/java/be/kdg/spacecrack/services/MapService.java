@@ -17,13 +17,17 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Component;
 
+import java.awt.geom.Line2D;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 @Component("mapService")
 public class MapService implements IMapService {
 
 
-    private void connectPlanetsByRadius(Planet[] planets, int radius) {
+    private void connectPlanetsByRadius(Planet[] planets, double radius) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
         for (int i = 0; i < planets.length; i++) {
@@ -54,6 +58,22 @@ public class MapService implements IMapService {
         tx.commit();
     }
 
+    private void connectPlanets(Planet p1, Planet p2) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction tx = session.beginTransaction();
+
+        PlanetConnection planetConnection = new PlanetConnection(p1, p2);
+        p1.addConnection(planetConnection);
+
+        planetConnection = new PlanetConnection(p2, p1);
+        p2.addConnection(planetConnection);
+
+        session.saveOrUpdate(p1);
+        session.saveOrUpdate(p2);
+
+        tx.commit();
+    }
+
     @Override
     public SpaceCrackMap getSpaceCrackMap() {
 
@@ -63,7 +83,6 @@ public class MapService implements IMapService {
         }
 
         SpaceCrackMap spaceCrackMap = new SpaceCrackMap(planets);
-
 
         return spaceCrackMap;
     }
@@ -225,7 +244,83 @@ public class MapService implements IMapService {
         }
 
         connectPlanetsByRadius(planets, 105 * 2);
-
+        removeCrossingConnections(planets);
+        // There is a bug in the algorithm removing a few connections to many, for now we add them manually
+        connectPlanets(d, j);
+        connectPlanets(d2, j2);
+        connectPlanets(d3, j3);
+        connectPlanets(d4, j4);
+        // We could also add certain connections manually to make the playing field more interesting
+        connectPlanets(j, p);
+        connectPlanets(j2, p2);
+        connectPlanets(j3, p3);
+        connectPlanets(j4, p4);
         return planets;
+    }
+
+    private void removeCrossingConnections(Planet[] planets) {
+        // Remove intersecting lines
+        // Optimalisation might be possible
+        /* Current algorithm:
+         * 1. Go through all the planets (starting with the first)
+         * 2. Map out all connections from that planet
+         * 3. Go through all the planets (neighbours) that are directly (first degree) connected to that planet
+         * 4. Map out all connections of every neighbour
+         * 5. Check all connections of the planet against all connections of every neighbour
+         * 6. If line segments intersect: remove connection both intersecting connections
+         * 7. Go to the next planet (back to step 1)
+         */
+
+        List<PlanetConnection> connectionsToRemove = new ArrayList<PlanetConnection>();
+        for(int i=0; i < planets.length; i++) {
+            Planet currentPlanet = planets[i];
+            Iterator<PlanetConnection> currentPlanetIterator = currentPlanet.getPlanetConnections().iterator();
+            while(currentPlanetIterator.hasNext()) {
+                PlanetConnection connectionToTest = currentPlanetIterator.next();
+                Line2D line1 = new Line2D.Float(connectionToTest.getParentPlanet().getX(), connectionToTest.getParentPlanet().getY(), connectionToTest.getChildPlanet().getX(), connectionToTest.getChildPlanet().getY());
+                Iterator<PlanetConnection> currentPlanetConnectionIterator = currentPlanet.getPlanetConnections().iterator();
+                while(currentPlanetConnectionIterator.hasNext()) {
+                    PlanetConnection currentPlanetConnection = currentPlanetConnectionIterator.next();
+                    Planet neighbour;
+                    if(currentPlanetConnection.getParentPlanet().getPlanetId() == currentPlanet.getPlanetId()) {
+                        neighbour = currentPlanetConnection.getChildPlanet();
+                    } else {
+                        neighbour = currentPlanetConnection.getParentPlanet();
+                    }
+
+                    Iterator<PlanetConnection> neighbourConnectionIterator = neighbour.getPlanetConnections().iterator();
+                    while(neighbourConnectionIterator.hasNext()) {
+                        PlanetConnection neighbourConnectionToTest = neighbourConnectionIterator.next();
+                        Line2D line2 = new Line2D.Float(neighbourConnectionToTest.getParentPlanet().getX(), neighbourConnectionToTest.getParentPlanet().getY(), neighbourConnectionToTest.getChildPlanet().getX(), neighbourConnectionToTest.getChildPlanet().getY());
+
+                        if(line1.intersectsLine(line2) && !line1.getP1().equals(line2.getP1()) && !line1.getP1().equals(line2.getP2()) && !line1.getP2().equals(line2.getP1()) && !line1.getP2().equals(line2.getP2())) {
+                            connectionsToRemove.add(connectionToTest);
+                            connectionsToRemove.add(neighbourConnectionToTest);
+                        }
+                    }
+                }
+            }
+        }
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        try {
+            Transaction tx = session.beginTransaction();
+            try {
+                for(PlanetConnection connection : connectionsToRemove) {
+                    connection.getParentPlanet().removeConnectionToPlanet(connection.getChildPlanet());
+                    connection.getChildPlanet().removeConnectionToPlanet(connection.getParentPlanet());
+
+                    session.saveOrUpdate(connection.getParentPlanet());
+                    session.saveOrUpdate(connection.getChildPlanet());
+                    //session.delete(connection); // Should be cascaded
+                }
+                tx.commit();
+            } catch (RuntimeException ex) {
+                tx.rollback();
+                throw ex;
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
     }
 }
