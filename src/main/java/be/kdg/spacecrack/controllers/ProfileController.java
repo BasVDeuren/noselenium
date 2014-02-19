@@ -55,4 +55,11 @@ public class ProfileController {
         contactService.editProfile(profile);
     }
 
+    @RequestMapping(method = RequestMethod.GET)
+    @ResponseBody
+    public Profile getProfileByAccesToken(@CookieValue("accessToken") String accessTokenValue) throws Exception {
+        User user = tokenService.getUserByAccessTokenValue(accessTokenValue);
+        return user.getProfile();
+    }
+
 }
