@@ -14,7 +14,7 @@ public interface IUserRepository {
 
     User getUser(User user);
 
-    void addUser(String username, String password, String email);
+    User addUser(String username, String password, String email);
 
     User getUserByUsername(String username) throws Exception;
 

@@ -47,12 +47,13 @@ public class UserRepository implements IUserRepository {
     }
 
     @Override
-    public void addUser(String username, String password, String email) {
+    public User addUser(String username, String password, String email) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
         User user = new User(username, password, email);
         session.saveOrUpdate(user);
         tx.commit();
+        return user;
     }
 
     @Override

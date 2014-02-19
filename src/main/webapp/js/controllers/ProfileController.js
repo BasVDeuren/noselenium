@@ -88,6 +88,14 @@ spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile
         email:""
     };
 
+    Contact.get(function (data) {
+        $scope.contactData.firstname = data.firstname;
+        $scope.contactData.lastname = data.lastname;
+    }, function () {
+
+
+    });
+
     $scope.editContact = function () {
 //        if($scope.contactData.gender == "true"){
 //            $scope.contactData.gender = true;
