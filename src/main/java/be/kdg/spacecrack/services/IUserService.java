@@ -14,7 +14,7 @@ public interface IUserService {
 
     User getUserByUsername(String username) throws Exception;
 
-    void registerUser(String username, String password, String email);
+    void registerUser(String username, String password, String email) throws Exception;
 
     void updateUser(User user);
 }

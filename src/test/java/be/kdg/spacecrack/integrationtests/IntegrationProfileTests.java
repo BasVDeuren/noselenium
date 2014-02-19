@@ -45,23 +45,6 @@ public class IntegrationProfileTests extends BaseFilteredIntegrationTests{
     }
 
     @Test
-    public void testPostAddProfile_ValidProfile_StatusOk() throws Exception {
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        ProfileWrapper profile = new ProfileWrapper("firstname","lastname","email","12-01-2013","image");
-
-        String contactJson = objectMapper.writeValueAsString(profile);
-
-        MockHttpServletRequestBuilder postRequestBuilder = post("/auth/profile");
-        mockMvc.perform(postRequestBuilder
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(contactJson)
-                .cookie(new Cookie("accessToken","%22"+ accessToken.getValue() + "%22")))
-                .andExpect(status().isOk());
-    }
-
-    @Test
     public void testUpdateEditProfile_ValidProfile_statusOk() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -73,15 +56,7 @@ public class IntegrationProfileTests extends BaseFilteredIntegrationTests{
         mockMvc.perform(postRequestBuilder
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(profileJson)
-                .cookie(new Cookie("accessToken", "%22" + accessToken.getValue() + "%22"))).andReturn();
-
-        profile.setFirstname("newFirstname");
-        profileJson = objectMapper.writeValueAsString(profile);
-        mockMvc.perform(post("/auth/profile/update")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(profileJson)
-            .cookie(new Cookie("accessToken","%22"+accessToken.getValue()+"%22")))
-            .andExpect(status().isOk());
+                .cookie(new Cookie("accessToken", "%22" + accessToken.getValue() + "%22"))).andExpect(status().isOk());
     }
 
     @After

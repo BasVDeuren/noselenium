@@ -6,11 +6,16 @@ package be.kdg.spacecrack.services;/* Git $Id
  *
  */
 
+import be.kdg.spacecrack.Exceptions.SpaceCrackAlreadyExistsException;
 import be.kdg.spacecrack.model.AccessToken;
+import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
+import be.kdg.spacecrack.repositories.ProfileRepository;
 import be.kdg.spacecrack.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Date;
 
 @Component("userService")
 public class UserService implements IUserService {
@@ -33,8 +38,11 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void registerUser(String username, String password, String email) {
-        userRepository.addUser(username, password, email);
+    public void registerUser(String username, String password, String email) throws Exception {
+        User user = userRepository.addUser(username, password, email);
+        Profile profile = new Profile();
+        ProfileService profileService = new ProfileService();
+        profileService.createProfile(profile, user);
     }
 
     @Override

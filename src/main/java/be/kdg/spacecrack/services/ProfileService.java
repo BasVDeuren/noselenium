@@ -8,6 +8,7 @@ import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.IProfileRepository;
 import be.kdg.spacecrack.repositories.IUserRepository;
 import be.kdg.spacecrack.repositories.ProfileRepository;
+import be.kdg.spacecrack.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +29,8 @@ public class ProfileService implements IProfileService {
 
 
     public ProfileService() {
-        contactRepository = new ProfileRepository();
+        this.contactRepository = new ProfileRepository();
+        this.userRepository = new UserRepository();
     }
 
     public ProfileService(ProfileRepository contactRepository, IUserRepository userRepository) {
@@ -52,14 +54,12 @@ public class ProfileService implements IProfileService {
     }
 
     @Override
-    public void editProfile(Profile profile, AccessToken accessToken) throws Exception {
-        User user = userRepository.getUserByAccessToken(accessToken);
-        if(user.getProfile() == profile){
-            contactRepository.editContact(profile);
-        }else{
-            throw new SpaceCrackUnauthorizedException();
-        }
+    public void editProfile(Profile profile) throws Exception {
+        contactRepository.editContact(profile);
     }
 
-
+    @Override
+    public Profile getProfileByUser(User user) {
+        return contactRepository.getContact(user);
+    }
 }

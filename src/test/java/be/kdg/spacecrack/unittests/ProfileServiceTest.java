@@ -117,7 +117,7 @@ public class ProfileServiceTest {
         profileService.createProfile(profile, user);
         profile.setFirstname("newFirstname");
         stub(userRepository.getUserByAccessToken(token)).toReturn(user);
-        profileService.editProfile(profile, accessToken);
+        profileService.editProfile(profile);
 
         verify(profileRepository, VerificationModeFactory.times(1)).editContact(profile);
     }

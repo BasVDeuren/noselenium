@@ -7,6 +7,7 @@ package be.kdg.spacecrack.controllers;/* Git $Id
  */
 
 import be.kdg.spacecrack.jsonviewmodels.ProfileWrapper;
+import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.TokenRepository;
@@ -22,7 +23,7 @@ import java.util.Date;
 @RequestMapping("/auth/profile")
 public class ProfileController {
     @Autowired
-    ProfileService profileService;
+    ProfileService contactService;
     @Autowired
     IUserService userService;
     @Autowired
@@ -32,21 +33,26 @@ public class ProfileController {
 
     }
 
-    public ProfileController(ProfileService profileService, UserService userService, TokenRepository tokenRepository, IAuthorizationService tokenService){
-        this.profileService = profileService;
+    public ProfileController(ProfileService contactService, UserService userService, TokenRepository tokenRepository, IAuthorizationService tokenService){
+        this.contactService = contactService;
         this.userService = userService;
         this.tokenService = tokenService;
     }
 
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public void createProfile(@RequestBody ProfileWrapper profileWrapper, @CookieValue("accessToken") String accessTokenValue) throws Exception {
+    public void updateProfile(@RequestBody ProfileWrapper profileWrapper, @CookieValue("accessToken") String accessTokenValue) throws Exception {
         User user = tokenService.getUserByAccessTokenValue(accessTokenValue);
-
         Date date = new SimpleDateFormat("dd-mm-yyyy").parse(profileWrapper.getDayOfBirth());
-        Profile profile = new Profile(profileWrapper.getFirstname(), profileWrapper.getLastname(), profileWrapper.getEmail(), date, profileWrapper.getImage());
 
-        profileService.createProfile(profile, user);
+        Profile profile = contactService.getProfileByUser(user);
+        profile.setFirstname(profileWrapper.getFirstname());
+        profile.setLastname(profileWrapper.getLastname());
+        profile.setEmail(profileWrapper.getEmail());
+        profile.setDayOfBirth(date);
+        profile.setImage(profileWrapper.getImage());
+
+        contactService.editProfile(profile);
     }
 
 }

@@ -13,5 +13,7 @@ import be.kdg.spacecrack.model.User;
 public interface IProfileService {
     void createProfile(Profile profile, User user) throws Exception;
 
-    void editProfile(Profile profile, AccessToken accessToken) throws Exception;
+    void editProfile(Profile profile) throws Exception;
+
+    Profile getProfileByUser(User user);
 }

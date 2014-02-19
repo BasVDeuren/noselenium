@@ -38,8 +38,8 @@ public class ProfileRepository implements IProfileRepository {
     public Profile getContact(User user) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
-        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Contact c where c.user = :user");
-        q.setParameter("user", user);
+        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Profile p where p.profileId = :pId");
+        q.setParameter("pId", user.getProfile().getProfileId());
         Profile profile = (Profile) q.uniqueResult();
         tx.commit();
 
@@ -48,6 +48,18 @@ public class ProfileRepository implements IProfileRepository {
 
     @Override
     public void editContact(Profile profile) {
-
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        try {
+            Transaction tx = session.beginTransaction();
+            try {
+                session.saveOrUpdate(profile);
+                tx.commit();
+            } catch (RuntimeException ex) {
+                tx.rollback();
+                throw ex;
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
     }
 }
