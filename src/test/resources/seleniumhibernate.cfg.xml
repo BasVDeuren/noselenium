@@ -9,7 +9,7 @@
         <property name="connection.username">root</property>
         <property name="connection.password"/>
 <!-- moet aanstaan om tables automatisch te genereren, uitzetten eenmaal tables gegenereerd zijn -->
-        <property name="hbm2ddl.auto">create</property>
+        <!--<property name="hbm2ddl.auto">create</property>-->
 
         <property name="dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>
 
@@ -30,5 +30,7 @@
         <mapping class="be.kdg.spacecrack.model.Player"/>
         <mapping class="be.kdg.spacecrack.model.Colony"/>
         <mapping class="be.kdg.spacecrack.model.Ship"/>
+        <mapping class="be.kdg.spacecrack.model.Game"/>
+
     </session-factory>
 </hibernate-configuration>

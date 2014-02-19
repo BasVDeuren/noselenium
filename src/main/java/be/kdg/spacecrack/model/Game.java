@@ -6,7 +6,17 @@ package be.kdg.spacecrack.model;/* Git $Id
  *
  */
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "T_Game")
 public class Game {
+
+    @Id
+    @GeneratedValue
+    private int gameId;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name= "playerId")
     private Player player1;
 
     public Player getPlayer1() {

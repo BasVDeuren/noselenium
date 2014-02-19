@@ -1,5 +1,6 @@
 package be.kdg.spacecrack.model;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -33,6 +34,11 @@ public class Player {
 
     @Column(name="commandPoints")
     private int commandPoints;
+
+
+    @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
+    @OneToOne(mappedBy = "player1")
+    private Game game;
 
     public int getCommandPoints() {
         return commandPoints;
