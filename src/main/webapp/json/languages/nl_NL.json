@@ -30,5 +30,7 @@
     "INVALID_EMAIL": "Ongeldige email",
     "MALE":"Man",
     "FEMALE":"Vrouw",
-    "CHOOSE_USERNAME": "Keuze gebruikersnaam"
+    "CHOOSE_USERNAME": "Keuze gebruikersnaam",
+    "404_ERROR":"404 - Pagina niet gevonden",
+    "404_INFO":"Controleer de ingevoerde URL"
 }

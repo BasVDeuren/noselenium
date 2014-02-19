@@ -63,6 +63,10 @@ function appRouter($routeProvider  ,$httpProvider) {
             templateUrl: 'partials/game.html',
             controller: 'GameController'
         })
+        .when('/notFound', {
+            templateUrl: 'partials/notFound.html'
+        });
+    $routeProvider.otherwise({redirectTo: '/notFound'});
 }
 
 //Translation
