@@ -54,7 +54,7 @@ spaceApp.controller("GameController", function($scope, $translate, Map, Game, Ac
     function preload() {
         game.load.spritesheet('button', 'assets/buttons/button_sprite_sheet.png', 193, 71);
 
-        game.load.image('bg', 'assets/SpaceCrackBackground.jpg');
+        game.load.image('bg', 'assets/SpaceCrackBackground.jpg', 193, 714);
         game.load.image('planet1', 'assets/planet1_small.png');
         game.load.image('planet2', 'assets/planet2.png');
         game.load.image('planet3', 'assets/planet3.png');
