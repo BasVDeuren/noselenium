@@ -7,8 +7,8 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner) {
 
     $scope.startLoading = false;
     $scope.loginData = {
-        email: "test@gmail.com",
-        password: "test"
+        email: "",
+        password: ""
     };
     $scope.hasLoginFailed = false;
     $scope.alreadyRegistered = false;
