@@ -2,9 +2,9 @@
  * Created by Dimi on 3/02/14.
  */
 var spaceApp = angular.module('spaceApp');
-spaceApp.controller("GameController", function($scope, $translate, Map, Game, Action) {
-    var game = new Phaser.Game(1120, 600, Phaser.AUTO, 'game', { preload: preload, create: $scope.create, update: update, render: render});
-    var commandpointsText;
+spaceApp.controller("GameController", function ($scope, $translate, Map, Game, Action) {
+    var game = new Phaser.Game(1120, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render});
+    console.log("game" + game);
     /*$scope.map = {
      planets: [{x:"",y:""}]
      };*/
@@ -25,10 +25,14 @@ spaceApp.controller("GameController", function($scope, $translate, Map, Game, Ac
         {planetXSprite: {planetSprite: null, name: ""}}
     ];
 
-    $scope.planetsByLetter = [{name: "", x: "", y: "", connectedPlanets: [
-        {name: ""}
-    ]}];
+    $scope.planetsByLetter = [
+        {name: "", x: "", y: "", connectedPlanets: [
+            {name: ""}
+        ]}
+    ];
     $scope.planetSpritesByLetter = [];
+
+    $scope.commandPoints = "";
 //extending sprite with planet name so we can use it in the listener
     var PlanetExtendedSprite = function (game, x, y, name) {
         Phaser.Sprite.call(this, game, x, y, 'planet1');
@@ -52,9 +56,8 @@ spaceApp.controller("GameController", function($scope, $translate, Map, Game, Ac
     // actionType, ship, destinationPlanet
     $scope.action = { actionType: "", ship: {shipId: "", planetName: ""}, destinationPlanet: "" };
     function preload() {
-        game.load.spritesheet('button', 'assets/buttons/button_sprite_sheet.png', 193, 71);
-
         game.load.image('bg', 'assets/SpaceCrackBackground.jpg');
+        game.load.image('button', 'assets/planet3.png');
         game.load.image('planet1', 'assets/planet1_small.png');
         game.load.image('planet2', 'assets/planet2.png');
         game.load.image('planet3', 'assets/planet3.png');
@@ -73,15 +76,15 @@ spaceApp.controller("GameController", function($scope, $translate, Map, Game, Ac
     var sprites;
 
 
-    function btnEndTurnClick() {
-        alert('bonzai!!')
-    }
-
-    $scope.create = function() {
+    function create() {
         // A simple background for our game
         var backgroundsprite = game.add.sprite(0, 0, 'bg');
         backgroundsprite.inputEnabled = true;
-        var button = game.add.button(game.world.centerX, 400,'button', btnEndTurnClick,this, 2,1,0);
+
+        var commandpointsText = game.add.text(5, 5, "Commandpoints: 5", { font: '50xp', fill: '#FF0000', backgroundColor: '#000000' }, sprites);
+        commandpointsText.fixedToCamera = true;
+        var button = game.add.button(5, 20,'button', btnEndTurnClick,this, 2,1,0);
+        button.fixedToCamera = true;
 
         backgroundsprite.events.onInputDown.add(backgroundlistener, this);
         var bgImg = game.cache.getImage('bg');
@@ -137,7 +140,8 @@ spaceApp.controller("GameController", function($scope, $translate, Map, Game, Ac
             }
             Game.save(function (data) {
                 //  "$.player1.colonies[0].planet.name"
-                commandpointsText = game.add.text(game.camera.x + 5, game.camera.y + 5, "Commandpoints: " + data.player1.commandPoints, { font: '50xp', fill: '#FF0000', backgroundColor: '#000000' }, sprites);
+                $scope.commandPoints = data.player1.commandPoints;
+                console.log($scope.commandPoints);
 
                 $scope.game.player1ships = data.player1.ships;
                 $scope.game.player1colonies = data.player1.colonies;
@@ -198,8 +202,7 @@ spaceApp.controller("GameController", function($scope, $translate, Map, Game, Ac
 //        spaceship.inputEnabled = true;
 //        //spaceship.events.onInputDown.add(spaceshipListener, this);*/
 
-    };
-    $scope.create();
+    }
 
     function update() {
         if (cursors.up.isDown) {
@@ -220,6 +223,7 @@ spaceApp.controller("GameController", function($scope, $translate, Map, Game, Ac
         //debug helper
         game.debug.renderInputInfo(0, 0);
     }
+
 //   functions
 //   ---------
     function drawColonyFlag(planetName) {
@@ -232,6 +236,10 @@ spaceApp.controller("GameController", function($scope, $translate, Map, Game, Ac
         var player1flagsprite = sprites.create(planet.x - width / 2 + 10, planet.y - height / 2 - 24, 'player1flag');
 
         player1flagsprite.body.immovable = true;
+    }
+
+    function subtracktCommandPoints(numberOfActionCommandPoints) {
+        $scope.commandPoints = $scope.commandPoints - numberOfActionCommandPoints;
     }
 
     function changePlanetOnSpaceShipClicked(spaceShipXSprite, i) {
@@ -272,21 +280,27 @@ spaceApp.controller("GameController", function($scope, $translate, Map, Game, Ac
             $scope.action.destinationPlanet = sprite.name;
             $scope.action.ship = selectedSpaceShipSprite.ship;
 
-            Action.save($scope.action, function () {
-                allPlanetsNormal();
-                game.physics.moveToXY(selectedSpaceShipSprite, sprite.center.x - 25 + xExtraByCamera, sprite.center.y - 10 + yExtraByCamera, 60, 1000);
-                setTimeout(function () {
-                    selectedSpaceShipSprite.body.velocity.x = 0;
-                    selectedSpaceShipSprite.body.velocity.y = 0;
-                }, 1000);
-                drawColonyFlag(sprite.name);
-                console.log("moveship was acceptable");
-                selectedSpaceShipSprite.ship.planetName = sprite.name;
+            if ($scope.commandPoints > 0) {
+                Action.save($scope.action, function () {
+                    allPlanetsNormal();
 
-                spaceshipListener(selectedSpaceShipSprite);
-            }, function () {
-                alert("moveship was unAcceptable");
-            })
+                    game.physics.moveToXY(selectedSpaceShipSprite, sprite.center.x - 25 + xExtraByCamera, sprite.center.y - 10 + yExtraByCamera, 60, 1000);
+                    setTimeout(function () {
+                        selectedSpaceShipSprite.body.velocity.x = 0;
+                        selectedSpaceShipSprite.body.velocity.y = 0;
+                    }, 1000);
+                    subtracktCommandPoints(1);
+                    drawColonyFlag(sprite.name);
+                    console.log("moveship was acceptable");
+                    selectedSpaceShipSprite.ship.planetName = sprite.name;
+
+                    spaceshipListener(selectedSpaceShipSprite);
+                }, function () {
+                    alert("moveship was unAcceptable");
+                })
+            } else {
+                alert("You have no more commandpoints to use.");
+            }
         }
     }
 
@@ -300,6 +314,16 @@ spaceApp.controller("GameController", function($scope, $translate, Map, Game, Ac
         console.log("clicked on background!");
         selectedSpaceShipSprite = null;
         allPlanetsNormal();
+    }
+
+    function btnEndTurnClick(){
+        console.log("clicked on end turn");
+        $scope.action.actionType = "ENDTURN";
+        Action.save($scope.action, function(){
+            alert("You have ended your turn, wait until you receive new commandpoints.");
+        }, function(){
+            alert("Something went wrong when ending your turn, please try again or wait for new commandpoints.");
+        });
     }
 
 
