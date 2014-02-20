@@ -2,7 +2,7 @@
  * Created by Dimi on 3/02/14.
  */
 
-var spaceApp = angular.module('spaceApp', ['ngRoute', 'spaceServices', 'ngCookies', 'ngAnimate', 'pascalprecht.translate','ui.bootstrap'])
+var spaceApp = angular.module('spaceApp', ['ngRoute', 'spaceServices', 'ngCookies', 'ngAnimate', 'pascalprecht.translate','ui.bootstrap','imageupload'])
     .config(appRouter);
 
 //Navigation

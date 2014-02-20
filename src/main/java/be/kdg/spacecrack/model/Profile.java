@@ -39,6 +39,7 @@ public class Profile {
     private Date dayOfBirth;
 
     @Column
+    @Type(type="text")
     private String image;
 
 

@@ -41,6 +41,7 @@ public class UserService implements IUserService {
     public void registerUser(String username, String password, String email) throws Exception {
         User user = userRepository.addUser(username, password, email);
         Profile profile = new Profile();
+        profile.setEmail(email);
         ProfileService profileService = new ProfileService();
         profileService.createProfile(profile, user);
     }

@@ -3,7 +3,7 @@
  */
 var spaceApp = angular.module('spaceApp');
 
-spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile, Contact, Spinner) {
+spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile, Contact, Spinner, $http) {
 
     /**Password**/
 
@@ -64,23 +64,6 @@ spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile
 
 //--------------------------------------------------------------------------------------------------
     /**CONTACT**/
-        //Image Upload
-    function convertImgToBase64(url, callback, outputFormat) {
-        var canvas = document.createElement('CANVAS');
-        var ctx = canvas.getContext('2d');
-        var img = new Image;
-        img.crossOrigin = 'Anonymous';
-        img.onload = function () {
-            canvas.height = img.height;
-            canvas.width = img.width;
-            ctx.drawImage(img, 0, 0);
-            var dataURL = canvas.toDataURL(outputFormat || 'image/png');
-            callback.call(this, dataURL);
-            // Clean up
-            canvas = null;
-        };
-        img.src = url;
-    }
 
     $scope.contactData = {
         firstname: "",
@@ -109,13 +92,15 @@ spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile
         $scope.contactData.lastname = data.lastname;
         $scope.convertedDate.value = new Date(data.dayOfBirth);
         $scope.contactData.image = data.image;
+        $scope.contactData.email = data.email;
     }, function () {
         Spinner.spinner.stop();
     });
 
-    $scope.editContact = function () {
+    $scope.editContact = function (image) {
         Spinner.spinner.spin(Spinner.target);
         $scope.contactData.dayOfBirth = $scope.convertedDate.value.toLocaleDateString();
+        $scope.contactData.image = image.dataURL;
         Contact.save($scope.contactData, function () {
             Spinner.spinner.stop();
             $scope.isContactSaveDone = true;
@@ -159,5 +144,9 @@ spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile
         'year-format': "'yy'",
         'starting-day': 1
     };
+
+    //Upload Image
+    $scope.uploadedImage = null;
+
 
 });
