@@ -74,15 +74,20 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
     var xExtraByCamera;
     var yExtraByCamera;
     var sprites;
-
+    var commandpointsText;
 
     function create() {
         // A simple background for our game
         var backgroundsprite = game.add.sprite(0, 0, 'bg');
         backgroundsprite.inputEnabled = true;
 
-        var commandpointsText = game.add.text(5, 5, "Commandpoints: 5", { font: '50xp', fill: '#FF0000', backgroundColor: '#000000' }, sprites);
-        commandpointsText.fixedToCamera = true;
+        var commandsprite = game.add.sprite(0,0);
+        commandsprite.fixedToCamera = true;
+        commandpointsText = game.add.text(0, 0, "Commandpoints: 0" , { font: '50px', fill: '#ff0000' }, sprites);
+        commandsprite.addChild(commandpointsText);
+        commandsprite.cameraOffset.x = 120;
+        commandsprite.cameraOffset.y = 5;
+
         var button = game.add.button(5, 20,'button', btnEndTurnClick,this, 2,1,0);
         button.fixedToCamera = true;
 
@@ -217,6 +222,12 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         }
         yExtraByCamera = game.camera.y;
         xExtraByCamera = game.camera.x;
+
+        updateCommandPoints();
+    }
+
+    function updateCommandPoints() {
+        commandpointsText.setText("Commandpoints : " + $scope.commandPoints);
     }
 
     function render() {
