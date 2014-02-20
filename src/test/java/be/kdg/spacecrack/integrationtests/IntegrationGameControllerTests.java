@@ -15,7 +15,7 @@ import org.springframework.http.MediaType;
 
 import javax.servlet.http.Cookie;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -32,8 +32,6 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
                 .andExpect(jsonPath("$.player1.ships[0].shipId", CoreMatchers.notNullValue()))
                 .andExpect(jsonPath("$.player1.ships[0].shipId", CoreMatchers.not(0)));
     }
-
-
 
     @Test
     public void MoveShip_validPlanet_Ok() throws Exception {

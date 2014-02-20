@@ -8,6 +8,8 @@ package be.kdg.spacecrack.services;/* Git $Id
 
 import be.kdg.spacecrack.model.*;
 
+import java.util.List;
+
 public interface IGameService {
     Game createGame(Profile profile);
 
@@ -16,4 +18,6 @@ public interface IGameService {
     Planet getShipLocationByShipId(int shipId);
 
     void endTurn(Player player);
+
+    List<Game> getGames(User user);
 }

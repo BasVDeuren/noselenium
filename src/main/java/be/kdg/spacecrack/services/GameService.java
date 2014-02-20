@@ -6,6 +6,7 @@ import be.kdg.spacecrack.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Set;
 
 /* Git $Id$
@@ -33,16 +34,20 @@ public class GameService implements IGameService {
     @Autowired
     IPlayerRepository playerRepository;
 
+    @Autowired
+    IGameRepository gameRepository;
+
     public GameService() {
     }
 
-    public GameService(IMapService mapService, IPlanetRepository planetRepository, IColonyRepository colonyRepository, IShipRepository shipRepository, IPlayerRepository playerRepository)
+    public GameService(IMapService mapService, IPlanetRepository planetRepository, IColonyRepository colonyRepository, IShipRepository shipRepository, IPlayerRepository playerRepository, IGameRepository gameRepository)
     {
         this.mapService = mapService;
         this.planetRepository = planetRepository;
         this.shipRepository = shipRepository;
         this.colonyRepository = colonyRepository;
         this.playerRepository = playerRepository;
+        this.gameRepository = gameRepository;
     }
 
     @Override
@@ -68,6 +73,7 @@ public class GameService implements IGameService {
         playerRepository.updatePlayer(player1);
         shipRepository.updateShip(ship);
         colonyRepository.updateColony(colony);
+        gameRepository.createGame(game);
 
         return  game;
     }
@@ -113,6 +119,11 @@ public class GameService implements IGameService {
     @Override
     public void endTurn(Player player) {
 
+    }
+
+    @Override
+    public List<Game> getGames(User user) {
+        return gameRepository.getGamesByProfile(user.getProfile());
     }
 
 

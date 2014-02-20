@@ -2,10 +2,7 @@ package be.kdg.spacecrack.unittests;
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.model.*;
-import be.kdg.spacecrack.repositories.ColonyRepository;
-import be.kdg.spacecrack.repositories.PlanetRepository;
-import be.kdg.spacecrack.repositories.PlayerRepository;
-import be.kdg.spacecrack.repositories.ShipRepository;
+import be.kdg.spacecrack.repositories.*;
 import be.kdg.spacecrack.services.GameService;
 import be.kdg.spacecrack.services.MapService;
 import be.kdg.spacecrack.utilities.HibernateUtil;
@@ -14,11 +11,16 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.internal.verification.VerificationModeFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.stub;
 
 /* Git $Id$
  *
@@ -30,12 +32,13 @@ import static org.junit.Assert.assertTrue;
 public class GameServiceTests {
 
     private GameService gameService;
+    private User user;
 
     @Before
     public void setUp() throws Exception {
 
-        gameService = new GameService(new MapService(),new PlanetRepository(), new ColonyRepository(), new ShipRepository(), new PlayerRepository());
-
+        gameService = new GameService(new MapService(),new PlanetRepository(), new ColonyRepository(), new ShipRepository(), new PlayerRepository(), new GameRepository());
+        user = new User();
     }
 
     @Test
@@ -56,6 +59,7 @@ public class GameServiceTests {
     private Game creategame()
     {
         Profile profile =new Profile();
+        user.setProfile(profile);
         Game game = gameService.createGame(profile);
         return game;
     }
@@ -114,5 +118,22 @@ public class GameServiceTests {
             gameService.moveShip(ship, "b");
             gameService.moveShip(ship, "c");
         }
+    }
+
+    @Test
+    public void GetAllGamesFromPlayer() throws Exception {
+        Game game = creategame();
+
+        IGameRepository gameRepository = mock(IGameRepository.class);
+        ArrayList<Game> expected = new ArrayList<Game>();
+        expected.add(new Game());
+        expected.add(new Game());
+        stub(gameRepository.getGamesByProfile(user.getProfile())).toReturn(expected);
+        GameService gameService1 = new GameService(new MapService(), new PlanetRepository(), new ColonyRepository(), new ShipRepository(), new PlayerRepository(), gameRepository);
+
+        List<Game> actual = gameService1.getGames(user);
+
+        Mockito.verify(gameRepository, VerificationModeFactory.times(1)).getGamesByProfile(user.getProfile());
+        assertEquals(expected, actual);
     }
 }
