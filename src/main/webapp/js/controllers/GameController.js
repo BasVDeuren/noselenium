@@ -2,12 +2,12 @@
  * Created by Dimi on 3/02/14.
  */
 var spaceApp = angular.module('spaceApp');
-spaceApp.controller("GameController", function ($scope, $translate, Map, Game, Action) {
+spaceApp.controller("GameController", function ($scope, $translate, Map, Game, Action, $routeParams) {
     var game = new Phaser.Game(1120, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render});
+
+    $scope.gameIdFromParameter = $routeParams.gameId;
     console.log("game" + game);
-    /*$scope.map = {
-     planets: [{x:"",y:""}]
-     };*/
+
     $scope.planetArray = [
         {name: "", x: "", y: "", connectedPlanets: [
             {name: ""}
@@ -77,13 +77,16 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
 
 
     function create() {
+        //move camara with cursors
+        cursors = game.input.keyboard.createCursorKeys();
+
         // A simple background for our game
         var backgroundsprite = game.add.sprite(0, 0, 'bg');
         backgroundsprite.inputEnabled = true;
 
         var commandpointsText = game.add.text(5, 5, "Commandpoints: 5", { font: '50xp', fill: '#FF0000', backgroundColor: '#000000' }, sprites);
         commandpointsText.fixedToCamera = true;
-        var button = game.add.button(5, 20,'button', btnEndTurnClick,this, 2,1,0);
+        var button = game.add.button(5, 20, 'button', btnEndTurnClick, this, 2, 1, 0);
         button.fixedToCamera = true;
 
         backgroundsprite.events.onInputDown.add(backgroundlistener, this);
@@ -95,7 +98,6 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         //graphics.beginFill(0x00FF00);
         graphics.lineStyle(3, 0x999999, 1);
 
-        // graphics.drawCircle($scope.map.planets[0].x,$scope.map.planets[0].y, 5);
         sprites = game.add.group();
 
 
@@ -120,7 +122,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
                 $scope.planetSpritesByLetter[planetSprite.name] = planetSprite;
                 console.log("in get, planetSprite name: " + $scope.planetSprites[i].name);
                 game.add.existing(planetSprite);
-//                var planetSprite = sprites.create(x - width / 2, y - height / 2, 'planet1');
+
                 planetSprite.body.immovable = true;
                 planetSprite.inputEnabled = true;
                 planetSprite.events.onInputDown.add(planetListener, this);
@@ -138,8 +140,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
                     graphics.lineTo(toX, toY);
                 }
             }
-            Game.save(function (data) {
-                //  "$.player1.colonies[0].planet.name"
+            function drawGame(data) {
                 $scope.commandPoints = data.player1.commandPoints;
                 console.log($scope.commandPoints);
 
@@ -174,8 +175,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
                             y = planet.y;
                         }
                     }
-//                    var x = player1ships[i].planet.x;
-//                    var y =player1ships[i].planet.y;
+
                     // Add sprite
                     var image = game.cache.getImage('spaceship');
                     var width = image.width;
@@ -190,21 +190,22 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
                     player1shipsprite.inputEnabled = true;
                     player1shipsprite.events.onInputDown.add(spaceshipListener, this);
                 }
-            })
-        });
+            }
 
+            Game.save(function (data) {
+                drawGame.call(this, data);
+            });
+            Game.get()
+        })
+    }
 
-        // Move camera with cursors
-        cursors = game.input.keyboard.createCursorKeys();
-
-//        spaceship = game.add.sprite(0, 0, 'spaceship');
-//        //enables all kind of input actions on this image (click, etc)
-//        spaceship.inputEnabled = true;
-//        //spaceship.events.onInputDown.add(spaceshipListener, this);*/
-
+    function render() {
+        //debug helper
+        game.debug.renderInputInfo(0, 0);
     }
 
     function update() {
+        console.log("cursors", cursors);
         if (cursors.up.isDown) {
             game.camera.y -= 4;
         } else if (cursors.down.isDown) {
@@ -217,11 +218,6 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         }
         yExtraByCamera = game.camera.y;
         xExtraByCamera = game.camera.x;
-    }
-
-    function render() {
-        //debug helper
-        game.debug.renderInputInfo(0, 0);
     }
 
 //   functions
@@ -316,15 +312,16 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         allPlanetsNormal();
     }
 
-    function btnEndTurnClick(){
+    function btnEndTurnClick() {
         console.log("clicked on end turn");
         $scope.action.actionType = "ENDTURN";
-        Action.save($scope.action, function(){
+        Action.save($scope.action, function () {
             alert("You have ended your turn, wait until you receive new commandpoints.");
-        }, function(){
+        }, function () {
             alert("Something went wrong when ending your turn, please try again or wait for new commandpoints.");
         });
     }
 
 
-});
+})
+;

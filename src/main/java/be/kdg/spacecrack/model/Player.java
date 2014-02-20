@@ -29,6 +29,8 @@ public class Player {
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany
     private List<Colony> colonies;
+
+    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany
     private List<Ship> ships;
 
