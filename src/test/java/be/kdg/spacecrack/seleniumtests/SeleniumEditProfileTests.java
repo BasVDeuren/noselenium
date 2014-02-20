@@ -24,13 +24,6 @@ public class SeleniumEditProfileTests extends SeleniumBaseTestCase {
         WebElement lnkEditProfile = driver.findElement(By.name("lnkEditProfile"));
         lnkEditProfile.click();
 
-        WebElement passwordTextBox = driver.findElement(By.id("new_password"));
-        wait.until(ExpectedConditions.visibilityOf(passwordTextBox));
-        assertEquals("http://localhost:8080/#/spacecrack/editProfile", driver.getCurrentUrl());
-
-        WebElement lnkProfile = driver.findElement(By.linkText("PROFILE"));
-        lnkProfile.click();
-
         WebElement firstNameTextBox = driver.findElement(By.id("firstname"));
         wait.until(ExpectedConditions.visibilityOf(firstNameTextBox));
 
@@ -39,16 +32,25 @@ public class SeleniumEditProfileTests extends SeleniumBaseTestCase {
         WebElement lnkpssword = driver.findElement(By.linkText("Change password"));
         lnkpssword.click();
 
-        passwordTextBox = driver.findElement(By.id("new_password"));
+        WebElement passwordTextBox = driver.findElement(By.id("new_password"));
         wait.until(ExpectedConditions.visibilityOf(passwordTextBox));
-
         assertEquals("http://localhost:8080/#/spacecrack/editProfile", driver.getCurrentUrl());
 
+        WebElement lnkProfile = driver.findElement(By.linkText("Profile"));
+        lnkProfile.click();
+
+        firstNameTextBox = driver.findElement(By.id("firstname"));
+        wait.until(ExpectedConditions.visibilityOf(firstNameTextBox));
+
+        assertEquals("http://localhost:8080/#/spacecrack/editProfile", driver.getCurrentUrl());
     }
     @Test
     public void ChangePassword_Oké() throws Exception {
         login();
         EditProfile();
+
+        WebElement lnkpssword = driver.findElement(By.linkText("Change password"));
+        lnkpssword.click();
 
         WebDriverWait wait = new WebDriverWait(driver,10);
         WebElement passwordTextBox = driver.findElement(By.id("new_password"));
@@ -72,6 +74,9 @@ public class SeleniumEditProfileTests extends SeleniumBaseTestCase {
     public void ChangePassword_Fail() throws Exception {
         login();
         EditProfile();
+
+        WebElement lnkpssword = driver.findElement(By.linkText("Change password"));
+        lnkpssword.click();
 
         WebDriverWait wait = new WebDriverWait(driver,10);
         WebElement passwordTextBox = driver.findElement(By.id("new_password"));

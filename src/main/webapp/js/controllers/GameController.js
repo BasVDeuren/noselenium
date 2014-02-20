@@ -57,7 +57,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
     $scope.action = { actionType: "", ship: {shipId: "", planetName: ""}, destinationPlanet: "" };
     function preload() {
         game.load.image('bg', 'assets/SpaceCrackBackground.jpg');
-        game.load.image('button', 'assets/planet3.png');
+        game.load.image('button', 'assets/endturn.png');
         game.load.image('planet1', 'assets/planet1_small.png');
         game.load.image('planet2', 'assets/planet2.png');
         game.load.image('planet3', 'assets/planet3.png');
