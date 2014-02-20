@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+
 @Controller
 @RequestMapping("/auth/action")
 public class ActionController {
@@ -38,6 +39,7 @@ public class ActionController {
             gameService.moveShip(action.getShip(), action.getDestinationPlanet());
         }else if(action.getActionType().equals(ENDTURN)){
             gameService.endTurn(action.getShip().getPlayer());
+
         }
     }
 }
