@@ -58,6 +58,20 @@ a {
     border-radius: 4px;
 }
 
+.profileImage{
+    border:10px solid dimgrey;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 0 25px #000;
+}
+
+.profileImage:focus, .profileImage:hover{
+    border:10px solid #3e444c;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 0 25px #fff;
+}
+
 
 
 
