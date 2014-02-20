@@ -1,6 +1,6 @@
 /**
- * Created by Atheesan on 4/02/14.
- */
+* Created by Atheesan on 4/02/14.
+*/
 var spaceApp = angular.module('spaceApp');
 
 spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile, Contact, Spinner, $http) {
@@ -92,6 +92,9 @@ spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile
         $scope.contactData.lastname = data.lastname;
         $scope.convertedDate.value = new Date(data.dayOfBirth);
         $scope.contactData.image = data.image;
+        if (data.image != null) {
+            $scope.uploadedImage.resized.dataURL = data.image;
+        }
         $scope.contactData.email = data.email;
     }, function () {
         Spinner.spinner.stop();
@@ -100,7 +103,9 @@ spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile
     $scope.editContact = function (image) {
         Spinner.spinner.spin(Spinner.target);
         $scope.contactData.dayOfBirth = $scope.convertedDate.value.toLocaleDateString();
-        $scope.contactData.image = image.dataURL;
+        if (image != null) {
+            $scope.contactData.image = image.dataURL;
+        }
         Contact.save($scope.contactData, function () {
             Spinner.spinner.stop();
             $scope.isContactSaveDone = true;
