@@ -36,10 +36,12 @@ public class GameController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public Game getGame(@CookieValue("accessToken") String accessTokenValue){
+    public Game createGame(@CookieValue("accessToken") String accessTokenValue){
         User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
         Game game = gameService.createGame(user.getProfile());
         return game;
 
     }
+
+
 }
