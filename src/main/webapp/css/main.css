@@ -13,19 +13,32 @@ html{
     background-attachment: fixed;
     background-position: center center;
     background-repeat: no-repeat;
-
+    min-height: 100%;
+    position: relative;
 }
 
 body {
-    padding-top: 50px;
-    padding-bottom: 20px;
     background-color: transparent;
+    margin-bottom: 71px;
 }
 
+a {
+    cursor: pointer;
+}
+
+.view-container {
+    padding-top: 50px;
+}
+
+#bottom {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 71px;
+}
 
 .pagecontainer{
-margin-top: 80px;
-
+    margin-top: 80px;
 }
 
 .formLabel{
@@ -34,6 +47,15 @@ margin-top: 80px;
 
 .infoNote{
     font-size: 11px;
+}
+
+.fb-button {
+    margin-left: 50px;
+}
+
+#game {
+    border:10px solid #3e444c;
+    border-radius: 4px;
 }
 
 

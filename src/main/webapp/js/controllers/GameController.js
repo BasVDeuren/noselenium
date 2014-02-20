@@ -3,7 +3,7 @@
  */
 var spaceApp = angular.module('spaceApp');
 spaceApp.controller("GameController", function($scope, $translate, Map, Game, Action) {
-    var game = new Phaser.Game(800, 500, Phaser.AUTO, 'game', { preload: preload, create: $scope.create, update: update, render: render});
+    var game = new Phaser.Game(1120, 600, Phaser.AUTO, 'game', { preload: preload, create: $scope.create, update: update, render: render});
     var commandpointsText;
     /*$scope.map = {
      planets: [{x:"",y:""}]

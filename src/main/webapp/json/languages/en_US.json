@@ -20,6 +20,7 @@
     "ERR_LOGIN_FAILED":"Login Failed",
     "ERR_REGISTRATION_FAILED":"Registration Failed",
     "SAVE_FAILED":"Save Failed",
+    "SETTINGS":"Settings",
     "SUCCESSFULLY_SAVED":"Successfully saved",
     "NEWGAME": "New Game",
     "ACTIVEGAMES": "Active Games",

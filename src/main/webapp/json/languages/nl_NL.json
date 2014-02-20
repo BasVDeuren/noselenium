@@ -20,6 +20,7 @@
     "ERR_LOGIN_FAILED":"Aanmelden mislukt",
     "ERR_REGISTRATION_FAILED":"Registratie mislukt",
     "SAVE_FAILED":"Opslaan mislukt",
+    "SETTINGS":"Instellingen",
     "SUCCESSFULLY_SAVED":"Succesvol opgeslagen",
     "NEWGAME": "Nieuw Spel",
     "ACTIVEGAMES": "Actieve Spelen",
