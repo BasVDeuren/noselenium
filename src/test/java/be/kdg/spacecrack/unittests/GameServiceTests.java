@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.stub;
+import static org.mockito.Mockito.verify;
 
 /* Git $Id$
  *
@@ -133,7 +134,21 @@ public class GameServiceTests {
 
         List<Game> actual = gameService1.getGames(user);
 
-        Mockito.verify(gameRepository, VerificationModeFactory.times(1)).getGamesByProfile(user.getProfile());
+        verify(gameRepository, VerificationModeFactory.times(1)).getGamesByProfile(user.getProfile());
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getGameFromPlayer() throws Exception {
+        Game expected = creategame();
+
+        IGameRepository gameRepository = mock(IGameRepository.class);
+        GameService gameService1 = new GameService(new MapService(), new PlanetRepository(), new ColonyRepository(), new ShipRepository(), new PlayerRepository(), gameRepository);
+        stub(gameRepository.getGameByGameId(expected.getGameId())).toReturn(expected);
+
+        Game actual = gameService1.getGameByGameId(expected.getGameId());
+
+        verify(gameRepository, VerificationModeFactory.times(1)).getGameByGameId(expected.getGameId());
+        assertEquals("Actual gameId should be the same as the expected gameId", expected.getGameId(), actual.getGameId());
     }
 }

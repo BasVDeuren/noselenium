@@ -5,10 +5,7 @@ spaceApp.controller("ActiveGamesController", function ($scope, $translate, Game)
     {gameId:""}];
 
     Game.query(function(data){
-        alert("hallo success!!!");
         $scope.games = data;
-    }, function(){
-        alert("FAIL!!!");
     });
 
 });

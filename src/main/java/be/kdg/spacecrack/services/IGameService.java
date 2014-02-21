@@ -20,4 +20,6 @@ public interface IGameService {
     void endTurn(Player player);
 
     List<Game> getGames(User user);
+
+    Game getGameByGameId(int gameId);
 }

@@ -16,4 +16,6 @@ public interface IGameRepository {
     int createGame(Game game);
 
     List<Game> getGamesByProfile(Profile profile);
+
+    Game getGameByGameId(int gameId);
 }

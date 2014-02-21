@@ -12,10 +12,7 @@ import be.kdg.spacecrack.services.IAuthorizationService;
 import be.kdg.spacecrack.services.IGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -38,11 +35,18 @@ public class GameController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public Game getGame(@CookieValue("accessToken") String accessTokenValue){
+    public Game createGame(@CookieValue("accessToken") String accessTokenValue){
         User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
         Game game = gameService.createGame(user.getProfile());
         return game;
 
+    }
+
+    @RequestMapping(value = "/auth/game/specificGame/{gameId}", method = RequestMethod.GET)
+    @ResponseBody
+    public Game getGameByGameId(@CookieValue("accessToken") String accessTokenValue, @PathVariable String gameId) {
+        Game game = gameService.getGameByGameId(Integer.parseInt(gameId));
+        return game;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -56,5 +60,7 @@ public class GameController {
         return games;
 
     }
+
+
 
 }

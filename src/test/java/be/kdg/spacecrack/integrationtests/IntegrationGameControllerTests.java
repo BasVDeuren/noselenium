@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 
 import javax.servlet.http.Cookie;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -54,5 +55,40 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
                 .content(moveShipActionJson)
                 .cookie(new Cookie("accessToken", accessToken)))
                 .andExpect(status().isOk());
+    }
+
+
+    @Test
+    public void getAllGamesByProfile() throws Exception {
+        String accessToken = login();
+        mockMvc.perform(post("/auth/game")
+                .accept(MediaType.APPLICATION_JSON)
+                .cookie(new Cookie("accessToken", accessToken)));
+
+        mockMvc.perform(post("/auth/game")
+                .accept(MediaType.APPLICATION_JSON)
+                .cookie(new Cookie("accessToken", accessToken)));
+
+        mockMvc.perform(get("/auth/game")
+                .accept(MediaType.APPLICATION_JSON)
+                .cookie(new Cookie("accessToken", accessToken)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].gameId", CoreMatchers.notNullValue()));
+    }
+
+    @Test
+    public void getGameByGameId() throws Exception {
+        String accessToken = login();
+        String gameJson = mockMvc.perform(post("/auth/game")
+                .accept(MediaType.APPLICATION_JSON)
+                .cookie(new Cookie("accessToken", accessToken))).andReturn().getResponse().getContentAsString();
+
+        Game expected = objectMapper.readValue(gameJson, Game.class);
+
+        mockMvc.perform(get("/auth/game/specificGame/" + expected.getGameId())
+                .accept(MediaType.APPLICATION_JSON)
+                .cookie(new Cookie("accessToken", accessToken)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.gameId", CoreMatchers.notNullValue()));
     }
 }

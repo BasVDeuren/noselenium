@@ -56,6 +56,26 @@ public class GameRepository implements IGameRepository {
         return games;
     }
 
+    @Override
+    public Game getGameByGameId(int gameId) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Game game;
+        try {
+            Transaction tx = session.beginTransaction();
+            try {
+                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Game g where g.gameId = :gameId");
+                q.setParameter("gameId", gameId);
+                game = (Game) q.uniqueResult();
+                tx.commit();
+            } catch (RuntimeException e) {
+                throw e;
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
+        return game;
+    }
+
     private List<Game> getGamesByProfile(Profile profile, Session session) {
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("select g from Game g where g.player1.profile = :profile");
         q.setParameter("profile", profile);

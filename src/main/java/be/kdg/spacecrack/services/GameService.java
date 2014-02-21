@@ -126,5 +126,10 @@ public class GameService implements IGameService {
         return gameRepository.getGamesByProfile(user.getProfile());
     }
 
+    @Override
+    public Game getGameByGameId(int gameId) {
+        return gameRepository.getGameByGameId(gameId);
+    }
+
 
 }

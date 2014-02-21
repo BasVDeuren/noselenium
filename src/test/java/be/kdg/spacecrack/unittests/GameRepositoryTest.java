@@ -55,4 +55,38 @@ public class GameRepositoryTest {
         Game actualGame = games.get(0);
         assertEquals(expectedId, actualGame.getGameId());
     }
+
+    @Test
+    public void getGameByGameId() throws Exception {
+        Profile profile;
+        Game expected;
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+
+        try {
+            Transaction tx = session.beginTransaction();
+            try {
+                profile = new Profile();
+                session.saveOrUpdate(profile);
+                Player player1 = new Player(profile);
+                session.saveOrUpdate(player1);
+                expected = new Game();
+                session.saveOrUpdate(expected);
+                expected.setPlayer1(player1);
+                session.saveOrUpdate(expected);
+                tx.commit();
+            } catch (Exception e) {
+                tx.rollback();
+                throw new RuntimeException(e);
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
+        GameRepository gameRepository = new GameRepository();
+
+        int expectedId = gameRepository.createGame(expected);
+
+        Game actual = gameRepository.getGameByGameId(expectedId);
+
+        assertEquals("GameId from repository should be the same as actual gameId", expectedId, actual.getGameId());
+    }
 }
