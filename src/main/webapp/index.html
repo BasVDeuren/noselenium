@@ -87,7 +87,7 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li ng-show="isUserLoggedIn()"><a href="#/spacecrack/home"><i class="fa fa-list"></i> Menu</a></li>
-                <li><a href="#/about"><i class="fa fa-info-circle"></i> About</a></li>
+                <li><a href="#/help"><i class="fa fa-info-circle"></i> Help</a></li>
             </ul>
             <form class="navbar-form navbar-right">
                 <div class="row">
@@ -96,7 +96,7 @@
                     <div class="btn-group" ng-show="isUserLoggedIn()">
                         <button type="button" name="btnAction" class="btn btn-default dropdown-toggle"
                                 data-toggle="dropdown">
-                            <i class="fa fa-cog"></i> Settings <span class="caret"></span>
+                            <i class="fa fa-cog"></i> {{'SETTINGS' | translate}} <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" role="menu">
                             <li><a name="lnkEditProfile" href="#/spacecrack/editProfile"><i

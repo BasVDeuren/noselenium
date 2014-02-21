@@ -67,6 +67,9 @@ function appRouter($routeProvider  ,$httpProvider) {
             templateUrl: 'partials/activeGames.html',
             controller: 'ActiveGamesController'
         })
+        .when('/help', {
+            templateUrl: 'partials/help.html'
+        })
         .when('/notFound', {
             templateUrl: 'partials/notFound.html'
         });
