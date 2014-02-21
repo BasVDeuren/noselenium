@@ -15,6 +15,7 @@ spaceApp.controller("RegisterController", function ($scope, Register,UserService
         Spinner.spinner.spin(Spinner.target);
         Register.save($scope.registerData, function (data, headers) {
             Spinner.spinner.stop();
+            UserService.loggedIn = true;
             $cookieStore.put('accessToken',data.value);
             $scope.go('/spacecrack/home');
             $scope.hasRegistrationFailed = false;

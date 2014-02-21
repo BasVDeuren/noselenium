@@ -2,20 +2,20 @@
  * Created by Dimi on 3/02/14.
  */
 
-var spaceApp = angular.module('spaceApp', ['ngRoute', 'spaceServices', 'ngCookies', 'ngAnimate', 'pascalprecht.translate','ui.bootstrap','imageupload'])
+var spaceApp = angular.module('spaceApp', ['ngRoute', 'spaceServices', 'ngCookies', 'ngAnimate', 'pascalprecht.translate', 'ui.bootstrap', 'imageupload'])
     .config(appRouter);
 
 //Navigation
-function appRouter($routeProvider  ,$httpProvider) {
+function appRouter($routeProvider, $httpProvider) {
 
-    var interceptor = ['$rootScope', '$q', '$location', function ( $rootScope, $q,$location) {
+    var interceptor = ['$rootScope', '$q', '$location', function ($rootScope, $q, $location) {
         function success(response) {
             return response;
         }
 
         function error(response, $scope) {
             var status = response.status;
-            if($location.path() !=="/"){
+            if ($location.path() !== "/") {
                 if (status == 401) {
 
                     console.info("unauthorized");
@@ -85,7 +85,7 @@ spaceApp.config(['$translateProvider', function ($translateProvider) {
     $translateProvider.preferredLanguage('en_US');
 }]);
 
-spaceApp.controller("MainController", function ($scope, $cookies, $location, $timeout, $translate, UserService, $cookieStore, Login) {
+spaceApp.controller("MainController", function ($scope, $cookies, $location, $timeout, $translate, UserService, $cookieStore, Login, Profile) {
     $scope.changeLanguage = function (key) {
         $translate.uses(key);
     };
@@ -93,18 +93,27 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
     $scope.go = function (path) {
         $location.path(path);
     };
-
+    UserService.loggedIn = false;
+    Profile.get(function () {
+        UserService.loggedIn = true;
+        return true;
+    }, function () {
+        UserService.loggedIn = false;
+        return false;
+    });
     $scope.isUserLoggedIn = function () {
-        if ($cookieStore.get('accessToken') == null) {
-            return false;
-        } else {
-            return true;
-        }
+//        if ($cookieStore.get('accessToken') == null) {
+//            return false;
+//        } else {
+//            return true;
+//        }
+         return UserService.loggedIn;
     };
 
 
     $scope.logout = function () {
         Login.delete(function () {
+            UserService.loggedIn = false;
             $cookieStore.remove('accessToken');
         }, function () {
 

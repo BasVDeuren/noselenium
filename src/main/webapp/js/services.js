@@ -45,7 +45,8 @@ angular.module('spaceServices', ['ngResource'])
             username: '',
             email: '',
             password: '',
-            accessToken: null
+            accessToken: null,
+            loggedIn : false
         };
     }).factory('Map',function ($resource) {
         return $resource('/api/map')

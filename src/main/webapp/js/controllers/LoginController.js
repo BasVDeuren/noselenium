@@ -1,7 +1,7 @@
 /**
  * Created by Atheesan on 4/02/14.
  */
-function LoginController($scope, Login, Register, $cookieStore, Spinner) {
+function LoginController($scope, Login, Register, $cookieStore, Spinner,UserService) {
     //Loading Spinner
 
 
@@ -16,6 +16,7 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner) {
         Spinner.spinner.spin(Spinner.target);
         Login.save($scope.loginData, function (data, headers) {
             Spinner.spinner.stop();
+            UserService.loggedIn = true;
             $cookieStore.put('accessToken', data.value);
             $scope.go('/spacecrack/home');
             $scope.hasLoginFailed = false;
@@ -45,6 +46,7 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner) {
 
                     Login.save(user, function (data, headers) {
                         Spinner.spinner.stop();
+                        UserService.loggedIn = true;
                         $cookieStore.put('accessToken', data.value);
                         $scope.go('/spacecrack/home');
                         $scope.hasLoginFailed = false;
@@ -72,6 +74,7 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner) {
 
         Register.save(user, function (data, headers) {
             Spinner.spinner.stop();
+            UserService.loggedIn = true;
             $cookieStore.put('accessToken', data.value);
             $scope.go('/spacecrack/home');
             $scope.alreadyRegistered = false;
