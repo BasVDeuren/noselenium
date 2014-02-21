@@ -38,6 +38,11 @@ public class GameRepository implements IGameRepository {
     }
 
     @Override
+    public int updateGame(Game game) {
+        return createGame(game); // Because creatorupdate
+    }
+
+    @Override
     public List<Game> getGamesByProfile(Profile profile) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         List<Game> games;

@@ -1,1 +1,8 @@
 .row-spacing { margin-top: 10px; }
+.navbar-brand-nohover {
+    float: left;
+    padding: 15px 15px;
+    font-size: 18px;
+    line-height: 20px;
+    height: 20px;
+}

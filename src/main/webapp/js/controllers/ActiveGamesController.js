@@ -2,12 +2,13 @@ var spaceApp = angular.module('spaceApp');
 spaceApp.controller("ActiveGamesController", function ($scope, $translate, Game,UserService) {
     if (!UserService.loggedIn) {
         $scope.go('/login');
-    } else {
+        } else {
         $scope.games = [
-            {gameId: ""}
+            {gameId:"",
+            name:""}
         ];
 
-        Game.query(function (data) {
+        Game.query(function(data){
             $scope.games = data;
         });
     }

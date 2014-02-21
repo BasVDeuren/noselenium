@@ -231,10 +231,10 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         yExtraByCamera = game.camera.y;
         xExtraByCamera = game.camera.x;
 
-        functionCommandPoints();
+        updateCommandPoints();
     }
 
-    function functionCommandPoints(){
+    function updateCommandPoints(){
         commandPointsText.setText("Commandpoints: " + $scope.commandPoints);
     }
 
@@ -257,8 +257,8 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         player1flagsprite.body.immovable = true;
     }
 
-    function subtracktCommandPoints(numberOfActionCommandPoints) {
-        $scope.commandPoints = $scope.commandPoints - numberOfActionCommandPoints;
+    function substractCommandPoints(numberOfCommandPoints) {
+        $scope.commandPoints = $scope.commandPoints - numberOfCommandPoints;
     }
 
     function changePlanetOnSpaceShipClicked(spaceShipXSprite, i) {
@@ -317,7 +317,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
                     allPlanetsNormal();
 
                     moveToPlanetSprite(planetXSprite);
-                    subtracktCommandPoints(1);
+                    substractCommandPoints(1);
 
                     drawColonyFlag(planetXSprite.name);
                     console.log("moveship was acceptable");
