@@ -62,6 +62,7 @@ public class GameService implements IGameService {
     public Game createGame(Profile profile) {
         mapService.getSpaceCrackMap();
         Game game = new Game();
+
         Player player1 = new Player(profile);
 
         playerRepository.createPlayer(player1);
@@ -82,7 +83,10 @@ public class GameService implements IGameService {
         playerRepository.updatePlayer(player1);
         shipRepository.updateShip(ship);
         colonyRepository.updateColony(colony);
-        gameRepository.createGame(game);
+        int id = gameRepository.createGame(game);
+
+        game.setName("Game " + id);
+        gameRepository.updateGame(game);
 
         return  game;
     }

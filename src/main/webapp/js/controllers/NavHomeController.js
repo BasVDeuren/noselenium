@@ -3,6 +3,10 @@
  */
 var spaceApp = angular.module('spaceApp');
 
-spaceApp.controller("NavHomeController", function($scope) {
-
+spaceApp.controller("NavHomeController", function ($scope,UserService) {
+    //DIT LATEN STAAN AUB!!!!
+    if (!UserService.loggedIn) {
+        $scope.go('/login');
+    } else {
+    }
 });

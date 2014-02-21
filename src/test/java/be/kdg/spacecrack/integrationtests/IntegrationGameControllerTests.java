@@ -73,7 +73,8 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
                 .accept(MediaType.APPLICATION_JSON)
                 .cookie(new Cookie("accessToken", accessToken)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].gameId", CoreMatchers.notNullValue()));
+                .andExpect(jsonPath("$.[0].gameId", CoreMatchers.notNullValue()))
+                .andExpect(jsonPath("$.[0].name", CoreMatchers.notNullValue()));
     }
 
     @Test

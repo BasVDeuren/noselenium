@@ -15,6 +15,7 @@ public class Game {
     @Id
     @GeneratedValue
     private int gameId;
+    private String name;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name= "playerId")
     private Player player1;
@@ -24,6 +25,14 @@ public class Game {
 
     public Player getPlayer1() {
         return player1;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setPlayer1(Player player1) {
