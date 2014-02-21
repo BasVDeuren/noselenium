@@ -59,7 +59,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
     $scope.action = { actionType: "", ship: {shipId: "", planetName: ""}, destinationPlanet: "" };
     function preload() {
         game.load.image('bg', 'assets/SpaceCrackBackground.jpg');
-        game.load.image('button', 'assets/planet3.png');
+        game.load.image('button', 'assets/endturn.png');
         game.load.image('planet1', 'assets/planet1_small.png');
         game.load.image('planet2', 'assets/planet2.png');
         game.load.image('planet3', 'assets/planet3.png');
@@ -76,15 +76,18 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
     var xExtraByCamera;
     var yExtraByCamera;
     var sprites;
-
+    var commandPointsText
 
     function create() {
         // A simple background for our game
         var backgroundsprite = game.add.sprite(0, 0, 'bg');
         backgroundsprite.inputEnabled = true;
 
-        var commandPointsText = game.add.text(5, 5, "Commandpoints: 5", { font: '50xp', fill: '#FF0000', backgroundColor: '#000000' }, sprites);
-        commandPointsText.fixedToCamera = true;
+        var commandpointsprite = game.add.sprite(0,0);
+        commandpointsprite.fixedToCamera = true;
+        commandPointsText = game.add.text(125, 5, "Commandpoints: ", { font: '50px', fill: '#FF0000'}, sprites);
+        commandpointsprite.addChild(commandPointsText);
+
         var button = game.add.button(5, 20, 'button', btnEndTurnClick, this, 2, 1, 0);
         button.fixedToCamera = true;
 
@@ -231,6 +234,12 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         }
         yExtraByCamera = game.camera.y;
         xExtraByCamera = game.camera.x;
+
+        functieCommandPoints();
+    }
+
+    function functieCommandPoints(){
+        commandPointsText.setText("Commandpoints: " + $scope.commandPoints);
     }
 
     function render() {
@@ -311,6 +320,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
 
                     moveToPlanetSprite(planetXSprite);
                     subtracktCommandPoints(1);
+
                     drawColonyFlag(planetXSprite.name);
                     console.log("moveship was acceptable");
 
