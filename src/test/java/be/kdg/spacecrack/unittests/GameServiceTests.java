@@ -11,7 +11,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.mockito.internal.verification.VerificationModeFactory;
 
 import java.util.ArrayList;
@@ -19,9 +18,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.stub;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /* Git $Id$
  *
@@ -34,11 +31,12 @@ public class GameServiceTests {
 
     private GameService gameService;
     private User user;
+    private IPlayerRepository playerRepository;
 
     @Before
     public void setUp() throws Exception {
-
-        gameService = new GameService(new MapService(),new PlanetRepository(), new ColonyRepository(), new ShipRepository(), new PlayerRepository(), new GameRepository());
+        playerRepository = new PlayerRepository();
+        gameService = new GameService(new MapService(),new PlanetRepository(), new ColonyRepository(), new ShipRepository(), playerRepository, new GameRepository());
         user = new User();
     }
 
@@ -99,7 +97,7 @@ public class GameServiceTests {
 
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
-        Query q = session.createQuery("from Ship s where s.shipId = :shipId");
+        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Ship s where s.shipId = :shipId");
         q.setParameter("shipId", ship.getShipId());
         Ship shipDb = (Ship) q.uniqueResult();
         tx.commit();
@@ -150,5 +148,24 @@ public class GameServiceTests {
 
         verify(gameRepository, VerificationModeFactory.times(1)).getGameByGameId(expected.getGameId());
         assertEquals("Actual gameId should be the same as the expected gameId", expected.getGameId(), actual.getGameId());
+    }
+
+    @Test
+    public void endPlayerTurnForTheMoment() throws Exception {
+        Game game = creategame();
+
+//        IGameRepository gameRepository = mock(IGameRepository.class);
+      //  IPlayerRepository playerRepository1 = mock(IPlayerRepository.class);
+        GameService gameService1 = new GameService(new MapService(), new PlanetRepository(), new ColonyRepository(), new ShipRepository(), playerRepository, new GameRepository());
+//        stub(gameRepository.getGameByGameId(game.getGameId())).toReturn(game);
+
+        Player player1 = game.getPlayer1();
+        int expected = player1.getCommandPoints() + 5;
+        gameService1.endTurn(player1.getPlayerId());
+        Player dbPlayer = playerRepository.getPlayerByPlayerId(player1.getPlayerId());
+        assertEquals(expected, dbPlayer.getCommandPoints());
+
+//        verify(playerRepository, VerificationModeFactory.times(1)).updatePlayer(game.getPlayer1());
+
     }
 }

@@ -1,5 +1,6 @@
 package be.kdg.spacecrack.model;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -37,9 +38,13 @@ public class Player {
     @Column(name="commandPoints")
     private int commandPoints;
 
+    @Column
+    private boolean turnEnded;
+
 
     @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
     @OneToOne(mappedBy = "player1")
+    @JsonIgnore
     private Game game;
 
     public int getCommandPoints() {
@@ -97,6 +102,22 @@ public class Player {
             ships = new ArrayList<Ship>();
         }
         return ships;
+    }
+
+    public boolean isTurnEnded() {
+        return turnEnded;
+    }
+
+    public void setTurnEnded(boolean turnEnded) {
+        this.turnEnded = turnEnded;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
     }
 
 

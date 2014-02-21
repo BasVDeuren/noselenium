@@ -17,7 +17,7 @@ public class Colony {
     @GeneratedValue
     private int colonyId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name="planetId")
     @JsonIgnore
     private Planet planet;
@@ -40,9 +40,13 @@ public class Colony {
         this.planet = planet;
     }
 
-
+//todo: fix this!
     public String getPlanetName(){
-      return planet.getName();
+        if(planet != null){
+            return planet.getName();
+        }else{
+            return "";
+        }
     }
 
     public void setPlanetName(String planetName){

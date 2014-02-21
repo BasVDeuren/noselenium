@@ -8,19 +8,21 @@ package be.kdg.spacecrack.jsonviewmodels;/* Git $Id
 
 import be.kdg.spacecrack.model.Ship;
 
-public class Action {
+public class ActionViewModel {
     private String actionType;
     private Ship ship;
     private String destinationPlanet;
+    private Integer playerId;
 //actionType, ship, destinationPlanet
-    public Action(String actionType, Ship ship, String destinationPlanet) {
+    public ActionViewModel(String actionType, Ship ship, String destinationPlanet, Integer playerId) {
 
         this.actionType = actionType;
         this.ship = ship;
         this.destinationPlanet = destinationPlanet;
+        this.playerId = playerId;
     }
 
-    public Action() {
+    public ActionViewModel() {
     }
 
     public String getActionType() {
@@ -45,5 +47,13 @@ public class Action {
 
     public void setDestinationPlanet(String destinationPlanet) {
         this.destinationPlanet = destinationPlanet;
+    }
+
+    public Integer getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(Integer playerId) {
+        this.playerId = playerId;
     }
 }

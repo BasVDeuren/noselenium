@@ -6,7 +6,7 @@ package be.kdg.spacecrack.integrationtests;/* Git $Id$
  *
  */
 
-import be.kdg.spacecrack.jsonviewmodels.Action;
+import be.kdg.spacecrack.jsonviewmodels.ActionViewModel;
 import be.kdg.spacecrack.model.Game;
 import be.kdg.spacecrack.model.Ship;
 import org.hamcrest.CoreMatchers;
@@ -46,9 +46,9 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
         Ship ship = game.getPlayer1().getShips().get(0);
         String destinationPlanet = "b";
 
-        Action moveShipAction = new Action("moveShip", ship, destinationPlanet);
+        ActionViewModel moveShipActionViewModel = new ActionViewModel("moveShip", ship, destinationPlanet, null);
 
-        String moveShipActionJson = objectMapper.writeValueAsString(moveShipAction);
+        String moveShipActionJson = objectMapper.writeValueAsString(moveShipActionViewModel);
 
         mockMvc.perform(post("/auth/action")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -90,5 +90,22 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
                 .cookie(new Cookie("accessToken", accessToken)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.gameId", CoreMatchers.notNullValue()));
+    }
+
+    @Test
+    public void endPlayerTurn() throws Exception {
+        String accessToken = login();
+        String gameJson = mockMvc.perform(post("/auth/game")
+                .accept(MediaType.APPLICATION_JSON)
+                .cookie(new Cookie("accessToken", accessToken))).andReturn().getResponse().getContentAsString();
+
+        Game game = objectMapper.readValue(gameJson, Game.class);
+
+        mockMvc.perform(post("/auth/action")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(new ActionViewModel("ENDTURN", game.getPlayer1().getShips().get(0), "", game.getPlayer1().getPlayerId())))
+                .cookie(new Cookie("accessToken", accessToken))
+        ).andExpect(status().isOk());
     }
 }

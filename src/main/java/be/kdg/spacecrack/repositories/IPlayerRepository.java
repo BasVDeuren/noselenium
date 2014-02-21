@@ -12,4 +12,6 @@ public interface IPlayerRepository {
     void createPlayer(Player player);
 
     void updatePlayer(Player player);
+
+    Player getPlayerByPlayerId(int playerId);
 }

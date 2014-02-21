@@ -5,9 +5,7 @@ var spaceApp = angular.module('spaceApp');
 spaceApp.controller("GameController", function ($scope, $translate, Map, Game, Action, ActiveGame, $routeParams) {
     var game = new Phaser.Game(1120, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render});
     console.log("game" + game);
-    /*$scope.map = {
-     planets: [{x:"",y:""}]
-     };*/
+    
     $scope.planetArray = [
         {name: "", x: "", y: "", connectedPlanets: [
             {name: ""}
@@ -56,7 +54,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
     ShipExtendedSprite.prototype.previousPlanet = null;
 
     // actionType, ship, destinationPlanet
-    $scope.action = { actionType: "", ship: {shipId: "", planetName: ""}, destinationPlanet: "" };
+    $scope.action = { actionType: "", ship: {shipId: "", planetName: ""}, destinationPlanet: "", playerId:"" };
     function preload() {
         game.load.image('bg', 'assets/SpaceCrackBackground.jpg');
         game.load.image('button', 'assets/endturn.png');
@@ -76,7 +74,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
     var xExtraByCamera;
     var yExtraByCamera;
     var sprites;
-    var commandPointsText;
+
 
     function create() {
         // A simple background for our game
@@ -97,10 +95,9 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         game.world.setBounds(0, 0, 1600, 1000);
 
         var graphics = game.add.graphics(0, 0);
-        //graphics.beginFill(0x00FF00);
+
         graphics.lineStyle(3, 0x999999, 1);
 
-        // graphics.drawCircle($scope.map.planets[0].x,$scope.map.planets[0].y, 5);
         sprites = game.add.group();
 
 
@@ -120,12 +117,12 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
                 var image = game.cache.getImage('planet1');
                 var width = image.width;
                 var height = image.height;
-                var planetSprite = new PlanetExtendedSprite(game, planets[i].x - width / 2, planets[i].y - height / 2, planets[i].name, false);
+                var planetSprite = new PlanetExtendedSprite(game, planets[i].x - width / 2, planets[i].y - height / 2, planets[i].name);
                 $scope.planetSprites[i] = planetSprite;
                 $scope.planetSpritesByLetter[planetSprite.name] = planetSprite;
                 console.log("in get, planetSprite name: " + $scope.planetSprites[i].name);
                 game.add.existing(planetSprite);
-//                var planetSprite = sprites.create(x - width / 2, y - height / 2, 'planet1');
+
                 planetSprite.body.immovable = true;
                 planetSprite.inputEnabled = true;
                 planetSprite.events.onInputDown.add(planetListener, this);
@@ -148,6 +145,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
                 $scope.commandPoints = data.player1.commandPoints;
                 console.log($scope.commandPoints);
 
+                $scope.action.playerId = data.player1.playerId;
                 $scope.game.player1ships = data.player1.ships;
                 $scope.game.player1colonies = data.player1.colonies;
                 var player1colonies = $scope.game.player1colonies;
@@ -178,8 +176,6 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
                             y = planet.y;
                         }
                     }
-//                    var x = player1ships[i].planet.x;
-//                    var y =player1ships[i].planet.y;
                     // Add sprite
                     var image = game.cache.getImage('spaceship');
                     var width = image.width;
@@ -202,10 +198,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
                 })
             } else {
                 ActiveGame.get({gameId: $routeParams.gameId}, function (data) {
-                    alert("SUCCESS!!");
                     applyGameData(data);
-                }, function () {
-                    alert("FAIL!!");
                 })
             }
         });
@@ -235,10 +228,10 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         yExtraByCamera = game.camera.y;
         xExtraByCamera = game.camera.x;
 
-        functieCommandPoints();
+        functionCommandPoints();
     }
 
-    function functieCommandPoints(){
+    function functionCommandPoints(){
         commandPointsText.setText("Commandpoints: " + $scope.commandPoints);
     }
 
@@ -360,6 +353,8 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         $scope.action.actionType = "ENDTURN";
         Action.save($scope.action, function () {
             alert("You have ended your turn, wait until you receive new commandpoints.");
+            //todo: longpoll communication with server?
+            $scope.commandPoints = $scope.commandPoints + 5;
         }, function () {
             alert("Something went wrong when ending your turn, please try again or wait for new commandpoints.");
         });

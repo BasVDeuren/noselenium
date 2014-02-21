@@ -2,6 +2,8 @@ package be.kdg.spacecrack.model;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.*;
@@ -30,9 +32,11 @@ public class Planet {
     private Set<PlanetConnection> planetConnections;
 
     @OneToMany
+    @LazyCollection(LazyCollectionOption.FALSE)
     private Set<Colony> colonies;
 
     @OneToMany
+    @LazyCollection(LazyCollectionOption.FALSE)
     private Set<Ship> ships;
 
 

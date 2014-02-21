@@ -37,6 +37,8 @@ public class GameService implements IGameService {
     @Autowired
     IGameRepository gameRepository;
 
+    private static final int NEWCOMMANDPOINTS = 5;
+
     public GameService() {
     }
 
@@ -62,6 +64,7 @@ public class GameService implements IGameService {
         game.setPlayer1(player1);
         Planet planetA = planetRepository.getPlanetByName("a");
         Ship ship = new Ship(planetA);
+        ship.setPlayer(player1);
         shipRepository.createShip(ship);
         Colony colony = new Colony(planetA);
         colonyRepository.createColony(colony);
@@ -117,8 +120,11 @@ public class GameService implements IGameService {
     }
 
     @Override
-    public void endTurn(Player player) {
-
+    public void endTurn(int playerId) {
+        Player player = playerRepository.getPlayerByPlayerId(playerId);
+        int commandPoints = player.getCommandPoints();
+        player.setCommandPoints(commandPoints +NEWCOMMANDPOINTS);
+        playerRepository.updatePlayer(player);
     }
 
     @Override
