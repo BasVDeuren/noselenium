@@ -83,8 +83,8 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         var backgroundsprite = game.add.sprite(0, 0, 'bg');
         backgroundsprite.inputEnabled = true;
 
-        var commandpointsText = game.add.text(5, 5, "Commandpoints: 5", { font: '50xp', fill: '#FF0000', backgroundColor: '#000000' }, sprites);
-        commandpointsText.fixedToCamera = true;
+        var commandPointsText = game.add.text(5, 5, "Commandpoints: 5", { font: '50xp', fill: '#FF0000', backgroundColor: '#000000' }, sprites);
+        commandPointsText.fixedToCamera = true;
         var button = game.add.button(5, 20, 'button', btnEndTurnClick, this, 2, 1, 0);
         button.fixedToCamera = true;
 
