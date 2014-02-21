@@ -34,6 +34,7 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, UserSer
         };
 
         $scope.fbLogin = function () {
+
             FB.login(function (response) {
                 if (response.authResponse) {
                     var user;
@@ -58,7 +59,7 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, UserSer
                     });
 
                 } else {
-                    Spinner.spinner.stop();
+//                    Spinner.spinner.stop();
                     console.log('User cancelled login or did not fully authorize.');
                 }
             }, {scope: 'email'});

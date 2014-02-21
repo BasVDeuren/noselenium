@@ -15,7 +15,7 @@ function appRouter($routeProvider, $httpProvider) {
 
         function error(response, $scope) {
             var status = response.status;
-            if ($location.path() !== "/") {
+            if ($location.path() !== "/login") {
                 if (status == 401) {
 
                     console.info("unauthorized");
