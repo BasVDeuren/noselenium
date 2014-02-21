@@ -20,7 +20,7 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, UserSer
                 Spinner.spinner.stop();
                 UserService.loggedIn = true;
                 $cookieStore.put('accessToken', data.value);
-                $scope.go('/spacecrack/home');
+                $scope.go('/');
                 $scope.hasLoginFailed = false;
             }, function (data, headers) {
                 Spinner.spinner.stop();
@@ -34,7 +34,6 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, UserSer
         };
 
         $scope.fbLogin = function () {
-            Spinner.spinner.spin(Spinner.target);
             FB.login(function (response) {
                 if (response.authResponse) {
                     var user;
@@ -45,12 +44,12 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, UserSer
                             email: response.email,
                             password: 'facebook' + response.id
                         };
-
+                        Spinner.spinner.spin(Spinner.target);
                         Login.save(user, function (data, headers) {
                             Spinner.spinner.stop();
                             UserService.loggedIn = true;
                             $cookieStore.put('accessToken', data.value);
-                            $scope.go('/spacecrack/home');
+                            $scope.go('/');
                             $scope.hasLoginFailed = false;
                         }, function (data, headers) {
                             Spinner.spinner.stop();
@@ -78,7 +77,7 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, UserSer
                 Spinner.spinner.stop();
                 UserService.loggedIn = true;
                 $cookieStore.put('accessToken', data.value);
-                $scope.go('/spacecrack/home');
+                $scope.go('/');
                 $scope.alreadyRegistered = false;
             }, function (data, headers) {
                 Spinner.spinner.stop();
