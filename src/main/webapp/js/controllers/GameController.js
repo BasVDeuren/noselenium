@@ -296,10 +296,12 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
     }
 
     function moveToPlanetSprite(planetXSprite) {
+        game.input.disabled = true;
         game.physics.moveToXY(selectedSpaceShipSprite, planetXSprite.center.x - 25 + xExtraByCamera, planetXSprite.center.y - 10 + yExtraByCamera, 60, 1000);
         setTimeout(function () {
             selectedSpaceShipSprite.body.velocity.x = 0;
             selectedSpaceShipSprite.body.velocity.y = 0;
+            game.input.disabled = false;
         }, 1000);
     }
 
@@ -335,7 +337,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
                     })
                 }
             } else {
-                alert("You have no more commandpoints to use.");
+                alert("You have no more commandpoints to use. Click end turn to refill your command points.");
             }
         }
     }
