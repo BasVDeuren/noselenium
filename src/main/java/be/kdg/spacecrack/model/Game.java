@@ -19,6 +19,9 @@ public class Game {
     @JoinColumn(name= "playerId")
     private Player player1;
 
+    @Column
+    private int turnCounter;
+
     public Player getPlayer1() {
         return player1;
     }
@@ -33,5 +36,13 @@ public class Game {
 
     public void setGameId(int gameId) {
         this.gameId = gameId;
+    }
+
+    public int getTurnCounter() {
+        return turnCounter;
+    }
+
+    public void setTurnCounter(int turnCounter) {
+        this.turnCounter = turnCounter;
     }
 }

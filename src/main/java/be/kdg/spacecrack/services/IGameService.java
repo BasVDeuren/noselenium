@@ -22,4 +22,6 @@ public interface IGameService {
     List<Game> getGames(User user);
 
     Game getGameByGameId(int gameId);
+
+    void checkVictory(Game gameByGameId);
 }

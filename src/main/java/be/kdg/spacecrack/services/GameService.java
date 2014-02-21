@@ -1,8 +1,12 @@
 package be.kdg.spacecrack.services;
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
+import be.kdg.spacecrack.Exceptions.SpaceCrackVictoryException;
 import be.kdg.spacecrack.model.*;
-import be.kdg.spacecrack.repositories.*;
+import be.kdg.spacecrack.repositories.IGameRepository;
+import be.kdg.spacecrack.repositories.IPlanetRepository;
+import be.kdg.spacecrack.repositories.IPlayerRepository;
+import be.kdg.spacecrack.repositories.IShipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,6 +40,8 @@ public class GameService implements IGameService {
 
     @Autowired
     IGameRepository gameRepository;
+
+    private static final int MAXIMUMTURNSFORVICTORY = 5;
 
     private static final int NEWCOMMANDPOINTS = 5;
 
@@ -135,6 +141,13 @@ public class GameService implements IGameService {
     @Override
     public Game getGameByGameId(int gameId) {
         return gameRepository.getGameByGameId(gameId);
+    }
+
+    @Override
+    public void checkVictory(Game gameByGameId) {
+        if(gameByGameId.getTurnCounter()>MAXIMUMTURNSFORVICTORY){
+            throw new SpaceCrackVictoryException();
+        }
     }
 
 

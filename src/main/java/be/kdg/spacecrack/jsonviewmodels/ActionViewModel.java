@@ -13,13 +13,16 @@ public class ActionViewModel {
     private Ship ship;
     private String destinationPlanet;
     private Integer playerId;
-//actionType, ship, destinationPlanet
-    public ActionViewModel(String actionType, Ship ship, String destinationPlanet, Integer playerId) {
+    private int gameId;
+
+    //actionType, ship, destinationPlanet
+    public ActionViewModel(String actionType, Ship ship, String destinationPlanet, Integer playerId, int gameId) {
 
         this.actionType = actionType;
         this.ship = ship;
         this.destinationPlanet = destinationPlanet;
         this.playerId = playerId;
+        this.gameId = gameId;
     }
 
     public ActionViewModel() {
@@ -55,5 +58,13 @@ public class ActionViewModel {
 
     public void setPlayerId(Integer playerId) {
         this.playerId = playerId;
+    }
+
+    public int getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
     }
 }

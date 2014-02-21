@@ -39,6 +39,7 @@ public class ActionController {
             gameService.moveShip(actionViewModel.getShip(), actionViewModel.getDestinationPlanet());
         }else if(actionViewModel.getActionType().equals(ENDTURN)){
             gameService.endTurn(actionViewModel.getPlayerId());
+            //gameService.checkVictory(gameService.getGameByGameId(actionViewModel.getGameId()));
         }
     }
 }

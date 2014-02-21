@@ -46,7 +46,7 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
         Ship ship = game.getPlayer1().getShips().get(0);
         String destinationPlanet = "b";
 
-        ActionViewModel moveShipActionViewModel = new ActionViewModel("moveShip", ship, destinationPlanet, null);
+        ActionViewModel moveShipActionViewModel = new ActionViewModel("moveShip", ship, destinationPlanet, null, 0);
 
         String moveShipActionJson = objectMapper.writeValueAsString(moveShipActionViewModel);
 
@@ -104,7 +104,7 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
         mockMvc.perform(post("/auth/action")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(new ActionViewModel("ENDTURN", game.getPlayer1().getShips().get(0), "", game.getPlayer1().getPlayerId())))
+                .content(objectMapper.writeValueAsString(new ActionViewModel("ENDTURN", game.getPlayer1().getShips().get(0), "", game.getPlayer1().getPlayerId(),0)))
                 .cookie(new Cookie("accessToken", accessToken))
         ).andExpect(status().isOk());
     }

@@ -39,6 +39,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
     PlanetExtendedSprite.prototype = Object.create(Phaser.Sprite.prototype);
     PlanetExtendedSprite.prototype.constructor = PlanetExtendedSprite;
     PlanetExtendedSprite.prototype.eligibleMove = false;
+    PlanetExtendedSprite.renderOrderID = 0;
 
     $scope.planetSprites = [
         {planetXSprite: {planetSprite: null, name: ""}}
@@ -52,9 +53,10 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
     ShipExtendedSprite.prototype = Object.create(Phaser.Sprite.prototype);
     ShipExtendedSprite.prototype.constructor = ShipExtendedSprite;
     ShipExtendedSprite.prototype.previousPlanet = null;
+    ShipExtendedSprite.renderOrderID = 2;
 
     // actionType, ship, destinationPlanet
-    $scope.action = { actionType: "", ship: {shipId: "", planetName: ""}, destinationPlanet: "", playerId:"" };
+    $scope.action = { actionType: "", ship: {shipId: "", planetName: ""}, destinationPlanet: "", playerId:""};
     function preload() {
         game.load.image('bg', 'assets/SpaceCrackBackground.jpg');
         game.load.image('button', 'assets/endturn.png');
@@ -250,7 +252,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         console.log("planetName: " + planetName);
         var planet = $scope.planetsByLetter[planetName];
         var player1flagsprite = sprites.create(planet.x - width / 2 + 10, planet.y - height / 2 - 24, 'player1flag');
-
+    player1flagsprite.renderOrderID = 1;
         player1flagsprite.body.immovable = true;
     }
 
