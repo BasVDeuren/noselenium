@@ -40,6 +40,10 @@ function appRouter($routeProvider, $httpProvider) {
 
     $routeProvider
         .when('/', {
+            templateUrl: 'partials/navhome.html',
+            controller: 'NavHomeController'
+        })
+        .when('/login', {
             templateUrl: 'partials/login.html',
             controller: 'LoginController'
         })
@@ -115,6 +119,7 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
         Login.delete(function () {
             UserService.loggedIn = false;
             $cookieStore.remove('accessToken');
+            $scope.go('/login');
         }, function () {
 
         });

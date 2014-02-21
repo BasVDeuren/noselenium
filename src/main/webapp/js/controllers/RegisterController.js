@@ -3,40 +3,40 @@
  */
 var spaceApp = angular.module('spaceApp');
 
-spaceApp.controller("RegisterController", function ($scope, Register,UserService,$cookieStore,Spinner) {
-    $scope.registerData = {
-        email: "",
-        username: "",
-        password: "",
-        passwordRepeated: ""
-    };
-    $scope.hasRegistrationFailed = false;
-    $scope.register = function () {
-        Spinner.spinner.spin(Spinner.target);
-        Register.save($scope.registerData, function (data, headers) {
-            Spinner.spinner.stop();
-            UserService.loggedIn = true;
-            $cookieStore.put('accessToken',data.value);
-            $scope.go('/spacecrack/home');
-            $scope.hasRegistrationFailed = false;
-        }, function (data, headers) {
-            Spinner.spinner.stop();
-            $scope.hasRegistrationFailed = true;
-        });
-    };
+spaceApp.controller("RegisterController", function ($scope, Register, UserService, $cookieStore, Spinner) {
+        $scope.registerData = {
+            email: "",
+            username: "",
+            password: "",
+            passwordRepeated: ""
+        };
+        $scope.hasRegistrationFailed = false;
+        $scope.register = function () {
+            Spinner.spinner.spin(Spinner.target);
+            Register.save($scope.registerData, function (data, headers) {
+                Spinner.spinner.stop();
+                UserService.loggedIn = true;
+                $cookieStore.put('accessToken', data.value);
+                $scope.go('/spacecrack/home');
+                $scope.hasRegistrationFailed = false;
+            }, function (data, headers) {
+                Spinner.spinner.stop();
+                $scope.hasRegistrationFailed = true;
+            });
+        };
 
-    $scope.checkPassword = function (password1, password2) {
-        return password1 == password2;
-    };
+        $scope.checkPassword = function (password1, password2) {
+            return password1 == password2;
+        };
 
-    $scope.validateRegister = function () {
-        if ($scope.registerData.email != '' && $scope.registerData.username != '' && $scope.registerData.password != '' && $scope.registerData.passwordRepeated != ''
-            && $scope.checkPassword($scope.registerData.password, $scope.registerData.passwordRepeated)) {
-            return false;
-        } else {
-            return true;
-        }
-    };
+        $scope.validateRegister = function () {
+            if ($scope.registerData.email != '' && $scope.registerData.username != '' && $scope.registerData.password != '' && $scope.registerData.passwordRepeated != ''
+                && $scope.checkPassword($scope.registerData.password, $scope.registerData.passwordRepeated)) {
+                return false;
+            } else {
+                return true;
+            }
+        };
 
 
 //    $scope.fbRegister = function() {
@@ -65,4 +65,5 @@ spaceApp.controller("RegisterController", function ($scope, Register,UserService
 //            }
 //        }, {scope: 'email'});
 //    }
+
 });

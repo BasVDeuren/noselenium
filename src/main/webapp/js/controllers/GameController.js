@@ -2,7 +2,10 @@
  * Created by Dimi on 3/02/14.
  */
 var spaceApp = angular.module('spaceApp');
-spaceApp.controller("GameController", function ($scope, $translate, Map, Game, Action, ActiveGame, $routeParams) {
+spaceApp.controller("GameController", function ($scope, $translate, Map, Game, Action, ActiveGame, $routeParams,UserService) {
+    if (!UserService.loggedIn) {
+        $scope.go('/login');
+    } else {
     var game = new Phaser.Game(1120, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render});
     console.log("game" + game);
     
@@ -360,5 +363,5 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         });
     }
 
-
+    }
 });
