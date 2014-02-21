@@ -2,7 +2,7 @@
  * Created by Dimi on 3/02/14.
  */
 var spaceApp = angular.module('spaceApp');
-spaceApp.controller("GameController", function ($scope, $translate, Map, Game, Action) {
+spaceApp.controller("GameController", function ($scope, $translate, Map, Game, Action, $routParams) {
     var game = new Phaser.Game(1120, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render});
     console.log("game" + game);
     /*$scope.map = {
@@ -83,7 +83,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
 
         var commandpointsText = game.add.text(5, 5, "Commandpoints: 5", { font: '50xp', fill: '#FF0000', backgroundColor: '#000000' }, sprites);
         commandpointsText.fixedToCamera = true;
-        var button = game.add.button(5, 20,'button', btnEndTurnClick,this, 2,1,0);
+        var button = game.add.button(5, 20, 'button', btnEndTurnClick, this, 2, 1, 0);
         button.fixedToCamera = true;
 
         backgroundsprite.events.onInputDown.add(backgroundlistener, this);
@@ -138,59 +138,61 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
                     graphics.lineTo(toX, toY);
                 }
             }
-            Game.save(function (data) {
-                //  "$.player1.colonies[0].planet.name"
-                $scope.commandPoints = data.player1.commandPoints;
-                console.log($scope.commandPoints);
+            if ($routeParams.gameId == 0) {
+                Game.save(function (data) {
+                    //  "$.player1.colonies[0].planet.name"
+                    $scope.commandPoints = data.player1.commandPoints;
+                    console.log($scope.commandPoints);
 
-                $scope.game.player1ships = data.player1.ships;
-                $scope.game.player1colonies = data.player1.colonies;
-                var player1colonies = $scope.game.player1colonies;
+                    $scope.game.player1ships = data.player1.ships;
+                    $scope.game.player1colonies = data.player1.colonies;
+                    var player1colonies = $scope.game.player1colonies;
 
-                //Create colonysprites
-                for (var i = 0; i < player1colonies.length; i++) {
-                    var x;
-                    var y;
-                    var planetName = player1colonies[i].planetName;
+                    //Create colonysprites
+                    for (var i = 0; i < player1colonies.length; i++) {
+                        var x;
+                        var y;
+                        var planetName = player1colonies[i].planetName;
 
-                    for (j = 0; j < $scope.planetArray.length; j++) {
-                        var planet = $scope.planetArray[j];
-                        if (planet.name === planetName) {
-                            x = planet.x;
-                            y = planet.y;
+                        for (j = 0; j < $scope.planetArray.length; j++) {
+                            var planet = $scope.planetArray[j];
+                            if (planet.name === planetName) {
+                                x = planet.x;
+                                y = planet.y;
+                            }
                         }
+                        drawColonyFlag(planetName);
                     }
-                    drawColonyFlag(planetName);
-                }
 
-                var player1ships = $scope.game.player1ships;
-                for (var i = 0; i < player1ships.length; i++) {
-                    var x;
-                    var y;
-                    for (j = 0; j < $scope.planetArray.length; j++) {
-                        var planet = $scope.planetArray[j];
-                        if (planet.name === planetName) {
-                            x = planet.x;
-                            y = planet.y;
+                    var player1ships = $scope.game.player1ships;
+                    for (var i = 0; i < player1ships.length; i++) {
+                        var x;
+                        var y;
+                        for (j = 0; j < $scope.planetArray.length; j++) {
+                            var planet = $scope.planetArray[j];
+                            if (planet.name === planetName) {
+                                x = planet.x;
+                                y = planet.y;
+                            }
                         }
-                    }
 //                    var x = player1ships[i].planet.x;
 //                    var y =player1ships[i].planet.y;
-                    // Add sprite
-                    var image = game.cache.getImage('spaceship');
-                    var width = image.width;
-                    var height = image.height;
+                        // Add sprite
+                        var image = game.cache.getImage('spaceship');
+                        var width = image.width;
+                        var height = image.height;
 
-                    var player1shipsprite = new ShipExtendedSprite(game, planets[i].x - width / 2 + 10, planets[i].y - height / 2, player1ships[i]);
-                    game.add.existing(player1shipsprite);
+                        var player1shipsprite = new ShipExtendedSprite(game, planets[i].x - width / 2 + 10, planets[i].y - height / 2, player1ships[i]);
+                        game.add.existing(player1shipsprite);
 
 
-                    player1shipsprite.body.immovable = true;
+                        player1shipsprite.body.immovable = true;
 
-                    player1shipsprite.inputEnabled = true;
-                    player1shipsprite.events.onInputDown.add(spaceshipListener, this);
-                }
-            })
+                        player1shipsprite.inputEnabled = true;
+                        player1shipsprite.events.onInputDown.add(spaceshipListener, this);
+                    }
+                })
+            }
         });
 
 
@@ -316,12 +318,12 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         allPlanetsNormal();
     }
 
-    function btnEndTurnClick(){
+    function btnEndTurnClick() {
         console.log("clicked on end turn");
         $scope.action.actionType = "ENDTURN";
-        Action.save($scope.action, function(){
+        Action.save($scope.action, function () {
             alert("You have ended your turn, wait until you receive new commandpoints.");
-        }, function(){
+        }, function () {
             alert("Something went wrong when ending your turn, please try again or wait for new commandpoints.");
         });
     }

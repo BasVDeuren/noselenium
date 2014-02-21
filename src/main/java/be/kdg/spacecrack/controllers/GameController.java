@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
+
 @Controller(value = "/auth/game")
 public class GameController {
 
@@ -42,4 +44,17 @@ public class GameController {
         return game;
 
     }
+
+    @RequestMapping(method = RequestMethod.GET)
+    @ResponseBody
+    public List<Game> getGamesByAccessToken(@CookieValue("accessToken") String accessTokenValue) {
+
+        User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
+        List<Game> games = gameService.getGames(user);
+
+
+        return games;
+
+    }
+
 }
