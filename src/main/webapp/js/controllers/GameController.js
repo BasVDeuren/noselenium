@@ -76,7 +76,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
     var xExtraByCamera;
     var yExtraByCamera;
     var sprites;
-    var commandPointsText
+    var commandPointsText;
 
     function create() {
         // A simple background for our game
