@@ -53,8 +53,6 @@ public abstract class SeleniumBaseTestCase  {
         lnkEditProfile.click();
     }
 
-
-
     @After
     public void tearDown() throws Exception {
         driver.close();

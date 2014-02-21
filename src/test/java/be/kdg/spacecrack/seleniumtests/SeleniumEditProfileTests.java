@@ -8,6 +8,7 @@ package be.kdg.spacecrack.seleniumtests;/* Git $Id
 
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -91,4 +92,60 @@ public class SeleniumEditProfileTests extends SeleniumBaseTestCase {
         assertEquals(false,btnSave.isEnabled());
     }
 
+    @Test
+    public void ChangeProfiel_OK() throws Exception {
+        login();
+        EditProfile();
+
+        WebDriverWait wait = new WebDriverWait(driver,10);
+        WebElement dateOfBirth = driver.findElement(By.name("date2"));
+        wait.until(ExpectedConditions.visibilityOf(dateOfBirth));
+        dateOfBirth.sendKeys(Keys.CONTROL + "a");
+        dateOfBirth.sendKeys(Keys.DELETE);
+        dateOfBirth.sendKeys("1991/07/16");
+
+        extra();
+
+        WebElement btnSubmit = driver.findElement(By.id("btnSubmit"));
+        btnSubmit.click();
+
+        WebElement contactSuccesMsg = driver.findElement(By.id("contactSuccesMsg"));
+        wait.until(ExpectedConditions.visibilityOf(contactSuccesMsg));
+
+        assertEquals(true, contactSuccesMsg.isDisplayed());
+    }
+    @Test
+    public void ChangeProfiel_FAIL() throws Exception {
+        login();
+        EditProfile();
+
+        WebDriverWait wait = new WebDriverWait(driver,10);
+        WebElement dateOfBirth = driver.findElement(By.name("date2"));
+        wait.until(ExpectedConditions.visibilityOf(dateOfBirth));
+        dateOfBirth.sendKeys(Keys.CONTROL + "a");
+        dateOfBirth.sendKeys(Keys.DELETE);
+
+        extra();
+
+        WebElement btnSubmit = driver.findElement(By.id("btnSubmit"));
+        assertEquals(false, btnSubmit.isEnabled());
+    }
+
+    public void extra() throws InterruptedException {
+
+        WebElement firstname = driver.findElement(By.id("firstname"));
+        firstname.sendKeys(Keys.CONTROL + "a");
+        firstname.sendKeys(Keys.DELETE);
+        firstname.sendKeys("Arno");
+
+        WebElement lastName = driver.findElement(By.id("lastName"));
+        lastName.sendKeys(Keys.CONTROL + "a");
+        lastName.sendKeys(Keys.DELETE);
+        lastName.sendKeys("Flerie");
+
+        WebElement lnkProfile = driver.findElement(By.linkText("Profile"));
+        lnkProfile.click();
+        lnkProfile.click();
+        Thread.sleep(2000);
+    }
 }
