@@ -29,7 +29,7 @@ public class SeleniumLoginTests extends SeleniumBaseTestCase {
         loginbutton.click();
         WebDriverWait wait = new WebDriverWait(driver, 10);
         wait.until(ExpectedConditions.elementToBeClickable(By.name("newgame")));
-        assertEquals("http://localhost:8080/#/spacecrack/home", driver.getCurrentUrl());
+        assertEquals("http://localhost:8080/#/", driver.getCurrentUrl());
 
 
     }
@@ -47,7 +47,7 @@ public class SeleniumLoginTests extends SeleniumBaseTestCase {
         WebDriverWait wait = new WebDriverWait(driver,10);
         WebElement loginfailedDiv = driver.findElement(By.name("loginfailed"));
         wait.until(ExpectedConditions.visibilityOf(loginfailedDiv));
-        assertEquals("http://localhost:8080/#/", driver.getCurrentUrl());
+        assertEquals("http://localhost:8080/#/login", driver.getCurrentUrl());
 
     }
 
