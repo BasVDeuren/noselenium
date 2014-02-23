@@ -42,7 +42,7 @@ public abstract class SeleniumBaseTestCase  {
         WebElement loginbutton = driver.findElement(By.name("login"));
         loginbutton.click();
         WebDriverWait wait = new WebDriverWait(driver, 10);
-        wait.until(ExpectedConditions.elementToBeClickable(By.name("newgame")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.name("createGame")));
     }
 
     protected void EditProfile() {

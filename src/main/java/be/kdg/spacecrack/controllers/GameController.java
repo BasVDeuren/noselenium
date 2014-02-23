@@ -6,10 +6,13 @@ package be.kdg.spacecrack.controllers;/* Git $Id
  *
  */
 
+import be.kdg.spacecrack.jsonviewmodels.GameParameters;
 import be.kdg.spacecrack.model.Game;
+import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.services.IAuthorizationService;
 import be.kdg.spacecrack.services.IGameService;
+import be.kdg.spacecrack.services.IProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -25,20 +28,25 @@ public class GameController {
     @Autowired
     private IGameService gameService;
 
+    @Autowired
+    IProfileService profileService;
+
     public GameController() {
     }
 
-    public GameController(IAuthorizationService authorizationService, IGameService gameService ){
+    public GameController(IAuthorizationService authorizationService, IGameService gameService, IProfileService profileService){
         this.authorizationService = authorizationService;
         this.gameService = gameService;
+        this.profileService = profileService;
     }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public Game createGame(@CookieValue("accessToken") String accessTokenValue){
+    public int createGame(@CookieValue("accessToken") String accessTokenValue, @RequestBody GameParameters gameData){
         User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
-        Game game = gameService.createGame(user.getProfile());
-        return game;
+        Profile opponentProfile =  profileService.getProfileByProfileId(gameData.getOpponentProfileId());
+        Game game = gameService.createGame(user.getProfile(), gameData.getGameName(), opponentProfile);
+        return game.getGameId();
 
     }
 

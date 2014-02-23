@@ -36,7 +36,7 @@ public class SeleniumRegisterTest extends SeleniumBaseTestCase {
         btnRegister.click();
         WebDriverWait wait = new WebDriverWait(driver, 10);
 
-        WebElement btnNewGame = driver.findElement(By.name("newgame"));
+        WebElement btnNewGame = driver.findElement(By.name("createGame"));
 
         wait.until(ExpectedConditions.visibilityOf(btnNewGame));
     }

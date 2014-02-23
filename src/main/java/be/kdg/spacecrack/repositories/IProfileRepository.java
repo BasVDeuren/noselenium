@@ -16,4 +16,6 @@ public interface IProfileRepository {
     public Profile getContact(User user);
 
     void editContact(Profile profile);
+
+    Profile getProfileByProfileId(int profileId);
 }

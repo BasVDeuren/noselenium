@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
  * 2013-2014
  *
  */
-@Component("contactRepository")
+@Component("profileRepository")
 public class ProfileRepository implements IProfileRepository {
     public void createProfile(Profile profile) throws Exception {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
@@ -61,5 +61,27 @@ public class ProfileRepository implements IProfileRepository {
         } finally {
             HibernateUtil.close(session);
         }
+    }
+
+    @Override
+    public Profile getProfileByProfileId(int profileId) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+
+        Profile profile;
+        try {
+            Transaction tx = session.beginTransaction();
+            try {
+                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Profile p where p.profileId = :profileId");
+                q.setParameter("profileId", profileId);
+                profile = (Profile) q.uniqueResult();
+                tx.commit();
+            } catch (RuntimeException e) {
+                tx.rollback();
+                throw e;
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
+        return profile;
     }
 }

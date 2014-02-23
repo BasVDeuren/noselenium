@@ -76,6 +76,10 @@ function appRouter($routeProvider, $httpProvider) {
         })
         .when('/notFound', {
             templateUrl: 'partials/notFound.html'
+        })
+        .when('/spacecrack/createGame', {
+            templateUrl: 'partials/createGame.html',
+            controller: 'createGameController'
         });
     $routeProvider.otherwise({redirectTo: '/notFound'});
 }

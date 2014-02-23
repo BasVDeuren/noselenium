@@ -10,12 +10,14 @@ describe("SpaceApp", function () {
             controller = $controller;
         }));
 
-        it("passwords should match", function () {
-            controller("GameController", {$scope: scope});
+        it("post to /api/auth/game, game created id returned", function () {
+            controller("createGameController", {$scope: scope});
 
-            scope.create();
+            var gameData = {gameName:"SpaceCrack Game 1", opponent:"SpaceCrackOpponent"}
+            scope.gameData = gameData;
+            scope.createGame();
 
-            expect(true).toBe(true);
+            expect(scope.gameId).toBeGreaterThan(0);
         });
     });
 });

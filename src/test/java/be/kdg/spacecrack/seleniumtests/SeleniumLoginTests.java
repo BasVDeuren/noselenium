@@ -28,7 +28,7 @@ public class SeleniumLoginTests extends SeleniumBaseTestCase {
         WebElement loginbutton = driver.findElement(By.name("login"));
         loginbutton.click();
         WebDriverWait wait = new WebDriverWait(driver, 10);
-        wait.until(ExpectedConditions.elementToBeClickable(By.name("newgame")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.name("createGame")));
         assertEquals("http://localhost:8080/#/", driver.getCurrentUrl());
 
 

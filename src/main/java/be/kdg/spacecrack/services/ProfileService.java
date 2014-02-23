@@ -1,8 +1,6 @@
 package be.kdg.spacecrack.services;
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackAlreadyExistsException;
-import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
-import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.IProfileRepository;
@@ -19,22 +17,22 @@ import org.springframework.stereotype.Component;
  * 2013-2014
  *
  */
-@Component("contactService")
+@Component("profileService")
 public class ProfileService implements IProfileService {
     @Autowired
-    IProfileRepository contactRepository;
+    IProfileRepository profileRepository;
 
     @Autowired
     IUserRepository userRepository;
 
 
     public ProfileService() {
-        this.contactRepository = new ProfileRepository();
+        this.profileRepository = new ProfileRepository();
         this.userRepository = new UserRepository();
     }
 
-    public ProfileService(ProfileRepository contactRepository, IUserRepository userRepository) {
-        this.contactRepository = contactRepository;
+    public ProfileService(ProfileRepository profileRepository, IUserRepository userRepository) {
+        this.profileRepository = profileRepository;
         this.userRepository = userRepository;
     }
 
@@ -44,7 +42,7 @@ public class ProfileService implements IProfileService {
         if(user.getProfile() == null){
             profile.setUser(user);
             user.setProfile(profile);
-            contactRepository.createProfile(profile);
+            profileRepository.createProfile(profile);
             userRepository.updateUser(user);
 
         }else{
@@ -55,11 +53,16 @@ public class ProfileService implements IProfileService {
 
     @Override
     public void editProfile(Profile profile) throws Exception {
-        contactRepository.editContact(profile);
+        profileRepository.editContact(profile);
     }
 
     @Override
     public Profile getProfileByUser(User user) {
-        return contactRepository.getContact(user);
+        return profileRepository.getContact(user);
+    }
+
+    @Override
+    public Profile getProfileByProfileId(int profileId) {
+        return profileRepository.getProfileByProfileId(profileId);
     }
 }

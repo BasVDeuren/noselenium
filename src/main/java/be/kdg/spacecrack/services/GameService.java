@@ -59,15 +59,17 @@ public class GameService implements IGameService {
     }
 
     @Override
-    public Game createGame(Profile profile) {
+    public Game createGame(Profile userProfile, String gameName, Profile opponentProfile) {
         mapService.getSpaceCrackMap();
         Game game = new Game();
 
-        Player player1 = new Player(profile);
+        Player player1 = new Player(userProfile);
+        Player player2 = new Player(opponentProfile);
 
         playerRepository.createPlayer(player1);
 
-        profile.addPlayer(player1);
+        opponentProfile.addPlayer(player2);
+        playerRepository.createPlayer(player2);
         game.setPlayer1(player1);
         Planet planetA = planetRepository.getPlanetByName("a");
         Ship ship = new Ship(planetA);

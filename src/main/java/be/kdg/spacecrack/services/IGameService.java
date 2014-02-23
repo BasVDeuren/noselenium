@@ -11,7 +11,7 @@ import be.kdg.spacecrack.model.*;
 import java.util.List;
 
 public interface IGameService {
-    Game createGame(Profile profile);
+    Game createGame(Profile userProfile, String gameName, Profile opponentProfile);
 
     void moveShip(Ship ship, String planet);
 

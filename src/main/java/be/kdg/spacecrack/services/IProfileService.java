@@ -6,7 +6,6 @@ package be.kdg.spacecrack.services;/* Git $Id$
  *
  */
 
-import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
 
@@ -16,4 +15,6 @@ public interface IProfileService {
     void editProfile(Profile profile) throws Exception;
 
     Profile getProfileByUser(User user);
+
+    Profile getProfileByProfileId(int profileId);
 }

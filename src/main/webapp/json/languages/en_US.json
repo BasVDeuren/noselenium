@@ -33,5 +33,7 @@
     "FEMALE":"Female",
     "CHOOSE_USERNAME": "Choose username",
     "404_ERROR":"404 - Page not found",
-    "404_INFO":"Please check the entered URL"
+    "404_INFO":"Please check the entered URL",
+    "OPPONENT": "Opponent",
+    "CREATEGAME": "create game"
 }
