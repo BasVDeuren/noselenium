@@ -97,11 +97,11 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         backgroundsprite.events.onInputDown.add(backgroundlistener, this);
         var bgImg = game.cache.getImage('bg');
         console.log("width: " + bgImg.width + " height:" + bgImg.height);
-        game.world.setBounds(0, 0, 1600, 1000);
+        game.world.setBounds(0, 0, 1800, 1000);
 
         var graphics = game.add.graphics(0, 0);
 
-        graphics.lineStyle(3, 0x999999, 1);
+
 
         sprites = game.add.group();
 
@@ -111,6 +111,23 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
             console.log("planetArray:" + $scope.planetArray[0].x);
 
             var planets = $scope.planetArray;
+
+            // Draw connections first, rest on top
+            graphics.lineStyle(3, 0x999999, 1);
+            for (var i = 0; i < planets.length; i++) {
+                var x = $scope.planetArray[i].x;
+                var y = $scope.planetArray[i].y;
+
+                // Draw planet connections (optimalisation possible)
+                var connectedPlanets = $scope.planetArray[i].connectedPlanets;
+                for (var j = 0; j < connectedPlanets.length; j++) {
+                    var toX = connectedPlanets[j].x;
+                    var toY = connectedPlanets[j].y;
+                    graphics.moveTo(x, y);
+                    graphics.lineTo(toX, toY);
+                }
+            }
+            graphics.lineStyle(0);
             for (var i = 0; i < planets.length; i++) {
                 $scope.planetsByLetter[planets[i].name] = planets[i];
 
@@ -132,18 +149,14 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
                 planetSprite.inputEnabled = true;
                 planetSprite.events.onInputDown.add(planetListener, this);
 
-                // Add text
-                var text = game.add.text(x - width / 2, y - height / 2, name, { font: '16px', fill: '#ff0000' }, sprites);
 
-                // Draw planet connections (optimalisation possible)
 
-                var connectedPlanets = $scope.planetArray[i].connectedPlanets;
-                for (var j = 0; j < connectedPlanets.length; j++) {
-                    var toX = connectedPlanets[j].x;
-                    var toY = connectedPlanets[j].y;
-                    graphics.moveTo(x, y);
-                    graphics.lineTo(toX, toY);
-                }
+                // Add planet name text
+                var nameTag = game.add.text(0, 0, name, { font: '12px bold Arial', fill: 'white' }, sprites);
+                nameTag.x = x - nameTag.width / 2;
+                nameTag.y = y + height / 2;
+                graphics.beginFill(0x000000);
+                graphics.drawRect(nameTag.x - 5, nameTag.y, nameTag.width + 10, nameTag.height);
             }
             function applyGameData(data) {
                 //  "$.player1.colonies[0].planet.name"
