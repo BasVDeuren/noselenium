@@ -49,7 +49,9 @@ public class GameRepository implements IGameRepository {
         try {
             Transaction tx = session.beginTransaction();
             try {
-                games = getGamesByProfile(profile, session);
+                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Game g where g.player1.profile = :profile or g.player2.profile = :profile");
+                q.setParameter("profile", profile);
+                games = (List<Game>) q.list();
                 tx.commit();
             } catch (Exception e) {
                 tx.rollback();
@@ -79,12 +81,6 @@ public class GameRepository implements IGameRepository {
             HibernateUtil.close(session);
         }
         return game;
-    }
-
-    private List<Game> getGamesByProfile(Profile profile, Session session) {
-        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("select g from Game g where g.player1.profile = :profile");
-        q.setParameter("profile", profile);
-        return (List<Game>)q.list();
     }
 
 

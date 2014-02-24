@@ -1,4 +1,4 @@
-package be.kdg.spacecrack.jsonviewmodels;
+package be.kdg.spacecrack.viewmodels;
 
 /* Git $Id$
  *

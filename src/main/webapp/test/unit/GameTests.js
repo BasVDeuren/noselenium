@@ -13,7 +13,7 @@ describe("SpaceApp", function () {
         it("post to /api/auth/game, game created id returned", function () {
             controller("createGameController", {$scope: scope});
 
-            var gameData = {gameName:"SpaceCrack Game 1", opponent:"SpaceCrackOpponent"}
+            var gameData = {gameName:"SpaceCrack Game 1", opponentProfileId:"2"}
             scope.gameData = gameData;
             scope.createGame();
 

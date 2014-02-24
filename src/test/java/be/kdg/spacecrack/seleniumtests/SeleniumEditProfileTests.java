@@ -48,7 +48,7 @@ public class SeleniumEditProfileTests extends SeleniumBaseTestCase {
     @Test
     public void ChangePassword_Oké() throws Exception {
         login();
-        EditProfile();
+        navigateToEditProfile();
 
         WebElement lnkpssword = driver.findElement(By.linkText("Change password"));
         lnkpssword.click();
@@ -74,7 +74,7 @@ public class SeleniumEditProfileTests extends SeleniumBaseTestCase {
     @Test
     public void ChangePassword_Fail() throws Exception {
         login();
-        EditProfile();
+        navigateToEditProfile();
 
         WebElement lnkpssword = driver.findElement(By.linkText("Change password"));
         lnkpssword.click();
@@ -95,7 +95,7 @@ public class SeleniumEditProfileTests extends SeleniumBaseTestCase {
     @Test
     public void ChangeProfiel_OK() throws Exception {
         login();
-        EditProfile();
+        navigateToEditProfile();
 
         WebDriverWait wait = new WebDriverWait(driver,10);
         WebElement dateOfBirth = driver.findElement(By.name("date2"));
@@ -117,7 +117,7 @@ public class SeleniumEditProfileTests extends SeleniumBaseTestCase {
     @Test
     public void ChangeProfiel_FAIL() throws Exception {
         login();
-        EditProfile();
+        navigateToEditProfile();
 
         WebDriverWait wait = new WebDriverWait(driver,10);
         WebElement dateOfBirth = driver.findElement(By.name("date2"));

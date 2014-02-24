@@ -30,6 +30,7 @@ public class Ship {
     @Transient
     private String planetName;
 
+
     public int getShipId() {
         return shipId;
     }

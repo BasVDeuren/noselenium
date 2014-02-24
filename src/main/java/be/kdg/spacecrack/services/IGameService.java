@@ -11,7 +11,7 @@ import be.kdg.spacecrack.model.*;
 import java.util.List;
 
 public interface IGameService {
-    Game createGame(Profile userProfile, String gameName, Profile opponentProfile);
+    int createGame(Profile userProfile, String gameName, Profile opponentProfile);
 
     void moveShip(Ship ship, String planet);
 
@@ -24,4 +24,6 @@ public interface IGameService {
     Game getGameByGameId(int gameId);
 
     void checkVictory(Game gameByGameId);
+
+    Player getActivePlayer(User user, Game game);
 }

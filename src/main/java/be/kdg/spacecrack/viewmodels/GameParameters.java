@@ -1,4 +1,4 @@
-package be.kdg.spacecrack.jsonviewmodels;/* Git $Id
+package be.kdg.spacecrack.viewmodels;/* Git $Id
  *
  * Project Application Development
  * Karel de Grote-Hogeschool
@@ -8,12 +8,12 @@ package be.kdg.spacecrack.jsonviewmodels;/* Git $Id
 
 public class GameParameters {
     String gameName;
-    int opponentProfileId;
+    String opponentProfileId;
 
     public GameParameters() {
     }
 
-    public GameParameters(String gameName, int opponentProfileId) {
+    public GameParameters(String gameName, String opponentProfileId) {
         this.gameName = gameName;
         this.opponentProfileId = opponentProfileId;
     }
@@ -26,11 +26,11 @@ public class GameParameters {
         this.gameName = gameName;
     }
 
-    public int getOpponentProfileId() {
+    public String getOpponentProfileId() {
         return opponentProfileId;
     }
 
-    public void setOpponentProfileId(int opponentProfileId) {
+    public void setOpponentProfileId(String opponentProfileId) {
         this.opponentProfileId = opponentProfileId;
     }
 }

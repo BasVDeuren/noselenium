@@ -59,7 +59,7 @@ public class GameService implements IGameService {
     }
 
     @Override
-    public Game createGame(Profile userProfile, String gameName, Profile opponentProfile) {
+    public int createGame(Profile userProfile, String gameName, Profile opponentProfile) {
         mapService.getSpaceCrackMap();
         Game game = new Game();
 
@@ -67,30 +67,55 @@ public class GameService implements IGameService {
         Player player2 = new Player(opponentProfile);
 
         playerRepository.createPlayer(player1);
-
-        opponentProfile.addPlayer(player2);
         playerRepository.createPlayer(player2);
-        game.setPlayer1(player1);
-        Planet planetA = planetRepository.getPlanetByName("a");
-        Ship ship = new Ship(planetA);
-        ship.setPlayer(player1);
-        shipRepository.createShip(ship);
-        Colony colony = new Colony(planetA);
-        colonyRepository.createColony(colony);
 
-        player1.getColonies().add(colony);
-        player1.getShips().add(ship);
-        ship.setPlayer(player1);
+      //  opponentProfile.addPlayer(player2);
+
+        game.setPlayer1(player1);
+        game.setPlayer2(player2);
+
+        Planet planetA = planetRepository.getPlanetByName("a");
+        Planet planetA3 = planetRepository.getPlanetByName("a3");
+
+        Ship player1StartingShip = new Ship(planetA);
+        Ship player2StartingShip = new Ship(planetA3);
+
+        player1StartingShip.setPlayer(player1);
+        player2StartingShip.setPlayer(player2);
+
+        shipRepository.createShip(player1StartingShip);
+        shipRepository.createShip(player2StartingShip);
+
+        Colony player1StartingColony = new Colony(planetA);
+        Colony player2StartingColony = new Colony(planetA3);
+
+        colonyRepository.createColony(player1StartingColony);
+        colonyRepository.createColony(player2StartingColony);
+
+        player1.getColonies().add(player1StartingColony);
+        player2.getColonies().add(player2StartingColony);
+
+        player1.getShips().add(player1StartingShip);
+        player2.getShips().add(player2StartingShip);
+
+        player1StartingShip.setPlayer(player1);
+        player2StartingShip.setPlayer(player2);
 
         playerRepository.updatePlayer(player1);
-        shipRepository.updateShip(ship);
-        colonyRepository.updateColony(colony);
+        playerRepository.updatePlayer(player2);
+
+        shipRepository.updateShip(player1StartingShip);
+        shipRepository.updateShip(player2StartingShip);
+
+        colonyRepository.updateColony(player1StartingColony);
+        colonyRepository.updateColony(player2StartingColony);
+
         int id = gameRepository.createGame(game);
 
         game.setName("Game " + id);
         gameRepository.updateGame(game);
 
-        return  game;
+        return  game.getGameId();
     }
 
     @Override
@@ -154,6 +179,19 @@ public class GameService implements IGameService {
         if(gameByGameId.getTurnCounter()>MAXIMUMTURNSFORVICTORY){
             throw new SpaceCrackVictoryException();
         }
+    }
+
+    @Override
+    public Player getActivePlayer(User user, Game game) {
+        for(Player p : user.getProfile().getPlayers()){
+            if(p.getPlayerId() == game.getPlayer1().getPlayerId()){
+                return p;
+            }
+            if(p.getPlayerId() == game.getPlayer2().getPlayerId()){
+                return p;
+            }
+        }
+        return null;
     }
 
 

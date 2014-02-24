@@ -6,8 +6,8 @@ package be.kdg.spacecrack.integrationtests;/* Git $Id
  *
  */
 
-import be.kdg.spacecrack.jsonviewmodels.ProfileWrapper;
-import be.kdg.spacecrack.jsonviewmodels.UserWrapper;
+import be.kdg.spacecrack.viewmodels.ProfileWrapper;
+import be.kdg.spacecrack.viewmodels.UserWrapper;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.utilities.HibernateUtil;
@@ -58,6 +58,7 @@ public class IntegrationProfileTests extends BaseFilteredIntegrationTests{
                 .content(profileJson)
                 .cookie(new Cookie("accessToken", "%22" + accessToken.getValue() + "%22"))).andExpect(status().isOk());
     }
+
 
     @After
     public void tearDown() throws Exception {

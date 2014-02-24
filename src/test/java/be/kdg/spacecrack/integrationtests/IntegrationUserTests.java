@@ -1,7 +1,7 @@
 package be.kdg.spacecrack.integrationtests;
 
 import be.kdg.spacecrack.model.User;
-import be.kdg.spacecrack.jsonviewmodels.UserWrapper;
+import be.kdg.spacecrack.viewmodels.UserWrapper;
 import be.kdg.spacecrack.repositories.UserRepository;
 import be.kdg.spacecrack.utilities.HibernateUtil;
 import org.codehaus.jackson.map.ObjectMapper;

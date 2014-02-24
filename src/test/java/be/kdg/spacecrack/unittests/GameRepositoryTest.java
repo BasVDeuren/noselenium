@@ -23,20 +23,26 @@ public class GameRepositoryTest {
     @Test
     public void GetAllGamesByProfile() throws Exception {
 
-        Profile profile;
+        Profile profile1;
+        Profile profile2;
         Game expected;
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 
         try {
             Transaction tx = session.beginTransaction();
             try {
-                profile = new Profile();
-                session.saveOrUpdate(profile);
-                Player player1 = new Player(profile);
+                profile1 = new Profile();
+                profile2 = new Profile();
+                session.saveOrUpdate(profile1);
+                session.saveOrUpdate(profile2);
+                Player player1 = new Player(profile1);
+                Player player2 = new Player(profile2);
                 session.saveOrUpdate(player1);
+                session.saveOrUpdate(player2);
                 expected = new Game();
-                session.saveOrUpdate(expected);
+
                 expected.setPlayer1(player1);
+                expected.setPlayer2(player2);
                 session.saveOrUpdate(expected);
                 tx.commit();
             } catch (Exception e) {
@@ -48,30 +54,36 @@ public class GameRepositoryTest {
         }
         GameRepository gameRepository = new GameRepository();
 
-        int expectedId = gameRepository.createGame(expected);
 
-        List<Game> games = gameRepository.getGamesByProfile(profile);
+
+        List<Game> games = gameRepository.getGamesByProfile(profile1);
 
         Game actualGame = games.get(0);
-        assertEquals(expectedId, actualGame.getGameId());
+        assertEquals(expected.getGameId(), actualGame.getGameId());
     }
 
     @Test
     public void getGameByGameId() throws Exception {
-        Profile profile;
+        Profile profile1;
+        Profile profile2;
         Game expected;
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 
         try {
             Transaction tx = session.beginTransaction();
             try {
-                profile = new Profile();
-                session.saveOrUpdate(profile);
-                Player player1 = new Player(profile);
+                profile1 = new Profile();
+                profile2 = new Profile();
+                session.saveOrUpdate(profile1);
+                session.saveOrUpdate(profile2);
+                Player player1 = new Player(profile1);
+                Player player2 = new Player(profile2);
                 session.saveOrUpdate(player1);
+                session.saveOrUpdate(player2);
                 expected = new Game();
-                session.saveOrUpdate(expected);
+
                 expected.setPlayer1(player1);
+                expected.setPlayer2(player2);
                 session.saveOrUpdate(expected);
                 tx.commit();
             } catch (Exception e) {

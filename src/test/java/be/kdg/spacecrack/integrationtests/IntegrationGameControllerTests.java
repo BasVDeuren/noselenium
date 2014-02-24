@@ -6,10 +6,7 @@ package be.kdg.spacecrack.integrationtests;/* Git $Id$
  *
  */
 
-import be.kdg.spacecrack.jsonviewmodels.ActionViewModel;
-import be.kdg.spacecrack.jsonviewmodels.GameParameters;
-import be.kdg.spacecrack.jsonviewmodels.ProfileWrapper;
-import be.kdg.spacecrack.jsonviewmodels.UserWrapper;
+import be.kdg.spacecrack.viewmodels.*;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.Game;
 import be.kdg.spacecrack.model.Profile;
@@ -39,7 +36,7 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
 
         Profile opponentProfile = createOpponent();
 
-        GameParameters gameParameters = new GameParameters("SpacecrackGame1", opponentProfile.getProfileId());
+        GameParameters gameParameters = new GameParameters("SpacecrackGame1", ""+opponentProfile.getProfileId());
         String gameParametersJson = objectMapper.writeValueAsString(gameParameters);
 
         String gameIdJson = mockMvc.perform(post("/auth/game")
@@ -53,10 +50,14 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
                 .accept(MediaType.APPLICATION_JSON)
                 .cookie(new Cookie("accessToken", accessToken)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.player1.colonies[0].planetName", CoreMatchers.is("a")))
-                .andExpect(jsonPath("$.player1.ships[0].planetName", CoreMatchers.is("a")))
-                .andExpect(jsonPath("$.player1.ships[0].shipId", CoreMatchers.notNullValue()))
-                .andExpect(jsonPath("$.player1.ships[0].shipId", CoreMatchers.not(0)));
+                .andExpect(jsonPath("$.game.player1.colonies[0].planetName", CoreMatchers.is("a")))
+                .andExpect(jsonPath("$.game.player1.ships[0].planetName", CoreMatchers.is("a")))
+                .andExpect(jsonPath("$.game.player1.ships[0].shipId", CoreMatchers.notNullValue()))
+                .andExpect(jsonPath("$.game.player1.ships[0].shipId", CoreMatchers.not(0)))
+                .andExpect(jsonPath("$.game.player2.colonies[0].planetName", CoreMatchers.is("a3")))
+                .andExpect(jsonPath("$.game.player2.ships[0].planetName", CoreMatchers.is("a3")))
+                .andExpect(jsonPath("$.game.player2.ships[0].shipId", CoreMatchers.notNullValue()))
+                .andExpect(jsonPath("$.game.player2.ships[0].shipId", CoreMatchers.not(0)));
     }
 
     @Test
@@ -64,7 +65,7 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
         String accessToken = login();
         Profile opponentProfile = createOpponent();
 
-        GameParameters gameParameters = new GameParameters("SpacecrackGame1", opponentProfile.getProfileId());
+        GameParameters gameParameters = new GameParameters("SpacecrackGame1", ""+opponentProfile.getProfileId());
         String gameParametersJson = objectMapper.writeValueAsString(gameParameters);
 
         String gameIdJson = mockMvc.perform(post("/auth/game")
@@ -79,12 +80,13 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
                 .accept(MediaType.APPLICATION_JSON)
                 .cookie(new Cookie("accessToken", accessToken))).andReturn().getResponse().getContentAsString();
 
-        Game game = objectMapper.readValue(gameJson, Game.class);
+        GameActivePlayerWrapper gameActivePlayerWrapper = objectMapper.readValue(gameJson, GameActivePlayerWrapper.class);
+        Game game = gameActivePlayerWrapper.getGame();
 
         Ship ship = game.getPlayer1().getShips().get(0);
         String destinationPlanet = "b";
 
-        ActionViewModel moveShipActionViewModel = new ActionViewModel("moveShip", ship, destinationPlanet, null, 0);
+        ActionViewModel moveShipActionViewModel = new ActionViewModel("MOVESHIP", ship, destinationPlanet, null, null);
 
         String moveShipActionJson = objectMapper.writeValueAsString(moveShipActionViewModel);
 
@@ -145,7 +147,7 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
 
         Profile opponentProfile = createOpponent();
 
-        GameParameters gameParameters = new GameParameters("SpacecrackGame1", opponentProfile.getProfileId());
+        GameParameters gameParameters = new GameParameters("SpacecrackGame1", ""+ opponentProfile.getProfileId());
         String gameParametersJson = objectMapper.writeValueAsString(gameParameters);
 
         mockMvc.perform(post("/auth/game")
@@ -168,7 +170,7 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
         String accessToken = login();
         Profile opponentProfile = createOpponent();
 
-        GameParameters gameParameters = new GameParameters("SpacecrackGame1", opponentProfile.getProfileId());
+        GameParameters gameParameters = new GameParameters("SpacecrackGame1", ""+ opponentProfile.getProfileId());
         String gameParametersJson = objectMapper.writeValueAsString(gameParameters);
 
         String gameIdJson = mockMvc.perform(post("/auth/game")
@@ -179,17 +181,19 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
         System.out.println(gameIdJson);
         int gameId = objectMapper.readValue(gameIdJson, Integer.class);
 
-        String gameJson = mockMvc.perform(get("/auth/game/specificGame/" + gameId)
+        String gameActivePlayerJson = mockMvc.perform(get("/auth/game/specificGame/" + gameId)
                 .accept(MediaType.APPLICATION_JSON)
                 .cookie(new Cookie("accessToken", accessToken))).andReturn().getResponse().getContentAsString();
 
-        Game expected = objectMapper.readValue(gameJson, Game.class);
+        GameActivePlayerWrapper gameActivePlayerWrapper = objectMapper.readValue(gameActivePlayerJson, GameActivePlayerWrapper.class);
+        Game expected = gameActivePlayerWrapper.getGame();
+
 
         mockMvc.perform(get("/auth/game/specificGame/" + expected.getGameId())
                 .accept(MediaType.APPLICATION_JSON)
                 .cookie(new Cookie("accessToken", accessToken)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.gameId", CoreMatchers.notNullValue()));
+                .andExpect(jsonPath("$.game.gameId", CoreMatchers.notNullValue()));
     }
 
     @Test
@@ -197,7 +201,7 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
         String accessToken = login();
         Profile opponentProfile = createOpponent();
 
-        GameParameters gameParameters = new GameParameters("SpacecrackGame1", opponentProfile.getProfileId());
+        GameParameters gameParameters = new GameParameters("SpacecrackGame1", ""+ opponentProfile.getProfileId());
         String gameParametersJson = objectMapper.writeValueAsString(gameParameters);
 
         String gameIdJson = mockMvc.perform(post("/auth/game")
@@ -208,14 +212,15 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
         System.out.println(gameIdJson);
         int gameId = objectMapper.readValue(gameIdJson, Integer.class);
 
-        String gameJson = mockMvc.perform(get("/auth/game/specificGame/" + gameId)
+        String gameActivePlayerJson = mockMvc.perform(get("/auth/game/specificGame/" + gameId)
                 .accept(MediaType.APPLICATION_JSON)
                 .cookie(new Cookie("accessToken", accessToken))).andReturn().getResponse().getContentAsString();
 
-        Game game = objectMapper.readValue(gameJson, Game.class);
-
+        GameActivePlayerWrapper gameActivePlayerWrapper = objectMapper.readValue(gameActivePlayerJson, GameActivePlayerWrapper.class);
+Game game = gameActivePlayerWrapper.getGame();
 
         mockMvc.perform(post("/auth/action")
+
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(new ActionViewModel("ENDTURN", game.getPlayer1().getShips().get(0), "", game.getPlayer1().getPlayerId(), 0)))

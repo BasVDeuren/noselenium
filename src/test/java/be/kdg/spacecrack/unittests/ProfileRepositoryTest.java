@@ -3,7 +3,6 @@ package be.kdg.spacecrack.unittests;
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.repositories.ProfileRepository;
 import be.kdg.spacecrack.utilities.HibernateUtil;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -25,7 +24,7 @@ public class ProfileRepositoryTest {
     @Test
     public void testAddContact() throws Exception {
         Calendar calendar = new GregorianCalendar(2014,2,12);
-        Profile profile = new Profile("firstname","lastname","email", calendar.getTime(),"image");
+        Profile profile = new Profile("firstname","lastname", calendar.getTime(),"image");
         ProfileRepository contactRepository = new ProfileRepository();
         contactRepository.createProfile(profile);
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();

@@ -46,7 +46,7 @@ public class TokenFilter implements Filter {
         AutowireCapableBeanFactory autowireCapableBeanFactory = webApplicationContext.getAutowireCapableBeanFactory();
 
 
-     //   authorizationService = (IAuthorizationService) autowireCapableBeanFactory.autowire(AuthorizationService.class, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
+        //   authorizationService = (IAuthorizationService) autowireCapableBeanFactory.autowire(AuthorizationService.class, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
         authorizationService = new AuthorizationService(new TokenRepository(), new UserRepository(), new TokenStringGenerator());
     }
 
@@ -57,26 +57,25 @@ public class TokenFilter implements Filter {
         HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper((HttpServletResponse) servletResponse);
         HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper((HttpServletRequest) servletRequest);
 
-        if(requestWrapper.getCookies() == null || requestWrapper.getCookies().length < 1)
-        {
+
+        if (requestWrapper.getCookies() == null || requestWrapper.getCookies().length < 1) {
             unauthorized = true;
-        }else{
+        } else {
             String tokenValue = requestWrapper.getCookies()[0].getValue();
-        //  tokenValue =  tokenValue.replaceAll("%22", "");
-            tokenValue = tokenValue.substring(3, tokenValue.length()-3);
+            //  tokenValue =  tokenValue.replaceAll("%22", "");
+            tokenValue = tokenValue.substring(3, tokenValue.length() - 3);
             requestWrapper.getCookies()[0].setValue(tokenValue);
-            if(requestWrapper.getCookies().length < 1||tokenValue == null || tokenValue.isEmpty())
-            {
+            if (requestWrapper.getCookies().length < 1 || tokenValue == null || tokenValue.isEmpty()) {
                 unauthorized = true;
                 System.out.println("token was null");
 
-            }else {
+            } else {
 
                 AccessToken token = null;
                 try {
                     token = authorizationService.getAccessTokenByValue(tokenValue);
                 } catch (SpaceCrackUnauthorizedException ex) {
-                    responseWrapper.sendError(HttpServletResponse.SC_UNAUTHORIZED,"You are unauthorized for this request");
+                    responseWrapper.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are unauthorized for this request");
                 }
 
                 if (token != null) {
@@ -88,23 +87,14 @@ public class TokenFilter implements Filter {
                 }
             }
         }
-        if(unauthorized == true){
-            responseWrapper.sendError(HttpServletResponse.SC_UNAUTHORIZED,"You are unauthorized for this request");
+        if (unauthorized == true) {
+            responseWrapper.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are unauthorized for this request");
 
             return;
         }
-        filterChain.doFilter(servletRequest,servletResponse);
+        filterChain.doFilter(servletRequest, servletResponse);
     }
 
-//    private AccessToken getAccessTokenByValue(String tokenValue) {
-//        Session currentSession = HibernateUtil.getSessionFactory().getCurrentSession();
-//        Transaction tx = currentSession.beginTransaction();
-//        @SuppressWarnings("JpaQlInspection") Query q = currentSession.createQuery("from AccessToken a where a.value = :tokenvalue");
-//        q.setParameter("tokenvalue", tokenValue);
-//        AccessToken token = (AccessToken) q.uniqueResult();
-//        tx.commit();
-//        return token;
-//    }
 
     @Override
     public void destroy() {

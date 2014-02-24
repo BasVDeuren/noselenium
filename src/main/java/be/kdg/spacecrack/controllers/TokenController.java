@@ -40,7 +40,7 @@ public class TokenController{
     public
     @ResponseBody
     AccessToken login(@RequestBody User user) {
-        tokenService.createTestUser();
+        tokenService.createTestUsers();
         AccessToken accessToken = tokenService.login(user);
 
         return accessToken;

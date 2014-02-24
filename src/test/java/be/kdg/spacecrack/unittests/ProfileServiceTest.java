@@ -67,7 +67,7 @@ public class ProfileServiceTest {
 
         Calendar calendar = new GregorianCalendar(2013,1,5);
 
-        Profile profile = new Profile("firstname","lastname","email", calendar.getTime(),"image");
+        Profile profile = new Profile("firstname","lastname", calendar.getTime(),"image");
         contactService.createProfile(profile, user);
         verify(profileRepository, VerificationModeFactory.times(1)).createProfile(profile);
     }
@@ -90,8 +90,8 @@ public class ProfileServiceTest {
         AccessToken accessToken = tokenController.login(user);
         Calendar calendar = new GregorianCalendar(2013,1,5);
 
-        Profile profile = new Profile("firstname","lastname","email", calendar.getTime(),"image");
-        Profile profile2 = new Profile("firstname","lastname","email", calendar.getTime(),"image");
+        Profile profile = new Profile("firstname","lastname", calendar.getTime(),"image");
+        Profile profile2 = new Profile("firstname","lastname", calendar.getTime(),"image");
         profileService.createProfile(profile, user);
         profileService.createProfile(profile2, user);
 
@@ -113,7 +113,7 @@ public class ProfileServiceTest {
         AccessToken accessToken = tokenController.login(user);
 
         Calendar calendar = new GregorianCalendar(2013,2,12);
-        Profile profile = new Profile("firstname","lastname","email", calendar.getTime() ,"image");
+        Profile profile = new Profile("firstname","lastname", calendar.getTime() ,"image");
         profileService.createProfile(profile, user);
         profile.setFirstname("newFirstname");
         stub(userRepository.getUserByAccessToken(token)).toReturn(user);

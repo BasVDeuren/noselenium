@@ -6,12 +6,14 @@ package be.kdg.spacecrack.controllers;/* Git $Id
  *
  */
 
-import be.kdg.spacecrack.jsonviewmodels.ProfileWrapper;
-import be.kdg.spacecrack.model.AccessToken;
+import be.kdg.spacecrack.viewmodels.ProfileWrapper;
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.TokenRepository;
-import be.kdg.spacecrack.services.*;
+import be.kdg.spacecrack.services.IAuthorizationService;
+import be.kdg.spacecrack.services.IUserService;
+import be.kdg.spacecrack.services.ProfileService;
+import be.kdg.spacecrack.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +50,6 @@ public class ProfileController {
         Profile profile = contactService.getProfileByUser(user);
         profile.setFirstname(profileWrapper.getFirstname());
         profile.setLastname(profileWrapper.getLastname());
-        profile.setEmail(profileWrapper.getEmail());
         profile.setDayOfBirth(date);
         profile.setImage(profileWrapper.getImage());
 
@@ -61,5 +62,6 @@ public class ProfileController {
         User user = tokenService.getUserByAccessTokenValue(accessTokenValue);
         return user.getProfile();
     }
+
 
 }

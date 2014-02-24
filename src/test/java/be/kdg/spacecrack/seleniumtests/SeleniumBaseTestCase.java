@@ -45,13 +45,15 @@ public abstract class SeleniumBaseTestCase  {
         wait.until(ExpectedConditions.elementToBeClickable(By.name("createGame")));
     }
 
-    protected void EditProfile() {
+    protected void navigateToEditProfile() {
         driver.get(baseUrl);
         WebElement btnAction = driver.findElement(By.name("btnAction"));
         btnAction.click();
         WebElement lnkEditProfile = driver.findElement(By.name("lnkEditProfile"));
         lnkEditProfile.click();
     }
+
+
 
     @After
     public void tearDown() throws Exception {

@@ -1,4 +1,4 @@
-package be.kdg.spacecrack.jsonviewmodels;/* Git $Id
+package be.kdg.spacecrack.viewmodels;/* Git $Id
  *
  * Project Application Development
  * Karel de Grote-Hogeschool
@@ -11,16 +11,16 @@ import be.kdg.spacecrack.model.Ship;
 public class ActionViewModel {
     private String actionType;
     private Ship ship;
-    private String destinationPlanet;
+    private String destinationPlanetName;
     private Integer playerId;
-    private int gameId;
+    private Integer gameId;
 
-    //actionType, ship, destinationPlanet
-    public ActionViewModel(String actionType, Ship ship, String destinationPlanet, Integer playerId, int gameId) {
+    //actionType, ship, destinationPlanetName
+    public ActionViewModel(String actionType, Ship ship, String destinationPlanetName, Integer playerId, Integer gameId) {
 
         this.actionType = actionType;
         this.ship = ship;
-        this.destinationPlanet = destinationPlanet;
+        this.destinationPlanetName = destinationPlanetName;
         this.playerId = playerId;
         this.gameId = gameId;
     }
@@ -36,8 +36,8 @@ public class ActionViewModel {
         return ship;
     }
 
-    public String getDestinationPlanet() {
-        return destinationPlanet;
+    public String getDestinationPlanetName() {
+        return destinationPlanetName;
     }
 
     public void setActionType(String actionType) {
@@ -48,8 +48,8 @@ public class ActionViewModel {
         this.ship = ship;
     }
 
-    public void setDestinationPlanet(String destinationPlanet) {
-        this.destinationPlanet = destinationPlanet;
+    public void setDestinationPlanetName(String destinationPlanetName) {
+        this.destinationPlanetName = destinationPlanetName;
     }
 
     public Integer getPlayerId() {
@@ -60,11 +60,11 @@ public class ActionViewModel {
         this.playerId = playerId;
     }
 
-    public int getGameId() {
+    public Integer getGameId() {
         return gameId;
     }
 
-    public void setGameId(int gameId) {
+    public void setGameId(Integer gameId) {
         this.gameId = gameId;
     }
 }

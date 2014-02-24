@@ -62,7 +62,8 @@ public class GameServiceTests {
         Profile profile =new Profile();
         Profile opponentProfile = new Profile();
         user.setProfile(profile);
-        Game game = gameService.createGame(user.getProfile(), "SpaceCrackName", opponentProfile);
+        int gameId = gameService.createGame(user.getProfile(), "SpaceCrackName", opponentProfile);
+        Game game = gameService.getGameByGameId(gameId);
         return game;
     }
     @Test

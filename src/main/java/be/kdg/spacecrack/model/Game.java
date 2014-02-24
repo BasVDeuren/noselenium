@@ -13,15 +13,23 @@ import javax.persistence.*;
 public class Game {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY )
     private int gameId;
     private String name;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name= "playerId")
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name= "player1Id")
     private Player player1;
 
     @Column
     private int turnCounter;
+
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name= "player2Id")
+    private Player player2;
+
+    public Player getPlayer2() {
+        return player2;
+    }
 
     public Player getPlayer1() {
         return player1;
@@ -53,5 +61,9 @@ public class Game {
 
     public void setTurnCounter(int turnCounter) {
         this.turnCounter = turnCounter;
+    }
+
+    public void setPlayer2(Player player2) {
+        this.player2 = player2;
     }
 }

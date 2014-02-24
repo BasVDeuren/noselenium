@@ -12,7 +12,7 @@ import be.kdg.spacecrack.model.User;
 public interface IAuthorizationService {
     public AccessToken getAccessTokenByValue(String accessTokenValue);
 
-    void createTestUser();
+    void createTestUsers();
 
     AccessToken login(User user);
 

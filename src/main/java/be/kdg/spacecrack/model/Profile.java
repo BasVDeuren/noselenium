@@ -33,9 +33,6 @@ public class Profile {
     private String lastname;
 
     @Column
-    private String email;
-
-    @Column
     private Date dayOfBirth;
 
     @Column
@@ -64,11 +61,10 @@ public class Profile {
     public Profile() {
     }
 
-    public Profile(String firstname, String lastname, String email, Date dayOfBirth, String image) {
+    public Profile(String firstname, String lastname,Date dayOfBirth, String image) {
 
         this.firstname = firstname;
         this.lastname = lastname;
-        this.email = email;
         this.dayOfBirth = dayOfBirth;
         this.image = image;
         players = new ArrayList<Player>();
@@ -90,13 +86,6 @@ public class Profile {
         this.lastname = lastname;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public Date getDayOfBirth() {
         return dayOfBirth;

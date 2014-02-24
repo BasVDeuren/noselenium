@@ -6,7 +6,8 @@ package be.kdg.spacecrack.controllers;/* Git $Id
  *
  */
 
-import be.kdg.spacecrack.jsonviewmodels.ActionViewModel;
+import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
+import be.kdg.spacecrack.viewmodels.ActionViewModel;
 import be.kdg.spacecrack.services.IGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,10 +37,12 @@ public class ActionController {
     @ResponseBody
     public void executeAction(@RequestBody ActionViewModel actionViewModel){
         if(actionViewModel.getActionType().equals(MOVESHIP)){
-            gameService.moveShip(actionViewModel.getShip(), actionViewModel.getDestinationPlanet());
+            gameService.moveShip(actionViewModel.getShip(), actionViewModel.getDestinationPlanetName());
         }else if(actionViewModel.getActionType().equals(ENDTURN)){
             gameService.endTurn(actionViewModel.getPlayerId());
             //gameService.checkVictory(gameService.getGameByGameId(actionViewModel.getGameId()));
+        }else{
+            throw new SpaceCrackNotAcceptableException("Unsupported action type");
         }
     }
 }

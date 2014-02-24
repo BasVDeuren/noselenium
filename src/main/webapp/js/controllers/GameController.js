@@ -2,23 +2,32 @@
  * Created by Dimi on 3/02/14.
  */
 var spaceApp = angular.module('spaceApp');
-spaceApp.controller("GameController", function ($scope, $translate, Map, Game, Action, ActiveGame, $routeParams,UserService) {
-    if (!UserService.loggedIn) {
-        $scope.go('/login');
-    } else {
+spaceApp.controller("GameController", function ($scope, $translate, Map, Game, Action, ActiveGame, $routeParams, UserService) {
+
+
     var game = new Phaser.Game(1120, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render});
     console.log("game" + game);
-    
+
+   // $scope.activePlayerId = null;
+
     $scope.planetArray = [
         {name: "", x: "", y: "", connectedPlanets: [
             {name: ""}
         ]}
     ];
     $scope.game = {
+        player1Id: "",
+        player2Id: "",
         player1colonies: [
             {colonyId: "", planetName: ""}
         ],
         player1ships: [
+            {shipId: "", planetName: ""}
+        ],
+        player2colonies: [
+            {colonyId: "", planetName: ""}
+        ],
+        player2ships: [
             {shipId: "", planetName: ""}
         ]
     };
@@ -49,9 +58,10 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
     ];
 
 //extending sprite with ship so we can use it in the listener
-    var ShipExtendedSprite = function (game, x, y, ship) {
+    var ShipExtendedSprite = function (game, x, y, ship, playerId) {
         Phaser.Sprite.call(this, game, x, y, 'spaceship');
         this.ship = ship;
+        this.playerId = playerId;
     }
     ShipExtendedSprite.prototype = Object.create(Phaser.Sprite.prototype);
     ShipExtendedSprite.prototype.constructor = ShipExtendedSprite;
@@ -59,7 +69,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
     ShipExtendedSprite.renderOrderID = 2;
 
     // actionType, ship, destinationPlanet
-    $scope.action = { actionType: "", ship: {shipId: "", planetName: ""}, destinationPlanet: "", playerId:""};
+    $scope.action = { actionType: "", ship: {shipId: "", planetName: ""}, destinationPlanet: "", playerId: ""};
     function preload() {
         game.load.image('bg', 'assets/SpaceCrackBackground.jpg');
         game.load.image('button', 'assets/endturn.png');
@@ -70,6 +80,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         game.load.image('planet4', 'assets/planet4.png');
         game.load.image('spaceship', 'assets/spaceship.png');
         game.load.image('player1flag', 'assets/player1flag.png');
+        game.load.image('player2flag', 'assets/player2flag.png');
     }
 
 
@@ -86,7 +97,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         var backgroundsprite = game.add.sprite(0, 0, 'bg');
         backgroundsprite.inputEnabled = true;
 
-        var commandpointsprite = game.add.sprite(0,0);
+        var commandpointsprite = game.add.sprite(0, 0);
         commandpointsprite.fixedToCamera = true;
         commandPointsText = game.add.text(125, 5, "Commandpoints: ", { font: '50px', fill: '#FF0000'}, sprites);
         commandpointsprite.addChild(commandPointsText);
@@ -107,6 +118,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
 
 
         Map.get(function (data, header) {
+            console.log(data.v);
             $scope.planetArray = data.planets;
             console.log("planetArray:" + $scope.planetArray[0].x);
 
@@ -158,16 +170,60 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
                 graphics.beginFill(0x000000);
                 graphics.drawRect(nameTag.x - 5, nameTag.y, nameTag.width + 10, nameTag.height);
             }
+
+
+            function drawPlayerShips(ships, playerId) {
+                for (var i = 0; i < ships.length; i++) {
+
+                    var ship = ships[i];
+                    var planet = $scope.planetsByLetter[ship.planetName];
+                    // Add sprite
+                    var image = game.cache.getImage('spaceship');
+                    var width = image.width;
+                    var height = image.height;
+
+                    var shipsprite = new ShipExtendedSprite(game, $scope.planetsByLetter[ships[i].planetName].x - width / 2 + 10, $scope.planetsByLetter[ships[i].planetName].y - height / 2, ships[i], playerId);
+                    game.add.existing(shipsprite);
+
+
+                    shipsprite.body.immovable = true;
+
+                    shipsprite.inputEnabled = true;
+
+                    if (playerId == $scope.activePlayerId) {
+                        shipsprite.events.onInputDown.add(spaceshipListener, this);
+                    }
+
+                }
+            }
+
             function applyGameData(data) {
                 //  "$.player1.colonies[0].planet.name"
-                $scope.commandPoints = data.player1.commandPoints;
-                console.log($scope.commandPoints);
+                $scope.game.player1Id = data.game.player1.playerId;
+                $scope.game.player2Id = data.game.player2.playerId;
 
-                $scope.action.playerId = data.player1.playerId;
-                $scope.game.player1ships = data.player1.ships;
-                $scope.game.player1colonies = data.player1.colonies;
-                var player1colonies = $scope.game.player1colonies;
+                $scope.activePlayerId = data.activePlayerId;
+                if ($scope.activePlayerId == data.game.player1.playerId) {
+                    $scope.commandPoints = data.game.player1.commandPoints;
+                    console.log($scope.commandPoints);
+                } else if ($scope.activePlayerId == data.game.player2.playerId) {
+                    $scope.commandPoints = data.game.player2.commandPoints;
+                }
+
+                $scope.action.playerId = $scope.activePlayerId;
+                $scope.game.player1ships = data.game.player1.ships;
+                $scope.game.player1colonies = data.game.player1.colonies;
+                $scope.game.player2ships = data.game.player2.ships;
+                $scope.game.player2colonies = data.game.player2.colonies;
+
                 //Create colonysprites
+                drawColoniesOnPlanets($scope.game.player1colonies, 'player1flag');
+                drawColoniesOnPlanets($scope.game.player2colonies, 'player2flag');
+                drawPlayerShips($scope.game.player1ships, $scope.game.player1Id);
+                drawPlayerShips($scope.game.player2ships, $scope.game.player2Id);
+            }
+
+            function drawColoniesOnPlanets(player1colonies, imageName) {
                 for (var i = 0; i < player1colonies.length; i++) {
                     var x;
                     var y;
@@ -180,34 +236,9 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
                             y = planet.y;
                         }
                     }
-                    drawColonyFlag(planetName);
+                    drawColonyFlag(planetName, imageName);
                 }
-
-                var player1ships = $scope.game.player1ships;
-                for (var i = 0; i < player1ships.length; i++) {
-                    var x;
-                    var y;
-                    for (j = 0; j < $scope.planetArray.length; j++) {
-                        var planet = $scope.planetArray[j];
-                        if (planet.name === planetName) {
-                            x = planet.x;
-                            y = planet.y;
-                        }
-                    }
-                    // Add sprite
-                    var image = game.cache.getImage('spaceship');
-                    var width = image.width;
-                    var height = image.height;
-
-                    var player1shipsprite = new ShipExtendedSprite(game, $scope.planetsByLetter[player1ships[i].planetName].x - width / 2 + 10, $scope.planetsByLetter[player1ships[i].planetName].y - height / 2, player1ships[i]);
-                    game.add.existing(player1shipsprite);
-
-
-                    player1shipsprite.body.immovable = true;
-
-                    player1shipsprite.inputEnabled = true;
-                    player1shipsprite.events.onInputDown.add(spaceshipListener, this);
-                }
+                return planetName;
             }
 
             if ($routeParams.gameId == 0) {
@@ -216,6 +247,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
                 })
             } else {
                 ActiveGame.get({gameId: $routeParams.gameId}, function (data) {
+
                     applyGameData(data);
                 })
             }
@@ -230,6 +262,21 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
 //        spaceship.inputEnabled = true;
 //        //spaceship.events.onInputDown.add(spaceshipListener, this);*/
 
+    }
+
+    function HighlightConnectedPlanets(spaceShipXSprite) {
+        var arrayPlanet = $scope.planetsByLetter[spaceShipXSprite.ship.planetName];
+        console.log(arrayPlanet.name);
+        console.log("connectedPlanets: " + arrayPlanet.connectedPlanets);
+        for (var j = 0; j < arrayPlanet.connectedPlanets.length; j++) {
+            for (var k = 0; k < $scope.planetSprites.length; k++) {
+                if (arrayPlanet.connectedPlanets[j].name == $scope.planetSprites[k].name) {
+                    console.log($scope.planetSprites[k]);
+                    $scope.planetSprites[k].loadTexture('planet1_small_selected');
+                    $scope.planetSprites[k].eligibleMove = true;
+                }
+            }
+        }
     }
 
     function update() {
@@ -249,7 +296,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         updateCommandPoints();
     }
 
-    function updateCommandPoints(){
+    function updateCommandPoints() {
         commandPointsText.setText("Commandpoints: " + $scope.commandPoints);
     }
 
@@ -260,15 +307,16 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
 
 //   functions
 //   ---------
-    function drawColonyFlag(planetName) {
+    function drawColonyFlag(planetName, imageName) {
+        imageName = imageName || 'player1flag';
 // Add sprite
-        var image = game.cache.getImage('player1flag');
+        var image = game.cache.getImage(imageName);
         var width = image.width;
         var height = image.height;
         console.log("planetName: " + planetName);
         var planet = $scope.planetsByLetter[planetName];
-        var player1flagsprite = sprites.create(planet.x - width / 2 + 10, planet.y - height / 2 - 24, 'player1flag');
-    player1flagsprite.renderOrderID = 1;
+        var player1flagsprite = sprites.create(planet.x - width / 2 + 10, planet.y - height / 2 - 24, imageName);
+        player1flagsprite.renderOrderID = 1;
         player1flagsprite.body.immovable = true;
     }
 
@@ -276,31 +324,10 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         $scope.commandPoints = $scope.commandPoints - numberOfCommandPoints;
     }
 
-    function changePlanetOnSpaceShipClicked(spaceShipXSprite, i) {
-        if (spaceShipXSprite.ship.planetName == $scope.planetArray[i].name) {
-            console.log("planet found in planetArray " + spaceShipXSprite.ship.planetName + " " + $scope.planetArray[i].name);
-            var arrayPlanet = $scope.planetArray[i];
-            console.log(arrayPlanet.name);
-            console.log("connectedPlanets: " + arrayPlanet.connectedPlanets);
-            for (var j = 0; j < $scope.planetArray[i].connectedPlanets.length; j++) {
-                for (var k = 0; k < $scope.planetSprites.length; k++) {
-                    if (arrayPlanet.connectedPlanets[j].name == $scope.planetSprites[k].name) {
-                        console.log($scope.planetSprites[k]);
-                        $scope.planetSprites[k].loadTexture('planet1_small_selected');
-                        $scope.planetSprites[k].eligibleMove = true;
-                    }
-                }
-            }
-
-        }
-    }
 
     function spaceshipListener(spaceShipXSprite) {
         console.log("ship clicked!!" + spaceShipXSprite.ship.shipId);
-        for (var i = 0; i < $scope.planetArray.length; i++) {
-            var change = changePlanetOnSpaceShipClicked(spaceShipXSprite, i);
-
-        }
+        HighlightConnectedPlanets(spaceShipXSprite);
         spaceShipXSprite.previousPlanet = spaceShipXSprite.ship.planetName;
         selectedSpaceShipSprite = spaceShipXSprite;
 
@@ -334,7 +361,12 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
                     moveToPlanetSprite(planetXSprite);
                     substractCommandPoints(1);
 
-                    drawColonyFlag(planetXSprite.name);
+                    if (selectedSpaceShipSprite.playerId == $scope.game.player1Id) {
+                        drawColonyFlag(planetXSprite.name, 'player1flag');
+                    } else if (selectedSpaceShipSprite.playerId == $scope.game.player2Id) {
+                        drawColonyFlag(planetXSprite.name, 'player2flag');
+                    }
+
                     console.log("moveship was acceptable");
 
 
@@ -378,5 +410,5 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         });
     }
 
-    }
+
 });

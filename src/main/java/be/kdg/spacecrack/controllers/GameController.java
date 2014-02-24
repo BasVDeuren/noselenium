@@ -6,8 +6,11 @@ package be.kdg.spacecrack.controllers;/* Git $Id
  *
  */
 
-import be.kdg.spacecrack.jsonviewmodels.GameParameters;
+import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
+import be.kdg.spacecrack.viewmodels.GameActivePlayerWrapper;
+import be.kdg.spacecrack.viewmodels.GameParameters;
 import be.kdg.spacecrack.model.Game;
+import be.kdg.spacecrack.model.Player;
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.services.IAuthorizationService;
@@ -42,19 +45,31 @@ public class GameController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public int createGame(@CookieValue("accessToken") String accessTokenValue, @RequestBody GameParameters gameData){
+    public Integer createGame(@CookieValue("accessToken") String accessTokenValue, @RequestBody GameParameters gameData){
         User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
-        Profile opponentProfile =  profileService.getProfileByProfileId(gameData.getOpponentProfileId());
-        Game game = gameService.createGame(user.getProfile(), gameData.getGameName(), opponentProfile);
-        return game.getGameId();
+
+        int profileId = 0;
+        try {
+            profileId = Integer.parseInt(gameData.getOpponentProfileId());
+        } catch (NumberFormatException e) {
+            throw new SpaceCrackNotAcceptableException("Unexpected numberformat");
+        }
+        Profile opponentProfile =  profileService.getProfileByProfileId(profileId);
+        int gameId = gameService.createGame(user.getProfile(), gameData.getGameName(), opponentProfile);
+        return gameId;
 
     }
 
     @RequestMapping(value = "/auth/game/specificGame/{gameId}", method = RequestMethod.GET)
     @ResponseBody
-    public Game getGameByGameId(@CookieValue("accessToken") String accessTokenValue, @PathVariable String gameId) {
+    public GameActivePlayerWrapper getGameByGameId(@CookieValue("accessToken") String accessTokenValue, @PathVariable String gameId) {
         Game game = gameService.getGameByGameId(Integer.parseInt(gameId));
-        return game;
+        User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
+        Player player = gameService.getActivePlayer(user, game);
+
+        GameActivePlayerWrapper gameActivePlayerWrapper = new GameActivePlayerWrapper(game, player.getPlayerId());
+
+        return gameActivePlayerWrapper;
     }
 
     @RequestMapping(method = RequestMethod.GET)

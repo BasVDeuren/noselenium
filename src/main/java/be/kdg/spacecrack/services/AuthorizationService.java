@@ -55,17 +55,24 @@ public class AuthorizationService implements IAuthorizationService {
 
 
     @Override
-    public void createTestUser() {
+    public void createTestUsers() {
 
+        createTestUser("test@gmail.com", "test", "test");
+        createTestUser("opponentje@gmail.com", "OpponentTest", "test");
+    }
+
+    private void createTestUser(String testemail, String testUsername, String testPassword) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         try {
             Transaction tx = session.beginTransaction();
             try {
                 @SuppressWarnings("JpaQlInspection") Query query = session.createQuery("from User u where u.email = :testemail");
-                query.setParameter("testemail", "test@gmail.com");
+
+                query.setParameter("testemail", testemail);
                 if (query.list().size() < 1) {
 
-                    User user = new User("test", "test", "test@gmail.com");
+
+                    User user = new User(testUsername, testPassword, testemail);
                     Profile profile = new Profile();
                     session.saveOrUpdate(profile);
                     user.setProfile(profile);
