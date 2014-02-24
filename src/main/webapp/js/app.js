@@ -105,6 +105,8 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
     $scope.go = function (path) {
         $location.path(path);
     };
+
+    //nakijken of user ingelogd is
     UserService.loggedIn = false;
     Profile.get(function () {
         UserService.loggedIn = true;
@@ -113,6 +115,7 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
         UserService.loggedIn = false;
         return false;
     });
+
     $scope.isUserLoggedIn = function () {
 //        if ($cookieStore.get('accessToken') == null) {
 //            return false;

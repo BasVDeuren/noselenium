@@ -35,5 +35,7 @@
     "404_ERROR":"404 - Page not found",
     "404_INFO":"Please check the entered URL",
     "OPPONENT": "Opponent",
-    "CREATEGAME": "create game"
+    "CREATEGAME": "create game",
+    "SEND":"Send",
+    "MESSAGE":"Message"
 }

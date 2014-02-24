@@ -35,5 +35,7 @@
     "404_ERROR":"404 - Pagina niet gevonden",
     "404_INFO":"Controleer de ingevoerde URL",
     "OPPONENT":"Tegenstander",
-    "CREATEGAME": "Maak spel"
+    "CREATEGAME": "Maak spel",
+    "SEND":"Stuur",
+    "MESSAGE":"Bericht"
 }
