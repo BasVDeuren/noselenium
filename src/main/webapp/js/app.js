@@ -2,7 +2,7 @@
  * Created by Dimi on 3/02/14.
  */
 
-var spaceApp = angular.module('spaceApp', ['ngRoute', 'spaceServices', 'ngCookies', 'ngAnimate', 'pascalprecht.translate', 'ui.bootstrap', 'imageupload'])
+var spaceApp = angular.module('spaceApp', ['ngRoute', 'spaceServices', 'ngCookies', 'ngAnimate', 'pascalprecht.translate', 'ui.bootstrap', 'imageupload', 'firebase'])
     .config(appRouter);
 
 //Navigation
@@ -80,7 +80,11 @@ function appRouter($routeProvider, $httpProvider) {
         .when('/spacecrack/createGame', {
             templateUrl: 'partials/createGame.html',
             controller: 'createGameController'
+        }).when('/spacecrack/chat', {
+            templateUrl: 'partials/chat.html',
+            controller: 'ChatController'
         });
+
     $routeProvider.otherwise({redirectTo: '/notFound'});
 }
 
@@ -115,7 +119,7 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
 //        } else {
 //            return true;
 //        }
-         return UserService.loggedIn;
+        return UserService.loggedIn;
     };
 
 
