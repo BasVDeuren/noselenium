@@ -4,7 +4,7 @@
 var spaceApp = angular.module('spaceApp');
 spaceApp.controller("BetterGameController", function ($scope, $translate, Map, Game, Action, ActiveGame,$route, $routeParams, UserService) {
     //region Declarations
-    var game = new Phaser.Game(1120, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render});
+    var game = new Phaser.Game(930, 558, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render});
     var cursors;
     var xExtraByCamera;
     var yExtraByCamera;

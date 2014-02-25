@@ -7,23 +7,29 @@ spaceApp.controller("ChatController", function ($scope, $cookieStore, Profile, C
     if (!UserService.loggedIn) {
         $scope.go('/login');
     } else {
-    Profile.get(function (data, headers) {
-        $scope.username = data.username;
-    }, function (data, headers) {
-        $scope.username = "";
-    });
-    var ref = new Firebase("https://amber-fire-3394.firebaseio.com/");
-    $scope.msg = "";
-    $scope.messages = $firebase(ref);
-    $scope.autoSend = function (e) {
-        if (e.keyCode != 13) return;
-        $scope.addMessage();
-    };
-    $scope.addMessage = function () {
-        if ($scope.msg != "") {
-            $scope.messages.$add({from: $scope.username, body: $scope.msg});
-            $scope.msg = "";
-        }
-    };
+
+        $scope.scrollToBottom = function(){
+            var objDiv = document.getElementById("chatBody");
+            objDiv.scrollTop = objDiv.scrollHeight;
+        };
+
+        Profile.get(function (data, headers) {
+            $scope.username = data.username;
+        }, function (data, headers) {
+            $scope.username = "";
+        });
+        var ref = new Firebase("https://amber-fire-3394.firebaseio.com/");
+        $scope.msg = "";
+        $scope.messages = $firebase(ref);
+        $scope.autoSend = function (e) {
+            if (e.keyCode != 13) return;
+            $scope.addMessage();
+        };
+        $scope.addMessage = function () {
+            if ($scope.msg != "") {
+                $scope.messages.$add({from: $scope.username, body: $scope.msg});
+                $scope.msg = "";
+            }
+        };
     }
 });
