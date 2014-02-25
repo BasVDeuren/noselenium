@@ -3,11 +3,10 @@
  */
 var spaceApp = angular.module('spaceApp');
 
-spaceApp.controller("ChatController", function ($scope, $cookieStore, Profile, Contact, Spinner, $http, UserService, $firebase) {
+spaceApp.controller("ChatController", function ($scope, $cookieStore, Profile, Contact, Spinner, $http, UserService, $firebase,$location) {
     if (!UserService.loggedIn) {
         $scope.go('/login');
     } else {
-
         $scope.scrollToBottom = function(){
             var objDiv = document.getElementById("chatBody");
             objDiv.scrollTop = objDiv.scrollHeight;
@@ -18,7 +17,11 @@ spaceApp.controller("ChatController", function ($scope, $cookieStore, Profile, C
         }, function (data, headers) {
             $scope.username = "";
         });
-        var ref = new Firebase("https://amber-fire-3394.firebaseio.com/");
+
+        //get gameId out of url
+        $scope.currentGameId = $location.path().split("/").pop();
+        var firebaseUrl = 'https://amber-fire-3394.firebaseio.com/'+$scope.currentGameId;
+        var ref = new Firebase(firebaseUrl);
         $scope.msg = "";
         $scope.messages = $firebase(ref);
         $scope.autoSend = function (e) {
@@ -31,5 +34,9 @@ spaceApp.controller("ChatController", function ($scope, $cookieStore, Profile, C
                 $scope.msg = "";
             }
         };
+
+        $scope.removeAllMessages = function(){
+            $scope.messages.$remove();
+        }
     }
 });
