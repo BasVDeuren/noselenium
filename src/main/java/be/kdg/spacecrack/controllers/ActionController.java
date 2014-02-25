@@ -7,14 +7,17 @@ package be.kdg.spacecrack.controllers;/* Git $Id
  */
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
-import be.kdg.spacecrack.viewmodels.ActionViewModel;
 import be.kdg.spacecrack.services.IGameService;
+import be.kdg.spacecrack.viewmodels.ActionViewModel;
+import com.firebase.client.Firebase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.io.IOException;
 
 
 @Controller
@@ -35,7 +38,7 @@ public class ActionController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public void executeAction(@RequestBody ActionViewModel actionViewModel){
+    public void executeAction(@RequestBody ActionViewModel actionViewModel) throws IOException {
         if(actionViewModel.getActionType().equals(MOVESHIP)){
             gameService.moveShip(actionViewModel.getShip(), actionViewModel.getDestinationPlanetName());
         }else if(actionViewModel.getActionType().equals(ENDTURN)){
@@ -44,5 +47,8 @@ public class ActionController {
         }else{
             throw new SpaceCrackNotAcceptableException("Unsupported action type");
         }
+
+        Firebase ref = new Firebase(GameController.FIREBASEURLBASE + actionViewModel.getPlayerId());
+        ref.push().setValue(actionViewModel);
     }
 }

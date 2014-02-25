@@ -41,10 +41,6 @@ public class User implements Serializable {
     @JsonManagedReference
     private Profile profile;
 
-
-
-
-
     public User() {
     }
 

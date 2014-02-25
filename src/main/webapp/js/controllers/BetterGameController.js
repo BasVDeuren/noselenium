@@ -2,9 +2,9 @@
  * Created by Tim on 24/02/14.
  */
 var spaceApp = angular.module('spaceApp');
-spaceApp.controller("BetterGameController", function ($scope, $translate, Map, Game, Action, ActiveGame,$route, $routeParams, UserService) {
+spaceApp.controller("BetterGameController", function ($scope, $translate, Map, Game, Action, ActiveGame, $route, $routeParams, UserService) {
     //region Declarations
-    var game = new Phaser.Game(1120, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render});
+    var game = new Phaser.Game(1120, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update});
     var cursors;
     var xExtraByCamera;
     var yExtraByCamera;
@@ -15,11 +15,13 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
     var shipGroup;
     var colonyGroup;
     $scope.planetXSpritesByLetter = [];
+    $scope.gameId;
     $scope.shipXSpritesById = [];
     $scope.activePlayerId = "";
     $scope.opponentPlayerId = "";
     $scope.selectedSpaceShipXSprite = "";
     $scope.activePlayerColonyImage = "";
+    $scope.opponentPlayerColonyImage;
 
     var PlanetExtendedSprite = function (game, x, y, planet) {
         var image = game.cache.getImage('planet1');
@@ -53,21 +55,16 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
     ShipExtendedSprite.prototype.constructor = ShipExtendedSprite;
     ShipExtendedSprite.prototype.previousPlanet = null;
 //Template Function for doing actions and pushing them to the server and the opponent's client!
-    function doAction(action, frontEndCondition , frontEndLogic)
-    {
-        if(frontEndCondition)
-        {
-           frontEndLogic();
-           Action.save(action, function(){
-                activePlayerFirebase.push(action);
-           }, function()
-           {
-               create();
-           });
+    function doAction(action, frontEndCondition, frontEndLogic) {
+        if (frontEndCondition) {
+            frontEndLogic();
+            Action.save(action, function () {
+                //activePlayerFirebase.push(action);
+            }, function () {
+                create();
+            });
         }
     }
-
-
 
 
     var ColonyExtendedSprite = function (game, planetName, playerId, image) {
@@ -92,17 +89,11 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
     }
 
 
-
-
     function create() {
-        drawGame();
-        console.log("activeplayerid: " + $scope.activePlayerId);
-        console.log("opponentid: " + $scope.opponentPlayerId);
-        activePlayerFirebase = new Firebase('https://vivid-fire-9476.firebaseio.com/player' + $scope.activePlayerId);
-        opponentFireBase = new Firebase('https://vivid-fire-9476.firebaseio.com/player' + $scope.opponentPlayerId);
-        addFirebaseListener();
         game.world.setBounds(0, 0, 1600, 1000);
         cursors = game.input.keyboard.createCursorKeys();
+        drawGame();
+
     }
 
     function update() {
@@ -118,10 +109,6 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
         }
         xExtraByCamera = game.camera.x;
         yExtraByCamera = game.camera.y;
-
-    }
-
-    function render() {
 
     }
 
@@ -174,13 +161,21 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
 
         function applyGameData(data) {
             $scope.activePlayerId = data.activePlayerId;
+            $scope.gameId = data.game.gameId;
             if ($scope.activePlayerId == data.game.player1.playerId) {
                 $scope.opponentPlayerId = data.game.player2.playerId;
+                $scope.opponentPlayerColonyImage = 'player2flag';
+
                 $scope.activePlayerColonyImage = 'player1flag';
             } else if ($scope.activePlayerId == data.game.player2.playerId) {
                 $scope.activePlayerColonyImage = 'player2flag';
+                $scope.opponentPlayerColonyImage = 'player1flag';
                 $scope.opponentPlayerId = data.game.player1.playerId;
             }
+            console.log("ActiveplayerFirebaseURL: " + data.activePlayerFirebaseURL + "\n" +
+                "opponentFirebaseURL: " + data.opponentFirebaseURL);
+            opponentFireBase = new Firebase(data.opponentFirebaseURL);
+            addFirebaseListener();
             drawShipsOfPlayer(data.game.player1, 'spaceship');
             drawShipsOfPlayer(data.game.player2, 'spaceship');
             drawColoniesOfPlayer(data.game.player1, 'player1flag');
@@ -208,16 +203,16 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
             }
         }
     }
+
     function addFirebaseListener() {
+        console.log("opponentFireBase in listener: " + opponentFireBase);
         opponentFireBase.on('child_added', function (snapshot) {
             var action = snapshot.val();
             if (action.actionType == "MOVESHIP") {
                 var shipXSprite = $scope.shipXSpritesById[action.ship.shipId];
                 var planetXSprite = $scope.planetXSpritesByLetter[action.destinationPlanetName];
-                moveShipToPlanetSprite(planetXSprite, shipXSprite);
+                moveShipToPlanetSprite(planetXSprite, shipXSprite, false);
             }
-
-
         });
     }
 
@@ -241,18 +236,16 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
         //Move spaceShip
         function frontEndmoveShip() {
             allPlanetsNormal();
-            moveShipToPlanetSprite(planetXSprite, $scope.selectedSpaceShipXSprite);
-            $scope.selectedSpaceShipXSprite.ship.planetName = planetXSprite.planet.name;
+            moveShipToPlanetSprite(planetXSprite, $scope.selectedSpaceShipXSprite, true);
             spaceshipListener($scope.selectedSpaceShipXSprite);
-            //Draw new colony
-            var colonyXSprite = new ColonyExtendedSprite(game, planetXSprite.planet.name, $scope.activePlayerId, $scope.activePlayerColonyImage);
-            colonyGroup.add(colonyXSprite);
+
         }
 
-            var action = {
+        var action = {
             actionType: "MOVESHIP",
             ship: $scope.selectedSpaceShipXSprite.ship,
-            destinationPlanetName: planetXSprite.planet.name
+            destinationPlanetName: planetXSprite.planet.name,
+            playerId:$scope.activePlayerId
         };
         doAction(action, planetXSprite.eligibleMove, frontEndmoveShip);
     }
@@ -264,16 +257,33 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
         }
     }
 
-    function moveShipToPlanetSprite(planetXSprite, ship) {
+    function moveShipToPlanetSprite(planetXSprite, shipXSprite, moveByActivePlayer) {
 //        ship = ship || $scope.selectedSpaceShipXSprite;
-        game.input.disabled = true;
+
+
+        var image;
+        if (moveByActivePlayer) {
+            game.input.disabled = true;
+            image = $scope.activePlayerColonyImage;
+        }else{
+            image = $scope.opponentPlayerColonyImage;
+        }
+
         var x = planetXSprite.center.x - 25 + xExtraByCamera;
         var y = planetXSprite.center.y - 10 + yExtraByCamera;
-        game.physics.moveToXY(ship, x, y, 60, 1000);
+        console.log("planetXSprite: " + planetXSprite);
+        console.log("x: " + x + "\ny: " + y);
+        game.physics.moveToXY(shipXSprite, x, y, 60, 1000);
         setTimeout(function () {
-            ship.body.velocity.x = 0;
-            ship.body.velocity.y = 0;
+            shipXSprite.body.velocity.x = 0;
+            shipXSprite.body.velocity.y = 0;
+            shipXSprite.x = x;
+            shipXSprite.y = y;
             game.input.disabled = false;
         }, 1000);
+        shipXSprite.planetName = planetXSprite.planet.name;
+        //Draw new colony
+        var colonyXSprite = new ColonyExtendedSprite(game, planetXSprite.planet.name, $scope.activePlayerId, image);
+        colonyGroup.add(colonyXSprite);
     }
 });

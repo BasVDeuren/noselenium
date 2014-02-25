@@ -194,5 +194,16 @@ public class GameService implements IGameService {
         return null;
     }
 
-
+    @Override
+    public Player getOpponentPlayer(User user, Game game) {
+        for(Player p : user.getProfile().getPlayers()){
+            if(p.getPlayerId() == game.getPlayer1().getPlayerId()){
+                return game.getPlayer2();
+            }
+            if(p.getPlayerId() == game.getPlayer2().getPlayerId()){
+                return game.getPlayer1();
+            }
+        }
+        return null;
+    }
 }

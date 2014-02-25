@@ -41,7 +41,6 @@ public class Player {
     @Column
     private boolean turnEnded;
 
-
     @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
     @OneToOne(mappedBy = "player1")
     @JsonIgnore
@@ -119,6 +118,4 @@ public class Player {
     public void setGame(Game game) {
         this.game = game;
     }
-
-
 }

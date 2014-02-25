@@ -26,4 +26,6 @@ public interface IGameService {
     void checkVictory(Game gameByGameId);
 
     Player getActivePlayer(User user, Game game);
+
+    Player getOpponentPlayer(User user, Game game);
 }

@@ -11,7 +11,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "T_Game")
 public class Game {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY )
     private int gameId;

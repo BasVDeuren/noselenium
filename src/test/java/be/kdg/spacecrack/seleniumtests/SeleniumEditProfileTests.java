@@ -67,7 +67,6 @@ public class SeleniumEditProfileTests extends SeleniumBaseTestCase {
 
         wait.until(ExpectedConditions.visibilityOf(profileSuccesMsg));
 
-
         assertEquals(true,profileSuccesMsg.isDisplayed());
     }
 

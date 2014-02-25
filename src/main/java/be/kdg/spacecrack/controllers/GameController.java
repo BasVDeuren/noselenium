@@ -7,8 +7,6 @@ package be.kdg.spacecrack.controllers;/* Git $Id
  */
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
-import be.kdg.spacecrack.viewmodels.GameActivePlayerWrapper;
-import be.kdg.spacecrack.viewmodels.GameParameters;
 import be.kdg.spacecrack.model.Game;
 import be.kdg.spacecrack.model.Player;
 import be.kdg.spacecrack.model.Profile;
@@ -16,6 +14,8 @@ import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.services.IAuthorizationService;
 import be.kdg.spacecrack.services.IGameService;
 import be.kdg.spacecrack.services.IProfileService;
+import be.kdg.spacecrack.viewmodels.GameActivePlayerWrapper;
+import be.kdg.spacecrack.viewmodels.GameParameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +24,7 @@ import java.util.List;
 
 @Controller(value = "/auth/game")
 public class GameController {
+    public static final String FIREBASEURLBASE = "https://vivid-fire-9476.firebaseio.com/player";
 
     @Autowired
     private IAuthorizationService authorizationService;
@@ -66,8 +67,9 @@ public class GameController {
         Game game = gameService.getGameByGameId(Integer.parseInt(gameId));
         User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
         Player player = gameService.getActivePlayer(user, game);
+        Player opponent = gameService.getOpponentPlayer(user, game);
 
-        GameActivePlayerWrapper gameActivePlayerWrapper = new GameActivePlayerWrapper(game, player.getPlayerId());
+        GameActivePlayerWrapper gameActivePlayerWrapper = new GameActivePlayerWrapper(game, player.getPlayerId(), FIREBASEURLBASE + player.getPlayerId(), FIREBASEURLBASE + opponent.getPlayerId());
 
         return gameActivePlayerWrapper;
     }
