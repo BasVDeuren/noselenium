@@ -73,6 +73,17 @@ a {
     box-shadow: 0 0 25px #fff;
 }
 
+/*ChatPanel*/
+
+#chatBody{
+    height: 279px;
+    font-size: 12px;
+    overflow-y: auto;
+
+}
+#chatBody .chatLine{
+    word-wrap: break-word;
+}
 
 
 

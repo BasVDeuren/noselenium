@@ -3,8 +3,35 @@
         <p class="col-md-12">Use the arrow keys to navigate the map.</p>
     </div>
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-10">
             <div id="game"></div>
         </div>
+        <div class="col-md-2" ng-controller="ChatController">
+            <div class="panel panel-default" id="chatPanel">
+                <div class="panel-heading">
+                    Chat <button class="btn btn-danger" ng-click="removeAllMessages()" >Delete all</button>
+                </div>
+                <div class="panel-body" id="chatBody">
+                    <div>
+                        <div class="chatLine" ng-repeat="msg in messages"><strong>{{msg.from}}</strong>:
+                            {{msg.body}}
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="input-group input-group-sm">
+                                <input type="text" ng-model="msg" ng-keydown="autoSend($event)" ng-click="{{scrollToBottom()}}"
+                                       placeholder="{{'MESSAGE' | translate}}" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    <script>
+
+    </script>
 </div>
