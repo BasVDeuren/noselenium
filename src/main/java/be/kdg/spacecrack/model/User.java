@@ -1,6 +1,8 @@
 package be.kdg.spacecrack.model;
 
-import org.codehaus.jackson.annotate.JsonManagedReference;
+//import org.codehaus.jackson.annotate.JsonManagedReference;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.io.Serializable;

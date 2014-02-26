@@ -15,7 +15,7 @@
         <dependency>
             <groupId>com.firebase</groupId>
             <artifactId>firebase-client</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.12</version>
         </dependency>
 
         <dependency>
@@ -93,10 +93,15 @@
             <version>3.1-b03</version>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.9.13</version>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.3.2</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.codehaus.jackson</groupId>-->
+            <!--<artifactId>jackson-mapper-asl</artifactId>-->
+            <!--<version>1.9.13</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>

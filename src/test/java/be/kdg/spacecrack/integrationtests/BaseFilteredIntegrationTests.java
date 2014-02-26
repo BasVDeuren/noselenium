@@ -3,7 +3,7 @@ package be.kdg.spacecrack.integrationtests;
 import be.kdg.spacecrack.filters.TokenFilter;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +23,8 @@ import javax.servlet.ServletContext;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+
+//import org.codehaus.jackson.map.ObjectMapper;
 
 /* Git $Id$
  *

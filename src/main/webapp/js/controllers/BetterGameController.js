@@ -4,7 +4,7 @@
 var spaceApp = angular.module('spaceApp');
 spaceApp.controller("BetterGameController", function ($scope, $translate, Map, Game, Action, ActiveGame, $route, $routeParams, UserService) {
     //region Declarations
-    var game = new Phaser.Game(1120, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update});
+    var game = new Phaser.Game(1120, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render });
     var cursors;
     var xExtraByCamera;
     var yExtraByCamera;
@@ -14,13 +14,12 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
     var shipGroup;
     var colonyGroup;
     $scope.planetXSpritesByLetter = [];
-
+    $scope.selectedSpaceShipXSprite = null;
     $scope.game = {
         gameId: "",
         shipXSpritesById: [],
         activePlayerId: "",
         opponentPlayerId: "",
-        selectedSpaceShipXSprite: "",
         activePlayerColonyImage: "",
         opponentPlayerColonyImage: "",
         commandPoints: ""
@@ -55,9 +54,10 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
                 this.loadTexture('planet1');
             }
         }
-        this.getEligibleMove = function () {
-            return eligibleMove();
+        this.isEligibleMove = function () {
+            return eligibleMove;
         }
+
     }
     PlanetExtendedSprite.prototype = Object.create(Phaser.Sprite.prototype);
     PlanetExtendedSprite.prototype.constructor = PlanetExtendedSprite;
@@ -76,25 +76,9 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
         }
 
         this.enforcePositionChanges = function () {
-            this.body.x = $scope.planetXSpritesByLetter[ship.planetName].planet.x;
-            this.body.y = $scope.planetXSpritesByLetter[ship.planetName].planet.y - 15;
-
+            this.x = $scope.planetXSpritesByLetter[this.ship.planetName].planet.x;
+            this.y = $scope.planetXSpritesByLetter[this.ship.planetName].planet.y - 15;
         };
-
-        this.animatePositionChanges = function (afterAnimationCode) {
-//            var x = $scope.planetXSpritesByLetter[ship.planetName].planet.x;
-//            var y = $scope.planetXSpritesByLetter[ship.planetName].planet.y - 15;
-//            game.physics.moveToXY(this, x, y, 60, 1000);
-//
-
-//            function afterTimeOut() {
-                this.enforcePositionChanges();
-             //   afterAnimationCode();
-           // }
-
-//            setTimeout(afterTimeOut(), 1000);
-        };
-
 
         this.highlightConnectedPlanets = function () {
             var planetXSprite = $scope.planetXSpritesByLetter[this.ship.planetName];
@@ -103,13 +87,11 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
                 connectedPlanetXSprites[i].setEligibleMove(true);
             }
         }
-
     };
 
     ShipExtendedSprite.prototype = Object.create(Phaser.Sprite.prototype);
     ShipExtendedSprite.prototype.constructor = ShipExtendedSprite;
     ShipExtendedSprite.prototype.previousPlanet = null;
-
 
 
     var ColonyExtendedSprite = function (game, planetName, playerId, image) {
@@ -121,11 +103,7 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
     };
     ColonyExtendedSprite.prototype = Object.create(Phaser.Sprite.prototype);
     ColonyExtendedSprite.prototype.constructor = ColonyExtendedSprite;
-    ColonyExtendedSprite.prototype.setPlanet = function (planet) {
-        this.planet = planet;
-        this.x = $scope.planetXSpritesByLetter[ship.planetName].planet.x;
-        this.y = $scope.planetXSpritesByLetter[ship.planetName].planet.y;
-    }
+
     //endregion
 
     //region Lifecycle Methods
@@ -163,8 +141,16 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
 
     }
 
+    function render() {
+
+    }
+
     //endregion
 
+
+    function resetGame() {
+        ActiveGame.get({gameId: $routeParams.gameId}, applyGameActiveViewModelData);
+    }
 
     function drawGame() {
         var backgroundsprite = game.add.sprite(0, 0, 'bg');
@@ -177,7 +163,7 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
             //assign planets to their sprites;
             drawPlanets(data);
             drawConnections();
-            ActiveGame.get({gameId: $routeParams.gameId}, applyGameActiveViewModelData);
+            resetGame();
         });
 
         function drawPlanets(data) {
@@ -209,36 +195,29 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
             }
         }
 
-        function applyGameActiveViewModelData(data) {
-            $scope.game.activePlayerId = data.activePlayerId;
-            var gameData = data.game;
 
-            applyGameData(gameData);
+    }
 
-            opponentFireBase = new Firebase(data.opponentFirebaseURL);
-            addFirebaseListener();
-        }
+    function applyGameActiveViewModelData(data) {
+        $scope.game.activePlayerId = data.activePlayerId;
+        var gameData = data.game;
 
+        applyGameData(gameData);
 
+        opponentFireBase = new Firebase(data.opponentFirebaseURL);
+        addFirebaseListener();
     }
 
     function addFirebaseListener() {
         console.log("opponentFireBase in listener: " + opponentFireBase);
-        opponentFireBase.on('child_added', function (snapshot) {
-            var action = snapshot.val();
-            if (action.actionType == "MOVESHIP") {
-                var shipXSprite = $scope.game.shipXSpritesById[action.ship.shipId];
-                var planetXSprite = $scope.planetXSpritesByLetter[action.destinationPlanetName];
-                shipXSprite.ship = action.ship;
-                shipXSprite.animatePositionChanges(function () {/*do nothing, all's fine*/
-                });
-
-            }
+        opponentFireBase.on('value', function (snapshot) {
+            var game = snapshot.val();
+            applyGameData(game);
         });
     }
 
     function selectShip(spaceShipXSprite) {
-        $scope.game.selectedSpaceShipXSprite = spaceShipXSprite;
+        $scope.selectedSpaceShipXSprite = spaceShipXSprite;
         spaceShipXSprite.highlightConnectedPlanets();
     }
 
@@ -248,31 +227,32 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
 
 
     function planetListener(planetXSprite) {
+        if (planetXSprite.isEligibleMove()) {
+            allPlanetsNormal();
 
-        allPlanetsNormal();
+            $scope.selectedSpaceShipXSprite.ship.planetName = planetXSprite.planet.name;
+            $scope.selectedSpaceShipXSprite.enforcePositionChanges();
 
-        $scope.game.selectedSpaceShipXSprite.ship.planet = planetXSprite.planet;
-        $scope.game.selectedSpaceShipXSprite.animatePositionChanges(function () {
-            $scope.game.selectedSpaceShipXSprite.highlightConnectedPlanets();
-        });
 
-        var action = {
-            gameId: $scope.game.gameId,
-            actionType: "MOVESHIP",
-            ship: $scope.game.selectedSpaceShipXSprite.ship,
-            destinationPlanetName: planetXSprite.planet.name,
-            playerId: $scope.game.activePlayerId
-        };
-        Action.save(action, function (data) {
-         //   applyGameData(data);
-        }, function () {
-            create();
-        });
+            var action = {
+                gameId: $scope.game.gameId,
+                actionType: "MOVESHIP",
+                ship: $scope.selectedSpaceShipXSprite.ship,
+                destinationPlanetName: planetXSprite.planet.name,
+                playerId: $scope.game.activePlayerId
+            };
+            Action.save(action, function (data) {
+                applyGameData(data);
+                $scope.selectedSpaceShipXSprite.highlightConnectedPlanets();
+            }, function () {
+                resetGame();
+            });
+        }
     }
 
     function allPlanetsNormal() {
-        for (var planetkey in $scope.planetXSpritesByLetter) {
-            $scope.planetXSpritesByLetter[planetkey].setEligibleMove(false);
+        for (var key in $scope.planetXSpritesByLetter) {
+            $scope.planetXSpritesByLetter[key].setEligibleMove(false);
         }
     }
 
@@ -297,15 +277,15 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
             for (var shipKey in ships) {
                 var ship = ships[shipKey];
                 var shipXSprite = $scope.game.shipXSpritesById[ship.shipId];
-                if (shipXSprite == undefined) {
+                if (shipXSprite == undefined || shipXSprite == null) {
                     shipXSprite = new ShipExtendedSprite(game, ship, player.playerId, image);
+                    $scope.game.shipXSpritesById[ship.shipId] = shipXSprite;
                 } else {
-                    shipXSprite = new ShipExtendedSprite(game, ship, player.playerId, image);
-//                    shipXSprite.ship = ship;
-//                    shipXSprite.animatePositionChanges(function () {/*doNothing, all's fine*/
-//                    });
+                    //shipXSprite = new ShipExtendedSprite(game, ship, player.playerId, image);
+                    shipXSprite.ship = ship;
+                    shipXSprite.enforcePositionChanges();
                 }
-                $scope.game.shipXSpritesById[ship.shipId] = shipXSprite;
+
             }
         }
 

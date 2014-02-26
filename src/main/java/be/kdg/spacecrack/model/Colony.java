@@ -6,7 +6,9 @@ package be.kdg.spacecrack.model;/* Git $Id
  *
  */
 
-import org.codehaus.jackson.annotate.JsonIgnore;
+//import org.codehaus.jackson.annotate.JsonIgnore;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 

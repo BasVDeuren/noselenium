@@ -5,13 +5,13 @@ import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.controllers.UserController;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
-import be.kdg.spacecrack.viewmodels.UserWrapper;
 import be.kdg.spacecrack.repositories.IUserRepository;
 import be.kdg.spacecrack.services.IAuthorizationService;
 import be.kdg.spacecrack.services.IUserService;
 import be.kdg.spacecrack.services.UserService;
 import be.kdg.spacecrack.utilities.HibernateUtil;
-import org.codehaus.jackson.map.ObjectMapper;
+import be.kdg.spacecrack.viewmodels.UserWrapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -29,6 +29,8 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
+
+//import org.codehaus.jackson.map.ObjectMapper;
 
 /* Git $Id$
  *

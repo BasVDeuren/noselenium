@@ -6,12 +6,12 @@ package be.kdg.spacecrack.integrationtests;/* Git $Id
  *
  */
 
-import be.kdg.spacecrack.viewmodels.ProfileWrapper;
-import be.kdg.spacecrack.viewmodels.UserWrapper;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.utilities.HibernateUtil;
-import org.codehaus.jackson.map.ObjectMapper;
+import be.kdg.spacecrack.viewmodels.ProfileWrapper;
+import be.kdg.spacecrack.viewmodels.UserWrapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -25,6 +25,8 @@ import javax.servlet.http.Cookie;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+//import org.codehaus.jackson.map.ObjectMapper;
 
 public class IntegrationProfileTests extends BaseFilteredIntegrationTests{
     public static final String USERNAME = "profiletestusername";

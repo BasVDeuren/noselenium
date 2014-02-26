@@ -48,9 +48,11 @@ public class ActionController {
         }else{
             throw new SpaceCrackNotAcceptableException("Unsupported action type");
         }
-
+        Game game = gameService.getGameByGameId(actionViewModel.getGameId());
         Firebase ref = new Firebase(GameController.FIREBASEURLBASE + actionViewModel.getPlayerId());
-        ref.push().setValue(actionViewModel);
-        return gameService.getGameByGameId(actionViewModel.getGameId());
+
+        ref.setValue(game);
+
+        return game;
     }
 }

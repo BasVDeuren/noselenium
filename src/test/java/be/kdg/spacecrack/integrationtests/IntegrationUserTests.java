@@ -1,10 +1,10 @@
 package be.kdg.spacecrack.integrationtests;
 
 import be.kdg.spacecrack.model.User;
-import be.kdg.spacecrack.viewmodels.UserWrapper;
 import be.kdg.spacecrack.repositories.UserRepository;
 import be.kdg.spacecrack.utilities.HibernateUtil;
-import org.codehaus.jackson.map.ObjectMapper;
+import be.kdg.spacecrack.viewmodels.UserWrapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.CoreMatchers;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -20,6 +20,8 @@ import javax.servlet.http.Cookie;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+//import org.codehaus.jackson.map.ObjectMapper;
 
 /* Git $Id$
  *

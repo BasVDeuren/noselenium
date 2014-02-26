@@ -1,6 +1,7 @@
 package be.kdg.spacecrack.model;
 
-import org.codehaus.jackson.annotate.JsonBackReference;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
 
