@@ -112,7 +112,7 @@ public class GameService implements IGameService {
 
         int id = gameRepository.createGame(game);
 
-        game.setName("Game " + id);
+        game.setName(gameName);
         gameRepository.updateGame(game);
 
         return  game.getGameId();
