@@ -7,6 +7,7 @@ package be.kdg.spacecrack.controllers;/* Git $Id
  */
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
+import be.kdg.spacecrack.model.Game;
 import be.kdg.spacecrack.services.IGameService;
 import be.kdg.spacecrack.viewmodels.ActionViewModel;
 import com.firebase.client.Firebase;
@@ -38,7 +39,7 @@ public class ActionController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public void executeAction(@RequestBody ActionViewModel actionViewModel) throws IOException {
+    public Game executeAction(@RequestBody ActionViewModel actionViewModel) throws IOException {
         if(actionViewModel.getActionType().equals(MOVESHIP)){
             gameService.moveShip(actionViewModel.getShip(), actionViewModel.getDestinationPlanetName());
         }else if(actionViewModel.getActionType().equals(ENDTURN)){
@@ -50,5 +51,6 @@ public class ActionController {
 
         Firebase ref = new Firebase(GameController.FIREBASEURLBASE + actionViewModel.getPlayerId());
         ref.push().setValue(actionViewModel);
+        return gameService.getGameByGameId(actionViewModel.getGameId());
     }
 }

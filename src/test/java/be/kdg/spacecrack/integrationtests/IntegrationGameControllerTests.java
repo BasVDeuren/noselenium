@@ -86,7 +86,7 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
         Ship ship = game.getPlayer1().getShips().get(0);
         String destinationPlanet = "b";
 
-        ActionViewModel moveShipActionViewModel = new ActionViewModel("MOVESHIP", ship, destinationPlanet, null, null);
+        ActionViewModel moveShipActionViewModel = new ActionViewModel("MOVESHIP", ship, destinationPlanet, null, game.getGameId());
 
         String moveShipActionJson = objectMapper.writeValueAsString(moveShipActionViewModel);
 
