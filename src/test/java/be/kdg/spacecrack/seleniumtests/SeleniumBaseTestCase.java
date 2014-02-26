@@ -48,6 +48,8 @@ public abstract class SeleniumBaseTestCase  {
     protected void navigateToEditProfile() {
         driver.get(baseUrl);
         WebElement btnAction = driver.findElement(By.name("btnAction"));
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        wait.until(ExpectedConditions.elementToBeClickable(By.name("btnAction")));
         btnAction.click();
         WebElement lnkEditProfile = driver.findElement(By.name("lnkEditProfile"));
         lnkEditProfile.click();

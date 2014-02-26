@@ -9,6 +9,8 @@ package be.kdg.spacecrack.services;/* Git $Id
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 
+import java.util.List;
+
 public interface IUserService {
     public User getUserByAccessToken(AccessToken accessToken) throws Exception;
 
@@ -17,4 +19,6 @@ public interface IUserService {
     void registerUser(String username, String password, String email) throws Exception;
 
     void updateUser(User user);
+
+    List<User> getUsersByString(String username) throws Exception;
 }

@@ -3,6 +3,8 @@ package be.kdg.spacecrack.repositories;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 
+import java.util.List;
+
 /* Git $Id$
  *
  * Project Application Development
@@ -21,4 +23,5 @@ public interface IUserRepository {
     void updateUser(User user);
 
     User getUserByAccessToken(AccessToken accessToken);
+    List<User> getUsersByString(String username) throws Exception;
 }
