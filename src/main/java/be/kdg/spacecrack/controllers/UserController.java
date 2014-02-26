@@ -13,6 +13,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /* Git $Id$
  *
  * Project Application Development
@@ -96,5 +99,9 @@ public class UserController {
             throw new SpaceCrackUnauthorizedException();
         }
         return user;
+    }
+
+    public List<User> getUsersByString(String username) throws Exception {
+        return userService.getUsersByString(username);
     }
 }

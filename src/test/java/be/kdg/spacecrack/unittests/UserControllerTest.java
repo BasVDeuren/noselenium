@@ -23,6 +23,9 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.VerificationModeFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -163,6 +166,24 @@ public class UserControllerTest {
 
         userController.getUserByToken(invalidAccessToken);
     }*/
+
+    @Test
+    public void testGetUser_validUserName_User() throws Exception {
+        User user = new User("Jacky", "password", "email");
+        List<User> foundUsers = new ArrayList<User>();
+        AccessToken accessToken = new AccessToken("accesstoken123");
+        user.setToken(accessToken);
+        foundUsers.add(user);
+        stub(userService.getUsersByString("Jac")).toReturn(foundUsers);
+        //stub(tokenService.getAccessTokenByValue(accessToken.getValue())).toReturn(accessToken);
+
+        //User actual = userController.getUserByToken(accessToken);
+        List<User> actualUsers = new ArrayList<User>();
+        actualUsers = userController.getUsersByString("Jac");
+        //User actual = userController.getUserByToken();
+
+        assertEquals("User from usercontroller should be the same as from db", foundUsers.get(0), actualUsers.get(0));
+    }
 
     @After
     public void tearDown() throws Exception {

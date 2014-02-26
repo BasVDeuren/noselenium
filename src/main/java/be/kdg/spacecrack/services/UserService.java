@@ -13,6 +13,9 @@ import be.kdg.spacecrack.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component("userService")
 public class UserService implements IUserService {
 
@@ -45,5 +48,10 @@ public class UserService implements IUserService {
     @Override
     public void updateUser(User user) {
         userRepository.updateUser(user);
+    }
+
+    @Override
+    public List<User> getUsersByString(String username) throws Exception {
+        return userRepository.getUsersByString(username);
     }
 }
