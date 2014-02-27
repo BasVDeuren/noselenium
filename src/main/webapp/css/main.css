@@ -95,7 +95,9 @@ a {
     max-height: 250px;
     overflow-y: auto;
 }
-
+.alignRight{
+    text-align: right;
+}
 
 
 

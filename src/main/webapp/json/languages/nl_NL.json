@@ -38,5 +38,6 @@
     "CREATEGAME": "Maak spel",
     "SEND":"Stuur",
     "MESSAGE":"Bericht",
-    "INVITE":"Uitnodigen"
+    "INVITE":"Uitnodigen",
+    "NAME":"Naam"
 }

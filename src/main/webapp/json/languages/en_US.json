@@ -38,5 +38,6 @@
     "CREATEGAME": "create game",
     "SEND":"Send",
     "MESSAGE":"Message",
-    "INVITE":"Invite"
+    "INVITE":"Invite",
+    "NAME":"Name"
 }

@@ -5,13 +5,24 @@
     *
     */
 var spaceApp = angular.module('spaceApp');
-spaceApp.controller("createGameController", function ($scope, $translate, Game,FindPlayer) {
+spaceApp.controller("createGameController", function ($scope, $translate, Game,FindPlayer,Profile) {
+
+    //haal ingelogde gebruiker op
+    Profile.get(function (data, headers) {
+        console.log("get api/auth/user");
+        $scope.loggedInProfileId = data.profile.profileId;
+    }, function (data, headers) {
+        $scope.loggedInProfileId = null;
+    });
+
+
     $scope.gameData = {
         gameName:"", opponentProfileId:""
     };
     $scope.gameId ="";
 
-    $scope.createGame = function(){
+    $scope.createGame = function(opponentId){
+        $scope.gameData.opponentProfileId = opponentId;
         Game.save($scope.gameData, function(data){
 
             $scope.gameId = data[0];
@@ -20,12 +31,16 @@ spaceApp.controller("createGameController", function ($scope, $translate, Game,F
 
         })
     };
-    $scope.foundPlayers = ["aaa","a","ayuiyui","ajijo","ahuihuh","jajijia","jijaa","azaea","ayyièyi","aijoijoi","uiuioa","kokma"];
+    $scope.foundPlayers = [];
     $scope.findPlayers = function(searchString){
-//        FindPlayer.get({username: searchString},function(data, headers){
-//          $scope.foundPlayers = data;
-//        });
+        FindPlayer.get({username: searchString},function(data, headers){
+          $scope.foundPlayers = data;
+        });
     } ;
+
+    $scope.hideFoundPlayer = function(profileId){
+         return (profileId == $scope.loggedInProfileId);
+    };
 
     $scope.getUserImage = function (image) {
         if (image == null) {
