@@ -85,6 +85,17 @@ a {
     word-wrap: break-word;
 }
 
+/*Find Players*/
+.findPlayerImg{
+    width: 40px;
+    height: 40px;
+}
+
+.foundPlayersTable{
+    max-height: 250px;
+    overflow-y: auto;
+}
+
 
 
 
