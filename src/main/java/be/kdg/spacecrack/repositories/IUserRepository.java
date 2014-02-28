@@ -23,5 +23,8 @@ public interface IUserRepository {
     void updateUser(User user);
 
     User getUserByAccessToken(AccessToken accessToken);
+
     List<User> getUsersByString(String username) throws Exception;
+
+    List<User> getUsersByEmail(String username) throws Exception;
 }

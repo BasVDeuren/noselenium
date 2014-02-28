@@ -184,7 +184,21 @@ public class UserControllerTest {
         actualUsers = userController.getUsersByString("Jac");
         //User actual = userController.getUserByToken();
 
-        assertEquals("User from usercontroller should be the same as from db", foundUsers.get(0), actualUsers.get(0));
+        assertEquals("Users from usercontroller should be the same as from db", foundUsers.get(0), actualUsers.get(0));
+    }
+
+    @Test
+    public void testGetUsers_validEmail_User() throws Exception {
+        User user = new User("Tommy", "password", "tommy@gmail.com");
+        List<User> foundUsers = new ArrayList<User>();
+        AccessToken accessToken = new AccessToken("accesstoken321");
+        user.setToken(accessToken);
+        foundUsers.add(user);
+        stub(userService.getUsersByEmail("tom")).toReturn(foundUsers);
+        List<User> actualUsers = new ArrayList<User>();
+        actualUsers = userController.getUsersByEmail("tom");
+
+        assertEquals("Users from usercontroller should be the same as from db", foundUsers.get(0), actualUsers.get(0));
     }
 
     @After

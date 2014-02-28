@@ -21,4 +21,6 @@ public interface IUserService {
     void updateUser(User user);
 
     List<User> getUsersByString(String username) throws Exception;
+
+    List<User> getUsersByEmail(String tom) throws Exception;
 }

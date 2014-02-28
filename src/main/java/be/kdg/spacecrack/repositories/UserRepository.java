@@ -81,6 +81,7 @@ public class UserRepository implements IUserRepository {
         return user;
     }
 
+    @Override
     public List<User> getUsersByString(String username) throws Exception {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         List<User> foundUsers;
@@ -93,6 +94,28 @@ public class UserRepository implements IUserRepository {
                 tx.commit();
             } catch (Exception ex) {
                 logger.error("Unexpected while retrieving user from database (getUsers())", ex);
+                tx.rollback();
+                throw ex;
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
+        return foundUsers;
+    }
+
+    @Override
+    public List<User> getUsersByEmail(String email) throws Exception {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        List<User> foundUsers;
+        try {
+            Transaction tx = session.beginTransaction();
+            try {
+                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from User u where u.email LIKE :email");
+                q.setParameter("email", "%" + email + "%");
+                foundUsers = q.list();
+                tx.commit();
+            } catch (Exception ex) {
+                logger.error("Unexpected while retrieving user from database (getUsersByEmail())", ex);
                 tx.rollback();
                 throw ex;
             }

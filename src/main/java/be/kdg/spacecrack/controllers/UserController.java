@@ -27,7 +27,7 @@ import java.util.List;
 @Component("userController")
 @Controller
 public class UserController {
-//TIS GEFIXD!!
+    //TIS GEFIXD!!
     @Autowired
     private IUserService userService;
 
@@ -45,7 +45,7 @@ public class UserController {
         this.authorizationService = authorizationService;
     }
 
-    @RequestMapping(value="/user",method = RequestMethod.POST, consumes = "application/json")
+    @RequestMapping(value = "/user", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public AccessToken registerUser(@RequestBody UserWrapper userWrapper) throws Exception {
         AccessToken accessToken;
@@ -54,7 +54,7 @@ public class UserController {
         if (userByUsername == null) {
             if (userWrapper.getPassword().equals(userWrapper.getPasswordRepeated())) {
                 userService.registerUser(userWrapper.getUsername(), userWrapper.getPassword(), userWrapper.getEmail());
-                accessToken =  authorizationService.login(userService.getUserByUsername(userWrapper.getUsername()));
+                accessToken = authorizationService.login(userService.getUserByUsername(userWrapper.getUsername()));
             } else {
                 throw new SpaceCrackNotAcceptableException("Password and repeat password aren't equal");
             }
@@ -86,7 +86,7 @@ public class UserController {
 
     }
 
-    @RequestMapping(value = "/auth/user",method = RequestMethod.GET)
+    @RequestMapping(value = "/auth/user", method = RequestMethod.GET)
     @ResponseBody
     public User getUserByToken(@CookieValue("accessToken") String cookieAccessTokenvalue) throws Exception {
         User user = null;
@@ -102,13 +102,25 @@ public class UserController {
         return user;
     }
 
-    @RequestMapping(value = "/auth/findusers/{username}",method = RequestMethod.GET)
+    @RequestMapping(value = "/auth/findusersbyusername/{username}", method = RequestMethod.GET)
     @ResponseBody
     public List<User> getUsersByString(@PathVariable String username) throws Exception {
         List<User> foundUsers = null;
         try {
             foundUsers = userService.getUsersByString(username);
-        }catch (JsonParseException ex){
+        } catch (JsonParseException ex) {
+            throw new SpaceCrackUnauthorizedException();
+        }
+        return foundUsers;
+    }
+
+    @RequestMapping(value = "/auth/findusersbyemail/{email}", method = RequestMethod.GET)
+    @ResponseBody
+    public List<User> getUsersByEmail(@PathVariable String email) throws Exception {
+        List<User> foundUsers = null;
+        try {
+            foundUsers = userService.getUsersByEmail(email);
+        } catch (JsonParseException ex) {
             throw new SpaceCrackUnauthorizedException();
         }
         return foundUsers;

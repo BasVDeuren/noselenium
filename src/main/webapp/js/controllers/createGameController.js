@@ -1,11 +1,11 @@
 /**
-* Project Application Development
-* Karel de Grote-Hogeschool
-    * 2013-2014
-    *
-    */
+ * Project Application Development
+ * Karel de Grote-Hogeschool
+ * 2013-2014
+ *
+ */
 var spaceApp = angular.module('spaceApp');
-spaceApp.controller("createGameController", function ($scope, $translate, Game,FindPlayer,Profile) {
+spaceApp.controller("createGameController", function ($scope, $translate, Game, FindPlayer, Profile) {
 
     //haal ingelogde gebruiker op
     Profile.get(function (data, headers) {
@@ -17,29 +17,44 @@ spaceApp.controller("createGameController", function ($scope, $translate, Game,F
 
 
     $scope.gameData = {
-        gameName:"", opponentProfileId:""
+        gameName: "", opponentProfileId: ""
     };
-    $scope.gameId ="";
+    $scope.gameId = "";
 
-    $scope.createGame = function(opponentId){
+    $scope.createGame = function (opponentId) {
         $scope.gameData.opponentProfileId = opponentId;
-        Game.save($scope.gameData, function(data){
+        Game.save($scope.gameData, function (data) {
 
             $scope.gameId = data[0];
 
-            $scope.go('/spacecrack/game/'+ $scope.gameId);
+            $scope.go('/spacecrack/game/' + $scope.gameId);
 
         })
     };
-    $scope.foundPlayers = [];
-    $scope.findPlayers = function(searchString){
-        FindPlayer.get({username: searchString},function(data, headers){
-          $scope.foundPlayers = data;
-        });
-    } ;
 
-    $scope.hideFoundPlayer = function(profileId){
-         return (profileId == $scope.loggedInProfileId);
+    $scope.foundPlayers = [];
+
+    $scope.searchCriteria = {
+        value: "username"
+    };
+
+    $scope.setSearchCriteria = function (value) {
+        $scope.searchCriteria.value = value;
+    };
+    $scope.findPlayers = function (searchString) {
+        if ($scope.searchCriteria.value == "email") {
+            FindPlayer.findUsersByEmail().get({email: searchString}, function (data, headers) {
+                $scope.foundPlayers = data;
+            });
+        } else {
+            FindPlayer.findUsersByUsername().get({username: searchString}, function (data, headers) {
+                $scope.foundPlayers = data;
+            });
+        }
+    };
+
+    $scope.hideFoundPlayer = function (profileId) {
+        return (profileId == $scope.loggedInProfileId);
     };
 
     $scope.getUserImage = function (image) {
@@ -49,4 +64,5 @@ spaceApp.controller("createGameController", function ($scope, $translate, Game,F
             return image;
         }
     }
-});
+})
+;

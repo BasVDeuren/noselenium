@@ -54,4 +54,9 @@ public class UserService implements IUserService {
     public List<User> getUsersByString(String username) throws Exception {
         return userRepository.getUsersByString(username);
     }
+
+    @Override
+    public List<User> getUsersByEmail(String email) throws Exception {
+        return userRepository.getUsersByEmail(email);
+    }
 }
