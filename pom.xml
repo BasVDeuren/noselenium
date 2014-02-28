@@ -98,9 +98,9 @@
             <version>4.3.2</version>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>org.codehaus.jackson</groupId>-->
-            <!--<artifactId>jackson-mapper-asl</artifactId>-->
-            <!--<version>1.9.13</version>-->
+        <!--<groupId>org.codehaus.jackson</groupId>-->
+        <!--<artifactId>jackson-mapper-asl</artifactId>-->
+        <!--<version>1.9.13</version>-->
         <!--</dependency>-->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -121,11 +121,14 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.29</version>
         </dependency>
-
-
-
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-agent</artifactId>
+            <version>2.5.6</version>
+        </dependency>
 
     </dependencies>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -148,6 +151,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
@@ -155,6 +159,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.16</version>
                 <configuration>
                     <includes>
                         <include>**/*Tests.java</include>
@@ -162,6 +167,7 @@
                 </configuration>
             </plugin>
         </plugins>
+
     </build>
     <reporting>
         <plugins>
@@ -180,6 +186,7 @@
                 <artifactId>cobertura-maven-plugin</artifactId>
                 <version>2.5.1</version>
             </plugin>
+
         </plugins>
     </reporting>
 </project>

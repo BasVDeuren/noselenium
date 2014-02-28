@@ -7,7 +7,12 @@ package be.kdg.spacecrack.controllers;/* Git $Id
  */
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
+import be.kdg.spacecrack.commands.Action;
+import be.kdg.spacecrack.commands.EndTurnAction;
+import be.kdg.spacecrack.commands.MoveShipAction;
 import be.kdg.spacecrack.model.Game;
+import be.kdg.spacecrack.model.Player;
+import be.kdg.spacecrack.repositories.IPlayerRepository;
 import be.kdg.spacecrack.services.IGameService;
 import be.kdg.spacecrack.viewmodels.ActionViewModel;
 import com.firebase.client.Firebase;
@@ -29,30 +34,29 @@ public class ActionController {
 
     @Autowired
     IGameService gameService;
+    @Autowired
+    IPlayerRepository playerRepository;
 
-    public ActionController() {
-    }
-
-    public ActionController(IGameService gameService){
-        this.gameService = gameService;
-    }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public Game executeAction(@RequestBody ActionViewModel actionViewModel) throws IOException {
+    public void executeAction(@RequestBody ActionViewModel actionViewModel) throws IOException {
+        Player player = playerRepository.getPlayerByPlayerId(actionViewModel.getPlayerId());
         if(actionViewModel.getActionType().equals(MOVESHIP)){
-            gameService.moveShip(actionViewModel.getShip(), actionViewModel.getDestinationPlanetName());
+     //       gameService.moveShip(actionViewModel.getShip(), actionViewModel.getDestinationPlanetName());
+
+            Action moveShipAction = new MoveShipAction(gameService, player, actionViewModel.getShip(), actionViewModel.getDestinationPlanetName());
+            moveShipAction.execute();
         }else if(actionViewModel.getActionType().equals(ENDTURN)){
-            gameService.endTurn(actionViewModel.getPlayerId());
+            Action endTurnAction = new EndTurnAction(gameService, player);
+            endTurnAction.execute();
             //gameService.checkVictory(gameService.getGameByGameId(actionViewModel.getGameId()));
         }else{
             throw new SpaceCrackNotAcceptableException("Unsupported action type");
         }
         Game game = gameService.getGameByGameId(actionViewModel.getGameId());
-        Firebase ref = new Firebase(GameController.FIREBASEURLBASE + actionViewModel.getPlayerId());
+        Firebase ref = new Firebase(GameController.FIREBASEURLBASE + game.getName());
 
         ref.setValue(game);
-
-        return game;
     }
 }

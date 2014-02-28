@@ -7,6 +7,7 @@ package be.kdg.spacecrack.repositories;/* Git $Id
  */
 
 import be.kdg.spacecrack.model.Game;
+import be.kdg.spacecrack.model.Player;
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.utilities.HibernateUtil;
 import org.hibernate.Query;
@@ -39,7 +40,7 @@ public class GameRepository implements IGameRepository {
 
     @Override
     public int updateGame(Game game) {
-        return createGame(game); // Because creatorupdate
+        return createGame(game); // Because saveorupdate
     }
 
     @Override
@@ -72,6 +73,26 @@ public class GameRepository implements IGameRepository {
             try {
                 @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Game g where g.gameId = :gameId");
                 q.setParameter("gameId", gameId);
+                game = (Game) q.uniqueResult();
+                tx.commit();
+            } catch (RuntimeException e) {
+                throw e;
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
+        return game;
+    }
+
+    @Override
+    public Game getGameByPlayer(Player player) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Game game;
+        try {
+            Transaction tx = session.beginTransaction();
+            try {
+                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Game g where g.player1 = :player or g.player2 = :player");
+                q.setParameter("player", player);
                 game = (Game) q.uniqueResult();
                 tx.commit();
             } catch (RuntimeException e) {

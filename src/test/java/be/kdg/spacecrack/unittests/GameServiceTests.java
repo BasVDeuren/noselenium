@@ -31,37 +31,22 @@ public class GameServiceTests {
     private GameService gameService;
     private User user;
     private IPlayerRepository playerRepository;
+    private Profile opponentProfile;
 
     @Before
     public void setUp() throws Exception {
         playerRepository = new PlayerRepository();
         gameService = new GameService(new MapService(),new PlanetRepository(), new ColonyRepository(), new ShipRepository(), playerRepository, new GameRepository());
         user = new User();
-    }
-
-    /*@Test
-    public void createGame_SinglePlayer_GameWithColonyCreated() throws Exception {
         Profile profile =new Profile();
+        opponentProfile = new Profile();
+        User opponentUser = new User();
+        opponentUser.setProfile(opponentProfile);
         user.setProfile(profile);
-        Profile opponentProfile = new Profile();
-        Game game = gameService.createGame(user.getProfile(), "SpaceCrackName", opponentProfile);
-        Player player1 = game.getPlayer1();
-        List<Player> players = profile.getPlayers();
-        assertTrue(players.contains(player1));
-        assertTrue(player1.getColonies().size() == 1);
-        assertTrue(player1.getColonies().get(0).getPlanet().getName().equals("a"));
-        assertTrue(player1.getShips().size()==1);
-        assertTrue(player1.getShips().get(0).getPlanet().getName().equals("a"));
-
-       // assertTrue(player1.getColonies().get(0).getPl)
-
-    }*/
+    }
 
     private Game creategame()
     {
-        Profile profile =new Profile();
-        Profile opponentProfile = new Profile();
-        user.setProfile(profile);
         int gameId = gameService.createGame(user.getProfile(), "SpaceCrackName", opponentProfile);
         Game game = gameService.getGameByGameId(gameId);
         return game;
@@ -141,7 +126,7 @@ public class GameServiceTests {
     }
 
     @Test
-    public void getGameFromPlayer() throws Exception {
+    public void getGameFromGameId() throws Exception {
         Game expected = creategame();
 
         IGameRepository gameRepository = mock(IGameRepository.class);
@@ -154,22 +139,36 @@ public class GameServiceTests {
         assertEquals("Actual gameId should be the same as the expected gameId", expected.getGameId(), actual.getGameId());
     }
 
-    @Test
-    public void endPlayerTurnForTheMoment() throws Exception {
+    @Test(expected = SpaceCrackNotAcceptableException.class)
+    public void endPlayerTurn() throws Exception {
+
         Game game = creategame();
+        Player player = game.getPlayer1();
+        int oldCommandPoints = player.getCommandPoints();
+        gameService.endTurn(player);
+        player = playerRepository.getPlayerByPlayerId(player.getPlayerId());
 
-//        IGameRepository gameRepository = mock(IGameRepository.class);
-      //  IPlayerRepository playerRepository1 = mock(IPlayerRepository.class);
-        GameService gameService1 = new GameService(new MapService(), new PlanetRepository(), new ColonyRepository(), new ShipRepository(), playerRepository, new GameRepository());
-//        stub(gameRepository.getGameByGameId(game.getGameId())).toReturn(game);
+        assertEquals(oldCommandPoints + GameService.COMMANDPOINTSPERTURN, player.getCommandPoints());
+        gameService.moveShip(player.getShips().get(0), "b");
+    }
 
+    @Test
+    public void endTurnBothPlayers_newCommandPoints() throws Exception {
+        Game game = creategame();
         Player player1 = game.getPlayer1();
-        int expected = player1.getCommandPoints() + 5;
-        gameService1.endTurn(player1.getPlayerId());
-        Player dbPlayer = playerRepository.getPlayerByPlayerId(player1.getPlayerId());
-        assertEquals(expected, dbPlayer.getCommandPoints());
+        int oldCommandPointsOfPlayer1 = player1.getCommandPoints();
+        gameService.endTurn(player1);
+        Player player2 = game.getPlayer2();
+        int oldCommandPointsOfPlayer2 = player2.getCommandPoints();
 
-//        verify(playerRepository, VerificationModeFactory.times(1)).updatePlayer(game.getPlayer1());
+        gameService.endTurn(player2);
+        player1 = playerRepository.getPlayerByPlayerId(player1.getPlayerId());
+        player2 = playerRepository.getPlayerByPlayerId(player2.getPlayerId());
 
+        assertEquals(oldCommandPointsOfPlayer1 + GameService.COMMANDPOINTSPERTURN, player1.getCommandPoints());
+        assertEquals(oldCommandPointsOfPlayer2 + GameService.COMMANDPOINTSPERTURN, player2.getCommandPoints());
+
+        gameService.moveShip(player1.getShips().get(0), "b");
+        gameService.moveShip(player2.getShips().get(0), "b3");
     }
 }

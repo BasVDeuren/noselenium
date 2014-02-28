@@ -17,7 +17,7 @@ public interface IGameService {
 
     Planet getShipLocationByShipId(int shipId);
 
-    void endTurn(int playerId);
+    void endTurn(Player player);
 
     List<Game> getGames(User user);
 

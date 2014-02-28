@@ -2,27 +2,35 @@
  * Created by Tim on 24/02/14.
  */
 var spaceApp = angular.module('spaceApp');
-spaceApp.controller("BetterGameController", function ($scope, $translate, Map, Game, Action, ActiveGame, $route, $routeParams, UserService) {
+spaceApp.controller("BetterGameController", function ($scope, $translate, Map, Game, Action, ActiveGame, $route, $routeParams) {
     //region Declarations
-    var game = new Phaser.Game(1120, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render });
+
+
+    const CANVASWIDTH = 1120;
+    const CANVASHEIGHT = 600;
+    var game = new Phaser.Game(CANVASWIDTH, CANVASHEIGHT, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render });
     var cursors;
     var xExtraByCamera;
     var yExtraByCamera;
-    var opponentFireBase;
+    var firebaseGameURL;
+    var commandPointsText;
 
     var planetGroup;
     var shipGroup;
     var colonyGroup;
+
+    var button;
     $scope.planetXSpritesByLetter = [];
     $scope.selectedSpaceShipXSprite = null;
+    $scope.commandPoints = 0;
+
     $scope.game = {
         gameId: "",
         shipXSpritesById: [],
         activePlayerId: "",
         opponentPlayerId: "",
         activePlayerColonyImage: "",
-        opponentPlayerColonyImage: "",
-        commandPoints: ""
+        opponentPlayerColonyImage: ""
     };
 
 
@@ -109,7 +117,7 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
     //region Lifecycle Methods
     function preload() {
         game.load.image('bg', 'assets/SpaceCrackBackground.jpg');
-        game.load.image('button', 'assets/endturn.png');
+        game.load.spritesheet('button', 'assets/button_sprite_sheet.png', 193, 71);
         game.load.image('planet1', 'assets/planet1_small.png');
         game.load.image('planet1_selected', 'assets/planet1_small_selected.png');
         game.load.image('spaceship', 'assets/spaceship.png');
@@ -119,10 +127,18 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
 
 
     function create() {
+
         game.world.setBounds(0, 0, 1780, 1000);
         cursors = game.input.keyboard.createCursorKeys();
         drawGame();
+        button = game.add.button(500, 75, 'button', onClickEndTurn, this, 2, 1, 0);
+        button.fixedToCamera = true;
+        button.cameraOffset.setTo(CANVASWIDTH/2 - 130, CANVASHEIGHT - 83);
 
+        var commandpointsprite = game.add.sprite(0, 0);
+        commandpointsprite.fixedToCamera = true;
+        commandPointsText = game.add.text(5, 5, "Commandpoints: ", { font: '100px', fill: '#FF0000'});
+        commandpointsprite.addChild(commandPointsText);
     }
 
     function update() {
@@ -204,15 +220,16 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
 
         applyGameData(gameData);
 
-        opponentFireBase = new Firebase(data.opponentFirebaseURL);
+        firebaseGameURL = new Firebase(data.firebaseGameURL);
         addFirebaseListener();
     }
 
     function addFirebaseListener() {
-        console.log("opponentFireBase in listener: " + opponentFireBase);
-        opponentFireBase.on('value', function (snapshot) {
+        console.log("opponentFireBase in listener: " + firebaseGameURL);
+        firebaseGameURL.on('value', function (snapshot) {
             var game = snapshot.val();
             applyGameData(game);
+            $scope.selectedSpaceShipXSprite.highlightConnectedPlanets();
         });
     }
 
@@ -241,9 +258,7 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
                 destinationPlanetName: planetXSprite.planet.name,
                 playerId: $scope.game.activePlayerId
             };
-            Action.save(action, function (data) {
-                applyGameData(data);
-                $scope.selectedSpaceShipXSprite.highlightConnectedPlanets();
+            Action.save(action, function () {
             }, function () {
                 resetGame();
             });
@@ -258,19 +273,24 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
 
     function applyGameData(gameData) {
         $scope.game.gameId = gameData.gameId;
+
         if ($scope.game.activePlayerId == gameData.player1.playerId) {
             $scope.game.opponentPlayerId = gameData.player2.playerId;
             $scope.game.opponentPlayerColonyImage = 'player2flag';
             $scope.game.activePlayerColonyImage = 'player1flag';
+            $scope.commandPoints = gameData.player1.commandPoints;
         } else if ($scope.game.activePlayerId == gameData.player2.playerId) {
             $scope.game.activePlayerColonyImage = 'player2flag';
             $scope.game.opponentPlayerColonyImage = 'player1flag';
             $scope.game.opponentPlayerId = gameData.player1.playerId;
+            $scope.commandPoints = gameData.player2.commandPoints;
         }
+
         drawShipsOfPlayer(gameData.player1, 'spaceship');
         drawShipsOfPlayer(gameData.player2, 'spaceship');
         drawColoniesOfPlayer(gameData.player1, 'player1flag');
         drawColoniesOfPlayer(gameData.player2, 'player2flag');
+        updateCommandPoints();
 
         function drawShipsOfPlayer(player, image) {
             var ships = player.ships;
@@ -298,6 +318,26 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
                 colonyGroup.add(colonyXSprite);
             }
         }
+    }
+
+    function onClickEndTurn () {
+            allPlanetsNormal();
+
+            $scope.selectedSpaceShipXSprite = null;
+
+            var action = {
+                gameId: $scope.game.gameId,
+                actionType: "ENDTURN",
+                playerId: $scope.game.activePlayerId
+            };
+            Action.save(action, function () {
+            }, function () {
+                resetGame();
+            });
+    }
+
+    function updateCommandPoints() {
+        commandPointsText.setText("Commandpoints: " + $scope.commandPoints);
     }
 
 });

@@ -11,17 +11,15 @@ import be.kdg.spacecrack.model.Game;
 public class GameActivePlayerWrapper {
     Game game;
     int activePlayerId;
-    String activePlayerFirebaseURL;
-    String opponentFirebaseURL;
+    String firebaseGameURL;
 
     public GameActivePlayerWrapper() {
     }
 
-    public GameActivePlayerWrapper(Game game, int activePlayerId, String activePlayerFirebaseURL, String opponentFirebaseURL) {
+    public GameActivePlayerWrapper(Game game, int activePlayerId, String firebaseGameURL) {
         this.game = game;
         this.activePlayerId = activePlayerId;
-        this.activePlayerFirebaseURL = activePlayerFirebaseURL;
-        this.opponentFirebaseURL = opponentFirebaseURL;
+        this.firebaseGameURL = firebaseGameURL;
     }
 
     public Game getGame() {
@@ -40,19 +38,11 @@ public class GameActivePlayerWrapper {
         this.activePlayerId = activePlayerId;
     }
 
-    public String getActivePlayerFirebaseURL() {
-        return activePlayerFirebaseURL;
+    public String getFirebaseGameURL() {
+        return firebaseGameURL;
     }
 
-    public void setActivePlayerFirebaseURL(String activePlayerFirebaseURL) {
-        this.activePlayerFirebaseURL = activePlayerFirebaseURL;
-    }
-
-    public String getOpponentFirebaseURL() {
-        return opponentFirebaseURL;
-    }
-
-    public void setOpponentFirebaseURL(String opponentFirebaseURL) {
-        this.opponentFirebaseURL = opponentFirebaseURL;
+    public void setFirebaseGameURL(String firebaseGameURL) {
+        this.firebaseGameURL = firebaseGameURL;
     }
 }

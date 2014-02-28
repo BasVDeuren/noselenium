@@ -2,7 +2,7 @@
  * Created by Dimi on 3/02/14.
  */
 var spaceApp = angular.module('spaceApp');
-spaceApp.controller("GameController", function ($scope, $translate, Map, Game, Action, ActiveGame, $routeParams, UserService) {
+spaceApp.controller("GameController", function ($scope, $translate, Map, Game, Action, ActiveGame, $routeParams) {
 
 
     var game = new Phaser.Game(1120, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render});
@@ -47,7 +47,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
     var PlanetExtendedSprite = function (game, x, y, name) {
         Phaser.Sprite.call(this, game, x, y, 'planet1');
         this.name = name;
-    }
+    };
     PlanetExtendedSprite.prototype = Object.create(Phaser.Sprite.prototype);
     PlanetExtendedSprite.prototype.constructor = PlanetExtendedSprite;
     PlanetExtendedSprite.prototype.eligibleMove = false;
@@ -62,7 +62,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         Phaser.Sprite.call(this, game, x, y, 'spaceship');
         this.ship = ship;
         this.playerId = playerId;
-    }
+    };
     ShipExtendedSprite.prototype = Object.create(Phaser.Sprite.prototype);
     ShipExtendedSprite.prototype.constructor = ShipExtendedSprite;
     ShipExtendedSprite.prototype.previousPlanet = null;
@@ -117,7 +117,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         sprites = game.add.group();
 
 
-        Map.get(function (data, header) {
+        Map.get(function (data) {
             console.log(data.v);
             $scope.planetArray = data.planets;
             console.log("planetArray:" + $scope.planetArray[0].x);
@@ -403,10 +403,8 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
         $scope.action.actionType = "ENDTURN";
         Action.save($scope.action, function () {
             alert("You have ended your turn, wait until you receive new commandpoints.");
-            //todo: longpoll communication with server?
-            $scope.commandPoints = $scope.commandPoints + 5;
-        }, function () {
-            alert("Something went wrong when ending your turn, please try again or wait for new commandpoints.");
+
+        }, function () {            alert("Something went wrong when ending your turn, please try again or wait for new commandpoints.");
         });
     }
 

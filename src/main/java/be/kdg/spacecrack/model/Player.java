@@ -16,6 +16,8 @@ import java.util.List;
  * 2013-2014
  *
  */
+
+//todo: commentaar
 @Entity
 @Table(name = "T_Player")
 public class Player {
@@ -59,7 +61,7 @@ public class Player {
 
     public Player(Profile profile) {
         this.profile = profile;
-        this.commandPoints = 5;
+    //    this.commandPoints = 5;
     }
 
     public int getPlayerId() {

@@ -15,7 +15,6 @@ public class ActionViewModel {
     private Integer playerId;
     private Integer gameId;
 
-    //actionType, ship, destinationPlanetName
     public ActionViewModel(String actionType, Ship ship, String destinationPlanetName, Integer playerId, Integer gameId) {
         this.actionType = actionType;
         this.ship = ship;

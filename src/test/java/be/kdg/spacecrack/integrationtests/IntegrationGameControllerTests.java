@@ -86,7 +86,7 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
         Ship ship = game.getPlayer1().getShips().get(0);
         String destinationPlanet = "b";
 
-        ActionViewModel moveShipActionViewModel = new ActionViewModel("MOVESHIP", ship, destinationPlanet, null, game.getGameId());
+        ActionViewModel moveShipActionViewModel = new ActionViewModel("MOVESHIP", ship, destinationPlanet, game.getPlayer1().getPlayerId(), game.getGameId());
 
         String moveShipActionJson = objectMapper.writeValueAsString(moveShipActionViewModel);
 
@@ -223,7 +223,7 @@ Game game = gameActivePlayerWrapper.getGame();
 
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(new ActionViewModel("ENDTURN", game.getPlayer1().getShips().get(0), "", game.getPlayer1().getPlayerId(), 0)))
+                .content(objectMapper.writeValueAsString(new ActionViewModel("ENDTURN", null, "", game.getPlayer1().getPlayerId(),game.getGameId())))
                 .cookie(new Cookie("accessToken", accessToken))
         ).andExpect(status().isOk());
     }

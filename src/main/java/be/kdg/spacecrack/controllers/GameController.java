@@ -24,7 +24,7 @@ import java.util.List;
 
 @Controller(value = "/auth/game")
 public class GameController {
-    public static final String FIREBASEURLBASE = "https://vivid-fire-9476.firebaseio.com/player";
+    public static final String FIREBASEURLBASE = "https://vivid-fire-9476.firebaseio.com/gameName";
 
     @Autowired
     private IAuthorizationService authorizationService;
@@ -67,9 +67,8 @@ public class GameController {
         Game game = gameService.getGameByGameId(Integer.parseInt(gameId));
         User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
         Player player = gameService.getActivePlayer(user, game);
-        Player opponent = gameService.getOpponentPlayer(user, game);
 
-        GameActivePlayerWrapper gameActivePlayerWrapper = new GameActivePlayerWrapper(game, player.getPlayerId(), FIREBASEURLBASE + player.getPlayerId(), FIREBASEURLBASE + opponent.getPlayerId());
+        GameActivePlayerWrapper gameActivePlayerWrapper = new GameActivePlayerWrapper(game, player.getPlayerId(), FIREBASEURLBASE + game.getName());
 
         return gameActivePlayerWrapper;
     }
