@@ -22,14 +22,14 @@ public class SeleniumGameTests extends  SeleniumBaseTestCase {
     }
 
     protected void navigateToNewGame() throws InterruptedException {
-        login();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
-
-        WebElement newgame = driver.findElement(By.name("createGame"));
-        wait.until(ExpectedConditions.visibilityOf(newgame));
-        newgame.click();
-        WebElement createGame = driver.findElement(By.name("createGame"));
-        wait.until(ExpectedConditions.visibilityOf(createGame));
+//        login();
+//        WebDriverWait wait = new WebDriverWait(driver, 10);
+//
+//        WebElement newgame = driver.findElement(By.name("createGame"));
+//        wait.until(ExpectedConditions.visibilityOf(newgame));
+//        newgame.click();
+//        WebElement createGame = driver.findElement(By.name("createGame"));
+//        wait.until(ExpectedConditions.visibilityOf(createGame));
 
     }
 }
