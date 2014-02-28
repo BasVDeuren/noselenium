@@ -133,7 +133,7 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
         drawGame();
         button = game.add.button(500, 75, 'button', onClickEndTurn, this, 2, 1, 0);
         button.fixedToCamera = true;
-        button.cameraOffset.setTo(CANVASWIDTH/2 - 130, CANVASHEIGHT - 83);
+        button.cameraOffset.setTo(CANVASWIDTH/2 - 180, CANVASHEIGHT - 83);
 
         var commandpointsprite = game.add.sprite(0, 0);
         commandpointsprite.fixedToCamera = true;
