@@ -170,7 +170,7 @@ public class UserControllerTest {
     }*/
 
     @Test
-    public void testGetUser_validUserName_User() throws Exception {
+    public void testGetUsers_validUserName_User() throws Exception {
         User user = new User("Jacky", "password", "email");
         List<User> foundUsers = new ArrayList<User>();
         AccessToken accessToken = new AccessToken("accesstoken123");

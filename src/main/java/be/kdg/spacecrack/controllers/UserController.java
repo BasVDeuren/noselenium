@@ -102,7 +102,15 @@ public class UserController {
         return user;
     }
 
-    public List<User> getUsersByString(String username) throws Exception {
-        return userService.getUsersByString(username);
+    @RequestMapping(value = "/auth/findusers/{username}",method = RequestMethod.GET)
+    @ResponseBody
+    public List<User> getUsersByString(@PathVariable String username) throws Exception {
+        List<User> foundUsers = null;
+        try {
+            foundUsers = userService.getUsersByString(username);
+        }catch (JsonParseException ex){
+            throw new SpaceCrackUnauthorizedException();
+        }
+        return foundUsers;
     }
 }

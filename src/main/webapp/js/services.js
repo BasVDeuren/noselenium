@@ -46,7 +46,7 @@ angular.module('spaceServices', ['ngResource'])
             email: '',
             password: '',
             accessToken: null,
-            loggedIn : false
+            loggedIn: false
         };
     }).factory('Map',function ($resource) {
         return $resource('/api/map')
@@ -55,7 +55,9 @@ angular.module('spaceServices', ['ngResource'])
     }).factory('Action', function ($resource) {
         return $resource('/api/auth/action')
     })
-    .factory('ActiveGame', function($resource){
+    .factory('ActiveGame', function ($resource) {
         return $resource('/api/auth/game/specificGame/:gameId', {gameId: '@GameId'})
+    })
+    .factory('FindPlayer', function ($resource) {
+        return $resource('/api/auth/findusers/:username', {username: '@username'},{'get': { method: 'GET', params: {username: '@username'}, format: 'json', isArray: true }})
     });
-

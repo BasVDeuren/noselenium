@@ -37,5 +37,7 @@
     "OPPONENT":"Tegenstander",
     "CREATEGAME": "Maak spel",
     "SEND":"Stuur",
-    "MESSAGE":"Bericht"
+    "MESSAGE":"Bericht",
+    "INVITE":"Uitnodigen",
+    "NAME":"Naam"
 }
