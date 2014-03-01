@@ -74,4 +74,7 @@ angular.module('spaceServices', ['ngResource'])
         };
 
         return factory;
+
+    }).factory('AuthorizationService', function($resource){
+        return $resource('/api/auth/accesstokens');
     });

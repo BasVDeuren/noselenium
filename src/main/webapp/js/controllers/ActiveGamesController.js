@@ -1,5 +1,5 @@
 var spaceApp = angular.module('spaceApp');
-spaceApp.controller("ActiveGamesController", function ($scope, $translate, Game, UserService) {
+spaceApp.controller("ActiveGamesController", function ($scope, $translate, Game) {
 
     $scope.games = [
         {gameId: "",

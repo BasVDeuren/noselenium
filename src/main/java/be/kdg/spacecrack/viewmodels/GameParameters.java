@@ -8,12 +8,12 @@ package be.kdg.spacecrack.viewmodels;/* Git $Id
 
 public class GameParameters {
     String gameName;
-    String opponentProfileId;
+    int opponentProfileId;
 
     public GameParameters() {
     }
 
-    public GameParameters(String gameName, String opponentProfileId) {
+    public GameParameters(String gameName, int opponentProfileId) {
         this.gameName = gameName;
         this.opponentProfileId = opponentProfileId;
     }
@@ -26,11 +26,11 @@ public class GameParameters {
         this.gameName = gameName;
     }
 
-    public String getOpponentProfileId() {
+    public int getOpponentProfileId() {
         return opponentProfileId;
     }
 
-    public void setOpponentProfileId(String opponentProfileId) {
+    public void setOpponentProfileId(int opponentProfileId) {
         this.opponentProfileId = opponentProfileId;
     }
 }

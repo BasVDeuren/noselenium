@@ -3,10 +3,8 @@
  */
 var spaceApp = angular.module('spaceApp');
 
-spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile, Contact, Spinner, $http, UserService) {
-    if (!UserService.loggedIn) {
-        $scope.go('/login');
-    } else {
+spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile, Contact, Spinner, $http) {
+
 
 
         /**Password**/
@@ -165,8 +163,4 @@ spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile
             'year-format': "'yy'",
             'starting-day': 1
         };
-
-    }
-
-
 });

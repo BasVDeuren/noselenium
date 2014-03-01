@@ -9,7 +9,6 @@ import be.kdg.spacecrack.services.IAuthorizationService;
 import be.kdg.spacecrack.utilities.TokenStringGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -28,7 +27,7 @@ import java.io.IOException;
  * 2013-2014
  *
  */
-@Component("tokenFilter")
+
 public class TokenFilter implements Filter {
 
     public static final String URLPATTERN = "auth/*";

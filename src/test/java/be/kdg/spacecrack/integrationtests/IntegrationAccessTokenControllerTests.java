@@ -23,8 +23,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import javax.servlet.http.Cookie;
 
 import static junit.framework.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 //import org.codehaus.jackson.map.ObjectMapper;
@@ -37,8 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  */
 public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrationTests {
-
-
     private TokenController tokenControllerWithMockedGenerator;
     private User testUser;
     private ITokenStringGenerator mockTokenGenerator;
@@ -151,6 +148,33 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
         MockHttpServletRequestBuilder deleteRequestBuilder = delete("/accesstokens")
                 .cookie(new Cookie("accessToken", "\"" + new AccessToken("invalid").getValue() + "\""));
         mockMvc.perform(deleteRequestBuilder).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void checkIfLoggedIn_validAccessToken_StatusOk() throws Exception {
+        String accessTokenValue = login();
+
+        mockMvc.perform(get("/auth/accesstokens")
+                .cookie(new Cookie("accessToken", accessTokenValue))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void checkIfLoggedIn_noAccessToken_SpaceCrackUnauthorizedException() throws Exception {
+        MockHttpServletRequestBuilder getAccessTokenIsUserLoggedIn = get("/auth/accesstokens")
+                .accept(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(getAccessTokenIsUserLoggedIn).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void checkIfLoggedIn_invalidAccessToken_SpaceCrackUnauthorizedException() throws Exception {
+        MockHttpServletRequestBuilder getAccessTokenIsUserLoggedIn = get("/auth/accesstokens")
+                .accept(MediaType.APPLICATION_JSON)
+                .cookie(new Cookie("accessToken", "blablabla"));
+
+        mockMvc.perform(getAccessTokenIsUserLoggedIn).andExpect(status().isUnauthorized());
     }
 
     @After

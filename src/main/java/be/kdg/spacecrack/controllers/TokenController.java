@@ -6,7 +6,7 @@ import be.kdg.spacecrack.services.IAuthorizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -17,8 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * 2013-2014
  *
  */
-@Component("tokenController")
-@RequestMapping("/accesstokens")
+@Controller
 public class TokenController{
 
 
@@ -36,22 +35,24 @@ public class TokenController{
         this.tokenService = tokenService;
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
-    public
-    @ResponseBody
-    AccessToken login(@RequestBody User user) {
+    @RequestMapping(value="/accesstokens", method = RequestMethod.POST, consumes = "application/json")
+    public @ResponseBody AccessToken login(@RequestBody User user) {
         tokenService.createTestUsers();
         AccessToken accessToken = tokenService.login(user);
 
         return accessToken;
     }
 
-    @RequestMapping(method = RequestMethod.DELETE)
+    @RequestMapping(value="/accesstokens", method = RequestMethod.DELETE)
     @ResponseBody
     public void Logout(@CookieValue("accessToken") String accessTokenValue) throws Exception {
         String substring = accessTokenValue.substring(1, accessTokenValue.length() - 1);
         tokenService.logout(substring);
     }
 
+    @RequestMapping(value="/auth/accesstokens", method = RequestMethod.GET)
+    @ResponseBody
+    public void checkUserLoggedIn(@CookieValue("accessToken") String accessTokenValue) throws Exception{
+    }
 
 }

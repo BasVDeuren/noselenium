@@ -1,12 +1,8 @@
 /**
  * Created by Atheesan on 4/02/14.
  */
-function LoginController($scope, Login, Register, $cookieStore, Spinner, UserService) {
+function LoginController($scope, Login, Register, $cookieStore, Spinner) {
     //Loading Spinner
-
-    if (UserService.loggedIn) {
-        $scope.go('/');
-    } else {
         $scope.startLoading = false;
         $scope.loginData = {
             email: "",
@@ -18,7 +14,6 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, UserSer
             Spinner.spinner.spin(Spinner.target);
             Login.save($scope.loginData, function (data, headers) {
                 Spinner.spinner.stop();
-                UserService.loggedIn = true;
                 $cookieStore.put('accessToken', data.value);
                 $scope.go('/');
                 $scope.hasLoginFailed = false;
@@ -48,7 +43,6 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, UserSer
                         Spinner.spinner.spin(Spinner.target);
                         Login.save(user, function (data, headers) {
                             Spinner.spinner.stop();
-                            UserService.loggedIn = true;
                             $cookieStore.put('accessToken', data.value);
                             $scope.go('/');
                             $scope.hasLoginFailed = false;
@@ -76,7 +70,6 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, UserSer
 
             Register.save(user, function (data, headers) {
                 Spinner.spinner.stop();
-                UserService.loggedIn = true;
                 $cookieStore.put('accessToken', data.value);
                 $scope.go('/');
                 $scope.alreadyRegistered = false;
@@ -85,5 +78,4 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, UserSer
                 $scope.alreadyRegistered = true;
             });
         };
-    }
 }

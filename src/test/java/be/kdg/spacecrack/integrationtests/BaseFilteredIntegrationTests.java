@@ -45,20 +45,20 @@ public abstract class BaseFilteredIntegrationTests {
 
     @Before
     public void setupMockMVC() throws Exception {
-               ctx = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+        ctx = WebApplicationContextUtils.getWebApplicationContext(servletContext);
         TokenFilter filter = new TokenFilter();
         FilterConfig filterConfig = new MockFilterConfig(servletContext);
 
         filter.init(filterConfig);
-        mockMvc = webAppContextSetup(ctx).addFilter(filter, "/auth/*" ).build();
+        mockMvc = webAppContextSetup(ctx).addFilter(filter, "/auth/*").build();
         objectMapper = new ObjectMapper();
     }
 
     protected String login() throws Exception {
 
 
-      User testUser = new User("test","test", "test@gmail.com");
-        String userjson =  objectMapper.writeValueAsString(testUser);
+        User testUser = new User("test", "test", "test@gmail.com");
+        String userjson = objectMapper.writeValueAsString(testUser);
 
         MockHttpServletRequestBuilder requestBuilder = post("/accesstokens");
         String accessTokenJson = mockMvc.perform(requestBuilder
@@ -66,7 +66,7 @@ public abstract class BaseFilteredIntegrationTests {
                 .content(userjson)
                 .accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         AccessToken accessToken = objectMapper.readValue(accessTokenJson, AccessToken.class);
-        return "%22"+accessToken.getValue()+"%22";
+        return "%22" + accessToken.getValue() + "%22";
 
     }
 }

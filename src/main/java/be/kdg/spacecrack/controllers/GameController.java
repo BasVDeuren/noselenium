@@ -22,7 +22,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller(value = "/auth/game")
+@Controller
+@RequestMapping("/auth/game")
 public class GameController {
     public static final String FIREBASEURLBASE = "https://vivid-fire-9476.firebaseio.com/gameName";
 
@@ -46,22 +47,22 @@ public class GameController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public Integer createGame(@CookieValue("accessToken") String accessTokenValue, @RequestBody GameParameters gameData){
+    public String createGame(@CookieValue("accessToken") String accessTokenValue, @RequestBody GameParameters gameData){
         User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
 
         int profileId = 0;
         try {
-            profileId = Integer.parseInt(gameData.getOpponentProfileId());
+            profileId = gameData.getOpponentProfileId();
         } catch (NumberFormatException e) {
             throw new SpaceCrackNotAcceptableException("Unexpected numberformat");
         }
         Profile opponentProfile =  profileService.getProfileByProfileId(profileId);
         int gameId = gameService.createGame(user.getProfile(), gameData.getGameName(), opponentProfile);
-        return gameId;
+        return gameId+"";
 
     }
 
-    @RequestMapping(value = "/auth/game/specificGame/{gameId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/specificGame/{gameId}", method = RequestMethod.GET)
     @ResponseBody
     public GameActivePlayerWrapper getGameByGameId(@CookieValue("accessToken") String accessTokenValue, @PathVariable String gameId) {
         Game game = gameService.getGameByGameId(Integer.parseInt(gameId));
@@ -76,15 +77,11 @@ public class GameController {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public List<Game> getGamesByAccessToken(@CookieValue("accessToken") String accessTokenValue) {
-
         User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
         List<Game> games = gameService.getGames(user);
-
 
         return games;
 
     }
-
-
 
 }

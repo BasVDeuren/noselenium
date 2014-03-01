@@ -9,7 +9,6 @@ import be.kdg.spacecrack.services.IUserService;
 import be.kdg.spacecrack.viewmodels.UserWrapper;
 import com.fasterxml.jackson.core.JsonParseException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,10 +23,9 @@ import java.util.List;
  * 2013-2014
  *
  */
-@Component("userController")
 @Controller
 public class UserController {
-    //TIS GEFIXD!!
+
     @Autowired
     private IUserService userService;
 

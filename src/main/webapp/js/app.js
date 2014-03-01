@@ -10,18 +10,24 @@ function appRouter($routeProvider, $httpProvider) {
 
     var interceptor = ['$rootScope', '$q', '$location', function ($rootScope, $q, $location) {
         function success(response) {
+            if(response.config.url.indexOf("/api/auth") > -1)
+            {
+                $rootScope.loggedInBoolBots = true;
+                $rootScope.$apply();
+            }
             return response;
         }
 
-        function error(response, $scope) {
+        function error(response) {
             var status = response.status;
             if ($location.path() !== "/login") {
                 if (status == 401) {
-
+                    $rootScope.loggedInBoolBots = false;
+                    $rootScope.$apply();
                     console.info("unauthorized");
                     console.info($location.path());
                     console.info("back to loginpage");
-                    $location.path("/");
+                    $location.path("/login");
 
                     return;
                 }
@@ -97,38 +103,18 @@ spaceApp.config(['$translateProvider', function ($translateProvider) {
     $translateProvider.preferredLanguage('en_US');
 }]);
 
-spaceApp.controller("MainController", function ($scope, $cookies, $location, $timeout, $translate, UserService, $cookieStore, Login, Profile) {
+spaceApp.controller("MainController", function ($scope, $cookies, $location, $timeout, $translate, $cookieStore, Login, $rootScope) {
     $scope.changeLanguage = function (key) {
         $translate.uses(key);
     };
     //site locatie wijzigen
     $scope.go = function (path) {
         $location.path(path);
-    };
-
-    //nakijken of user ingelogd is
-    UserService.loggedIn = false;
-    Profile.get(function () {
-        UserService.loggedIn = true;
-        return true;
-    }, function () {
-        UserService.loggedIn = false;
-        return false;
-    });
-
-    $scope.isUserLoggedIn = function () {
-//        if ($cookieStore.get('accessToken') == null) {
-//            return false;
-//        } else {
-//            return true;
-//        }
-        return UserService.loggedIn;
-    };
-
+    }
 
     $scope.logout = function () {
         Login.delete(function () {
-            UserService.loggedIn = false;
+            $rootScope.loggedInBoolBots = false;
             $cookieStore.remove('accessToken');
             $scope.go('/login');
         }, function () {
