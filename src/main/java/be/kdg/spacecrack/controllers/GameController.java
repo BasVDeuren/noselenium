@@ -50,7 +50,7 @@ public class GameController {
     public String createGame(@CookieValue("accessToken") String accessTokenValue, @RequestBody GameParameters gameData){
         User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
 
-        int profileId = 0;
+        int profileId;
         try {
             profileId = gameData.getOpponentProfileId();
         } catch (NumberFormatException e) {

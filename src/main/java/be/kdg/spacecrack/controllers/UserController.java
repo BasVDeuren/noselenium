@@ -66,7 +66,7 @@ public class UserController {
     @ResponseBody
     public void editUser(@RequestBody UserWrapper userWrapper, @CookieValue("accessToken") String accessTokenValue) throws Exception {
 
-        User user = null;
+        User user;
 
 
         AccessToken accessToken = authorizationService.getAccessTokenByValue(accessTokenValue);
@@ -87,7 +87,7 @@ public class UserController {
     @RequestMapping(value = "/auth/user", method = RequestMethod.GET)
     @ResponseBody
     public User getUserByToken(@CookieValue("accessToken") String cookieAccessTokenvalue) throws Exception {
-        User user = null;
+        User user;
 
         try {
             user = userService.getUserByAccessToken(authorizationService.getAccessTokenByValue(cookieAccessTokenvalue));
@@ -103,7 +103,7 @@ public class UserController {
     @RequestMapping(value = "/auth/findusersbyusername/{username}", method = RequestMethod.GET)
     @ResponseBody
     public List<User> getUsersByString(@PathVariable String username) throws Exception {
-        List<User> foundUsers = null;
+        List<User> foundUsers;
         try {
             foundUsers = userService.getUsersByString(username);
         } catch (JsonParseException ex) {
@@ -115,7 +115,7 @@ public class UserController {
     @RequestMapping(value = "/auth/findusersbyemail/{email}", method = RequestMethod.GET)
     @ResponseBody
     public List<User> getUsersByEmail(@PathVariable String email) throws Exception {
-        List<User> foundUsers = null;
+        List<User> foundUsers;
         try {
             foundUsers = userService.getUsersByEmail(email);
         } catch (JsonParseException ex) {

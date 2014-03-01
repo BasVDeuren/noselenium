@@ -9,9 +9,9 @@ spaceApp.controller("ChatController", function ($scope, $cookieStore, Profile, C
         objDiv.scrollTop = objDiv.scrollHeight;
     };
 
-    Profile.get(function (data, headers) {
+    Profile.get(function (data) {
         $scope.username = data.username;
-    }, function (data, headers) {
+    }, function () {
         $scope.username = "";
     });
 

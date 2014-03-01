@@ -29,7 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests {
-    Profile opponentProfile;
     @Test
     public void testCreateGame_AuthorisedUser_Map() throws Exception {
         String accessTokenValue = login();

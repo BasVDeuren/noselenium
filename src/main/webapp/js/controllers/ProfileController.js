@@ -3,7 +3,7 @@
  */
 var spaceApp = angular.module('spaceApp');
 
-spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile, Contact, Spinner, $http) {
+spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile, Contact, Spinner) {
 
 
 
@@ -19,7 +19,7 @@ spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile
         $scope.isSaveSuccess = false;
         $scope.isSaveDone = false;
 
-        Profile.get(function (data, headers) {
+        Profile.get(function (data) {
             console.log("get api/auth/user");
             $scope.editUserData.username = data.username;
             $scope.editUserData.email = data.email;
@@ -35,7 +35,7 @@ spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile
                 console.log("post api/auth/user succeed");
                 $scope.isSaveDone = true;
                 $scope.isSaveSuccess = true;
-            }, function (data, headers) {
+            }, function () {
                 Spinner.spinner.stop();
                 console.log("post api/auth/user failed");
                 $scope.isSaveDone = true;
@@ -95,7 +95,7 @@ spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile
             } else {
                 return image.dataURL;
             }
-        }
+        };
 
         Spinner.spinner.spin(Spinner.target);
         Contact.get(function (data) {

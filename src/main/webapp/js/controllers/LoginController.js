@@ -12,12 +12,12 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner) {
         $scope.alreadyRegistered = false;
         $scope.login = function () {
             Spinner.spinner.spin(Spinner.target);
-            Login.save($scope.loginData, function (data, headers) {
+            Login.save($scope.loginData, function (data) {
                 Spinner.spinner.stop();
                 $cookieStore.put('accessToken', data.value);
                 $scope.go('/');
                 $scope.hasLoginFailed = false;
-            }, function (data, headers) {
+            }, function () {
                 Spinner.spinner.stop();
                 $scope.hasLoginFailed = true;
             });
@@ -41,12 +41,12 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner) {
                             password: 'facebook' + response.id
                         };
                         Spinner.spinner.spin(Spinner.target);
-                        Login.save(user, function (data, headers) {
+                        Login.save(user, function (data) {
                             Spinner.spinner.stop();
                             $cookieStore.put('accessToken', data.value);
                             $scope.go('/');
                             $scope.hasLoginFailed = false;
-                        }, function (data, headers) {
+                        }, function () {
                             Spinner.spinner.stop();
                             $scope.registerFB(response);
                         });
@@ -68,12 +68,12 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner) {
                 passwordRepeated: 'facebook' + response.id
             };
 
-            Register.save(user, function (data, headers) {
+            Register.save(user, function (data) {
                 Spinner.spinner.stop();
                 $cookieStore.put('accessToken', data.value);
                 $scope.go('/');
                 $scope.alreadyRegistered = false;
-            }, function (data, headers) {
+            }, function () {
                 Spinner.spinner.stop();
                 $scope.alreadyRegistered = true;
             });

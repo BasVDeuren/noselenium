@@ -13,12 +13,12 @@ spaceApp.controller("RegisterController", function ($scope, Register, $cookieSto
         $scope.hasRegistrationFailed = false;
         $scope.register = function () {
             Spinner.spinner.spin(Spinner.target);
-            Register.save($scope.registerData, function (data, headers) {
+            Register.save($scope.registerData, function (data) {
                 Spinner.spinner.stop();
                 $cookieStore.put('accessToken', data.value);
                 $scope.go('/spacecrack/home');
                 $scope.hasRegistrationFailed = false;
-            }, function (data, headers) {
+            }, function () {
                 Spinner.spinner.stop();
                 $scope.hasRegistrationFailed = true;
             });

@@ -1,13 +1,11 @@
 package be.kdg.spacecrack.integrationtests;
 
 
-import be.kdg.spacecrack.controllers.TokenController;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.TokenRepository;
 import be.kdg.spacecrack.repositories.UserRepository;
 import be.kdg.spacecrack.utilities.HibernateUtil;
-import be.kdg.spacecrack.utilities.ITokenStringGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.CoreMatchers;
 import org.hibernate.Query;
@@ -36,9 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  */
 public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrationTests {
-    private TokenController tokenControllerWithMockedGenerator;
     private User testUser;
-    private ITokenStringGenerator mockTokenGenerator;
     private ObjectMapper objectMapper;
 
 

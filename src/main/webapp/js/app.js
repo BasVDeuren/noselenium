@@ -110,7 +110,7 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
     //site locatie wijzigen
     $scope.go = function (path) {
         $location.path(path);
-    }
+    };
 
     $scope.logout = function () {
         Login.delete(function () {

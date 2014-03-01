@@ -7,8 +7,6 @@ import be.kdg.spacecrack.repositories.UserRepository;
 import be.kdg.spacecrack.services.AuthorizationService;
 import be.kdg.spacecrack.services.IAuthorizationService;
 import be.kdg.spacecrack.utilities.TokenStringGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -30,10 +28,7 @@ import java.io.IOException;
 
 public class TokenFilter implements Filter {
 
-    public static final String URLPATTERN = "auth/*";
-    private static final String BEAN_NAME = "tokenfilterbean";
 
-    @Autowired
     public IAuthorizationService authorizationService;
 
     @Override
@@ -42,10 +37,6 @@ public class TokenFilter implements Filter {
         ServletContext servletContext = filterConfig.getServletContext();
         WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
 
-        AutowireCapableBeanFactory autowireCapableBeanFactory = webApplicationContext.getAutowireCapableBeanFactory();
-
-
-        //   authorizationService = (IAuthorizationService) autowireCapableBeanFactory.autowire(AuthorizationService.class, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
         authorizationService = new AuthorizationService(new TokenRepository(), new UserRepository(), new TokenStringGenerator());
     }
 
