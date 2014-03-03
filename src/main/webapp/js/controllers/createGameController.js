@@ -39,8 +39,6 @@ spaceApp.controller("createGameController", function ($scope, $translate, Game, 
                 $scope.gameId = data[0];
                 $scope.go('/spacecrack/game/' + $scope.gameId);
             })
-        }, function(){
-            alert("FAIL!!");
         })
     };
 
