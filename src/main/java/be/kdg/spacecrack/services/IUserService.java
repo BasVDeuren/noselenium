@@ -23,4 +23,6 @@ public interface IUserService {
     List<User> getUsersByString(String username) throws Exception;
 
     List<User> getUsersByEmail(String tom) throws Exception;
+
+    User getRandomUser(int UserId) throws Exception;
 }

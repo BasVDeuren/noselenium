@@ -201,6 +201,23 @@ public class UserControllerTest {
         assertEquals("Users from usercontroller should be the same as from db", foundUsers.get(0), actualUsers.get(0));
     }
 
+    @Test
+    public void testGetUser_UserId_User() throws Exception {
+        User user1 = new User("Jacky", "password", "email");
+        AccessToken accessToken = new AccessToken("accesstoken123");
+        user1.setToken(accessToken);
+
+        User user2 = new User("barry", "password", "email");
+        AccessToken accessToken2 = new AccessToken("accesstoken123321");
+        user2.setToken(accessToken2);
+
+        stub(userService.getRandomUser(user1.getUserId())).toReturn(user2);
+
+        User actualUser = userController.getRandomUser(user1.getUserId());
+
+        assertEquals("Users from usercontroller should be the same as from db",actualUser, user2);
+    }
+
     @After
     public void tearDown() throws Exception {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();

@@ -34,9 +34,11 @@
                             <div class="col-md-8" id="opponent">
                                 <div class="input-group">
                                     <input type="text" class="form-control" ng-model="searchString">
-      <span class="input-group-btn">
-        <button class="btn btn-info" type="button" ng-click="findPlayers(searchString)">Find!</button>
-      </span>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-info" type="button" ng-click="findPlayers(searchString)">Find!</button>
+                                            <button type="submit" class="btn btn-warning" name="createGame" ng-click="selectRandomPlayer()"><i
+                                                        class="fa fa-share"></i> {{'RANDOM' | translate}}</button>
+                                        </span>
                                 </div><!-- /input-group -->
                             </div>
                             <div class="col-sm-offset-3 col-md-12 infoNote">

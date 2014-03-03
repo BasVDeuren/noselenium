@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Component("userService")
 public class UserService implements IUserService {
@@ -59,4 +60,16 @@ public class UserService implements IUserService {
     public List<User> getUsersByEmail(String email) throws Exception {
         return userRepository.getUsersByEmail(email);
     }
+
+    @Override
+    public User getRandomUser(int userId) throws Exception {
+        User foundUser;
+        List<User> users = userRepository.getUsers();
+        do{
+            Random random = new Random();
+            foundUser = users.get(random.nextInt(users.size()));
+        }while(foundUser.getUserId() == userId);
+        return foundUser;
+    }
+
 }
