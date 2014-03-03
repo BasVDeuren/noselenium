@@ -1,8 +1,8 @@
 package be.kdg.spacecrack.controllers;
 
 import be.kdg.spacecrack.model.SpaceCrackMap;
-import be.kdg.spacecrack.services.IMapService;
-import be.kdg.spacecrack.services.MapService;
+import be.kdg.spacecrack.repositories.IMapFactory;
+import be.kdg.spacecrack.repositories.MapFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/map")
 public class MapController {
     @Autowired
-    public IMapService mapService;
+    public IMapFactory mapService;
 
     public static final int MAP_HEIGHT = 500;
     public static final int MAP_LENGTH = 800;
@@ -29,7 +29,7 @@ public class MapController {
     public MapController() {
     }
 
-    public MapController(MapService mapService) {
+    public MapController(MapFactory mapService) {
 
         this.mapService = mapService;
     }

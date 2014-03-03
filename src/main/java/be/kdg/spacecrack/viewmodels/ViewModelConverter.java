@@ -71,6 +71,7 @@ public class ViewModelConverter implements IViewModelConverter {
         ShipViewModel shipViewModel = new ShipViewModel();
         shipViewModel.setShipId(ship.getShipId());
         shipViewModel.setPlanetName(ship.getPlanet().getName());
+        shipViewModel.setStrength(ship.getStrength());
         return shipViewModel;
     }
 }

@@ -57,8 +57,7 @@ public class ColonyRepository implements IColonyRepository {
     }
 
     @Override
-    public List<Colony> getColoniesByGame(Game game)
-    {
+    public List<Colony> getColoniesByGame(Game game) {
         List<Colony> colonies;
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         try {
@@ -66,11 +65,11 @@ public class ColonyRepository implements IColonyRepository {
             try {
                 tx = session.beginTransaction();
 
-             //   @SuppressWarnings("JpaQlInspection") Query query = session.createQuery("select c from Colony c");
+                //   @SuppressWarnings("JpaQlInspection") Query query = session.createQuery("select c from Colony c");
 
-           @SuppressWarnings("JpaQlInspection") Query query = session.createQuery("from Colony c where c.player.game.gameId = :gameId ");
-          query.setParameter("gameId", game.getGameId());
-             //   List<Player> gameIds = query.list();
+                @SuppressWarnings("JpaQlInspection") Query query = session.createQuery("from Colony c where c.player.game.gameId = :gameId ");
+                query.setParameter("gameId", game.getGameId());
+                //   List<Player> gameIds = query.list();
                 colonies = query.list();
 
                 tx.commit();
@@ -82,5 +81,29 @@ public class ColonyRepository implements IColonyRepository {
             HibernateUtil.close(session);
         }
         return colonies;
+    }
+
+    @Override
+    public Colony getColonyById(Integer colonyId) {
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Colony colony;
+        try {
+            Transaction tx = session.beginTransaction();
+            try {
+                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Colony c where c.colonyId = :colonyId");
+                q.setParameter("colonyId", colonyId);
+                colony = (Colony) q.uniqueResult();
+                tx.commit();
+            } catch (RuntimeException e) {
+                throw e;
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
+
+        return colony;
+
+
     }
 }

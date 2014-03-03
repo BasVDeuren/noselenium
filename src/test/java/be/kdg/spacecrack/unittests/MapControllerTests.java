@@ -3,7 +3,8 @@ package be.kdg.spacecrack.unittests;
 import be.kdg.spacecrack.controllers.MapController;
 import be.kdg.spacecrack.model.Planet;
 import be.kdg.spacecrack.model.PlanetConnection;
-import be.kdg.spacecrack.services.MapService;
+import be.kdg.spacecrack.repositories.MapFactory;
+import be.kdg.spacecrack.repositories.PlanetRepository;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 public class MapControllerTests {
     @Test
     public void getMap_valid_AllPlanetsConnected() throws Exception {
-        MapController mapController = new MapController(new MapService());
+        MapController mapController = new MapController(new MapFactory(new PlanetRepository()));
         Planet[] planets = mapController.getMap().getPlanets();
         Planet startPlanet = planets[0];
 

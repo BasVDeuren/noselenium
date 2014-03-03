@@ -13,6 +13,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component("planetRepository")
 public class PlanetRepository implements IPlanetRepository {
     @Override
@@ -34,5 +36,51 @@ public class PlanetRepository implements IPlanetRepository {
             HibernateUtil.close(session);
         }
         return planet;
+    }
+
+
+    protected void createPlanets(Planet[] planets) {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        try {
+            Transaction tx = session.beginTransaction();
+            try {
+                for (Planet planet : planets) {
+                    session.saveOrUpdate(planet);
+                }
+
+                tx.commit();
+            } catch (RuntimeException ex) {
+                tx.rollback();
+                throw ex;
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
+    }
+
+
+    public Planet[] getAll() {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Planet[] planets;
+        List result;
+        try {
+            Transaction tx = session.beginTransaction();
+            try {
+                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Planet");
+                result = q.list();
+                tx.commit();
+            } catch (RuntimeException ex) {
+                tx.rollback();
+                throw ex;
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
+        int size = result.size();
+        planets = new Planet[size];
+        for (int i = 0; i < size; i++) {
+            planets[i] = (Planet) result.get(i);
+        }
+        return planets;
     }
 }

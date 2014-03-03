@@ -17,4 +17,6 @@ public interface IColonyRepository {
     void updateColony(Colony colony);
 
     List<Colony> getColoniesByGame(Game game);
+
+    Colony getColonyById(Integer colonyId);
 }

@@ -52,6 +52,7 @@ public class Planet {
     }
 
     public Planet() {
+        planetConnections = new HashSet<PlanetConnection>();
     }
 
     public int getX() {

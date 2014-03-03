@@ -15,4 +15,6 @@ public interface IShipRepository {
 
     void updateShip(Ship ship);
 
+
+    void deleteShip(Ship ship);
 }

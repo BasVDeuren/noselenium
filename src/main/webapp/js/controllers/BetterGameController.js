@@ -14,7 +14,7 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
     var cursors;
     var xExtraByCamera;
     var yExtraByCamera;
-    var firebaseGameURL;
+    var firebaseGameRef;
     var commandPointsText;
     var notificationText;
 
@@ -228,18 +228,17 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
 
         applyGameData(gameData);
 
-        firebaseGameURL = new Firebase(data.firebaseGameURL);
-        addFirebaseListener();
-    }
+        firebaseGameRef = new Firebase(data.firebaseGameURL);
 
-    function addFirebaseListener() {
-        console.log("opponentFireBase in listener: " + firebaseGameURL);
-        firebaseGameURL.on('value', function (snapshot) {
+        firebaseGameRef.on('value', function (snapshot) {
             var game = snapshot.val();
             applyGameData(game);
             $scope.selectedSpaceShipXSprite.highlightConnectedPlanets();
         });
+
     }
+
+
 
     //region Listeners
     function spaceshipListener(spaceShipXSprite) {
@@ -343,9 +342,13 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
             var colonies = player.colonies;
             for (var colonyKey in colonies) {
                 var colony = colonies[colonyKey];
-                var colonyXSprite = new ColonyExtendedSprite(game, colony.planetName, player.playerId, image);
-                $scope.planetXSpritesByLetter[colony.planetName].colonyXSprite = colonyXSprite;
-                colonyGroup.add(colonyXSprite);
+                if($scope.planetXSpritesByLetter[colony.planetName].colonyXSprite == null)
+                {
+                    var colonyXSprite = new ColonyExtendedSprite(game, colony.planetName, player.playerId, image);
+
+                    $scope.planetXSpritesByLetter[colony.planetName].colonyXSprite = colonyXSprite;
+                    colonyGroup.add(colonyXSprite);
+                }
             }
         }
     }

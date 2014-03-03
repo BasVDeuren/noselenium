@@ -5,7 +5,8 @@
                 <div class="panel-body">
                     <form class="form-horizontal" role="form" name="gameForm">
                         <div class="form-group">
-                            <label for="gameName" class="col-sm-3 control-label formLabel">{{'NAME' | translate}}: *</label>
+                            <label for="gameName" class="col-sm-3 control-label formLabel">{{'NAME' | translate}}:
+                                *</label>
 
                             <div class="col-sm-8">
                                 <input type="text" class="form-control" id="gameName"
@@ -14,30 +15,34 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="searchCriteria" class="col-sm-3 control-label formLabel">{{'SEARCH_BY' | translate}}: *</label>
+                            <label for="searchCriteria" class="col-sm-3 control-label formLabel">{{'SEARCH_BY' |
+                                translate}}: *</label>
 
                             <div class="col-sm-8" id="searchCriteria">
                                 <div class="btn-group" data-toggle="buttons">
                                     <label class="btn btn-primary" ng-click="setSearchCriteria('username')">
-                                        <input type="radio" name="options" value="username" checked="true" ng-model="searchCriteria.value"> {{'USERNAME' | translate}}
+                                        <input type="radio" name="options" value="username" checked="true"
+                                               ng-model="searchCriteria.value"> {{'USERNAME' | translate}}
                                     </label>
                                     <label class="btn btn-primary" ng-click="setSearchCriteria('email')">
-                                        <input type="radio" name="options" value ="email" ng-model="searchCriteria.value"> Email
+                                        <input type="radio" name="options" value="email"
+                                               ng-model="searchCriteria.value"> Email
                                     </label>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="opponent" class="col-sm-3 control-label formLabel">{{'OPPONENT' | translate}}
-                                </label>
+                            </label>
 
                             <div class="col-md-8" id="opponent">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" ng-model="searchString">
+                                    <input type="text" class="form-control" name="txtSearchString" ng-model="searchString">
       <span class="input-group-btn">
-        <button class="btn btn-info" type="button" ng-click="findPlayers(searchString)">Find!</button>
+        <button class="btn btn-info" name="btnFind" type="button" ng-click="findPlayers(searchString)">{{'FIND!' | translate}}</button>
       </span>
-                                </div><!-- /input-group -->
+                                </div>
+                                <!-- /input-group -->
                             </div>
                             <div class="col-sm-offset-3 col-md-12 infoNote">
                                 * {{'REQUIRED' | translate}}
@@ -50,10 +55,13 @@
                                     <tr ng-repeat="p in foundPlayers" ng-hide="hideFoundPlayer(p.profile.profileId)">
                                         <td><img class="findPlayerImg" ng-src="{{getUserImage(p.profile.image)}}"></td>
                                         <td>{{p.username}}</td>
-                                        <td class="alignRight"><button type="submit" class="btn btn-warning" name="createGame" ng-click="createGame(p.profile.profileId)"><i
-                                                class="fa fa-share"></i> {{'INVITE' |
-                                            translate}}
-                                        </button></td>
+                                        <td class="alignRight">
+                                            <button type="submit" class="btn btn-warning" name="btnInvite"
+                                                    ng-click="createGame(p.profile.profileId)"><i
+                                                    class="fa fa-share"></i> {{'INVITE' |
+                                                translate}}
+                                            </button>
+                                        </td>
                                     </tr>
                                 </table>
                             </div>

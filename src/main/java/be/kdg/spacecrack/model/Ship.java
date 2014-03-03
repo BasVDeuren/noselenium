@@ -25,6 +25,7 @@ public class Ship {
     @JoinColumn(name="planetId")
     private Planet planet;
 
+    private int strength;
 
 
     public int getShipId() {
@@ -62,4 +63,11 @@ public class Ship {
     }
 
 
+    public int getStrength() {
+        return strength;
+    }
+
+    public void setStrength(int strength) {
+        this.strength = strength;
+    }
 }

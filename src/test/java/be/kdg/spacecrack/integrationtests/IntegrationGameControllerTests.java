@@ -8,6 +8,7 @@ package be.kdg.spacecrack.integrationtests;/* Git $Id$
 
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.Profile;
+import be.kdg.spacecrack.services.GameService;
 import be.kdg.spacecrack.utilities.HibernateUtil;
 import be.kdg.spacecrack.viewmodels.*;
 import org.hamcrest.CoreMatchers;
@@ -28,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests {
     @Test
-    public void CreateGame_AuthorisedUser_Map() throws Exception {
+    public void CreateGame_AuthorisedUserValidName_GameWithShipsAndColonies() throws Exception {
         String accessTokenValue = login();
 
         Profile opponentProfile = createOpponent();
@@ -52,10 +53,30 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
                 .andExpect(jsonPath("$.game.player1.ships[0].planetName", CoreMatchers.is("a")))
                 .andExpect(jsonPath("$.game.player1.ships[0].shipId", CoreMatchers.notNullValue()))
                 .andExpect(jsonPath("$.game.player1.ships[0].shipId", CoreMatchers.not(0)))
+                .andExpect(jsonPath("$.game.player1.ships[0].strength", CoreMatchers.is(GameService.NEWSHIPSTRENGTH)))
                 .andExpect(jsonPath("$.game.player2.colonies[0].planetName", CoreMatchers.is("a3")))
                 .andExpect(jsonPath("$.game.player2.ships[0].planetName", CoreMatchers.is("a3")))
                 .andExpect(jsonPath("$.game.player2.ships[0].shipId", CoreMatchers.notNullValue()))
-                .andExpect(jsonPath("$.game.player2.ships[0].shipId", CoreMatchers.not(0)));
+                .andExpect(jsonPath("$.game.player2.ships[0].shipId", CoreMatchers.not(0)))
+                .andExpect(jsonPath("$.game.player2.ships[0].strength", CoreMatchers.is(GameService.NEWSHIPSTRENGTH)))
+        ;
+    }
+
+    @Test
+    public void CreateGame_InvalidName_SpaceCrackNotAcceptableException() throws Exception {
+        String accessTokenValue = login();
+
+        Profile opponentProfile = createOpponent();
+
+        GameParameters gameParameters = new GameParameters(".$[]#/", opponentProfile.getProfileId());
+        String gameParametersJson = objectMapper.writeValueAsString(gameParameters);
+
+
+        mockMvc.perform(post("/auth/game")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(gameParametersJson)
+                .cookie(new Cookie("accessToken", accessTokenValue))).andExpect(status().isNotAcceptable());
     }
 
     @Test

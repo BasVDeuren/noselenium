@@ -11,9 +11,9 @@ import be.kdg.spacecrack.utilities.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-@Component("playerRepository")
+@Repository("playerRepository")
 public class PlayerRepository implements IPlayerRepository {
 
     @Override
@@ -35,7 +35,19 @@ public class PlayerRepository implements IPlayerRepository {
 
     @Override
     public void updatePlayer(Player player) {
-        createPlayer(player);
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        try {
+            Transaction tx = session.beginTransaction();
+            try {
+                session.update(player);
+                tx.commit();
+            } catch (RuntimeException e) {
+                tx.rollback();
+                throw e;
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
     }
 
     @Override

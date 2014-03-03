@@ -10,6 +10,7 @@ public class ShipViewModel {
 
     private int shipId;
     private String planetName;
+    private int strength;
 
     public int getShipId() {
         return shipId;
@@ -25,5 +26,13 @@ public class ShipViewModel {
 
     public void setPlanetName(String planetName) {
         this.planetName = planetName;
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
+    public void setStrength(int strength) {
+        this.strength = strength;
     }
 }

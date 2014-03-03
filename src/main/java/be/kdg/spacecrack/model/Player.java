@@ -37,7 +37,7 @@ public class Player {
     @OneToMany
     private List<Ship> ships;
 
-    @Column(name="commandPoints")
+    @Column(name = "commandPoints")
     private int commandPoints;
 
     @Column
@@ -45,7 +45,7 @@ public class Player {
 
 
     @ManyToOne(cascade = CascadeType.ALL, optional = false)
-    @JoinColumn(name= "gameId")
+    @JoinColumn(name = "gameId")
     private Game game;
 
     public int getCommandPoints() {
@@ -61,7 +61,7 @@ public class Player {
 
     public Player(Profile profile) {
         this.profile = profile;
-    //    this.commandPoints = 5;
+        //    this.commandPoints = 5;
     }
 
     public int getPlayerId() {
@@ -90,16 +90,14 @@ public class Player {
 
 
     public List<Colony> getColonies() {
-        if(colonies == null)
-        {
+        if (colonies == null) {
             colonies = new ArrayList<Colony>();
         }
         return colonies;
     }
 
     public List<Ship> getShips() {
-        if(ships == null)
-        {
+        if (ships == null) {
             ships = new ArrayList<Ship>();
         }
         return ships;

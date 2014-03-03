@@ -11,6 +11,8 @@ import be.kdg.spacecrack.model.Game;
 import be.kdg.spacecrack.model.Player;
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
+import be.kdg.spacecrack.repositories.MapFactory;
+import be.kdg.spacecrack.repositories.PlanetRepository;
 import be.kdg.spacecrack.services.IAuthorizationService;
 import be.kdg.spacecrack.services.IGameService;
 import be.kdg.spacecrack.services.IProfileService;
@@ -23,6 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +50,12 @@ public class GameController {
 
     public GameController() {
     }
+    @PostConstruct
+    private void createMap()
+    {
+        MapFactory mapFactory = new MapFactory(new PlanetRepository());
+        mapFactory.createPlanets();
+    }
 
     public GameController(IAuthorizationService authorizationService, IGameService gameService, IProfileService profileService){
         this.authorizationService = authorizationService;
@@ -55,7 +65,7 @@ public class GameController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public String createGame(@CookieValue("accessToken") String accessTokenValue, @RequestBody GameParameters gameData){
+    public String createGame(@CookieValue("accessToken") String accessTokenValue, @RequestBody @Valid GameParameters gameData){
         User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
         int profileId;
         try {

@@ -10,4 +10,5 @@ import be.kdg.spacecrack.model.Planet;
 
 public interface IPlanetRepository {
     Planet getPlanetByName(String planetName);
+
 }

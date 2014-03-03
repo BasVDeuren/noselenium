@@ -20,13 +20,10 @@ import java.util.Set;
 @Component(value = "gameService")
 public class GameService implements IGameService {
 
-
-    public static final int START_COMMAND_POINTS = 5;
-    public static final int COMMANDPOINTSPERTURN = START_COMMAND_POINTS;
-    @Autowired
+   @Autowired
     IPlanetRepository planetRepository;
-    @Autowired
-    IMapService mapService;
+//    @Autowired
+//    IMapFactory mapService;
 
     @Autowired
     IShipRepository shipRepository;
@@ -43,8 +40,8 @@ public class GameService implements IGameService {
     public GameService() {
     }
 
-    public GameService(IMapService mapService, IPlanetRepository planetRepository, IColonyRepository colonyRepository, IShipRepository shipRepository, IPlayerRepository playerRepository, IGameRepository gameRepository) {
-        this.mapService = mapService;
+    public GameService(IPlanetRepository planetRepository, IColonyRepository colonyRepository, IShipRepository shipRepository, IPlayerRepository playerRepository, IGameRepository gameRepository) {
+//        this.mapService = mapService;
         this.planetRepository = planetRepository;
         this.shipRepository = shipRepository;
         this.colonyRepository = colonyRepository;
@@ -54,7 +51,7 @@ public class GameService implements IGameService {
 
     @Override
     public int createGame(Profile userProfile, String gameName, Profile opponentProfile) {
-        mapService.getSpaceCrackMap();
+        //mapService.getSpaceCrackMap();
         Game game = new Game();
 
         Player player1 = new Player(userProfile);
@@ -78,6 +75,8 @@ public class GameService implements IGameService {
 
         Ship player1StartingShip = new Ship(planetA);
         Ship player2StartingShip = new Ship(planetA3);
+        player1StartingShip.setStrength(NEWSHIPSTRENGTH);
+        player2StartingShip.setStrength(NEWSHIPSTRENGTH);
 
         player1StartingShip.setPlayer(player1);
         player2StartingShip.setPlayer(player2);
@@ -119,10 +118,10 @@ public class GameService implements IGameService {
     }
 
     @Override
-    public void moveShip(Integer shipId, String planetName) {
+    public void moveShip(Integer shipId, String destinationPlanetName) {
         Ship ship = shipRepository.getShipByShipId(shipId);
 
-       if (ship.getPlayer().isTurnEnded()) {
+        if (ship.getPlayer().isTurnEnded()) {
             throw new SpaceCrackNotAcceptableException("Player's turn is ended, not allowed to move!");
         }
         Planet sourcePlanet = ship.getPlanet();
@@ -130,7 +129,7 @@ public class GameService implements IGameService {
         Set<PlanetConnection> planetConnections = sourcePlanet.getPlanetConnections();
         Planet destinationPlanet = null;
         for (PlanetConnection planetConnection : planetConnections) {
-            if (planetConnection.getChildPlanet().getName().equals(planetName)) {
+            if (planetConnection.getChildPlanet().getName().equals(destinationPlanetName)) {
                 destinationPlanet = planetConnection.getChildPlanet();
                 connected = true;
             }
@@ -140,47 +139,63 @@ public class GameService implements IGameService {
             Player player = ship.getPlayer();
 
 
-
-            Game game = gameRepository.getGameByPlayer(player);
+            Game game = ship.getPlayer().getGame();
             List<Colony> coloniesByGame = colonyRepository.getColoniesByGame(game);
             boolean allowCreateColony = true;
             boolean allowMove = true;
-            int cost = 2;
+
             for (Colony c : coloniesByGame) {
                 if (c.getPlanet().getPlanetId() == destinationPlanet.getPlanetId()) {
                     if (c.getPlayer().getPlayerId() == player.getPlayerId()) {
 
-                        allowMove= true;
-                        allowCreateColony =false;
-                        cost = 1;
-                    }else{
-                        allowMove = false;
-                        allowCreateColony= false;
-                        cost = 0;
+                        allowMove = true;
+                        allowCreateColony = false;
+
+                    } else {
+                        throw new SpaceCrackNotAcceptableException("Taking enemy colonies not supported yet!");
                     }
 
                 }
             }
-            if (ship.getPlayer().getCommandPoints() - cost  < 0) {
-                throw new SpaceCrackNotAcceptableException("Insufficient command points");
-            }
-            if(allowMove){
-                ship.setPlanet(destinationPlanet);
-                playerRepository.updatePlayer(player);
-                shipRepository.updateShip(ship);
-                player.setCommandPoints(player.getCommandPoints() - 1);
-                if(allowCreateColony){
-
-                    Colony colony = new Colony(destinationPlanet);
-                    colony.setPlayer(player);
-                    colonyRepository.createColony(colony);
-                    player.getColonies().add(colony);
-                    player.setCommandPoints(player.getCommandPoints() - 1);
+            int cost = 0;
+            if (allowMove) {
+                cost += MOVESHIPCOST;
+                if (allowCreateColony) {
+                    cost += CREATECOLONYCOST;
                 }
             }
+            if (ship.getPlayer().getCommandPoints() - cost < 0) {
+                throw new SpaceCrackNotAcceptableException("Insufficient command points");
+            }
+            if (allowMove) {
+                player.setCommandPoints(player.getCommandPoints() - MOVESHIPCOST);
+                Ship shipAlreadyOnPlanet = null;
+                for (Ship s : player.getShips()) {
+                    if (s.getPlanet().getName() == destinationPlanetName) {
+                        shipAlreadyOnPlanet = s;
+                    }
+                }
+                if (shipAlreadyOnPlanet == null) {
+                    ship.setPlanet(destinationPlanet);
+
+
+                    if (allowCreateColony) {
+
+                        Colony colony = new Colony(destinationPlanet);
+                        colony.setPlayer(player);
+                        colonyRepository.createColony(colony);
+                        player.getColonies().add(colony);
+                        player.setCommandPoints(player.getCommandPoints() - CREATECOLONYCOST);
+                    }
+                }else{
+                    shipAlreadyOnPlanet.setStrength(shipAlreadyOnPlanet.getStrength() + ship.getStrength());
+                    shipRepository.deleteShip(ship);
+                    ship = shipAlreadyOnPlanet;
+                }
+
+            }
             playerRepository.updatePlayer(player);
-
-
+            shipRepository.updateShip(ship);
 
         } else {
             throw new SpaceCrackNotAcceptableException("Ship cannot be moved to that planet!");
@@ -205,20 +220,17 @@ public class GameService implements IGameService {
 
             boolean allTurnsEnded = true;
             List<Player> players = game.getPlayers();
-            for(Player p : players)
-             {
-               if(!p.isTurnEnded())
-               {
+            for (Player p : players) {
+                if (!p.isTurnEnded()) {
                     allTurnsEnded = false;
-               }
+                }
 
             }
-            if(allTurnsEnded){
-               for(Player p: players)
-               {
-                   p.setTurnEnded(false);
-                   playerRepository.updatePlayer(p);
-               }
+            if (allTurnsEnded) {
+                for (Player p : players) {
+                    p.setTurnEnded(false);
+                    playerRepository.updatePlayer(p);
+                }
             }
 
 
@@ -247,13 +259,11 @@ public class GameService implements IGameService {
     @Override
     public Player getActivePlayer(User user, Game game) {
         for (Player p : user.getProfile().getPlayers()) {
-           for(Player gamePlayer : game.getPlayers())
-           {
-               if(gamePlayer.getPlayerId() == p.getPlayerId())
-               {
-                   return gamePlayer;
-               }
-           }
+            for (Player gamePlayer : game.getPlayers()) {
+                if (gamePlayer.getPlayerId() == p.getPlayerId()) {
+                    return gamePlayer;
+                }
+            }
 
         }
         throw new SpaceCrackUnexpectedException("This user isn't playing this game");
@@ -261,17 +271,36 @@ public class GameService implements IGameService {
     }
 
     @Override
-    public Player getOpponentPlayer(User user, Game game) {
-        for (Player p : user.getProfile().getPlayers()) {
-            for(Player gamePlayer : game.getPlayers())
-            {
-                if(gamePlayer.getPlayerId() != p.getPlayerId())
-                {
-                    return gamePlayer;
-                }
-            }
+    public void buildShip(Integer colonyId) {
+        Ship shipOnPlanet = null;
 
+        Colony colony = colonyRepository.getColonyById(colonyId);
+        Player player = colony.getPlayer();
+        if (player.getCommandPoints() < BUILDSHIPCOST || player.isTurnEnded()) {
+            throw new SpaceCrackNotAcceptableException("Dear Sir or Lady, you have either run out of command points or your turn has ended, please wait for the other players to end their turn.");
         }
-        throw new SpaceCrackUnexpectedException("Unexpected error, no opponent found!");
+        for (Ship ship : player.getShips()) {
+            if (ship.getPlanet().getName().equals(colony.getPlanet().getName())) {
+                shipOnPlanet = ship;
+            }
+        }
+
+        Ship ship;
+        if (shipOnPlanet == null) {
+            ship = new Ship();
+            ship.setStrength(NEWSHIPSTRENGTH);
+            ship.setPlayer(player);
+            ship.setPlanet(colony.getPlanet());
+            player.getShips().add(ship);
+        } else {
+            shipOnPlanet.setStrength(shipOnPlanet.getStrength() + NEWSHIPSTRENGTH);
+            ship = shipOnPlanet;
+        }
+        shipRepository.updateShip(ship);
+        player.setCommandPoints(player.getCommandPoints() - BUILDSHIPCOST);
+        playerRepository.updatePlayer(player);
+
+
     }
+
 }

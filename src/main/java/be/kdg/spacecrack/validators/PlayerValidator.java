@@ -6,6 +6,7 @@ package be.kdg.spacecrack.validators;/* Git $Id
  *
  */
 
+import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.model.Player;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -21,7 +22,7 @@ public class PlayerValidator implements Validator {
         Player player = (Player) o;
         if(player.getCommandPoints() < 0)
         {
-            errors.reject("commandPoints", "Commandpoints should never be lower than 0");
+           throw new SpaceCrackNotAcceptableException("Insufficient commandPoints");
         }
     }
 }

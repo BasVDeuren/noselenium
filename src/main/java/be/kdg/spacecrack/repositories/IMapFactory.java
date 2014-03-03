@@ -1,4 +1,4 @@
-package be.kdg.spacecrack.services;/* Git $Id$
+package be.kdg.spacecrack.repositories;/* Git $Id$
  *
  * Project Application Development
  * Karel de Grote-Hogeschool
@@ -8,7 +8,7 @@ package be.kdg.spacecrack.services;/* Git $Id$
 
 import be.kdg.spacecrack.model.SpaceCrackMap;
 
-public interface IMapService {
+public interface IMapFactory {
 
     SpaceCrackMap getSpaceCrackMap();
 
