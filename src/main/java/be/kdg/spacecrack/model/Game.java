@@ -7,6 +7,8 @@ package be.kdg.spacecrack.model;/* Git $Id
  */
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "T_Game")
@@ -15,24 +17,12 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.IDENTITY )
     private int gameId;
     private String name;
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
-    @JoinColumn(name= "player1Id")
-    private Player player1;
+
+    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
+    private List<Player> players;
 
     @Column
     private int turnCounter;
-
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
-    @JoinColumn(name= "player2Id")
-    private Player player2;
-
-    public Player getPlayer2() {
-        return player2;
-    }
-
-    public Player getPlayer1() {
-        return player1;
-    }
 
     public String getName() {
         return name;
@@ -42,8 +32,9 @@ public class Game {
         this.name = name;
     }
 
-    public void setPlayer1(Player player1) {
-        this.player1 = player1;
+
+    public Game() {
+       players = new ArrayList<Player>();
     }
 
     public int getGameId() {
@@ -62,7 +53,11 @@ public class Game {
         this.turnCounter = turnCounter;
     }
 
-    public void setPlayer2(Player player2) {
-        this.player2 = player2;
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
     }
 }

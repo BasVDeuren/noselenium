@@ -6,18 +6,17 @@ package be.kdg.spacecrack.commands;/* Git $Id
  *
  */
 
-import be.kdg.spacecrack.model.Player;
 import be.kdg.spacecrack.services.IGameService;
 
 public class EndTurnAction extends Action {
 
-    public EndTurnAction(IGameService gameService, Player player) {
+    public EndTurnAction(IGameService gameService, Integer player) {
         super(gameService, player);
     }
 
     @Override
     public void execute() {
-        gameService.endTurn(player);
+        gameService.endTurn(playerId);
     }
 
 

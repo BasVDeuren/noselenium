@@ -37,12 +37,15 @@ public class GameRepositoryTest {
                 session.saveOrUpdate(profile2);
                 Player player1 = new Player(profile1);
                 Player player2 = new Player(profile2);
+                expected = new Game();
+                player1.setGame(expected);
+                player2.setGame(expected);
                 session.saveOrUpdate(player1);
                 session.saveOrUpdate(player2);
-                expected = new Game();
 
-                expected.setPlayer1(player1);
-                expected.setPlayer2(player2);
+
+                expected.getPlayers().add(player1);
+                expected.getPlayers().add(player2);
                 session.saveOrUpdate(expected);
                 tx.commit();
             } catch (Exception e) {
@@ -78,12 +81,15 @@ public class GameRepositoryTest {
                 session.saveOrUpdate(profile2);
                 Player player1 = new Player(profile1);
                 Player player2 = new Player(profile2);
+                expected = new Game();
+                player1.setGame(expected);
+                player2.setGame(expected);
                 session.saveOrUpdate(player1);
                 session.saveOrUpdate(player2);
-                expected = new Game();
 
-                expected.setPlayer1(player1);
-                expected.setPlayer2(player2);
+
+                expected.getPlayers().add(player1);
+                expected.getPlayers().add(player2);
                 session.saveOrUpdate(expected);
                 tx.commit();
             } catch (Exception e) {

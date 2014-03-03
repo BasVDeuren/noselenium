@@ -6,12 +6,10 @@ package be.kdg.spacecrack.integrationtests;/* Git $Id$
  *
  */
 
-import be.kdg.spacecrack.viewmodels.*;
 import be.kdg.spacecrack.model.AccessToken;
-import be.kdg.spacecrack.model.Game;
 import be.kdg.spacecrack.model.Profile;
-import be.kdg.spacecrack.model.Ship;
 import be.kdg.spacecrack.utilities.HibernateUtil;
+import be.kdg.spacecrack.viewmodels.*;
 import org.hamcrest.CoreMatchers;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -30,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests {
     @Test
-    public void testCreateGame_AuthorisedUser_Map() throws Exception {
+    public void CreateGame_AuthorisedUser_Map() throws Exception {
         String accessTokenValue = login();
 
         Profile opponentProfile = createOpponent();
@@ -81,9 +79,9 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
                 .cookie(new Cookie("accessToken", accessToken))).andReturn().getResponse().getContentAsString();
 
         GameActivePlayerWrapper gameActivePlayerWrapper = objectMapper.readValue(gameJson, GameActivePlayerWrapper.class);
-        Game game = gameActivePlayerWrapper.getGame();
+        GameViewModel game = gameActivePlayerWrapper.getGame();
 
-        Ship ship = game.getPlayer1().getShips().get(0);
+        ShipViewModel ship = game.getPlayer1().getShips().get(0);
         String destinationPlanet = "b";
 
         ActionViewModel moveShipActionViewModel = new ActionViewModel("MOVESHIP", ship, destinationPlanet, game.getPlayer1().getPlayerId(), game.getGameId());
@@ -186,7 +184,7 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
                 .cookie(new Cookie("accessToken", accessToken))).andReturn().getResponse().getContentAsString();
 
         GameActivePlayerWrapper gameActivePlayerWrapper = objectMapper.readValue(gameActivePlayerJson, GameActivePlayerWrapper.class);
-        Game expected = gameActivePlayerWrapper.getGame();
+        GameViewModel expected = gameActivePlayerWrapper.getGame();
 
 
         mockMvc.perform(get("/auth/game/specificGame/" + expected.getGameId())
@@ -217,7 +215,7 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
                 .cookie(new Cookie("accessToken", accessToken))).andReturn().getResponse().getContentAsString();
 
         GameActivePlayerWrapper gameActivePlayerWrapper = objectMapper.readValue(gameActivePlayerJson, GameActivePlayerWrapper.class);
-Game game = gameActivePlayerWrapper.getGame();
+        GameViewModel game = gameActivePlayerWrapper.getGame();
 
         mockMvc.perform(post("/auth/action")
 

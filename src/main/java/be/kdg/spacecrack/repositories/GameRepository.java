@@ -50,9 +50,10 @@ public class GameRepository implements IGameRepository {
         try {
             Transaction tx = session.beginTransaction();
             try {
-                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Game g where g.player1.profile = :profile or g.player2.profile = :profile");
-                q.setParameter("profile", profile);
-                games = (List<Game>) q.list();
+                @SuppressWarnings("JpaQlInspection") Query query = session.createQuery("FROM Game game WHERE game.gameId = (SELECT player.game.gameId FROM Player player where player.profile = :profile)");
+                query.setParameter("profile", profile);
+
+                games = (List<Game>) query.list();
                 tx.commit();
             } catch (Exception e) {
                 tx.rollback();
@@ -91,7 +92,7 @@ public class GameRepository implements IGameRepository {
         try {
             Transaction tx = session.beginTransaction();
             try {
-                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Game g where g.player1 = :player or g.player2 = :player");
+                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Game g where :player in (from Player p where p.game = g)");
                 q.setParameter("player", player);
                 game = (Game) q.uniqueResult();
                 tx.commit();

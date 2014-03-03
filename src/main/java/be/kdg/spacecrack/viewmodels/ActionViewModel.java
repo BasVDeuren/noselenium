@@ -6,16 +6,14 @@ package be.kdg.spacecrack.viewmodels;/* Git $Id
  *
  */
 
-import be.kdg.spacecrack.model.Ship;
-
 public class ActionViewModel {
     private String actionType;
-    private Ship ship;
+    private ShipViewModel ship;
     private String destinationPlanetName;
     private Integer playerId;
     private Integer gameId;
 
-    public ActionViewModel(String actionType, Ship ship, String destinationPlanetName, Integer playerId, Integer gameId) {
+    public ActionViewModel(String actionType, ShipViewModel ship, String destinationPlanetName, Integer playerId, Integer gameId) {
         this.actionType = actionType;
         this.ship = ship;
         this.destinationPlanetName = destinationPlanetName;
@@ -30,7 +28,7 @@ public class ActionViewModel {
         return actionType;
     }
 
-    public Ship getShip() {
+    public ShipViewModel getShip() {
         return ship;
     }
 
@@ -42,7 +40,7 @@ public class ActionViewModel {
         this.actionType = actionType;
     }
 
-    public void setShip(Ship ship) {
+    public void setShip(ShipViewModel ship) {
         this.ship = ship;
     }
 

@@ -1,11 +1,9 @@
 package be.kdg.spacecrack.services;
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
+import be.kdg.spacecrack.Exceptions.SpaceCrackUnexpectedException;
 import be.kdg.spacecrack.model.*;
-import be.kdg.spacecrack.repositories.IGameRepository;
-import be.kdg.spacecrack.repositories.IPlanetRepository;
-import be.kdg.spacecrack.repositories.IPlayerRepository;
-import be.kdg.spacecrack.repositories.IShipRepository;
+import be.kdg.spacecrack.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -64,13 +62,16 @@ public class GameService implements IGameService {
         player1.setCommandPoints(START_COMMAND_POINTS);
         player2.setCommandPoints(START_COMMAND_POINTS);
 
+        player1.setGame(game);
+        player2.setGame(game);
         playerRepository.createPlayer(player1);
         playerRepository.createPlayer(player2);
 
         //  opponentProfile.addPlayer(player2);
 
-        game.setPlayer1(player1);
-        game.setPlayer2(player2);
+
+        game.getPlayers().add(player1);
+        game.getPlayers().add(player2);
 
         Planet planetA = planetRepository.getPlanetByName("a");
         Planet planetA3 = planetRepository.getPlanetByName("a3");
@@ -87,6 +88,8 @@ public class GameService implements IGameService {
         Colony player1StartingColony = new Colony(planetA);
         Colony player2StartingColony = new Colony(planetA3);
 
+        player1StartingColony.setPlayer(player1);
+        player2StartingColony.setPlayer(player2);
         colonyRepository.createColony(player1StartingColony);
         colonyRepository.createColony(player2StartingColony);
 
@@ -116,14 +119,13 @@ public class GameService implements IGameService {
     }
 
     @Override
-    public void moveShip(Ship ship, String planetName) {
-        Ship shipDb = shipRepository.getShipByShipId(ship.getShipId());
-        if (shipDb.getPlayer().getCommandPoints() < 1) {
-            throw new SpaceCrackNotAcceptableException("Insufficient command points");
-        } else if (shipDb.getPlayer().isTurnEnded()) {
+    public void moveShip(Integer shipId, String planetName) {
+        Ship ship = shipRepository.getShipByShipId(shipId);
+
+       if (ship.getPlayer().isTurnEnded()) {
             throw new SpaceCrackNotAcceptableException("Player's turn is ended, not allowed to move!");
         }
-        Planet sourcePlanet = shipDb.getPlanet();
+        Planet sourcePlanet = ship.getPlanet();
         boolean connected = false;
         Set<PlanetConnection> planetConnections = sourcePlanet.getPlanetConnections();
         Planet destinationPlanet = null;
@@ -134,14 +136,52 @@ public class GameService implements IGameService {
             }
         }
         if (connected) {
-            shipDb.setPlanet(destinationPlanet);
-            Player player = shipDb.getPlayer();
-            Colony colony = new Colony(destinationPlanet);
-            colonyRepository.createColony(colony);
-            player.getColonies().add(colony);
-            player.setCommandPoints(player.getCommandPoints() - 1);
+
+            Player player = ship.getPlayer();
+
+
+
+            Game game = gameRepository.getGameByPlayer(player);
+            List<Colony> coloniesByGame = colonyRepository.getColoniesByGame(game);
+            boolean allowCreateColony = true;
+            boolean allowMove = true;
+            int cost = 2;
+            for (Colony c : coloniesByGame) {
+                if (c.getPlanet().getPlanetId() == destinationPlanet.getPlanetId()) {
+                    if (c.getPlayer().getPlayerId() == player.getPlayerId()) {
+
+                        allowMove= true;
+                        allowCreateColony =false;
+                        cost = 1;
+                    }else{
+                        allowMove = false;
+                        allowCreateColony= false;
+                        cost = 0;
+                    }
+
+                }
+            }
+            if (ship.getPlayer().getCommandPoints() - cost  < 0) {
+                throw new SpaceCrackNotAcceptableException("Insufficient command points");
+            }
+            if(allowMove){
+                ship.setPlanet(destinationPlanet);
+                playerRepository.updatePlayer(player);
+                shipRepository.updateShip(ship);
+                player.setCommandPoints(player.getCommandPoints() - 1);
+                if(allowCreateColony){
+
+                    Colony colony = new Colony(destinationPlanet);
+                    colony.setPlayer(player);
+                    colonyRepository.createColony(colony);
+                    player.getColonies().add(colony);
+                    player.setCommandPoints(player.getCommandPoints() - 1);
+                }
+            }
             playerRepository.updatePlayer(player);
-            shipRepository.updateShip(shipDb);
+
+
+
         } else {
             throw new SpaceCrackNotAcceptableException("Ship cannot be moved to that planet!");
         }
@@ -154,24 +194,35 @@ public class GameService implements IGameService {
     }
 
     @Override
-    public void endTurn(Player player) {
+    public void endTurn(Integer playerID) {
+        Player player = playerRepository.getPlayerByPlayerId(playerID);
         if (!player.isTurnEnded()) {
             int commandPoints = player.getCommandPoints();
             player.setCommandPoints(commandPoints + COMMANDPOINTSPERTURN);
             player.setTurnEnded(true);
             playerRepository.updatePlayer(player);
             Game game = gameRepository.getGameByPlayer(player);
-            Player player1;
-            Player player2;
-            if (game.getPlayer1().isTurnEnded() && game.getPlayer2().isTurnEnded()) {
-                player1 = game.getPlayer1();
-                player1.setTurnEnded(false);
-                player2 = game.getPlayer2();
-                player2.setTurnEnded(false);
-                playerRepository.updatePlayer(player1);
-                playerRepository.updatePlayer(player2);
+
+            boolean allTurnsEnded = true;
+            List<Player> players = game.getPlayers();
+            for(Player p : players)
+             {
+               if(!p.isTurnEnded())
+               {
+                    allTurnsEnded = false;
+               }
+
             }
-        }else{
+            if(allTurnsEnded){
+               for(Player p: players)
+               {
+                   p.setTurnEnded(false);
+                   playerRepository.updatePlayer(p);
+               }
+            }
+
+
+        } else {
             throw new SpaceCrackNotAcceptableException("Turn is already ended");
         }
     }
@@ -196,26 +247,31 @@ public class GameService implements IGameService {
     @Override
     public Player getActivePlayer(User user, Game game) {
         for (Player p : user.getProfile().getPlayers()) {
-            if (p.getPlayerId() == game.getPlayer1().getPlayerId()) {
-                return p;
-            }
-            if (p.getPlayerId() == game.getPlayer2().getPlayerId()) {
-                return p;
-            }
+           for(Player gamePlayer : game.getPlayers())
+           {
+               if(gamePlayer.getPlayerId() == p.getPlayerId())
+               {
+                   return gamePlayer;
+               }
+           }
+
         }
-        return null;
+        throw new SpaceCrackUnexpectedException("This user isn't playing this game");
+
     }
 
     @Override
     public Player getOpponentPlayer(User user, Game game) {
         for (Player p : user.getProfile().getPlayers()) {
-            if (p.getPlayerId() == game.getPlayer1().getPlayerId()) {
-                return game.getPlayer2();
+            for(Player gamePlayer : game.getPlayers())
+            {
+                if(gamePlayer.getPlayerId() != p.getPlayerId())
+                {
+                    return gamePlayer;
+                }
             }
-            if (p.getPlayerId() == game.getPlayer2().getPlayerId()) {
-                return game.getPlayer1();
-            }
+
         }
-        return null;
+        throw new SpaceCrackUnexpectedException("Unexpected error, no opponent found!");
     }
 }

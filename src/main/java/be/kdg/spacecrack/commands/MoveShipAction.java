@@ -6,16 +6,15 @@ package be.kdg.spacecrack.commands;/* Git $Id
  *
  */
 
-import be.kdg.spacecrack.model.Player;
-import be.kdg.spacecrack.model.Ship;
 import be.kdg.spacecrack.services.IGameService;
+import be.kdg.spacecrack.viewmodels.ShipViewModel;
 
 public class MoveShipAction extends Action{
-    private  Ship ship;
+    private  ShipViewModel ship;
     private  String planetName;
 
 
-    public MoveShipAction(IGameService gameService, Player player, Ship ship, String destinationPlanetName) {
+    public MoveShipAction(IGameService gameService, Integer player, ShipViewModel ship, String destinationPlanetName) {
         super(gameService, player);
         this.ship = ship;
         this.planetName = destinationPlanetName;
@@ -23,14 +22,14 @@ public class MoveShipAction extends Action{
 
     @Override
     public void execute() {
-        gameService.moveShip(ship, planetName);
+        gameService.moveShip(ship.getShipId(), planetName);
     }
 
-    public Ship getShip() {
+    public ShipViewModel getShip() {
         return ship;
     }
 
-    public void setShip(Ship ship) {
+    public void setShip(ShipViewModel ship) {
         this.ship = ship;
     }
 

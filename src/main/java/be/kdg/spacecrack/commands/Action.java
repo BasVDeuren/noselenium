@@ -7,7 +7,6 @@ package be.kdg.spacecrack.commands;
  *
  */
 
-import be.kdg.spacecrack.model.Player;
 import be.kdg.spacecrack.services.IGameService;
 
 
@@ -16,18 +15,24 @@ public abstract class Action {
 
     protected IGameService gameService;
 
-    protected Player player;
+    protected Integer playerId;
 
 
 
-    protected Action(IGameService gameService, Player player) {
+    protected Action(IGameService gameService, Integer playerId) {
         this.gameService = gameService;
 
-        this.player = player;
+        this.playerId = playerId;
     }
 
     public abstract void execute();
 
+    public Integer getPlayerId() {
+        return playerId;
+    }
 
+    public void setPlayerId(Integer playerId) {
+        this.playerId = playerId;
+    }
 }
 

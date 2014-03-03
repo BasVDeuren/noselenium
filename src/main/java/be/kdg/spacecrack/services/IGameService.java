@@ -13,11 +13,14 @@ import java.util.List;
 public interface IGameService {
     int createGame(Profile userProfile, String gameName, Profile opponentProfile);
 
-    void moveShip(Ship ship, String planet);
+
+
+    void moveShip(Integer shipId, String planetName);
 
     Planet getShipLocationByShipId(int shipId);
 
-    void endTurn(Player player);
+
+    void endTurn(Integer playerID);
 
     List<Game> getGames(User user);
 

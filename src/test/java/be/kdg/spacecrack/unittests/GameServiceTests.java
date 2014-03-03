@@ -55,9 +55,9 @@ public class GameServiceTests {
     public void moveShip_validPlanet_shipmoved() throws Exception {
         Game game = creategame();
 
-        Ship ship = game.getPlayer1().getShips().get(0);
+        Ship ship = game.getPlayers().get(0).getShips().get(0);
 
-        gameService.moveShip(ship, "b");
+        gameService.moveShip(ship.getShipId(), "b");
         Planet shipLocation = gameService.getShipLocationByShipId(ship.getShipId());
 
         assertEquals("b", shipLocation.getName());
@@ -68,8 +68,8 @@ public class GameServiceTests {
     public void moveShip_invalidPlanet_shipNotMoved() throws Exception {
         Game game = creategame();
 
-        Ship ship = game.getPlayer1().getShips().get(0);
-        gameService.moveShip(ship, "f");
+        Ship ship = game.getPlayers().get(0).getShips().get(0);
+        gameService.moveShip(ship.getShipId(), "f");
         Planet shipLocation = gameService.getShipLocationByShipId(ship.getShipId());
 
         assertEquals("a", shipLocation.getName());
@@ -80,9 +80,9 @@ public class GameServiceTests {
     public void MoveShipAndCreateColony_validPlanetNoColonyOnPlanet_ColonyPlaced() throws Exception {
         Game game = creategame();
 
-        Ship ship = game.getPlayer1().getShips().get(0);
+        Ship ship = game.getPlayers().get(0).getShips().get(0);
 
-        gameService.moveShip(ship, "b");
+        gameService.moveShip(ship.getShipId(), "b");
 
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         Transaction tx = session.beginTransaction();
@@ -93,19 +93,51 @@ public class GameServiceTests {
 
         List<Colony> colonies = shipDb.getPlayer().getColonies();
         assertEquals("The player should have 2 colonies", 2, colonies.size());
-        assertEquals("The second colony the player should have is on planet b.", "b", colonies.get(1).getPlanetName());
+        assertEquals("The second colony the player should have is on planet b.", "b", colonies.get(1).getPlanet().getName());
+    }
+
+    @Test
+    public void MoveShipAndCreateColony_PlanetAlreadyColonizedByPlayer_NoColonyPlaced() throws Exception {
+        Game game = creategame();
+
+        Ship ship = game.getPlayers().get(0).getShips().get(0);
+
+        gameService.moveShip(ship.getShipId(), "b");
+
+        gameService.moveShip(ship.getShipId(), "a");
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Transaction tx = session.beginTransaction();
+        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Ship s where s.shipId = :shipId");
+        q.setParameter("shipId", ship.getShipId());
+        Ship shipDb = (Ship) q.uniqueResult();
+        tx.commit();
+
+        List<Colony> colonies = shipDb.getPlayer().getColonies();
+        assertEquals("The player should have Only 2 colonies", 2, colonies.size());
+
     }
 
     @Test(expected = SpaceCrackNotAcceptableException.class, timeout = 20000)
     public void MoveShipWithNoCommandPoints_SpaceCrackNotAcceptableException() throws Exception {
         Game game = creategame();
 
-        Ship ship = game.getPlayer1().getShips().get(0);
+        Ship ship = game.getPlayers().get(0).getShips().get(0);
 
-        while(true){
-            gameService.moveShip(ship, "b");
-            gameService.moveShip(ship, "c");
-        }
+
+            gameService.moveShip(ship.getShipId(), "b");
+            gameService.moveShip(ship.getShipId(), "c");
+        gameService.moveShip(ship.getShipId(), "b");
+        gameService.moveShip(ship.getShipId(), "c");
+        gameService.moveShip(ship.getShipId(), "b");
+        gameService.moveShip(ship.getShipId(), "c");
+        gameService.moveShip(ship.getShipId(), "b");
+        gameService.moveShip(ship.getShipId(), "c");
+        gameService.moveShip(ship.getShipId(), "b");
+        gameService.moveShip(ship.getShipId(), "c");
+        gameService.moveShip(ship.getShipId(), "b");
+        gameService.moveShip(ship.getShipId(), "c");
+
     }
 
     @Test
@@ -143,32 +175,35 @@ public class GameServiceTests {
     public void endPlayerTurn() throws Exception {
 
         Game game = creategame();
-        Player player = game.getPlayer1();
+        Player player = game.getPlayers().get(0);
         int oldCommandPoints = player.getCommandPoints();
-        gameService.endTurn(player);
+        gameService.endTurn(player.getPlayerId());
         player = playerRepository.getPlayerByPlayerId(player.getPlayerId());
 
         assertEquals(oldCommandPoints + GameService.COMMANDPOINTSPERTURN, player.getCommandPoints());
-        gameService.moveShip(player.getShips().get(0), "b");
+        gameService.moveShip(player.getShips().get(0).getShipId(), "b");
     }
 
     @Test
     public void endTurnBothPlayers_newCommandPoints() throws Exception {
         Game game = creategame();
-        Player player1 = game.getPlayer1();
+        Player player1 = game.getPlayers().get(0);
         int oldCommandPointsOfPlayer1 = player1.getCommandPoints();
-        gameService.endTurn(player1);
-        Player player2 = game.getPlayer2();
+        gameService.endTurn(player1.getPlayerId());
+        Player player2 = game.getPlayers().get(1);
         int oldCommandPointsOfPlayer2 = player2.getCommandPoints();
 
-        gameService.endTurn(player2);
+        gameService.endTurn(player2.getPlayerId());
         player1 = playerRepository.getPlayerByPlayerId(player1.getPlayerId());
         player2 = playerRepository.getPlayerByPlayerId(player2.getPlayerId());
+
+        assertEquals("player1's turn shouldn't be ended", false,player1.isTurnEnded());
+        assertEquals("player2's turn shouldn't be ended", false,player2.isTurnEnded());
 
         assertEquals(oldCommandPointsOfPlayer1 + GameService.COMMANDPOINTSPERTURN, player1.getCommandPoints());
         assertEquals(oldCommandPointsOfPlayer2 + GameService.COMMANDPOINTSPERTURN, player2.getCommandPoints());
 
-        gameService.moveShip(player1.getShips().get(0), "b");
-        gameService.moveShip(player2.getShips().get(0), "b3");
+        gameService.moveShip(player1.getShips().get(0).getShipId(), "b");
+        gameService.moveShip(player2.getShips().get(0).getShipId(), "b3");
     }
 }

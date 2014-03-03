@@ -1,7 +1,5 @@
 package be.kdg.spacecrack.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -17,7 +15,9 @@ import java.util.List;
  *
  */
 
-//todo: commentaar
+/**
+ * This class represents the player in a specific game, it contains information on his current turn, his resources, and contains his Ships and Colonies on the map.
+ */
 @Entity
 @Table(name = "T_Player")
 public class Player {
@@ -43,9 +43,9 @@ public class Player {
     @Column
     private boolean turnEnded;
 
-    @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
-    @OneToOne(mappedBy = "player1")
-    @JsonIgnore
+
+    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name= "gameId")
     private Game game;
 
     public int getCommandPoints() {
