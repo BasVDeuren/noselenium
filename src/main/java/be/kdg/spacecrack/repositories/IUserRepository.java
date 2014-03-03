@@ -27,4 +27,7 @@ public interface IUserRepository {
     List<User> getUsersByString(String username) throws Exception;
 
     List<User> getUsersByEmail(String username) throws Exception;
+
+    List<User> getUsers() throws Exception;
+
 }

@@ -123,4 +123,17 @@ public class UserController {
         }
         return foundUsers;
     }
+
+    @RequestMapping(value = "/auth/findUserByUserId/{userId}",method = RequestMethod.GET)
+    @ResponseBody
+    public User getRandomUser(@PathVariable int userId) throws Exception {
+        User foundUser = null;
+        try {
+            foundUser = userService.getRandomUser(userId);
+        }catch (JsonParseException ex){
+            throw new SpaceCrackUnauthorizedException();
+        }
+        return foundUser;
+    }
+
 }

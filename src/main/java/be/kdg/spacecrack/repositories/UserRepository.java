@@ -164,5 +164,27 @@ public class UserRepository implements IUserRepository {
         return user;
     }
 
+    @Override
+    public List<User> getUsers() throws Exception {
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        List<User> foundUsers;
+        try {
+            Transaction tx = session.beginTransaction();
+            try {
+                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from User u WHERE u.token IS NOT NULL ");
+                foundUsers = q.list();
+                tx.commit();
+            } catch (Exception ex) {
+                logger.error("Unexpected while retrieving user from database (getUsers())", ex);
+                tx.rollback();
+                throw ex;
+            }
+        } finally {
+            HibernateUtil.close(session);
+        }
+        return foundUsers;
+    }
+
+
 
 }
