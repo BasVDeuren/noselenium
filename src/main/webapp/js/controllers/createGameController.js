@@ -33,17 +33,14 @@ spaceApp.controller("createGameController", function ($scope, $translate, Game, 
     };
 
     $scope.selectRandomPlayer = function(){
-        alert("stap1");
-        FindPlayer.findUserByUserId().get({userId: $scope.loggedInProfileId}, function (data, headers){
-            alert("stap2");
-            alert(data.profile.profileId);
+        FindPlayer.findUserByUserId().get({userId: $scope.loggedInProfileId}, function (data){
             $scope.gameData.opponentProfileId = data.profile.profileId;
             Game.save($scope.gameData, function (data) {
-                alert("stap3");
                 $scope.gameId = data[0];
-                alert("stap4");
                 $scope.go('/spacecrack/game/' + $scope.gameId);
             })
+        }, function(){
+            alert("FAIL!!");
         })
     };
 

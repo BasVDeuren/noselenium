@@ -74,7 +74,7 @@ angular.module('spaceServices', ['ngResource'])
         };
 
         factory.findUserByUserId = function() {
-            return $resource('/api/auth/findUserByUserId/:userId', {userId: '@userId'},{'get': { method: 'GET', params: {userId: '@userId'}, format: 'json', isArray: true }})
+            return $resource('/api/auth/findUserByUserId/:userId', {userId: '@userId'},{'get': { method: 'GET', params: {userId: '@userId'}, format: 'json', isArray: false }})
         };
 
 

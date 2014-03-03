@@ -12,7 +12,7 @@ function appRouter($routeProvider, $httpProvider) {
         function success(response) {
             if(response.config.url.indexOf("/api/auth") > -1)
             {
-                $rootScope.loggedInBoolBots = true;
+                $rootScope.loggedInBool = true;
                 $rootScope.$apply();
             }
             return response;
@@ -22,7 +22,7 @@ function appRouter($routeProvider, $httpProvider) {
             var status = response.status;
             if ($location.path() !== "/login") {
                 if (status == 401) {
-                    $rootScope.loggedInBoolBots = false;
+                    $rootScope.loggedInBool = false;
                     $rootScope.$apply();
                     console.info("unauthorized");
                     console.info($location.path());
@@ -114,7 +114,7 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
 
     $scope.logout = function () {
         Login.delete(function () {
-            $rootScope.loggedInBoolBots = false;
+            $rootScope.loggedInBool = false;
             $cookieStore.remove('accessToken');
             $scope.go('/login');
         }, function () {
