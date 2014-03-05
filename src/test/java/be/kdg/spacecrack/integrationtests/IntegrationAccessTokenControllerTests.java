@@ -148,7 +148,7 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
 
     @Test
     public void checkIfLoggedIn_validAccessToken_StatusOk() throws Exception {
-        String accessTokenValue = login();
+        String accessTokenValue = loginAndRetrieveAccessToken();
 
         mockMvc.perform(get("/auth/accesstokens")
                 .cookie(new Cookie("accessToken", accessTokenValue))

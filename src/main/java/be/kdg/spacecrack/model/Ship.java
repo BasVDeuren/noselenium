@@ -17,6 +17,7 @@ public class Ship {
     @GeneratedValue
     private int shipId;
 
+
     @ManyToOne
     @JoinColumn(name="playerId")
     private Player player;

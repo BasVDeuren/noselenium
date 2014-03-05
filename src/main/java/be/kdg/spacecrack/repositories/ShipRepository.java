@@ -64,8 +64,8 @@ public class ShipRepository implements IShipRepository {
                 session.saveOrUpdate(ship);
                 tx.commit();
             } catch (RuntimeException e) {
-                tx.rollback();;
-                e.printStackTrace();
+                tx.rollback();
+                throw e;
             }
         } finally {
             HibernateUtil.close(session);
@@ -74,15 +74,17 @@ public class ShipRepository implements IShipRepository {
 
     @Override
     public void deleteShip(Ship ship) {
+
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         try {
             Transaction tx = session.beginTransaction();
             try {
+
                 session.delete(ship);
                 tx.commit();
             } catch (RuntimeException e) {
-                tx.rollback();;
-                e.printStackTrace();
+                tx.rollback();
+                throw e;
             }
         } finally {
             HibernateUtil.close(session);

@@ -171,7 +171,7 @@ public class GameService implements IGameService {
                 player.setCommandPoints(player.getCommandPoints() - MOVESHIPCOST);
                 Ship shipAlreadyOnPlanet = null;
                 for (Ship s : player.getShips()) {
-                    if (s.getPlanet().getName() == destinationPlanetName) {
+                    if (s.getPlanet().getName().equals(destinationPlanetName)) {
                         shipAlreadyOnPlanet = s;
                     }
                 }
@@ -189,13 +189,18 @@ public class GameService implements IGameService {
                     }
                 }else{
                     shipAlreadyOnPlanet.setStrength(shipAlreadyOnPlanet.getStrength() + ship.getStrength());
+                    //HELP ONS VOCHTEN
                     shipRepository.deleteShip(ship);
+                    player.getShips().remove(ship);
                     ship = shipAlreadyOnPlanet;
                 }
 
             }
+
             playerRepository.updatePlayer(player);
             shipRepository.updateShip(ship);
+
+
 
         } else {
             throw new SpaceCrackNotAcceptableException("Ship cannot be moved to that planet!");

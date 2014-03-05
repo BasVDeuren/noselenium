@@ -41,7 +41,10 @@ public class GlobalExceptionHandler {
             throw e;
         }
         logger.error("Unexpected exception occurred: " + e.toString());
-
+        for(StackTraceElement ste : e.getStackTrace())
+        {
+            logger.error(ste.toString());
+        }
         return "Something bad happened";
     }
 }

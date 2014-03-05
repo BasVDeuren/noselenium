@@ -10,6 +10,8 @@ public class ColonyViewModel {
     private int colonyId;
     private String planetName;
 
+
+
     public String getPlanetName() {
         return planetName;
     }

@@ -30,12 +30,12 @@ public class Player {
     private Profile profile;
 
     @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Colony> colonies;
 
     @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany
-    private List<Ship> ships;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "player")
+    private List<Ship> ships = new ArrayList<Ship>();
 
     @Column(name = "commandPoints")
     private int commandPoints;
@@ -44,8 +44,7 @@ public class Player {
     private boolean turnEnded;
 
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
-    @JoinColumn(name = "gameId")
+    @ManyToOne(cascade = CascadeType.ALL)
     private Game game;
 
     public int getCommandPoints() {

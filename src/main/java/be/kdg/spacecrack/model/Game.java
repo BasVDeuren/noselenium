@@ -6,6 +6,9 @@ package be.kdg.spacecrack.model;/* Git $Id
  *
  */
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +21,9 @@ public class Game {
     private int gameId;
     private String name;
 
-    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
-    private List<Player> players;
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "game")
+    private List<Player> players = new ArrayList<Player>();
 
     @Column
     private int turnCounter;

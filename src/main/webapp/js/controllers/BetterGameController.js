@@ -5,7 +5,7 @@ var spaceApp = angular.module('spaceApp');
 spaceApp.controller("BetterGameController", function ($scope, $translate, Map, Game, Action, ActiveGame, $route, $routeParams) {
     //region Declarations
 
-
+    const BUILDSHIPCOST = 3;
     const COLONIZECOST = 2;
     const MOVECOST = 1;
     const CANVASWIDTH = 1120;
@@ -23,12 +23,14 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
     var shipGroup;
     var colonyGroup;
     var buttonGroup;
+    var miniShipGroup;
 
     var btnEndTurn;
     $scope.planetXSpritesByLetter = [];
     $scope.selectedSpaceShipXSprite = null;
     $scope.commandPoints = 0;
     $scope.isTurnEnded = true;
+    $scope.activePlayerMiniShipImage = null;
 
     $scope.game = {
         gameId: "",
@@ -81,14 +83,17 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
 
     var ShipExtendedSprite = function (game, ship, playerId, image) {
         var planet = $scope.planetXSpritesByLetter[ship.planetName].planet;
-        var text = "";
+
         Phaser.Sprite.call(this, game, planet.x, planet.y - 15, image);
+        var text = game.add.text(34, -5, ship.strength, {font: '20px Arial', fill: '#FF0000'});
+        this.addChild(text);
         this.ship = ship;
         this.playerId = playerId;
-        this.strength = 1;
+
         this.inputEnabled = true;
         this.body.immovable = true;
         shipGroup.add(this);
+
         if (playerId == $scope.game.activePlayerId) {
             this.events.onInputDown.add(spaceshipListener, this);
         }
@@ -107,9 +112,10 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
         }
 
         this.drawStrength = function () {
-            text = game.add.text(0,0, this.strength, {font: '20px Arial', fill: '#FF0000'});
-            this.addChild(text);
+            text.setText(this.ship.strength)
         }
+
+
     };
 
     ShipExtendedSprite.prototype = Object.create(Phaser.Sprite.prototype);
@@ -117,9 +123,29 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
     ShipExtendedSprite.prototype.previousPlanet = null;
 
 
-    var ColonyExtendedSprite = function (game, planetName, playerId, image) {
+    var ColonyExtendedSprite = function (game, colony, planetName, playerId, image) {
         var planet = $scope.planetXSpritesByLetter[planetName].planet;
-        Phaser.Sprite.call(this, game, planet.x - 5, planet.y - 32, image);
+        Phaser.Sprite.call(this, game, planet.x - 15, planet.y - 42, image);
+
+        this.colony = colony;
+
+        this.body.immovable = true;
+        if (playerId == $scope.game.activePlayerId) {
+            this.inputEnabled = true;
+            this.events.onInputDown.add(colonyListener, this);
+        }
+        var miniShipSprite = game.add.sprite(-18, -18, $scope.activePlayerMiniShipImage);
+
+        miniShipSprite.inputEnabled = true;
+        miniShipSprite.events.onInputDown.add(miniShipListener);
+        miniShipSprite.colonyXSprite = this;
+        this.addChild(miniShipSprite);
+
+        miniShipSprite.visible = false;
+        this.triggerMiniShip = function () {
+            miniShipSprite.visible = !miniShipSprite.visible;
+        }
+
 
     };
     ColonyExtendedSprite.prototype = Object.create(Phaser.Sprite.prototype);
@@ -135,23 +161,24 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
         game.load.spritesheet('button', 'assets/button_sprite_sheet.png', 193, 71);
         game.load.image('planet1', 'assets/planet1_small.png');
         game.load.image('planet1_selected', 'assets/planet1_small_selected.png');
-        game.load.image('spaceship', 'assets/spaceship.png');
+        game.load.image('player1spaceship', 'assets/player1spaceship.png');
+        game.load.image('miniplayer1spaceship', 'assets/mini_player1spaceship.png');
+        game.load.image('player2spaceship', 'assets/player2spaceship.png');
+        game.load.image('miniplayer2spaceship', 'assets/mini_player2spaceship.png');
         game.load.image('player1flag', 'assets/player1flag.png');
         game.load.image('player2flag', 'assets/player2flag.png');
+        game.load.image('player1castle', 'assets/player1castle.png');
+        game.load.image('player2castle', 'assets/player2castle.png');
     }
 
 
     function create() {
 
+
         game.world.setBounds(0, 0, 1780, 1000);
         cursors = game.input.keyboard.createCursorKeys();
         drawGame();
         buttonGroup = game.add.group();
-        btnEndTurn = game.add.button(500, 75, 'button', onClickEndTurn, this, 2, 1, 0);
-        btnEndTurn.fixedToCamera = true;
-        btnEndTurn.cameraOffset.setTo(CANVASWIDTH / 2 - 180, CANVASHEIGHT - 83);
-        buttonGroup.add(btnEndTurn);
-        buttonGroup.z = 3;
 
 
         var commandpointsprite = game.add.sprite(0, 0);
@@ -189,8 +216,8 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
     }
 
     function drawGame() {
-        var backgroundsprite = game.add.sprite(0, 0, 'bg');
-        // backgroundsprite.inputEnabled = true;
+        game.add.sprite(0, 0, 'bg');
+
         var graphics = game.add.graphics(0, 0);
         graphics.lineStyle(3, 0x999999, 1);
 
@@ -204,12 +231,20 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
 
         function drawPlanets(data) {
             planetGroup = game.add.group();
-            planetGroup.z=0;
+            planetGroup.z = 0;
             shipGroup = game.add.group();
-            shipGroup.z=2;
+            shipGroup.z = 2;
             colonyGroup = game.add.group();
-            colonyGroup.z=1;
+            colonyGroup.z = 1;
+            miniShipGroup = game.add.group();
+            miniShipGroup.z = 1000;
+            btnEndTurn = game.add.button(500, 75, 'button', onClickEndTurn, this, 2, 1, 0);
+            btnEndTurn.events.onInputDown.add(onClickEndTurn);
+            btnEndTurn.fixedToCamera = true;
+            btnEndTurn.cameraOffset.setTo(CANVASWIDTH / 2 - 180, CANVASHEIGHT - 83);
+            planetGroup.add(btnEndTurn);
             var planetArray = data.planets;
+
 
             for (var planetKey in planetArray) {
                 var planet = planetArray[planetKey];
@@ -218,6 +253,10 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
                 var planetXSprite = $scope.planetXSpritesByLetter[planet.name];
                 planetGroup.add(planetXSprite);
             }
+
+
+            btnEndTurn.bringToTop();
+
         }
 
         function drawConnections() {
@@ -237,13 +276,21 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
 
     }
 
+
     function applyGameActiveViewModelData(data) {
         $scope.game.activePlayerId = data.activePlayerId;
-        var gameData = data.game;
+        if(data.game.player2.playerId == $scope.game.activePlayerId)
+        {
+            game.camera.x = FARRESTPOINTOFCAMERA;
+            game.camera.y = MIDPOINTOFCAMERA;
+        }
 
-        applyGameData(gameData);
 
         firebaseGameRef = new Firebase(data.firebaseGameURL);
+
+        var firebasePlayer1ShipsGameRef = new Firebase(data.firebaseGameURL + "/player1/ships");
+        var firebasePlayer2ShipsGameRef = new Firebase(data.firebaseGameURL + "/player2/ships");
+
 
         firebaseGameRef.on('value', function (snapshot) {
             var game = snapshot.val();
@@ -251,10 +298,48 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
             $scope.selectedSpaceShipXSprite.highlightConnectedPlanets();
         });
 
+        firebasePlayer1ShipsGameRef.on('child_removed', shipRemovedListener);
+        firebasePlayer2ShipsGameRef.on('child_removed', shipRemovedListener);
+
+
     }
 
 
 //region Listeners
+    function shipRemovedListener(snapshot) {
+        var ship = snapshot.val();
+        $scope.game.shipXSpritesById[ship.shipId].destroy();
+
+    }
+
+    function miniShipListener(miniShipXSprite) {
+        if (!$scope.isTurnEnded) {
+            if ($scope.commandPoints >= BUILDSHIPCOST) {
+                var action = {
+                    gameId: $scope.game.gameId,
+                    actionType: "BUILDSHIP",
+                    colony: miniShipXSprite.colonyXSprite.colony,
+
+                    playerId: $scope.game.activePlayerId
+                };
+                Action.save(action, function () {
+                }, function () {
+                    resetGame();
+                });
+            } else {
+                showNotification("Too few commandpoints!");
+            }
+
+        } else {
+            showNotification("You can't move because your turn has ended!");
+        }
+    }
+
+    function colonyListener(colonyXSprite) {
+
+        colonyXSprite.triggerMiniShip();
+    }
+
     function spaceshipListener(spaceShipXSprite) {
         selectShip(spaceShipXSprite);
     }
@@ -296,6 +381,7 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
     function selectShip(spaceShipXSprite) {
         $scope.selectedSpaceShipXSprite = spaceShipXSprite;
         spaceShipXSprite.highlightConnectedPlanets();
+
     }
 
 
@@ -311,30 +397,37 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
         if ($scope.game.activePlayerId == gameData.player1.playerId) {
 
             $scope.game.opponentPlayerId = gameData.player2.playerId;
-            $scope.game.opponentPlayerColonyImage = 'player2flag';
-            $scope.game.activePlayerColonyImage = 'player1flag';
+            $scope.game.opponentPlayerColonyImage = 'player2castle';
+            $scope.game.activePlayerColonyImage = 'player1castle';
+
+            $scope.activePlayerMiniShipImage = 'miniplayer1spaceship';
             $scope.commandPoints = gameData.player1.commandPoints;
             $scope.isTurnEnded = gameData.player1.turnEnded;
 
         } else if ($scope.game.activePlayerId == gameData.player2.playerId) {
-            game.camera.x = FARRESTPOINTOFCAMERA;
-            game.camera.y = MIDPOINTOFCAMERA;
+
             $scope.game.opponentPlayerId = gameData.player1.playerId;
-            $scope.game.opponentPlayerColonyImage = 'player1flag';
-            $scope.game.activePlayerColonyImage = 'player2flag';
+            $scope.game.opponentPlayerColonyImage = 'player1castle';
+            $scope.game.activePlayerColonyImage = 'player2castle';
+            $scope.activePlayerMiniShipImage = 'miniplayer2spaceship';
             $scope.commandPoints = gameData.player2.commandPoints;
             $scope.isTurnEnded = gameData.player2.turnEnded;
 
         }
-        btnEndTurn.visible = !$scope.isTurnEnded;
-        drawShipsOfPlayer(gameData.player1, 'spaceship');
-        drawShipsOfPlayer(gameData.player2, 'spaceship');
-        drawColoniesOfPlayer(gameData.player1, 'player1flag');
-        drawColoniesOfPlayer(gameData.player2, 'player2flag');
+
+
+        drawShipsOfPlayer(gameData.player1, 'player1spaceship');
+        drawShipsOfPlayer(gameData.player2, 'player2spaceship');
+        drawColoniesOfPlayer(gameData.player1, 'player1castle');
+        drawColoniesOfPlayer(gameData.player2, 'player2castle');
         updateCommandPoints();
+        btnEndTurn.visible = !$scope.isTurnEnded;
+
 
         function drawShipsOfPlayer(player, image) {
             var ships = player.ships;
+
+
             for (var shipKey in ships) {
                 var ship = ships[shipKey];
                 var shipXSprite = $scope.game.shipXSpritesById[ship.shipId];
@@ -354,13 +447,15 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
             for (var colonyKey in colonies) {
                 var colony = colonies[colonyKey];
                 if ($scope.planetXSpritesByLetter[colony.planetName].colonyXSprite == null) {
-                    var colonyXSprite = new ColonyExtendedSprite(game, colony.planetName, player.playerId, image);
+                    var colonyXSprite = new ColonyExtendedSprite(game, colony, colony.planetName, player.playerId, image);
 
                     $scope.planetXSpritesByLetter[colony.planetName].colonyXSprite = colonyXSprite;
+
                     colonyGroup.add(colonyXSprite);
                 }
             }
         }
+
     }
 
     function onClickEndTurn() {

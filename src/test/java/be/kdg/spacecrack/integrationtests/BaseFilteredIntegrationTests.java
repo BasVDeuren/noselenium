@@ -54,7 +54,7 @@ public abstract class BaseFilteredIntegrationTests {
         objectMapper = new ObjectMapper();
     }
 
-    protected String login() throws Exception {
+    protected String loginAndRetrieveAccessToken() throws Exception {
 
 
         User testUser = new User("test", "test", "test@gmail.com");

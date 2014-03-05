@@ -17,6 +17,7 @@ import be.kdg.spacecrack.services.IAuthorizationService;
 import be.kdg.spacecrack.services.IGameService;
 import be.kdg.spacecrack.services.IProfileService;
 import be.kdg.spacecrack.utilities.FirebaseUtil;
+import be.kdg.spacecrack.utilities.IFirebaseUtil;
 import be.kdg.spacecrack.viewmodels.GameActivePlayerWrapper;
 import be.kdg.spacecrack.viewmodels.GameParameters;
 import be.kdg.spacecrack.viewmodels.GameViewModel;
@@ -47,6 +48,9 @@ public class GameController {
 
     @Autowired
     IViewModelConverter viewModelConverter;
+
+    @Autowired
+    IFirebaseUtil firebaseUtil;
 
     public GameController() {
     }
@@ -86,7 +90,7 @@ public class GameController {
         Player player = gameService.getActivePlayer(user, game);
         GameViewModel gameViewModel = viewModelConverter.convertGameToViewModel(game);
         GameActivePlayerWrapper gameActivePlayerWrapper = new GameActivePlayerWrapper(gameViewModel, player.getPlayerId(), FirebaseUtil.FIREBASEURLBASE + GAMESUFFIX + game.getName());
-
+        firebaseUtil.setValue(GAMESUFFIX + game.getName(), gameViewModel);
         return gameActivePlayerWrapper;
     }
 

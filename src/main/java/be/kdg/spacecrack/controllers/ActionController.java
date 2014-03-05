@@ -8,12 +8,10 @@ package be.kdg.spacecrack.controllers;/* Git $Id
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.commands.Action;
+import be.kdg.spacecrack.commands.BuildShipAction;
 import be.kdg.spacecrack.commands.EndTurnAction;
 import be.kdg.spacecrack.commands.MoveShipAction;
 import be.kdg.spacecrack.model.Game;
-import be.kdg.spacecrack.model.Ship;
-import be.kdg.spacecrack.repositories.IPlayerRepository;
-import be.kdg.spacecrack.repositories.IShipRepository;
 import be.kdg.spacecrack.services.IGameService;
 import be.kdg.spacecrack.utilities.IFirebaseUtil;
 import be.kdg.spacecrack.viewmodels.ActionViewModel;
@@ -34,53 +32,57 @@ import java.io.IOException;
 public class ActionController {
     public static final String MOVESHIP = "MOVESHIP";
     public static final String ENDTURN = "ENDTURN";
+    public static final String BUILDSHIP = "BUILDSHIP";
 
     @Autowired
     private IGameService gameService;
-    @Autowired
-    private IPlayerRepository playerRepository;
 
-    @Autowired
-    private IShipRepository shipRepository;
     @Autowired
     private IViewModelConverter viewModelConverter;
     @Autowired
     private IFirebaseUtil firebaseUtil;
 
 
+    public ActionController() {
+    }
+
+    public ActionController(IGameService gameService, IViewModelConverter viewModelConverter, IFirebaseUtil firebaseUtil) {
+
+        this.gameService = gameService;
+        this.viewModelConverter = viewModelConverter;
+        this.firebaseUtil = firebaseUtil;
+    }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public void executeAction(@RequestBody ActionViewModel actionViewModel) throws IOException {
-        if(actionViewModel.getPlayerId() == null || actionViewModel.getPlayerId() < 1)
-        {
+        if (actionViewModel.getPlayerId() == null || actionViewModel.getPlayerId() < 1) {
             throw new SpaceCrackNotAcceptableException("An action must contain a valid playerId");
         }
-
-        if(actionViewModel.getGameId() == null || actionViewModel.getGameId() < 1)
-        {
+        if (actionViewModel.getGameId() == null || actionViewModel.getGameId() < 1) {
             throw new SpaceCrackNotAcceptableException("An action must contain a valid gameId");
         }
 
-
-
-
         String actionType = actionViewModel.getActionType();
+        Action action;
+        if (actionType.equals(MOVESHIP)) {
+           action = new MoveShipAction(gameService, actionViewModel.getPlayerId(), actionViewModel.getShip(), actionViewModel.getDestinationPlanetName());
+       } else if (actionType.equals(ENDTURN)) {
+            action = new EndTurnAction(gameService, actionViewModel.getPlayerId());
 
-        if(actionType.equals(MOVESHIP)){
-            Ship ship = shipRepository.getShipByShipId(actionViewModel.getShip().getShipId());
-            Action moveShipAction = new MoveShipAction(gameService, actionViewModel.getPlayerId(), actionViewModel.getShip(), actionViewModel.getDestinationPlanetName());
-            moveShipAction.execute();
-        }else if(actionType.equals(ENDTURN)){
-            Action endTurnAction = new EndTurnAction(gameService, actionViewModel.getPlayerId());
-            endTurnAction.execute();
-            //gameService.checkVictory(gameService.getGameByGameId(actionViewModel.getGameId()));
-        }else{
+        } else if (actionType.equals(BUILDSHIP)) {
+            action = new BuildShipAction(gameService, actionViewModel.getPlayerId(), actionViewModel.getColony());
+        } else {
             throw new SpaceCrackNotAcceptableException("Unsupported action type");
         }
+        action.execute();
         Game game = gameService.getGameByGameId(actionViewModel.getGameId());
         GameViewModel gameViewModel = viewModelConverter.convertGameToViewModel(game);
 
-        firebaseUtil.setValue(GameController.GAMESUFFIX +game.getName(), gameViewModel);
+        firebaseUtil.setValue(GameController.GAMESUFFIX + gameViewModel.getName(), gameViewModel);
+    }
+
+    public void setFirebaseUtil(IFirebaseUtil firebaseUtil) {
+        this.firebaseUtil = firebaseUtil;
     }
 }

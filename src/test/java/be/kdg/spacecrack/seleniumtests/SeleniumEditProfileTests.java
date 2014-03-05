@@ -93,7 +93,7 @@ public class SeleniumEditProfileTests extends SeleniumBaseTestCase {
 /*
     @Test
     public void ChangeProfiel_OK() throws Exception {
-        login();
+        loginAndRetrieveAccessToken();
         navigateToEditProfile();
 
         WebDriverWait wait = new WebDriverWait(driver,10);
@@ -115,7 +115,7 @@ public class SeleniumEditProfileTests extends SeleniumBaseTestCase {
     }
     @Test
     public void ChangeProfiel_FAIL() throws Exception {
-        login();
+        loginAndRetrieveAccessToken();
         navigateToEditProfile();
 
         WebDriverWait wait = new WebDriverWait(driver,10);
