@@ -14,17 +14,17 @@ import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.ITokenRepository;
 import be.kdg.spacecrack.repositories.IUserRepository;
-import be.kdg.spacecrack.utilities.HibernateUtil;
 import be.kdg.spacecrack.utilities.ITokenStringGenerator;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Component("authorizationService")
+import java.util.List;
+
+@Service("authorizationService")
+@Transactional
 public class AuthorizationService implements IAuthorizationService {
 
     @Autowired
@@ -32,13 +32,17 @@ public class AuthorizationService implements IAuthorizationService {
     @Autowired
     IUserRepository userRepository;
 
+
+
     @Autowired
     private ITokenStringGenerator tokenStringGenerator;
+
     static Logger logger = LoggerFactory.getLogger(TokenController.class);
+
     public AuthorizationService() {
     }
 
-    public AuthorizationService(ITokenRepository tokenRepository, IUserRepository userRepository, ITokenStringGenerator tokenStringGenerator){
+    public AuthorizationService(ITokenRepository tokenRepository, IUserRepository userRepository, ITokenStringGenerator tokenStringGenerator) {
         this.tokenRepository = tokenRepository;
         this.userRepository = userRepository;
         this.tokenStringGenerator = tokenStringGenerator;
@@ -62,37 +66,27 @@ public class AuthorizationService implements IAuthorizationService {
     }
 
     private void createTestUser(String testemail, String testUsername, String testPassword) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-                @SuppressWarnings("JpaQlInspection") Query query = session.createQuery("from User u where u.email = :testemail");
-
-                query.setParameter("testemail", testemail);
-                if (query.list().size() < 1) {
+        List<User> list = userRepository.getUsersByEmail(testemail);
+        if (list.size() < 1) {
 
 
-                    User user = new User(testUsername, testPassword, testemail);
-                    Profile profile = new Profile();
-                    session.saveOrUpdate(profile);
-                    user.setProfile(profile);
-                    session.saveOrUpdate(user);
-                }
-                tx.commit();
 
-            } catch (Exception e) {
-                tx.rollback();
-            }
-       }finally {
-           HibernateUtil.close(session);
-       }
+            Profile profile = new Profile();
+
+            User user =  new User(testUsername, testPassword, testemail);
+            user.setProfile(profile);
+            profile.setUser(user);
+            userRepository.createUser(user);
+        }
+
+
     }
 
     @Override
     public AccessToken login(User user) {
         User dbUser;
 
-            dbUser = userRepository.getUser(user);
+        dbUser = userRepository.getUser(user);
 
 
         if (dbUser == null) {
@@ -103,6 +97,7 @@ public class AuthorizationService implements IAuthorizationService {
         if (accessToken == null) {
             String tokenvalue = tokenStringGenerator.generateTokenString();
             accessToken = new AccessToken(tokenvalue);
+            accessToken.setUser(dbUser);
             dbUser.setToken(accessToken);
 
             tokenRepository.saveAccessToken(dbUser, accessToken);
@@ -121,7 +116,7 @@ public class AuthorizationService implements IAuthorizationService {
         }
 
         try {
-           tokenRepository.deleteAccessToken(accessToken);
+            tokenRepository.deleteAccessToken(accessToken);
         } catch (Exception ex) {
             throw new SpaceCrackUnexpectedException("Unexpected exception happened while logging out");
         }

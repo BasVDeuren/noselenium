@@ -6,11 +6,9 @@ import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.TokenRepository;
 import be.kdg.spacecrack.repositories.UserRepository;
 import be.kdg.spacecrack.services.AuthorizationService;
-import be.kdg.spacecrack.utilities.HibernateUtil;
 import be.kdg.spacecrack.utilities.TokenStringGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,12 +44,10 @@ public class IntegrationTokenFilterTests extends BaseFilteredIntegrationTests {
     public void setUp() throws Exception {
         objectMapper = new ObjectMapper();
 
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        Transaction tx = session.beginTransaction();
+        Session session = sessionFactory.getCurrentSession();
+
         testUser = new User("testUsername", "testPassword", "testEmail");
         session.saveOrUpdate(testUser);
-        tx.commit();
-
 
 
     }
@@ -61,7 +57,7 @@ public class IntegrationTokenFilterTests extends BaseFilteredIntegrationTests {
 
 
         mockMvc.perform(requestBuilder)
-            .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized());
 
     }
 
@@ -82,18 +78,18 @@ public class IntegrationTokenFilterTests extends BaseFilteredIntegrationTests {
     @Test
     public void TokenFilter_validToken_OK() throws Exception {
         TokenStringGenerator generator = new TokenStringGenerator(12345);
-        TokenRepository tokenRepository = new TokenRepository();
-        UserRepository userRepository = new UserRepository();
+        TokenRepository tokenRepository = new TokenRepository(sessionFactory);
+        UserRepository userRepository = new UserRepository(sessionFactory);
         TokenController tokenController = new TokenController(new AuthorizationService(tokenRepository, userRepository, generator));
         AccessToken validToken = tokenController.login(testUser);
-        mockMvc.perform(requestBuilder.cookie(new Cookie("accessToken", "%22"+validToken.getValue()+"%22"))).andExpect(status().isOk());
+        mockMvc.perform(requestBuilder.cookie(new Cookie("accessToken", "%22" + validToken.getValue() + "%22"))).andExpect(status().isOk());
     }
 
     @After
     public void tearDown() throws Exception {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        Transaction tx = session.beginTransaction();
+        Session session = sessionFactory.getCurrentSession();
+
         session.delete(testUser);
-        tx.commit();
+
     }
 }

@@ -6,26 +6,39 @@ package be.kdg.spacecrack.services;/* Git $Id
  *
  */
 
+import be.kdg.spacecrack.Exceptions.SpaceCrackAlreadyExistsException;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
-import be.kdg.spacecrack.repositories.UserRepository;
+import be.kdg.spacecrack.repositories.IProfileRepository;
+import be.kdg.spacecrack.repositories.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 @Component("userService")
+@Transactional
 public class UserService implements IUserService {
 
     @Autowired
-    UserRepository userRepository;
+    IUserRepository userRepository;
+
+    @Autowired
+    IProfileRepository profileRepository;
 
     public UserService() {
-        userRepository = new UserRepository();
+
     }
+
+
+    public UserService(IUserRepository userRepository, IProfileRepository profileRepository) {
+        this.userRepository = userRepository;
+        this.profileRepository = profileRepository;
+    }
+
 
     @Override
     public User getUserByAccessToken(AccessToken accessToken) throws Exception {
@@ -42,8 +55,17 @@ public class UserService implements IUserService {
         User user = userRepository.addUser(username, password, email);
         Profile profile = new Profile();
 
-        ProfileService profileService = new ProfileService();
-        profileService.createProfile(profile, user);
+
+        if(user.getProfile() == null){
+            profile.setUser(user);
+            user.setProfile(profile);
+            profileRepository.createProfile(profile);
+            userRepository.updateUser(user);
+
+        }else{
+            throw new SpaceCrackAlreadyExistsException();
+        }
+
     }
 
     @Override

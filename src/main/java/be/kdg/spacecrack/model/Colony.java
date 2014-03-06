@@ -30,7 +30,6 @@ public class Colony {
     }
 
     public Colony(Planet planet) {
-
         this.planet = planet;
     }
 

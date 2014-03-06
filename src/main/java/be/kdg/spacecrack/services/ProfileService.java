@@ -5,10 +5,9 @@ import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.IProfileRepository;
 import be.kdg.spacecrack.repositories.IUserRepository;
-import be.kdg.spacecrack.repositories.ProfileRepository;
-import be.kdg.spacecrack.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /* Git $Id$
  *
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component("profileService")
+@Transactional
 public class ProfileService implements IProfileService {
     @Autowired
     IProfileRepository profileRepository;
@@ -27,11 +27,10 @@ public class ProfileService implements IProfileService {
 
 
     public ProfileService() {
-        this.profileRepository = new ProfileRepository();
-        this.userRepository = new UserRepository();
+
     }
 
-    public ProfileService(ProfileRepository profileRepository, IUserRepository userRepository) {
+    public ProfileService(IProfileRepository profileRepository, IUserRepository userRepository) {
         this.profileRepository = profileRepository;
         this.userRepository = userRepository;
     }

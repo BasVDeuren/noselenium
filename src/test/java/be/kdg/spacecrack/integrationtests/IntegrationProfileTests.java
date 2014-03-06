@@ -7,14 +7,11 @@ package be.kdg.spacecrack.integrationtests;/* Git $Id
  */
 
 import be.kdg.spacecrack.model.AccessToken;
-import be.kdg.spacecrack.model.User;
-import be.kdg.spacecrack.utilities.HibernateUtil;
 import be.kdg.spacecrack.viewmodels.ProfileWrapper;
 import be.kdg.spacecrack.viewmodels.UserWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,9 +25,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 //import org.codehaus.jackson.map.ObjectMapper;
 
-public class IntegrationProfileTests extends BaseFilteredIntegrationTests{
+public class IntegrationProfileTests extends BaseFilteredIntegrationTests {
     public static final String USERNAME = "profiletestusername";
-    User testUser;
+
 
     AccessToken accessToken;
 
@@ -50,7 +47,7 @@ public class IntegrationProfileTests extends BaseFilteredIntegrationTests{
     public void testUpdateEditProfile_ValidProfile_statusOk() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        ProfileWrapper profile = new ProfileWrapper("firstname","lastname","email","12-01-2013","image");
+        ProfileWrapper profile = new ProfileWrapper("firstname", "lastname", "email", "12-01-2013", "image");
 
         String profileJson = objectMapper.writeValueAsString(profile);
 
@@ -64,12 +61,12 @@ public class IntegrationProfileTests extends BaseFilteredIntegrationTests{
 
     @After
     public void tearDown() throws Exception {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        Transaction tx = session.beginTransaction();
+        Session session = sessionFactory.getCurrentSession();
 
-        @SuppressWarnings("JpaQlInsepction") Query q = session.createQuery("delete from User u where u.username= :name  ");
-        q.setParameter("name", USERNAME );
+
+        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User u where u.username= :name  ");
+        q.setParameter("name", USERNAME);
         q.executeUpdate();
-        tx.commit();
+
     }
 }

@@ -92,6 +92,8 @@ public class UserController {
         try {
             user = userService.getUserByAccessToken(authorizationService.getAccessTokenByValue(cookieAccessTokenvalue));
         } catch (JsonParseException ex) {
+            //todo: checken op juiste input ipv exception catchen...
+
             throw new SpaceCrackUnauthorizedException();
         }
         if (user == null) {
@@ -107,6 +109,7 @@ public class UserController {
         try {
             foundUsers = userService.getUsersByString(username);
         } catch (JsonParseException ex) {
+            //todo: checken op juiste input ipv exception catchen...
             throw new SpaceCrackUnauthorizedException();
         }
         return foundUsers;
@@ -119,6 +122,8 @@ public class UserController {
         try {
             foundUsers = userService.getUsersByEmail(email);
         } catch (JsonParseException ex) {
+            //todo: checken op juiste input ipv exception catchen...
+
             throw new SpaceCrackUnauthorizedException();
         }
         return foundUsers;
@@ -131,6 +136,9 @@ public class UserController {
         try {
             foundUser = userService.getRandomUser(userId);
         }catch (JsonParseException ex){
+
+            //todo: checken op juiste input ipv exception catchen...
+
             throw new SpaceCrackUnauthorizedException();
         }
         return foundUser;

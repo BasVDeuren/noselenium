@@ -1,14 +1,13 @@
 package be.kdg.spacecrack.repositories;
 
-import be.kdg.spacecrack.Exceptions.SpaceCrackUnexpectedException;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
-import be.kdg.spacecrack.utilities.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /* Git $Id$
@@ -21,85 +20,57 @@ import org.springframework.stereotype.Component;
 @Component("tokenRepository")
 public class TokenRepository implements ITokenRepository {
     Logger logger = LoggerFactory.getLogger(TokenRepository.class);
-
+    @Autowired
+    SessionFactory sessionFactory;
 
     public TokenRepository() {
-
     }
 
+    public TokenRepository(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
 
     @Override
     public AccessToken getAccessTokenByValue(String value) throws Exception {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
         AccessToken accessToken = null;
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from AccessToken a where a.value = :value");
-                q.setParameter("value", value);
-                accessToken = (AccessToken) q.uniqueResult();
-                tx.commit();
-            } catch (Exception ex) {
-                tx.rollback();
-                throw ex;
-            }
-        } finally {
-            HibernateUtil.close(session);
-        }
 
+        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from AccessToken a where a.value = :value");
+        q.setParameter("value", value);
+        accessToken = (AccessToken) q.uniqueResult();
         return accessToken;
     }
 
 
     @Override
     public void saveAccessToken(User dbUser, AccessToken accessToken) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
+        Session session = sessionFactory.getCurrentSession();
 
 
-                session.saveOrUpdate(accessToken);
+        session.saveOrUpdate(accessToken);
 
-                session.saveOrUpdate(dbUser);
-                tx.commit();
-            } catch (Exception ex) {
-                tx.rollback();
-                throw new SpaceCrackUnexpectedException("Unexpected exception in saveAccessToken()");
-            }
+        session.saveOrUpdate(dbUser);
 
-        } finally {
-            HibernateUtil.close(session);
-        }
+
     }
 
     @Override
     public void deleteAccessToken(AccessToken accessToken) throws Exception {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
 
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from AccessToken a where a.accessTokenId = :id and a.value = :value");
-                q.setParameter("id", accessToken.getAccessTokenId());
-                q.setParameter("value", accessToken.getValue());
-                AccessToken dbAccessToken = (AccessToken) q.uniqueResult();
-                if (dbAccessToken != null) {
-                    dbAccessToken.getUser().setToken(null);
-                    session.delete(dbAccessToken);
-                }
 
-                tx.commit();
-
-            } catch (RuntimeException ex) {
-                logger.error("Unexpected while Deleting Accesstoken database (deleteAccessToken)", ex);
-                tx.rollback();
-                throw new SpaceCrackUnexpectedException("Unexpected while retrieving user from database");
-            }
-        } finally {
-            HibernateUtil.close(session);
+        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from AccessToken a where a.accessTokenId = :id and a.value = :value");
+        q.setParameter("id", accessToken.getAccessTokenId());
+        q.setParameter("value", accessToken.getValue());
+        AccessToken dbAccessToken = (AccessToken) q.uniqueResult();
+        if (dbAccessToken != null) {
+            dbAccessToken.getUser().setToken(null);
+            session.delete(dbAccessToken);
         }
+
+
     }
+
+
 }

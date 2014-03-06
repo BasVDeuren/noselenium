@@ -5,14 +5,13 @@ import be.kdg.spacecrack.model.*;
 import be.kdg.spacecrack.repositories.*;
 import be.kdg.spacecrack.services.GameService;
 import be.kdg.spacecrack.services.IColonyRepository;
-import be.kdg.spacecrack.utilities.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.VerificationModeFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,17 +26,18 @@ import static org.mockito.Mockito.*;
  * 2013-2014
  *
  */
-public class GameServiceTests {
+public class GameServiceTests extends BaseUnitTest{
 
     private GameService gameService;
     private User user;
     private IPlayerRepository playerRepository;
     private Profile opponentProfile;
 
+
     @Before
     public void setUp() throws Exception {
-        playerRepository = new PlayerRepository();
-        gameService = new GameService(new PlanetRepository(), new ColonyRepository(), new ShipRepository(), playerRepository, new GameRepository());
+        playerRepository = new PlayerRepository(sessionFactory);
+        gameService = new GameService(new PlanetRepository(sessionFactory), new ColonyRepository(sessionFactory), new ShipRepository(sessionFactory), playerRepository, new GameRepository(sessionFactory));
         user = new User();
         Profile profile = new Profile();
         opponentProfile = new Profile();
@@ -55,7 +55,7 @@ public class GameServiceTests {
         return game;
     }
 
-    @Test
+    @Transactional @Test
     public void moveShipAndBuildColony_validPlanet_shipmovedandColonyBuilt() throws Exception {
         Game game = creategame();
 
@@ -72,7 +72,7 @@ public class GameServiceTests {
 
     }
 
-    @Test(expected = SpaceCrackNotAcceptableException.class)
+    @Transactional @Test(expected = SpaceCrackNotAcceptableException.class)
     public void moveShip_invalidPlanet_shipNotMoved() throws Exception {
         Game game = creategame();
 
@@ -84,7 +84,7 @@ public class GameServiceTests {
 
     }
 
-    @Test
+    @Transactional @Test
     public void moveShipAndCreateColony_validPlanetNoColonyOnPlanet_ColonyPlaced() throws Exception {
         Game game = creategame();
 
@@ -92,19 +92,19 @@ public class GameServiceTests {
 
         gameService.moveShip(ship.getShipId(), "b");
 
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        Transaction tx = session.beginTransaction();
+        Session session = sessionFactory.getCurrentSession();
+
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Ship s where s.shipId = :shipId");
         q.setParameter("shipId", ship.getShipId());
         Ship shipDb = (Ship) q.uniqueResult();
-        tx.commit();
+
 
         List<Colony> colonies = shipDb.getPlayer().getColonies();
         assertEquals("The player should have 2 colonies", 2, colonies.size());
         assertEquals("The second colony the player should have is on planet b.", "b", colonies.get(1).getPlanet().getName());
     }
 
-    @Test
+    @Transactional @Test
     public void moveShipAndCreateColony_PlanetAlreadyColonizedByPlayer_NoColonyPlaced() throws Exception {
         Game game = creategame();
 
@@ -114,12 +114,12 @@ public class GameServiceTests {
 
         gameService.moveShip(ship.getShipId(), "a");
 
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        Transaction tx = session.beginTransaction();
+        Session session = sessionFactory.getCurrentSession();
+
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Ship s where s.shipId = :shipId");
         q.setParameter("shipId", ship.getShipId());
         Ship shipDb = (Ship) q.uniqueResult();
-        tx.commit();
+
 
         List<Colony> colonies = shipDb.getPlayer().getColonies();
         assertEquals("The player should have Only 2 colonies", 2, colonies.size());
@@ -127,7 +127,7 @@ public class GameServiceTests {
     }
 
 
-    @Test
+    @Transactional @Test
     public void moveShip_PlanetHasShip_ShipsMerged() throws Exception {
 
         int argShipId = 1;
@@ -192,7 +192,7 @@ public class GameServiceTests {
     }
 
 
-    @Test(expected = SpaceCrackNotAcceptableException.class, timeout = 20000)
+    @Transactional @Test(expected = SpaceCrackNotAcceptableException.class, timeout = 20000)
     public void moveShip_NoCommandPoints_SpaceCrackNotAcceptableException() throws Exception {
         Game game = creategame();
 
@@ -214,7 +214,7 @@ public class GameServiceTests {
 
     }
 
-    @Test
+    @Transactional @Test
     public void getAllGamesFromPlayer_validPlayer_gamesRetrieved() throws Exception {
         Game game = creategame();
 
@@ -231,7 +231,9 @@ public class GameServiceTests {
         assertEquals(expected, actual);
     }
 
+
     @Test
+    @Transactional
     public void getGameFromGameId() throws Exception {
         Game expected = creategame();
 
@@ -245,7 +247,7 @@ public class GameServiceTests {
         assertEquals("Actual gameId should be the same as the expected gameId", expected.getGameId(), actual.getGameId());
     }
 
-    @Test(expected = SpaceCrackNotAcceptableException.class)
+    @Transactional @Test(expected = SpaceCrackNotAcceptableException.class)
     public void endPlayerTurn() throws Exception {
 
         Game game = creategame();
@@ -258,7 +260,7 @@ public class GameServiceTests {
         gameService.moveShip(player.getShips().get(0).getShipId(), "b");
     }
 
-    @Test
+    @Transactional @Test
     public void endTurnBothPlayers_newCommandPoints() throws Exception {
         Game game = creategame();
         Player player1 = game.getPlayers().get(0);
@@ -281,7 +283,7 @@ public class GameServiceTests {
         gameService.moveShip(player2.getShips().get(0).getShipId(), "b3");
     }
 
-    @Test
+    @Transactional @Test
     public void buildShip_NoShipOnPlanetEnoughCommandPoints_shipBuilt() {
         Game game = creategame();
         Player player = game.getPlayers().get(0);
@@ -304,7 +306,7 @@ public class GameServiceTests {
 
     }
 
-    @Test(expected = SpaceCrackNotAcceptableException.class)
+    @Transactional @Test(expected = SpaceCrackNotAcceptableException.class)
     public void buildShip_NoShipOnPlanetNotEnoughCommandPoints_NoShipBuilt() {
         Game game = creategame();
         Player player = game.getPlayers().get(0);
@@ -315,7 +317,7 @@ public class GameServiceTests {
         gameService.buildShip(colony.getColonyId());
     }
 
-    @Test
+    @Transactional @Test
     public void buildShip_ShipOnPlanetEnoughCommandPoints_shipMerged() {
         Game game = creategame();
         Player player = game.getPlayers().get(0);

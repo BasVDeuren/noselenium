@@ -13,4 +13,5 @@ public interface IMapFactory {
     SpaceCrackMap getSpaceCrackMap();
 
 
+    void createPlanets();
 }

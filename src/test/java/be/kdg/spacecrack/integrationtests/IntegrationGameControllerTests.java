@@ -11,14 +11,9 @@ import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.services.GameService;
 import be.kdg.spacecrack.services.IGameService;
-import be.kdg.spacecrack.utilities.HibernateUtil;
 import be.kdg.spacecrack.utilities.IFirebaseUtil;
 import be.kdg.spacecrack.viewmodels.*;
 import org.hamcrest.CoreMatchers;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.junit.After;
 import org.junit.Test;
 import org.mockito.internal.verification.VerificationModeFactory;
 import org.springframework.http.MediaType;
@@ -29,9 +24,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import javax.servlet.http.Cookie;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.stub;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -129,6 +122,7 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
 
         return objectMapper.readValue(gameJson, GameActivePlayerWrapper.class);
     }
+
 
     private Profile createOpponent() throws Exception {
         ProfileWrapper profileWrapper = new ProfileWrapper("pponentname", "opponentlastname", "opponentemail@gmail.com", "12-07-1992", "image");
@@ -245,10 +239,10 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
         gameViewModel.setName("mockGame");
         stub(mockViewModelConverter.convertGameToViewModel(null)).toReturn(gameViewModel);
 
-        ActionController actionController =  new ActionController(mockGameService, mockViewModelConverter, mockFireBaseUtil);
+        ActionController actionController = new ActionController(mockGameService, mockViewModelConverter, mockFireBaseUtil);
 
         MockMvc standAloneMockMVC = MockMvcBuilders.standaloneSetup(actionController).build();
-        String actionViewModelJSon = objectMapper.writeValueAsString(new ActionViewModel("BUILDSHIP", null, "",colonyViewModel, game.getPlayer1().getPlayerId(), game.getGameId()));
+        String actionViewModelJSon = objectMapper.writeValueAsString(new ActionViewModel("BUILDSHIP", null, "", colonyViewModel, game.getPlayer1().getPlayerId(), game.getGameId()));
 
 //        Mockito.verify(mockFireBaseUtil, VerificationModeFactory.times(1)).setValue(any(String.class), any(Object.class));
         standAloneMockMVC.perform(post("/auth/action")
@@ -259,20 +253,13 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
         verify(mockGameService, VerificationModeFactory.times(1)).buildShip(colonyViewModel.getColonyId());
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-                @SuppressWarnings("JpaQlInspection")Query q = session.createQuery("delete from User");
-                q.executeUpdate();
-                tx.commit();
-            } catch (Exception e) {
-                tx.rollback();
-            }
-        } finally {
-            HibernateUtil.close(session);
-        }
-    }
+//    @After
+//    public void tearDown() throws Exception {
+//        Session session = sessionFactory.getCurrentSession();
+//
+//        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User");
+//        q.executeUpdate();
+//
+//
+//    }
 }

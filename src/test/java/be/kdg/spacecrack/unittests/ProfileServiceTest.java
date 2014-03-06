@@ -10,15 +10,14 @@ import be.kdg.spacecrack.repositories.TokenRepository;
 import be.kdg.spacecrack.repositories.UserRepository;
 import be.kdg.spacecrack.services.AuthorizationService;
 import be.kdg.spacecrack.services.ProfileService;
-import be.kdg.spacecrack.utilities.HibernateUtil;
 import be.kdg.spacecrack.utilities.TokenStringGenerator;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.verification.VerificationModeFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -32,7 +31,7 @@ import static org.mockito.Mockito.*;
  * 2013-2014
  *
  */
-public class ProfileServiceTest {
+public class ProfileServiceTest extends BaseUnitTest{
 
 
     private TokenController tokenController;
@@ -42,25 +41,26 @@ public class ProfileServiceTest {
     public void setUp() throws Exception {
 
         TokenStringGenerator generator = new TokenStringGenerator();
-        TokenRepository tokenRepository = new TokenRepository();
+        TokenRepository tokenRepository = new TokenRepository(sessionFactory);
         userRepository = mock(UserRepository.class);
         tokenController = new TokenController(new AuthorizationService(tokenRepository, userRepository, generator ));
 
     }
 
     @Test
+    @Transactional
     public void testCreateContact() throws Exception {
         Session session;
-        Transaction tx;
+
 
         ProfileRepository profileRepository = mock(ProfileRepository.class);
         ProfileService contactService = new ProfileService(profileRepository, userRepository);
 
         User user = new User("username", "password", "email");
-        session = HibernateUtil.getSessionFactory().getCurrentSession();
-        tx = session.beginTransaction();
+        session = sessionFactory.getCurrentSession();
+
         session.saveOrUpdate(user);
-        tx.commit();
+
 
         stub(userRepository.getUser(user)).toReturn(user);
         AccessToken accessToken = tokenController.login(user);
@@ -73,18 +73,19 @@ public class ProfileServiceTest {
     }
 
     @Test(expected = SpaceCrackAlreadyExistsException.class)
+    @Transactional
     public void testCreateExtraContact_notPossible() throws Exception {
         Session session;
-        Transaction tx;
+
 
         ProfileRepository profileRepository = mock(ProfileRepository.class);
         ProfileService profileService = new ProfileService(profileRepository, userRepository);
 
         User user = new User("username", "password", "email");
-        session = HibernateUtil.getSessionFactory().getCurrentSession();
-        tx = session.beginTransaction();
+        session = sessionFactory.getCurrentSession();
+
         session.saveOrUpdate(user);
-        tx.commit();
+
 
         stub(userRepository.getUser(user)).toReturn(user);
         AccessToken accessToken = tokenController.login(user);
@@ -99,6 +100,7 @@ public class ProfileServiceTest {
     }
 
     @Test
+    @Transactional
     public void testEditProfile_validProfile() throws Exception {
         ProfileRepository profileRepository = mock(ProfileRepository.class);
         ProfileService profileService = new ProfileService(profileRepository, userRepository);
@@ -124,10 +126,10 @@ public class ProfileServiceTest {
 
     @After
     public void tearDown() throws Exception {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        Transaction tx = session.beginTransaction();
+        Session session = sessionFactory.getCurrentSession();
+
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User");
         q.executeUpdate();
-        tx.commit();
+
     }
 }

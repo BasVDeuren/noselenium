@@ -11,33 +11,38 @@ import be.kdg.spacecrack.controllers.MapController;
 import be.kdg.spacecrack.model.Planet;
 import be.kdg.spacecrack.model.PlanetConnection;
 import be.kdg.spacecrack.model.SpaceCrackMap;
-import be.kdg.spacecrack.utilities.HibernateUtil;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-@Component("mapService")
+@Service("mapService")
+@Transactional
 public class MapFactory implements IMapFactory {
+    @Autowired
+    SessionFactory sessionFactory;
+    @Autowired
+    IPlanetRepository planetRepository;
 
-   @Autowired
-    PlanetRepository planetRepository;
-
-    public MapFactory(){
+    public MapFactory() {
     }
 
-    public  MapFactory(PlanetRepository planetRepository){
+
+    public MapFactory(SessionFactory sessionFactory, IPlanetRepository planetRepository) {
+
+        this.sessionFactory = sessionFactory;
         this.planetRepository = planetRepository;
     }
 
     private void connectPlanetsByRadius(Planet[] planets, double radius) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        Transaction tx = session.beginTransaction();
+        Session session = sessionFactory.getCurrentSession();
+
         for (int i = 0; i < planets.length; i++) {
             Planet checkPlanet = planets[i];
             for (int j = 0; j < planets.length; j++) {
@@ -63,12 +68,11 @@ public class MapFactory implements IMapFactory {
                 }
             }
         }
-        tx.commit();
+
     }
 
     private void connectPlanets(Planet p1, Planet p2) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        Transaction tx = session.beginTransaction();
+        Session session = sessionFactory.getCurrentSession();
 
         PlanetConnection planetConnection = new PlanetConnection(p1, p2);
         p1.addConnection(planetConnection);
@@ -79,7 +83,7 @@ public class MapFactory implements IMapFactory {
         session.saveOrUpdate(p1);
         session.saveOrUpdate(p2);
 
-        tx.commit();
+
     }
 
 
@@ -93,7 +97,6 @@ public class MapFactory implements IMapFactory {
 
         return spaceCrackMap;
     }
-
 
     public void createPlanets() {
 
@@ -272,25 +275,17 @@ public class MapFactory implements IMapFactory {
             }
         }
 
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-                for (PlanetConnection connection : connectionsToRemove) {
-                    connection.getParentPlanet().removeConnectionToPlanet(connection.getChildPlanet());
-                    connection.getChildPlanet().removeConnectionToPlanet(connection.getParentPlanet());
+        Session session = sessionFactory.getCurrentSession();
 
-                    session.saveOrUpdate(connection.getParentPlanet());
-                    session.saveOrUpdate(connection.getChildPlanet());
-                    //session.delete(connection); // Should be cascaded
-                }
-                tx.commit();
-            } catch (RuntimeException ex) {
-                tx.rollback();
-                throw ex;
-            }
-        } finally {
-            HibernateUtil.close(session);
+        for (PlanetConnection connection : connectionsToRemove) {
+            connection.getParentPlanet().removeConnectionToPlanet(connection.getChildPlanet());
+            connection.getChildPlanet().removeConnectionToPlanet(connection.getParentPlanet());
+
+            session.saveOrUpdate(connection.getParentPlanet());
+            session.saveOrUpdate(connection.getChildPlanet());
+            //session.delete(connection); // Should be cascaded
         }
+
+
     }
 }

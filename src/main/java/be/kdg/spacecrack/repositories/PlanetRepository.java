@@ -7,75 +7,60 @@ package be.kdg.spacecrack.repositories;/* Git $Id
  */
 
 import be.kdg.spacecrack.model.Planet;
-import be.kdg.spacecrack.utilities.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.springframework.stereotype.Component;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Component("planetRepository")
+@Service("planetRepository")
 public class PlanetRepository implements IPlanetRepository {
+    @Autowired
+    SessionFactory sessionFactory;
+
+    public PlanetRepository() {
+    }
+
+    public PlanetRepository(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
+
     @Override
     public Planet getPlanetByName(String planetName) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
         Planet planet;
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Planet p where p.name = :name");
-                q.setParameter("name", planetName);
-                planet = (Planet) q.uniqueResult();
-                tx.commit();
-            } catch (RuntimeException ex) {
-                tx.rollback();
-                throw ex;
-            }
-        } finally {
-            HibernateUtil.close(session);
-        }
+
+        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Planet p where p.name = :name");
+        q.setParameter("name", planetName);
+        planet = (Planet) q.uniqueResult();
+
+
         return planet;
     }
 
 
-    protected void createPlanets(Planet[] planets) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-                for (Planet planet : planets) {
-                    session.saveOrUpdate(planet);
-                }
+    public void createPlanets(Planet[] planets) {
+        Session session = sessionFactory.getCurrentSession();
 
-                tx.commit();
-            } catch (RuntimeException ex) {
-                tx.rollback();
-                throw ex;
-            }
-        } finally {
-            HibernateUtil.close(session);
+        for (Planet planet : planets) {
+            session.saveOrUpdate(planet);
         }
+
+
     }
 
 
     public Planet[] getAll() {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
         Planet[] planets;
         List result;
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Planet");
-                result = q.list();
-                tx.commit();
-            } catch (RuntimeException ex) {
-                tx.rollback();
-                throw ex;
-            }
-        } finally {
-            HibernateUtil.close(session);
-        }
+
+        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Planet");
+        result = q.list();
+
+
         int size = result.size();
         planets = new Planet[size];
         for (int i = 0; i < size; i++) {

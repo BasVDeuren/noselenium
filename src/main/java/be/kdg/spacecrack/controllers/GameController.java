@@ -11,8 +11,7 @@ import be.kdg.spacecrack.model.Game;
 import be.kdg.spacecrack.model.Player;
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
-import be.kdg.spacecrack.repositories.MapFactory;
-import be.kdg.spacecrack.repositories.PlanetRepository;
+import be.kdg.spacecrack.repositories.IMapFactory;
 import be.kdg.spacecrack.services.IAuthorizationService;
 import be.kdg.spacecrack.services.IGameService;
 import be.kdg.spacecrack.services.IProfileService;
@@ -52,17 +51,23 @@ public class GameController {
     @Autowired
     IFirebaseUtil firebaseUtil;
 
+    @Autowired
+    IMapFactory mapFactory;
+
     public GameController() {
     }
+
     @PostConstruct
     private void createMap()
     {
-        MapFactory mapFactory = new MapFactory(new PlanetRepository());
+
         mapFactory.createPlanets();
     }
 
-    public GameController(IAuthorizationService authorizationService, IGameService gameService, IProfileService profileService){
+    public GameController(IAuthorizationService authorizationService, IGameService gameService, IProfileService profileService, IViewModelConverter viewModelConverter, IFirebaseUtil firebaseUtil){
+        this.viewModelConverter = viewModelConverter;
         this.authorizationService = authorizationService;
+        this.firebaseUtil = firebaseUtil;
         this.gameService = gameService;
         this.profileService = profileService;
     }
@@ -75,6 +80,7 @@ public class GameController {
         try {
             profileId = gameData.getOpponentProfileId();
         } catch (NumberFormatException e) {
+            //todo: valideren... zo'n exceptions niet catchen
             throw new SpaceCrackNotAcceptableException("Unexpected numberformat");
         }
         Profile opponentProfile =  profileService.getProfileByProfileId(profileId);

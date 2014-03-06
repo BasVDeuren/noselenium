@@ -17,16 +17,19 @@ public class SeleniumLogOutTests extends SeleniumBaseTestCase {
     public void LogOutOK() throws InterruptedException {
         login();
 
+        WebDriverWait wait = new WebDriverWait(driver, 10);
         WebElement btnAction = driver.findElement(By.name("btnAction"));
+        wait.until(ExpectedConditions.visibilityOf(btnAction));
         btnAction.click();
         WebElement btnLogout = driver.findElement(By.name("btnLogout"));
+        wait.until(ExpectedConditions.visibilityOf(btnLogout));
         btnLogout.click();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("login")));
 
         assertEquals("http://localhost:8080/#/login", driver.getCurrentUrl());
-
-        Thread.sleep(2000);
+        WebElement uname = driver.findElement(By.name("uname"));
+       wait.until(ExpectedConditions.visibilityOf(uname));
         assertEquals(false, btnAction.isDisplayed());
 
     }

@@ -7,87 +7,65 @@ package be.kdg.spacecrack.repositories;/* Git $Id
  */
 
 import be.kdg.spacecrack.model.Ship;
-import be.kdg.spacecrack.utilities.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("shipRepository")
 public class ShipRepository implements IShipRepository {
+
+    @Autowired
+    SessionFactory sessionFactory;
+
+    public ShipRepository() {
+    }
+
+    public ShipRepository(SessionFactory sessionFactory) {
+
+        this.sessionFactory = sessionFactory;
+    }
+
     @Override
     public void createShip(Ship ship) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-                session.saveOrUpdate(ship);
-                tx.commit();
-            } catch (RuntimeException e) {
-                tx.rollback();
-                throw e;
-            }
-        } finally {
-            HibernateUtil.close(session);
-        }
+        Session session = sessionFactory.getCurrentSession();
+
+        session.saveOrUpdate(ship);
+
+
     }
 
     @Override
     public Ship getShipByShipId(int shipId) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
         Ship ship;
-        try {
-            Transaction tx =session.beginTransaction();
-            try {
 
-                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Ship s where s.shipId = :shipId");
-                q.setParameter("shipId", shipId);
-                ship = (Ship) q.uniqueResult();
-                tx.commit();
-            } catch (RuntimeException e) {
-                tx.rollback();
-                throw e;
-            }
-        } finally {
-            HibernateUtil.close(session);
-        }
+        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Ship s where s.shipId = :shipId");
+        q.setParameter("shipId", shipId);
+        ship = (Ship) q.uniqueResult();
+
 
         return ship;
     }
 
     @Override
     public void updateShip(Ship ship) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-                session.saveOrUpdate(ship);
-                tx.commit();
-            } catch (RuntimeException e) {
-                tx.rollback();
-                throw e;
-            }
-        } finally {
-            HibernateUtil.close(session);
-        }
+        Session session = sessionFactory.getCurrentSession();
+
+        session.saveOrUpdate(ship);
+
+
     }
 
     @Override
     public void deleteShip(Ship ship) {
 
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
+        Session session = sessionFactory.getCurrentSession();
 
-                session.delete(ship);
-                tx.commit();
-            } catch (RuntimeException e) {
-                tx.rollback();
-                throw e;
-            }
-        } finally {
-            HibernateUtil.close(session);
-        }
+
+        session.delete(ship);
+
+
     }
 }

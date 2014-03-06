@@ -7,66 +7,50 @@ package be.kdg.spacecrack.repositories;/* Git $Id
  */
 
 import be.kdg.spacecrack.model.Player;
-import be.kdg.spacecrack.utilities.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository("playerRepository")
 public class PlayerRepository implements IPlayerRepository {
 
+    @Autowired
+    SessionFactory sessionFactory;
+
+    public PlayerRepository() {
+    }
+
+    public PlayerRepository(SessionFactory sessionFactory) {
+
+        this.sessionFactory = sessionFactory;
+    }
+
     @Override
     public void createPlayer(Player player) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-                session.saveOrUpdate(player);
-                tx.commit();
-            } catch (RuntimeException e) {
-                tx.rollback();
-                throw e;
-            }
-        } finally {
-            HibernateUtil.close(session);
-        }
+        Session session = sessionFactory.getCurrentSession();
+        session.saveOrUpdate(player);
     }
 
     @Override
     public void updatePlayer(Player player) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-                session.update(player);
-                tx.commit();
-            } catch (RuntimeException e) {
-                tx.rollback();
-                throw e;
-            }
-        } finally {
-            HibernateUtil.close(session);
-        }
+        Session session = sessionFactory.getCurrentSession();
+
+        session.update(player);
+
+
     }
 
     @Override
     public Player getPlayerByPlayerId(int playerId) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
         Player player;
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Player p where p.playerId = :playerId");
-                q.setParameter("playerId", playerId);
-                player = (Player) q.uniqueResult();
-                tx.commit();
-            } catch (RuntimeException e) {
-                throw e;
-            }
-        } finally {
-            HibernateUtil.close(session);
-        }
+
+        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Player p where p.playerId = :playerId");
+        q.setParameter("playerId", playerId);
+        player = (Player) q.uniqueResult();
+
 
         return player;
 

@@ -29,7 +29,7 @@ public class MapController {
     public MapController() {
     }
 
-    public MapController(MapFactory mapService) {
+    public MapController(IMapFactory mapService) {
 
         this.mapService = mapService;
     }

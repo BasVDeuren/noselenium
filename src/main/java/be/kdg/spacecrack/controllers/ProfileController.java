@@ -6,14 +6,12 @@ package be.kdg.spacecrack.controllers;/* Git $Id
  *
  */
 
-import be.kdg.spacecrack.viewmodels.ProfileWrapper;
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
+import be.kdg.spacecrack.repositories.ITokenRepository;
 import be.kdg.spacecrack.repositories.TokenRepository;
-import be.kdg.spacecrack.services.IAuthorizationService;
-import be.kdg.spacecrack.services.IUserService;
-import be.kdg.spacecrack.services.ProfileService;
-import be.kdg.spacecrack.services.UserService;
+import be.kdg.spacecrack.services.*;
+import be.kdg.spacecrack.viewmodels.ProfileWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -24,19 +22,19 @@ import java.util.Date;
 @Controller
 @RequestMapping("/auth/profile")
 public class ProfileController {
-    @Autowired
-    ProfileService contactService;
+
     @Autowired
     IUserService userService;
     @Autowired
     IAuthorizationService tokenService;
-
+    @Autowired
+    IProfileService profileService;
     public ProfileController() {
 
     }
 
-    public ProfileController(ProfileService contactService, UserService userService, TokenRepository tokenRepository, IAuthorizationService tokenService){
-        this.contactService = contactService;
+    public ProfileController(IProfileService profileService, IUserService userService, ITokenRepository tokenRepository, IAuthorizationService tokenService){
+        this.profileService = profileService;
         this.userService = userService;
         this.tokenService = tokenService;
     }
@@ -47,13 +45,13 @@ public class ProfileController {
         User user = tokenService.getUserByAccessTokenValue(accessTokenValue);
         Date date = new SimpleDateFormat("dd-MM-yyyy").parse(profileWrapper.getDayOfBirth());
 
-        Profile profile = contactService.getProfileByUser(user);
+        Profile profile = profileService.getProfileByUser(user);
         profile.setFirstname(profileWrapper.getFirstname());
         profile.setLastname(profileWrapper.getLastname());
         profile.setDayOfBirth(date);
         profile.setImage(profileWrapper.getImage());
 
-        contactService.editProfile(profile);
+        profileService.editProfile(profile);
     }
 
     @RequestMapping(method = RequestMethod.GET)

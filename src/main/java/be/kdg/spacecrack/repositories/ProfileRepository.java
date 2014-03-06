@@ -2,10 +2,10 @@ package be.kdg.spacecrack.repositories;
 
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
-import be.kdg.spacecrack.utilities.HibernateUtil;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /* Git $Id$
@@ -17,71 +17,52 @@ import org.springframework.stereotype.Component;
  */
 @Component("profileRepository")
 public class ProfileRepository implements IProfileRepository {
-    public void createProfile(Profile profile) throws Exception {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        try{
-        Transaction tx = session.beginTransaction();
-        try{
-        session.saveOrUpdate(profile);
-        tx.commit();
-        }catch (RuntimeException ex){
-            tx.rollback();
-            throw ex;
-        }
-        }finally {
-            HibernateUtil.close(session);
-        }
+    @Autowired
+    SessionFactory sessionFactory;
 
+    public ProfileRepository() {
+    }
+
+    public ProfileRepository(SessionFactory sessionFactory) {
+
+        this.sessionFactory = sessionFactory;
+    }
+
+    public void createProfile(Profile profile) throws Exception {
+        Session session = sessionFactory.getCurrentSession();
+        session.saveOrUpdate(profile);
     }
 
     @Override
     public Profile getContact(User user) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        Transaction tx = session.beginTransaction();
+        Session session = sessionFactory.getCurrentSession();
+
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Profile p where p.profileId = :pId");
         q.setParameter("pId", user.getProfile().getProfileId());
         Profile profile = (Profile) q.uniqueResult();
-        tx.commit();
+
 
         return profile;
     }
 
     @Override
     public void editContact(Profile profile) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-                session.saveOrUpdate(profile);
-                tx.commit();
-            } catch (RuntimeException ex) {
-                tx.rollback();
-                throw ex;
-            }
-        } finally {
-            HibernateUtil.close(session);
-        }
+        Session session = sessionFactory.getCurrentSession();
+
+        session.saveOrUpdate(profile);
+
     }
 
     @Override
     public Profile getProfileByProfileId(int profileId) {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
 
         Profile profile;
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Profile p where p.profileId = :profileId");
-                q.setParameter("profileId", profileId);
-                profile = (Profile) q.uniqueResult();
-                tx.commit();
-            } catch (RuntimeException e) {
-                tx.rollback();
-                throw e;
-            }
-        } finally {
-            HibernateUtil.close(session);
-        }
+
+        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Profile p where p.profileId = :profileId");
+        q.setParameter("profileId", profileId);
+        profile = (Profile) q.uniqueResult();
+
         return profile;
     }
 }

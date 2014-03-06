@@ -11,4 +11,7 @@ import be.kdg.spacecrack.model.Planet;
 public interface IPlanetRepository {
     Planet getPlanetByName(String planetName);
 
+    Planet[] getAll();
+
+    void createPlanets(Planet[] planets);
 }

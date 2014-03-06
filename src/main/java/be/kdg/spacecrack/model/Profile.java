@@ -46,7 +46,7 @@ public class Profile {
 
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "profile")
     @JsonIgnore
-    private List<Player> players;
+    private List<Player> players = new ArrayList<Player>();
 
 
     public User getUser() {

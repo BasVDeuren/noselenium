@@ -2,13 +2,11 @@ package be.kdg.spacecrack.integrationtests;
 
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.UserRepository;
-import be.kdg.spacecrack.utilities.HibernateUtil;
 import be.kdg.spacecrack.viewmodels.UserWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.CoreMatchers;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,18 +34,18 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
 
     @Before
     public void setUp() throws Exception {
-        userRepository = new UserRepository();
+        userRepository = new UserRepository(sessionFactory);
     }
 
     @Test
     public void testEditUser_validEditedUser_StatusOk() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        Transaction tx = session.beginTransaction();
+        Session session = sessionFactory.getCurrentSession();
+
         User testUser = new User("usernameTest²", "password", "email");
         session.saveOrUpdate(testUser);
-        tx.commit();
+
 
         String userjson = objectMapper.writeValueAsString(testUser);
 
@@ -66,7 +64,7 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
         mockMvc.perform(putRequestBuilder
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(userMapperJsonValid)
-                .cookie(new Cookie("accessToken",  "%22"+ tokenOfEditedUser + "%22")      )
+                .cookie(new Cookie("accessToken", "%22" + tokenOfEditedUser + "%22"))
         ).andExpect(status().isOk());
     }
 
@@ -111,14 +109,14 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
         User user = userRepository.getUserByUsername("username");
 
         MockHttpServletRequestBuilder getUserRequestBuilder = get("/auth/user")
-                .cookie(new Cookie("accessToken", "%22"+user.getToken().getValue()+"%22"));
+                .cookie(new Cookie("accessToken", "%22" + user.getToken().getValue() + "%22"));
 
         mockMvc.perform(getUserRequestBuilder).andExpect(status().isOk());
     }
 
     @Test
     public void testGetUser_InvalidToken_SpaceCrackUnauthorisedException() throws Exception {
-     //   testRegisterUser_NewUser_Token();
+        //   testRegisterUser_NewUser_Token();
 
         MockHttpServletRequestBuilder getUserRequestBuilder = get("/auth/user")
                 .cookie(new Cookie("accessToken", "invalidToken"));
@@ -128,19 +126,11 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
 
     @After
     public void tearDown() throws Exception {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        try {
-            Transaction tx = session.beginTransaction();
-            try {
-                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User");
-                q.executeUpdate();
-                tx.commit();
-            } catch (Exception e) {
-                tx.rollback();
-                throw e;
-            }
-        } finally {
-            HibernateUtil.close(session);
-        }
+        Session session = sessionFactory.getCurrentSession();
+
+        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User");
+        q.executeUpdate();
+
+
     }
 }

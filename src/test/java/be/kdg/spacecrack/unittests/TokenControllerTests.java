@@ -9,15 +9,14 @@ import be.kdg.spacecrack.repositories.IUserRepository;
 import be.kdg.spacecrack.repositories.TokenRepository;
 import be.kdg.spacecrack.repositories.UserRepository;
 import be.kdg.spacecrack.services.AuthorizationService;
-import be.kdg.spacecrack.utilities.HibernateUtil;
 import be.kdg.spacecrack.utilities.ITokenStringGenerator;
 import be.kdg.spacecrack.utilities.TokenStringGenerator;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.transaction.annotation.Transactional;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -28,7 +27,7 @@ import static junit.framework.Assert.assertEquals;
  * 2013-2014
  *
  */
-public class TokenControllerTests{
+public class TokenControllerTests extends BaseUnitTest{
 
 
     private TokenController tokenController;
@@ -38,18 +37,19 @@ public class TokenControllerTests{
     @Before
     public void setUp() throws Exception {
         fixedSeedGenerator = new TokenStringGenerator(1234);
-        TokenRepository tokenRepository = new TokenRepository();
-        UserRepository userRepository = new UserRepository();
+        TokenRepository tokenRepository = new TokenRepository(sessionFactory);
+        UserRepository userRepository = new UserRepository(sessionFactory);
         tokenController = new TokenController(new AuthorizationService(tokenRepository,  userRepository, fixedSeedGenerator));
 
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        Transaction tx = session.beginTransaction();
+        Session session = sessionFactory.getCurrentSession();
+
         testUser = new User("testUsername2", "testPassword2", "testEmail2");
         session.saveOrUpdate(testUser);
-        tx.commit();
+
     }
 
     @Test(expected = SpaceCrackUnauthorizedException.class)
+    @Transactional
     public void testRequestAccessToken_InvalidUser_UserNotFoundException() {
 
         String name = "badUser";
@@ -61,11 +61,12 @@ public class TokenControllerTests{
     }
 
     @Test
+    @Transactional
     public void testRequestAccessToken_ValidUser_Ok()
     {
         ITokenStringGenerator mockTokenGenerator = Mockito.mock(ITokenStringGenerator.class);
-        TokenRepository tokenRepository = new TokenRepository();
-        UserRepository userRepository = new UserRepository();
+        TokenRepository tokenRepository = new TokenRepository(sessionFactory);
+        UserRepository userRepository = new UserRepository(sessionFactory);
         TokenController tokenControllerWithMockedGenerator = new TokenController(new AuthorizationService(tokenRepository, userRepository, mockTokenGenerator));
         String email = "testEmail2";
         String name ="testUsername2";
@@ -80,6 +81,7 @@ public class TokenControllerTests{
     }
 
     @Test(expected = SpaceCrackUnexpectedException.class)
+    @Transactional
     public void testgetUser() throws Exception {
         IUserRepository userRepository = Mockito.mock(IUserRepository.class);
         User user = new User("testUsername2", "testPassword2", "testEmail2");
@@ -93,9 +95,9 @@ public class TokenControllerTests{
 
     @After
     public void tearDown() throws Exception {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        Transaction tx = session.beginTransaction();
+        Session session = sessionFactory.getCurrentSession();
+
         session.delete(testUser);
-        tx.commit();
+
     }
 }

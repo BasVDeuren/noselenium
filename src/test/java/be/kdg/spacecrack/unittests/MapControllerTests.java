@@ -6,6 +6,7 @@ import be.kdg.spacecrack.model.PlanetConnection;
 import be.kdg.spacecrack.repositories.MapFactory;
 import be.kdg.spacecrack.repositories.PlanetRepository;
 import org.junit.Test;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,10 +21,11 @@ import static org.junit.Assert.assertEquals;
  * 2013-2014
  *
  */
-public class MapControllerTests {
+public class MapControllerTests extends BaseUnitTest {
     @Test
+    @Transactional
     public void getMap_valid_AllPlanetsConnected() throws Exception {
-        MapController mapController = new MapController(new MapFactory(new PlanetRepository()));
+        MapController mapController = new MapController(new MapFactory(sessionFactory,new PlanetRepository(sessionFactory)));
         Planet[] planets = mapController.getMap().getPlanets();
         Planet startPlanet = planets[0];
 
@@ -48,38 +50,8 @@ public class MapControllerTests {
             }
         }
 
-      //  HibernateUtil.close(session);
 
     }
-
-//    @Test
-//    public void testGetConnectedPlanets() throws Exception {
-//        Planet planet1 = new Planet("a", 0, 0);
-//        Planet planet2 = new Planet("b", 0, 0);
-//        Planet planet3 = new Planet("c", 0, 0);
-//
-//        Set<Planet> connectedPlanets1 = planet1.writeConnectedPlanetstoList();
-//        connectedPlanets1.add(planet2);
-//        connectedPlanets1.add(planet3);
-//
-//        Set<Planet> connectedPlanets2 = planet2.writeConnectedPlanetstoList();
-//        connectedPlanets1.add(planet1);
-//        connectedPlanets1.add(planet3);
-//
-//        Set<Planet> connectedPlanets3 = planet3.writeConnectedPlanetstoList();
-//        connectedPlanets1.add(planet2);
-//        connectedPlanets1.add(planet1);
-//
-//
-//        ArrayList<Planet> out = new ArrayList<Planet>();
-//        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-//        Transaction tx = session.beginTransaction();
-//
-//        writeConnectedPlanetstoList(planet1, out);
-//        assertTrue(out.size() == 3);
-//tx.commit();
-//
-//    }
 
 
 }

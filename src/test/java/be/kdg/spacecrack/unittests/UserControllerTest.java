@@ -9,12 +9,10 @@ import be.kdg.spacecrack.repositories.IUserRepository;
 import be.kdg.spacecrack.services.IAuthorizationService;
 import be.kdg.spacecrack.services.IUserService;
 import be.kdg.spacecrack.services.UserService;
-import be.kdg.spacecrack.utilities.HibernateUtil;
 import be.kdg.spacecrack.viewmodels.UserWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -22,6 +20,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.VerificationModeFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +38,8 @@ import static org.mockito.Mockito.*;
  * 2013-2014
  *
  */
-public class UserControllerTest {
+@Transactional
+public class UserControllerTest extends BaseUnitTest {
 
     private UserController userController;
 
@@ -215,25 +215,16 @@ public class UserControllerTest {
 
         User actualUser = userController.getRandomUser(user1.getUserId());
 
-        assertEquals("Users from usercontroller should be the same as from db",actualUser, user2);
+        assertEquals("Users from usercontroller should be the same as from db", actualUser, user2);
     }
 
     @After
     public void tearDown() throws Exception {
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-        try {
-            Transaction tx = session.beginTransaction();
-            ;
-            try {
-                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User");
-                q.executeUpdate();
-                tx.commit();
-            } catch (Exception ex) {
-                tx.rollback();
-                throw ex;
-            }
-        } finally {
-            HibernateUtil.close(session);
-        }
+        Session session = sessionFactory.getCurrentSession();
+
+        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User");
+        q.executeUpdate();
+
+
     }
 }

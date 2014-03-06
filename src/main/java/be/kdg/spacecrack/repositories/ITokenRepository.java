@@ -2,6 +2,7 @@ package be.kdg.spacecrack.repositories;
 
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
+
 /* Git $Id$
  *
  * Project Application Development

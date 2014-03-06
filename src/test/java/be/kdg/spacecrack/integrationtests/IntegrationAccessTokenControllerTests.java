@@ -3,20 +3,20 @@ package be.kdg.spacecrack.integrationtests;
 
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
+import be.kdg.spacecrack.repositories.IUserRepository;
 import be.kdg.spacecrack.repositories.TokenRepository;
 import be.kdg.spacecrack.repositories.UserRepository;
-import be.kdg.spacecrack.utilities.HibernateUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.CoreMatchers;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.Cookie;
 
@@ -33,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 2013-2014
  *
  */
+
 public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrationTests {
     private User testUser;
     private ObjectMapper objectMapper;
@@ -46,22 +47,11 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
 
         objectMapper = new ObjectMapper();
 
-        Session session= HibernateUtil.getSessionFactory().getCurrentSession();
-        try {
 
-            Transaction tx = null;
-            try {
-                tx = session.beginTransaction();
-                testUser = new User("testUsername", "testPassword", "testEmail@gmail.com");
-                session.saveOrUpdate(testUser);
-                tx.commit();
-            } catch (Exception e) {
-                tx.rollback();
-                throw new RuntimeException(e);
-            }
-        } finally {
-            HibernateUtil.close(session);
-        }
+//        session.saveOrUpdate(testUser);
+        IUserRepository repository = new UserRepository(sessionFactory);
+        testUser = repository.addUser("testUsername", "testPassword", "testEmail@gmail.com");
+
 
     }
 
@@ -72,6 +62,7 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
 
 
     @Test
+    @Transactional
     public void login_ValidUser_Token() throws Exception {
 
         String userjson = objectMapper.writeValueAsString(testUser);
@@ -122,9 +113,9 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
         mockMvc.perform(requestBuilder
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(userjson)
-                .accept(MediaType.APPLICATION_JSON))  ;
-        UserRepository userRepository = new UserRepository();
-        TokenRepository tokenRepository = new TokenRepository();
+                .accept(MediaType.APPLICATION_JSON));
+        UserRepository userRepository = new UserRepository(sessionFactory);
+        TokenRepository tokenRepository = new TokenRepository(sessionFactory);
 
         AccessToken accessToken = tokenRepository.getAccessTokenByValue(userRepository.getUserByUsername(testUser.getUsername()).getToken().getValue());
 
@@ -132,8 +123,8 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
 
         MockHttpServletRequestBuilder logoutRequestBuilder = delete("/accesstokens");
         mockMvc.perform(logoutRequestBuilder
-            .cookie(new Cookie("accessToken", "\"" + accessToken.getValue() + "\"")))
-        .andExpect(status().isBadRequest());
+                .cookie(new Cookie("accessToken", "\"" + accessToken.getValue() + "\"")))
+                .andExpect(status().isBadRequest());
 
 
     }
@@ -176,22 +167,12 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
     @After
     public void tearDown() throws Exception {
 
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Session session = sessionFactory.getCurrentSession();
 
-        try {
-            Transaction   tx = session.beginTransaction();
-            try {
 
-                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User");
-                q.executeUpdate();
-                tx.commit();
-            } catch (RuntimeException e) {
-                tx.rollback();
-                throw e;
-            }
-        } finally {
-            HibernateUtil.close(session);
-        }
+        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User");
+        q.executeUpdate();
+
 
     }
 }

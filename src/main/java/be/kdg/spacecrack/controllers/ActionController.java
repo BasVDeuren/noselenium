@@ -44,6 +44,7 @@ public class ActionController {
 
 
     public ActionController() {
+
     }
 
     public ActionController(IGameService gameService, IViewModelConverter viewModelConverter, IFirebaseUtil firebaseUtil) {
@@ -82,7 +83,4 @@ public class ActionController {
         firebaseUtil.setValue(GameController.GAMESUFFIX + gameViewModel.getName(), gameViewModel);
     }
 
-    public void setFirebaseUtil(IFirebaseUtil firebaseUtil) {
-        this.firebaseUtil = firebaseUtil;
-    }
 }

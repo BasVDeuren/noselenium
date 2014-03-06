@@ -6,6 +6,7 @@ import be.kdg.spacecrack.model.*;
 import be.kdg.spacecrack.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -18,6 +19,7 @@ import java.util.Set;
  *
  */
 @Component(value = "gameService")
+@Transactional
 public class GameService implements IGameService {
 
    @Autowired
@@ -56,6 +58,8 @@ public class GameService implements IGameService {
 
         Player player1 = new Player(userProfile);
         Player player2 = new Player(opponentProfile);
+        userProfile.getPlayers().add(player1);
+        opponentProfile.getPlayers().add(player2);
         player1.setCommandPoints(START_COMMAND_POINTS);
         player2.setCommandPoints(START_COMMAND_POINTS);
 
@@ -89,11 +93,14 @@ public class GameService implements IGameService {
 
         player1StartingColony.setPlayer(player1);
         player2StartingColony.setPlayer(player2);
-        colonyRepository.createColony(player1StartingColony);
-        colonyRepository.createColony(player2StartingColony);
 
         player1.getColonies().add(player1StartingColony);
         player2.getColonies().add(player2StartingColony);
+
+        colonyRepository.createColony(player1StartingColony);
+        colonyRepository.createColony(player2StartingColony);
+
+
 
         player1.getShips().add(player1StartingShip);
         player2.getShips().add(player2StartingShip);
