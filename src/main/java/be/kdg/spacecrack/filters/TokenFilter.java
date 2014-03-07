@@ -1,6 +1,6 @@
 package be.kdg.spacecrack.filters;
 
-import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
+import be.kdg.spacecrack.exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.services.AuthorizationService;
 import be.kdg.spacecrack.services.IAuthorizationService;

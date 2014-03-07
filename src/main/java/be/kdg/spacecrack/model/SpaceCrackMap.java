@@ -11,8 +11,6 @@ public class SpaceCrackMap {
 
     private Planet[] planets;
 
-
-
     public SpaceCrackMap(Planet[] planets ) {
         this.planets = planets;
     }

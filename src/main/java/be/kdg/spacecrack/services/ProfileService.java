@@ -1,6 +1,6 @@
 package be.kdg.spacecrack.services;
 
-import be.kdg.spacecrack.Exceptions.SpaceCrackAlreadyExistsException;
+import be.kdg.spacecrack.exceptions.SpaceCrackAlreadyExistsException;
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.IProfileRepository;

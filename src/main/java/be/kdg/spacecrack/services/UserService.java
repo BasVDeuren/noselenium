@@ -6,7 +6,6 @@ package be.kdg.spacecrack.services;/* Git $Id
  *
  */
 
-import be.kdg.spacecrack.Exceptions.SpaceCrackAlreadyExistsException;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
@@ -63,7 +62,7 @@ public class UserService implements IUserService {
             userRepository.updateUser(user);
 
         }else{
-            throw new SpaceCrackAlreadyExistsException();
+            //throw new SpaceCrackAlreadyExistsException();
         }
 
     }

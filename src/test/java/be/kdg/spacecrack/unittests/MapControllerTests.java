@@ -31,7 +31,6 @@ public class MapControllerTests extends BaseUnitTest {
 
         ArrayList<Planet> connectedPlanets = new ArrayList<Planet>();
 
-
         writeConnectedPlanetstoList(startPlanet, connectedPlanets);
 
         List<Planet> planetList = Arrays.asList(planets);

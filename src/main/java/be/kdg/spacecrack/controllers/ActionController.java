@@ -6,7 +6,7 @@ package be.kdg.spacecrack.controllers;/* Git $Id
  *
  */
 
-import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
+import be.kdg.spacecrack.exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.commands.Action;
 import be.kdg.spacecrack.commands.BuildShipAction;
 import be.kdg.spacecrack.commands.EndTurnAction;

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-@Service("mapService")
+@Service("mapFactory")
 @Transactional
 public class MapFactory implements IMapFactory {
     @Autowired

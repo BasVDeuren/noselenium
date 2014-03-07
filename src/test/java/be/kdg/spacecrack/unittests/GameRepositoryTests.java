@@ -21,7 +21,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 
-public class GameRepositoryTest extends BaseUnitTest {
+public class GameRepositoryTests extends BaseUnitTest {
     @Autowired
     SessionFactory sessionFactory;
 

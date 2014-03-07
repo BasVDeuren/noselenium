@@ -1,6 +1,6 @@
 package be.kdg.spacecrack.unittests;
 
-import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
+import be.kdg.spacecrack.exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.model.*;
 import be.kdg.spacecrack.repositories.*;
 import be.kdg.spacecrack.services.GameService;
@@ -45,8 +45,6 @@ public class GameServiceTests extends BaseUnitTest{
         opponentUser.setProfile(opponentProfile);
         user.setProfile(profile);
     }
-
-
 
     private Game creategame() {
         int gameId = gameService.createGame(user.getProfile(), "SpaceCrackName", opponentProfile);
@@ -341,6 +339,4 @@ public class GameServiceTests extends BaseUnitTest{
         assertEquals("Player should have lost 3 commandPoints", oldCommandPoints - GameService.BUILDSHIPCOST, playerDb.getCommandPoints());
 
     }
-
-
 }

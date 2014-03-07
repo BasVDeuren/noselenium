@@ -1,15 +1,19 @@
 package be.kdg.spacecrack.services;
 
-import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
-import be.kdg.spacecrack.Exceptions.SpaceCrackUnexpectedException;
+import be.kdg.spacecrack.exceptions.SpaceCrackNotAcceptableException;
+import be.kdg.spacecrack.exceptions.SpaceCrackUnexpectedException;
 import be.kdg.spacecrack.model.*;
 import be.kdg.spacecrack.repositories.*;
+import org.jgrapht.UndirectedGraph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.SimpleGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 /* Git $Id$
  *
@@ -22,10 +26,8 @@ import java.util.Set;
 @Transactional
 public class GameService implements IGameService {
 
-   @Autowired
+    @Autowired
     IPlanetRepository planetRepository;
-//    @Autowired
-//    IMapFactory mapService;
 
     @Autowired
     IShipRepository shipRepository;
@@ -39,11 +41,13 @@ public class GameService implements IGameService {
     @Autowired
     IGameRepository gameRepository;
 
+    @Autowired
+    IGraphService graphService;
+
     public GameService() {
     }
 
     public GameService(IPlanetRepository planetRepository, IColonyRepository colonyRepository, IShipRepository shipRepository, IPlayerRepository playerRepository, IGameRepository gameRepository) {
-//        this.mapService = mapService;
         this.planetRepository = planetRepository;
         this.shipRepository = shipRepository;
         this.colonyRepository = colonyRepository;
@@ -53,7 +57,6 @@ public class GameService implements IGameService {
 
     @Override
     public int createGame(Profile userProfile, String gameName, Profile opponentProfile) {
-        //mapService.getSpaceCrackMap();
         Game game = new Game();
 
         Player player1 = new Player(userProfile);
@@ -67,9 +70,6 @@ public class GameService implements IGameService {
         player2.setGame(game);
         playerRepository.createPlayer(player1);
         playerRepository.createPlayer(player2);
-
-        //  opponentProfile.addPlayer(player2);
-
 
         game.getPlayers().add(player1);
         game.getPlayers().add(player2);
@@ -142,9 +142,7 @@ public class GameService implements IGameService {
             }
         }
         if (connected) {
-
             Player player = ship.getPlayer();
-
 
             Game game = ship.getPlayer().getGame();
             List<Colony> coloniesByGame = colonyRepository.getColoniesByGame(game);
@@ -313,6 +311,78 @@ public class GameService implements IGameService {
         playerRepository.updatePlayer(player);
 
 
+    }
+
+    // Call when a new colony has been captured, try to find if it is part of a new perimeter
+    private List<Perimeter> detectPerimeter(Player player, Colony newColony) {
+        // List of perimeters to return
+        List<Perimeter> perimeters = new ArrayList<Perimeter>();
+        // Get all colonies of this player (= the graph to find perimeters within)
+        UndirectedGraph<String, DefaultEdge> graph = new SimpleGraph<String, DefaultEdge>(DefaultEdge.class);
+        List<Colony> colonies = player.getColonies();
+        Map<String, Planet> playerPlanetsMap = new HashMap<String, Planet>();
+        List<Planet> playerPlanetsList = new ArrayList<Planet>();
+        for(Colony colony : colonies) {
+            Planet planet = colony.getPlanet();
+            playerPlanetsList.add(planet);
+            playerPlanetsMap.put(planet.getName(), planet);
+            graph.addVertex(planet.getName());
+            for(PlanetConnection connection : planet.getPlanetConnections()) {
+                graph.addEdge(connection.getParentPlanet().getName(), connection.getChildPlanet().getName());
+            }
+        }
+
+        // Get all the other planets of the map (all planets - player colonies)
+        List<Planet> targetPlanets = new ArrayList<Planet>(Arrays.asList(planetRepository.getAll())); // all planets
+        targetPlanets.removeAll(playerPlanetsList); // all planets without already captured planets
+
+        // Find chordless cycles of the graph
+        List<List<String>> cycles = graphService.calculateChordlessCyclesFromVertex(graph, newColony.getPlanet().getName());
+
+        // For every cycles, make a possible perimeter
+        for(List<String> cycle : cycles) {
+            Perimeter perimeter = new Perimeter();
+            for(String vertex : cycle) {
+                Planet planet = playerPlanetsMap.get(vertex);
+                perimeter.getOutsidePlanets().add(planet);
+            }
+            perimeters.add(perimeter);
+        }
+
+        // For every polygon (=cycle) test if it contains a target planet
+        for(Planet target : targetPlanets) {
+            List<Perimeter> perimetersForTarget = new ArrayList<Perimeter>();
+            for(Perimeter perimeter : perimeters) {
+                Polygon polygon = new Polygon();
+                for(Planet planet : perimeter.getOutsidePlanets()) {
+                    polygon.addPoint(planet.getX(), planet.getY());
+                }
+
+                if(polygon.contains(target.getX(), target.getY())) {
+                    // This is a perimeter for this target planet (but check if it is the smallest)
+                    perimetersForTarget.add(perimeter);
+                }
+            }
+
+            Perimeter smallestPerimeter = perimetersForTarget.get(0);
+            for(Perimeter perimeter : perimetersForTarget) {
+                if(perimeter.getOutsidePlanets().size() < smallestPerimeter.getOutsidePlanets().size()) {
+                    smallestPerimeter = perimeter;
+                }
+            }
+
+            smallestPerimeter.getInsidePlanets().add(target);
+        }
+
+        // Remove all the perimeters without inside planets
+        for(Iterator<Perimeter> i = perimeters.iterator(); i.hasNext(); ) {
+            Perimeter perimeter = i.next();
+            if(perimeter.getInsidePlanets().size() == 0) {
+                i.remove();
+            }
+        }
+
+        return perimeters;
     }
 
 }
