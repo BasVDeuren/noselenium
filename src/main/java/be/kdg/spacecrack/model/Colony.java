@@ -12,7 +12,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "T_Colony")
-public class Colony {
+public class Colony extends Piece {
     @Id
     @GeneratedValue
     private int colonyId;
@@ -21,7 +21,7 @@ public class Colony {
     @JoinColumn(name = "planetId")
     private Planet planet;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "playerId")
     private Player player;
 
@@ -57,5 +57,12 @@ public class Colony {
 
     public void setPlayer(Player player) {
         this.player = player;
+        player.internalAddColony(this);
     }
+
+    protected void internalSetPlayer(Player player)
+    {
+       this.player = player;
+    }
+
 }

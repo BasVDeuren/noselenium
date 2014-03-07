@@ -16,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * 2013-2014
  *
  */
+
 public class IntegrationMapControllerTests extends BaseFilteredIntegrationTests {
     @Test
     public void getMap_validRequest_mapWithPlanets() throws Exception {

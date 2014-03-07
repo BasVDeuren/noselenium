@@ -19,4 +19,6 @@ public interface IColonyRepository {
     List<Colony> getColoniesByGame(Game game);
 
     Colony getColonyById(Integer colonyId);
+
+    void deleteColony(Colony opponentColony);
 }

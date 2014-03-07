@@ -31,7 +31,7 @@ public class Player {
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL)
-    private List<Colony> colonies;
+    private List<Colony> colonies = new ArrayList<Colony>();
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "player")
@@ -60,7 +60,6 @@ public class Player {
 
     public Player(Profile profile) {
         this.profile = profile;
-        //    this.commandPoints = 5;
     }
 
     public int getPlayerId() {
@@ -89,16 +88,10 @@ public class Player {
 
 
     public List<Colony> getColonies() {
-        if (colonies == null) {
-            colonies = new ArrayList<Colony>();
-        }
         return colonies;
     }
 
     public List<Ship> getShips() {
-        if (ships == null) {
-            ships = new ArrayList<Ship>();
-        }
         return ships;
     }
 
@@ -115,6 +108,40 @@ public class Player {
     }
 
     public void setGame(Game game) {
+        this.game = game;
+        game.internalAddPlayer(this);
+    }
+
+    protected void internalAddColony(Colony colony) {
+        colonies.add(colony);
+    }
+
+    public void addColony(Colony colony) {
+
+        colonies.add(colony);
+        colony.setPlayer(this);
+    }
+
+    public void removeColony(Colony colony) {
+        colonies.remove(colony);
+        colony.internalSetPlayer(null);
+    }
+
+    protected void internalAddShip(Ship ship) {
+        ships.add(ship);
+    }
+
+    public void addShip(Ship ship) {
+        ships.add(ship);
+        ship.internalSetPlayer(this);
+    }
+
+    public void removeShip(Ship ship) {
+        ships.remove(ship);
+        ship.internalSetPlayer(null);
+    }
+
+    protected void internalSetGame(Game game) {
         this.game = game;
     }
 }

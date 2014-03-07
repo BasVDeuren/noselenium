@@ -6,6 +6,9 @@ package be.kdg.spacecrack.seleniumtests;/* Git $Id
  *
  */
 
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.junit.After;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -37,26 +40,13 @@ public class SeleniumRegisterTest extends SeleniumBaseTestCase {
         wait.until(ExpectedConditions.visibilityOf(btnNewGame));
     }
 
-/*
+
     @After
     public void tearDown2() throws Exception {
         Session session = sessionFactory.getCurrentSession();
-        try {
-            Transaction tx = session.beginTransaction();
 
-            try {
                 @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User u where u.email = :email");
                 q.setParameter("email", "emailSeleniumTest@email.be");
                 q.executeUpdate();
-
-            } catch (RuntimeException e) {
-
-                throw e;
-            }
-        } finally {
-            Selenium
-        }
-
-
-    }*/
+    }
 }

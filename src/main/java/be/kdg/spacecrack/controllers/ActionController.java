@@ -6,7 +6,7 @@ package be.kdg.spacecrack.controllers;/* Git $Id
  *
  */
 
-import be.kdg.spacecrack.exceptions.SpaceCrackNotAcceptableException;
+import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.commands.Action;
 import be.kdg.spacecrack.commands.BuildShipAction;
 import be.kdg.spacecrack.commands.EndTurnAction;
@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.validation.Valid;
 import java.io.IOException;
 
 
@@ -56,7 +57,7 @@ public class ActionController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public void executeAction(@RequestBody ActionViewModel actionViewModel) throws IOException {
+    public void executeAction(@RequestBody @Valid ActionViewModel actionViewModel) throws IOException {
         if (actionViewModel.getPlayerId() == null || actionViewModel.getPlayerId() < 1) {
             throw new SpaceCrackNotAcceptableException("An action must contain a valid playerId");
         }

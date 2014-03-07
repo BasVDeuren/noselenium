@@ -1,6 +1,6 @@
 package be.kdg.spacecrack.unittests;
 
-import be.kdg.spacecrack.exceptions.SpaceCrackAlreadyExistsException;
+import be.kdg.spacecrack.Exceptions.SpaceCrackAlreadyExistsException;
 import be.kdg.spacecrack.controllers.TokenController;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.Profile;

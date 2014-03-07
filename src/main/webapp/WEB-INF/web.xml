@@ -31,6 +31,7 @@
         <filter-name>hibernateFilter</filter-name>
         <url-pattern>/api/auth/*</url-pattern>
     </filter-mapping>
+
     <filter>
         <filter-name>TokenFilter</filter-name> <!-- mandatory -->
         <filter-class>be.kdg.spacecrack.filters.TokenFilter</filter-class> <!-- mandatory -->

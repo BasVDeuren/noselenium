@@ -20,6 +20,7 @@ import java.util.List;
 @Component("colonyRepository")
 public class ColonyRepository implements IColonyRepository {
 
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     SessionFactory sessionFactory;
 
@@ -34,18 +35,12 @@ public class ColonyRepository implements IColonyRepository {
     public void createColony(Colony colony) {
         Session session = sessionFactory.getCurrentSession();
         session.saveOrUpdate(colony);
-
-
     }
 
     @Override
     public void updateColony(Colony colony) {
         Session session = sessionFactory.getCurrentSession();
-
-
-        session.saveOrUpdate(colony);
-
-
+        session.update(colony);
     }
 
     @Override
@@ -77,5 +72,11 @@ public class ColonyRepository implements IColonyRepository {
         return colony;
 
 
+    }
+
+    @Override
+    public void deleteColony(Colony colony) {
+        Session session = sessionFactory.getCurrentSession();
+        session.delete(colony);
     }
 }

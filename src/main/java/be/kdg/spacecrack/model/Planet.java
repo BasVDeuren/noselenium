@@ -5,8 +5,6 @@ package be.kdg.spacecrack.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.util.*;
@@ -35,11 +33,9 @@ public class Planet {
     private Set<PlanetConnection> planetConnections;
 
     @OneToMany
-    @LazyCollection(LazyCollectionOption.FALSE)
     private Set<Colony> colonies;
 
     @OneToMany
-    @LazyCollection(LazyCollectionOption.FALSE)
     private Set<Ship> ships;
 
 
@@ -111,9 +107,6 @@ public class Planet {
         return name;
     }
 
-    public void removeConnection(PlanetConnection connection) {
-        planetConnections.remove(connection);
-    }
 
     public void removeConnectionToPlanet(Planet planet) {
         Iterator iterator = planetConnections.iterator();

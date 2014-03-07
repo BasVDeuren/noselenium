@@ -6,6 +6,8 @@ import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.*;
 import be.kdg.spacecrack.services.*;
+import be.kdg.spacecrack.services.handlers.IMoveShipHandler;
+import be.kdg.spacecrack.services.handlers.MoveShipHandler;
 import be.kdg.spacecrack.utilities.FirebaseUtil;
 import be.kdg.spacecrack.utilities.ITokenStringGenerator;
 import be.kdg.spacecrack.utilities.TokenStringGenerator;
@@ -75,7 +77,8 @@ public abstract class BaseFilteredIntegrationTests {
         IUserRepository userRepository= new UserRepository(sessionFactory);
         ITokenStringGenerator tokenStringGenerator = new TokenStringGenerator();
 
-        IGameService gameService = new GameService(planetRepository,colonyRepository, shipRepository, playerRepository,gameRepository);
+        IMoveShipHandler moveShipHandler = new MoveShipHandler(colonyRepository);
+        IGameService gameService = new GameService(planetRepository,colonyRepository, shipRepository, playerRepository,gameRepository, moveShipHandler);
         IAuthorizationService authorizationService = new AuthorizationService(tokenRepository, userRepository, tokenStringGenerator);
         IUserService userService = new UserService(userRepository, profileRepository);
         IProfileService profileService = new ProfileService(profileRepository, userRepository);

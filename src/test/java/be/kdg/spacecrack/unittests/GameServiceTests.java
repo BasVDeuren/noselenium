@@ -1,15 +1,14 @@
 package be.kdg.spacecrack.unittests;
 
-import be.kdg.spacecrack.exceptions.SpaceCrackNotAcceptableException;
+import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.model.*;
 import be.kdg.spacecrack.repositories.*;
 import be.kdg.spacecrack.services.GameService;
-import be.kdg.spacecrack.services.IColonyRepository;
+import be.kdg.spacecrack.services.handlers.MoveShipHandler;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.mockito.internal.verification.VerificationModeFactory;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +36,9 @@ public class GameServiceTests extends BaseUnitTest{
     @Before
     public void setUp() throws Exception {
         playerRepository = new PlayerRepository(sessionFactory);
-        gameService = new GameService(new PlanetRepository(sessionFactory), new ColonyRepository(sessionFactory), new ShipRepository(sessionFactory), playerRepository, new GameRepository(sessionFactory));
+        ColonyRepository colonyRepository = new ColonyRepository(sessionFactory);
+        ShipRepository shipRepository = new ShipRepository(sessionFactory);
+        gameService = new GameService(new PlanetRepository(sessionFactory), colonyRepository, shipRepository, playerRepository, new GameRepository(sessionFactory), new MoveShipHandler(colonyRepository));
         user = new User();
         Profile profile = new Profile();
         opponentProfile = new Profile();
@@ -66,7 +67,7 @@ public class GameServiceTests extends BaseUnitTest{
         Planet shipLocation = gameService.getShipLocationByShipId(ship.getShipId());
 
         assertEquals("b", shipLocation.getName());
-        assertEquals("Player should have lost", oldCommandPoints - GameService.MOVESHIPCOST - GameService.CREATECOLONYCOST, playerDb.getCommandPoints());
+        assertEquals("Player should have lost commandPoints", oldCommandPoints - GameService.MOVESHIPCOST - GameService.CREATECOLONYCOST, playerDb.getCommandPoints());
 
     }
 
@@ -125,72 +126,10 @@ public class GameServiceTests extends BaseUnitTest{
     }
 
 
-    @Transactional @Test
-    public void moveShip_PlanetHasShip_ShipsMerged() throws Exception {
-
-        int argShipId = 1;
-        String argDestinationPlanetName = "b";
-
-        IShipRepository mockShipRepository = mock(IShipRepository.class);
-        IColonyRepository mockColonyRepository = mock(IColonyRepository.class);
-        IPlayerRepository mockPlayerRepository = mock(IPlayerRepository.class);
-
-        // IMapFactory mapService = mock(IMapFactory.class);
-        Planet planetA = new Planet();
-        planetA.setName("a");
-        planetA.setPlanetId(1);
-        Planet planetB = new Planet();
-        planetB.setName("b");
-        planetB.setPlanetId(2);
-
-        planetA.addConnection(new PlanetConnection(planetA, planetB));
-        planetB.addConnection(new PlanetConnection(planetB, planetA));
-
-        Planet[] planets = new Planet[2];
-        planets[0] = planetA;
-        planets[1] = planetB;
-
-        Player player = new Player();
-        player.setTurnEnded(false);
-        player.setPlayerId(1);
-        player.setCommandPoints(10);
-
-        Colony colonyA = new Colony();
-        colonyA.setPlanet(planetA);
-        colonyA.setPlayer(player);
-        Colony colonyB = new Colony();
-        colonyB.setPlanet(planetB);
-        colonyB.setPlayer(player);
-        List<Colony> colonies = new ArrayList<Colony>();
-        colonies.add(colonyA);
-        colonies.add(colonyB);
-        stub(mockColonyRepository.getColoniesByGame(any(Game.class))).toReturn(colonies);
-
-        Ship ship = new Ship();
-        ship.setPlanet(planets[0]);
-        ship.setPlayer(player);
-        Ship shipOnDestinationPlanet = new Ship();
-        shipOnDestinationPlanet.setPlanet(planets[1]);
-        shipOnDestinationPlanet.setPlayer(player);
-        List<Ship> playerShips = new ArrayList<Ship>();
-        playerShips.add(ship);
-        playerShips.add(shipOnDestinationPlanet);
-        player.setShips(playerShips);
-        stub(mockShipRepository.getShipByShipId(argShipId)).toReturn(ship);
-
-        GameService gameServiceWithMockedDependencies = new GameService(null, mockColonyRepository, mockShipRepository, mockPlayerRepository, null );
-
-        gameServiceWithMockedDependencies.moveShip(argShipId, argDestinationPlanetName);
-
-        Mockito.verify(mockShipRepository, VerificationModeFactory.times(1)).deleteShip(ship);
-        // SpaceCrackMap simpleTestMap = new SpaceCrackMap(planets);
-        // stub(mapService.getSpaceCrackMap()).toReturn(simpleTestMap);
 
 
-    }
 
-
-    @Transactional @Test(expected = SpaceCrackNotAcceptableException.class, timeout = 20000)
+    @Transactional @Test(expected = SpaceCrackNotAcceptableException.class)
     public void moveShip_NoCommandPoints_SpaceCrackNotAcceptableException() throws Exception {
         Game game = creategame();
 
@@ -221,7 +160,7 @@ public class GameServiceTests extends BaseUnitTest{
         expected.add(new Game());
         expected.add(new Game());
         stub(gameRepository.getGamesByProfile(user.getProfile())).toReturn(expected);
-        GameService gameService1 = new GameService(new PlanetRepository(), new ColonyRepository(), new ShipRepository(), new PlayerRepository(), gameRepository);
+        GameService gameService1 = new GameService(new PlanetRepository(sessionFactory), new ColonyRepository(sessionFactory), new ShipRepository(sessionFactory), new PlayerRepository(sessionFactory), gameRepository, new MoveShipHandler(new ColonyRepository(sessionFactory)));
 
         List<Game> actual = gameService1.getGames(user);
 
@@ -236,7 +175,7 @@ public class GameServiceTests extends BaseUnitTest{
         Game expected = creategame();
 
         IGameRepository gameRepository = mock(IGameRepository.class);
-        GameService gameService1 = new GameService(new PlanetRepository(), new ColonyRepository(), new ShipRepository(), new PlayerRepository(), gameRepository);
+        GameService gameService1 = new GameService(new PlanetRepository(sessionFactory), new ColonyRepository(sessionFactory), new ShipRepository(sessionFactory), new PlayerRepository(sessionFactory), gameRepository, new MoveShipHandler(new ColonyRepository(sessionFactory)));
         stub(gameRepository.getGameByGameId(expected.getGameId())).toReturn(expected);
 
         Game actual = gameService1.getGameByGameId(expected.getGameId());

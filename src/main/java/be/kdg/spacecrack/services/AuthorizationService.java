@@ -6,8 +6,8 @@ package be.kdg.spacecrack.services;/* Git $Id
  *
  */
 
-import be.kdg.spacecrack.exceptions.SpaceCrackUnauthorizedException;
-import be.kdg.spacecrack.exceptions.SpaceCrackUnexpectedException;
+import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
+import be.kdg.spacecrack.Exceptions.SpaceCrackUnexpectedException;
 import be.kdg.spacecrack.controllers.TokenController;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.Profile;

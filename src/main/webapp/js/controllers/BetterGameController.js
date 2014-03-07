@@ -27,6 +27,7 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
 
     var btnEndTurn;
     $scope.planetXSpritesByLetter = [];
+    $scope.colonyXSpritesById = [];
     $scope.selectedSpaceShipXSprite = null;
     $scope.commandPoints = 0;
     $scope.isTurnEnded = true;
@@ -126,7 +127,7 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
     var ColonyExtendedSprite = function (game, colony, planetName, playerId, image) {
         var planet = $scope.planetXSpritesByLetter[planetName].planet;
         Phaser.Sprite.call(this, game, planet.x - 15, planet.y - 42, image);
-
+        this.playerId = playerId;
         this.colony = colony;
 
         this.body.immovable = true;
@@ -279,8 +280,7 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
 
     function applyGameActiveViewModelData(data) {
         $scope.game.activePlayerId = data.activePlayerId;
-        if(data.game.player2.playerId == $scope.game.activePlayerId)
-        {
+        if (data.game.player2.playerId == $scope.game.activePlayerId) {
             game.camera.x = FARRESTPOINTOFCAMERA;
             game.camera.y = MIDPOINTOFCAMERA;
         }
@@ -290,7 +290,8 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
 
         var firebasePlayer1ShipsGameRef = new Firebase(data.firebaseGameURL + "/player1/ships");
         var firebasePlayer2ShipsGameRef = new Firebase(data.firebaseGameURL + "/player2/ships");
-
+        var firebasePlayer1ColoniesGameRef = new Firebase(data.firebaseGameURL + "/player1/colonies");
+        var firebasePlayer2ColoniesGameRef = new Firebase(data.firebaseGameURL + "/player2/colonies");
 
         firebaseGameRef.on('value', function (snapshot) {
             var game = snapshot.val();
@@ -302,13 +303,24 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
         firebasePlayer2ShipsGameRef.on('child_removed', shipRemovedListener);
 
 
+        firebasePlayer1ColoniesGameRef.on('child_removed', colonyRemovedListener);
+        firebasePlayer2ColoniesGameRef.on('child_removed', colonyRemovedListener);
+
+
+    }
+
+    //region Listeners
+    function colonyRemovedListener(snapshot) {
+        var colony = snapshot.val();
+        $scope.colonyXSpritesById[colony.colonyId].destroy();
+        $scope.colonyXSpritesById[colony.colonyId] = undefined;
     }
 
 
-//region Listeners
     function shipRemovedListener(snapshot) {
         var ship = snapshot.val();
         $scope.game.shipXSpritesById[ship.shipId].destroy();
+        $scope.game.shipXSpritesById[ship.shipId] = undefined;
 
     }
 
@@ -348,8 +360,22 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
     function planetListener(planetXSprite) {
         if (planetXSprite.isEligibleMove()) {
             if (!$scope.isTurnEnded) {
-                if ((planetXSprite.colonyXSprite != null && $scope.commandPoints >= MOVECOST)
-                    || (planetXSprite.colonyXSprite == null && $scope.commandPoints >= COLONIZECOST)) {
+                var cost;
+                if (planetXSprite.colonyXSprite != null ){
+                    if(planetXSprite.colonyXSprite.playerId == $scope.game.activePlayerId)
+                    {
+                        cost = MOVECOST
+                    }else{
+                        cost = COLONIZECOST;
+                    }
+
+                }else{
+                    cost = COLONIZECOST;
+                }
+
+                if($scope.commandPoints >= cost)
+                {
+
                     allPlanetsNormal();
 
                     $scope.selectedSpaceShipXSprite.ship.planetName = planetXSprite.planet.name;
@@ -368,7 +394,7 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
                         resetGame();
                     });
                 } else {
-                    showNotification("Too few commandpoints!");
+                    showNotification("Insufficient commandpoints!");
                 }
             } else {
                 showNotification("You can't move because your turn has ended!");
@@ -446,12 +472,23 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
             var colonies = player.colonies;
             for (var colonyKey in colonies) {
                 var colony = colonies[colonyKey];
-                if ($scope.planetXSpritesByLetter[colony.planetName].colonyXSprite == null) {
-                    var colonyXSprite = new ColonyExtendedSprite(game, colony, colony.planetName, player.playerId, image);
+                if ($scope.planetXSpritesByLetter[colony.planetName].colonyXSprite != null && $scope.planetXSpritesByLetter[colony.planetName].colonyXSprite != undefined) {
+                    try{
+                        $scope.planetXSpritesByLetter[colony.planetName].colonyXSprite.destroy();
+                    }catch(err)
+                    {
 
+                    }
+
+                    $scope.planetXSpritesByLetter[colony.planetName].colonyXSprite = undefined;
+                }
+                if ($scope.planetXSpritesByLetter[colony.planetName].colonyXSprite == null || $scope.planetXSpritesByLetter[colony.planetName] == undefined) {
+                    var colonyXSprite = new ColonyExtendedSprite(game, colony, colony.planetName, player.playerId, image);
+                    $scope.colonyXSpritesById[colony.colonyId] = colonyXSprite;
                     $scope.planetXSpritesByLetter[colony.planetName].colonyXSprite = colonyXSprite;
 
                     colonyGroup.add(colonyXSprite);
+
                 }
             }
         }

@@ -64,4 +64,13 @@ public class Game {
     public void setPlayers(List<Player> players) {
         this.players = players;
     }
+
+    public void addPlayer(Player player) {
+        players.add(player);
+        player.internalSetGame(this);
+    }
+
+    protected void internalAddPlayer(Player player) {
+        players.add(player);
+    }
 }

@@ -20,7 +20,9 @@ public class SeleniumEditProfileTests extends SeleniumBaseTestCase {
     public void navigateToEditProfile_loggedIn_ok() throws Exception {
         login();
         WebDriverWait wait = new WebDriverWait(driver,10);
+
         WebElement btnAction = driver.findElement(By.name("btnAction"));
+        wait.until(ExpectedConditions.visibilityOf(btnAction));
         btnAction.click();
         WebElement lnkEditProfile = driver.findElement(By.name("lnkEditProfile"));
         lnkEditProfile.click();

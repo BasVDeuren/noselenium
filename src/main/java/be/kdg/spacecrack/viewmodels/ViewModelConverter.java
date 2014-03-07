@@ -22,6 +22,7 @@ public class ViewModelConverter implements IViewModelConverter {
         ColonyViewModel colonyViewModel = new ColonyViewModel();
         colonyViewModel.setColonyId(colony.getColonyId());
         colonyViewModel.setPlanetName(colony.getPlanet().getName());
+        colonyViewModel.setStrength(colony.getStrength());
         return colonyViewModel;
     }
 

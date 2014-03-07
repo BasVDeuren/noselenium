@@ -1,7 +1,7 @@
 package be.kdg.spacecrack.controllers;
 
-import be.kdg.spacecrack.exceptions.SpaceCrackNotAcceptableException;
-import be.kdg.spacecrack.exceptions.SpaceCrackUnauthorizedException;
+import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
+import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.services.IAuthorizationService;

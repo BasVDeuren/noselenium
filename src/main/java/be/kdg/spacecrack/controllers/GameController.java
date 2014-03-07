@@ -6,7 +6,7 @@ package be.kdg.spacecrack.controllers;/* Git $Id
  *
  */
 
-import be.kdg.spacecrack.exceptions.SpaceCrackNotAcceptableException;
+import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.model.Game;
 import be.kdg.spacecrack.model.Player;
 import be.kdg.spacecrack.model.Profile;
@@ -58,13 +58,12 @@ public class GameController {
     }
 
     @PostConstruct
-    private void createMap()
-    {
+    private void createMap() {
 
         mapFactory.createPlanets();
     }
 
-    public GameController(IAuthorizationService authorizationService, IGameService gameService, IProfileService profileService, IViewModelConverter viewModelConverter, IFirebaseUtil firebaseUtil){
+    public GameController(IAuthorizationService authorizationService, IGameService gameService, IProfileService profileService, IViewModelConverter viewModelConverter, IFirebaseUtil firebaseUtil) {
         this.viewModelConverter = viewModelConverter;
         this.authorizationService = authorizationService;
         this.firebaseUtil = firebaseUtil;
@@ -74,18 +73,16 @@ public class GameController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public String createGame(@CookieValue("accessToken") String accessTokenValue, @RequestBody @Valid GameParameters gameData){
+    public String createGame(@CookieValue("accessToken") String accessTokenValue, @RequestBody @Valid GameParameters gameData) {
         User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
         int profileId;
-        try {
-            profileId = gameData.getOpponentProfileId();
-        } catch (NumberFormatException e) {
-            //todo: valideren... zo'n exceptions niet catchen
-            throw new SpaceCrackNotAcceptableException("Unexpected numberformat");
-        }
-        Profile opponentProfile =  profileService.getProfileByProfileId(profileId);
+
+        profileId = gameData.getOpponentProfileId();
+
+
+        Profile opponentProfile = profileService.getProfileByProfileId(profileId);
         int gameId = gameService.createGame(user.getProfile(), gameData.getGameName(), opponentProfile);
-        return gameId+"";
+        return gameId + "";
     }
 
     @RequestMapping(value = "/specificGame/{gameId}", method = RequestMethod.GET)
@@ -106,8 +103,7 @@ public class GameController {
         User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
         List<Game> games = gameService.getGames(user);
         List<GameViewModel> gameViewModels = new ArrayList<GameViewModel>();
-        for(Game g: games)
-        {
+        for (Game g : games) {
             GameViewModel gameViewModel = new GameViewModel();
             gameViewModel.setName(g.getName());
             gameViewModel.setGameId(g.getGameId());

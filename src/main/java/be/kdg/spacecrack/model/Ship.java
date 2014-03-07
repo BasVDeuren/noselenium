@@ -11,22 +11,19 @@ package be.kdg.spacecrack.model;/* Git $Id$
 import javax.persistence.*;
 
 @Entity
-@Table(name= "T_Ship")
-public class Ship {
+@Table(name = "T_Ship")
+public class Ship extends Piece {
     @Id
     @GeneratedValue
     private int shipId;
 
-
     @ManyToOne
-    @JoinColumn(name="playerId")
+    @JoinColumn(name = "playerId")
     private Player player;
 
     @ManyToOne
-    @JoinColumn(name="planetId")
+    @JoinColumn(name = "planetId")
     private Planet planet;
-
-    private int strength;
 
 
     public int getShipId() {
@@ -56,19 +53,13 @@ public class Ship {
         return planet;
     }
 
-
-
-
     public void setPlayer(Player player) {
         this.player = player;
+        player.internalAddShip(this);
     }
 
 
-    public int getStrength() {
-        return strength;
-    }
-
-    public void setStrength(int strength) {
-        this.strength = strength;
+    protected void internalSetPlayer(Player player) {
+        this.player = player;
     }
 }

@@ -1,9 +1,13 @@
 package be.kdg.spacecrack.services;
 
-import be.kdg.spacecrack.exceptions.SpaceCrackNotAcceptableException;
-import be.kdg.spacecrack.exceptions.SpaceCrackUnexpectedException;
+import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
+import be.kdg.spacecrack.Exceptions.SpaceCrackUnexpectedException;
 import be.kdg.spacecrack.model.*;
-import be.kdg.spacecrack.repositories.*;
+import be.kdg.spacecrack.repositories.IGameRepository;
+import be.kdg.spacecrack.repositories.IPlanetRepository;
+import be.kdg.spacecrack.repositories.IPlayerRepository;
+import be.kdg.spacecrack.repositories.IShipRepository;
+import be.kdg.spacecrack.services.handlers.IMoveShipHandler;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
@@ -14,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+
 
 /* Git $Id$
  *
@@ -26,6 +31,8 @@ import java.util.List;
 @Transactional
 public class GameService implements IGameService {
 
+   
+    public static final int NEWCOLONYSTRENGTH = 1;
     @Autowired
     IPlanetRepository planetRepository;
 
@@ -42,175 +49,85 @@ public class GameService implements IGameService {
     IGameRepository gameRepository;
 
     @Autowired
+    IMoveShipHandler moveShipHandler;
+
+
+    @Autowired
     IGraphService graphService;
 
     public GameService() {
     }
 
-    public GameService(IPlanetRepository planetRepository, IColonyRepository colonyRepository, IShipRepository shipRepository, IPlayerRepository playerRepository, IGameRepository gameRepository) {
+    public GameService(IPlanetRepository planetRepository, IColonyRepository colonyRepository, IShipRepository shipRepository, IPlayerRepository playerRepository, IGameRepository gameRepository, IMoveShipHandler moveShipHandler) {
+//        this.mapService = mapService;
         this.planetRepository = planetRepository;
         this.shipRepository = shipRepository;
         this.colonyRepository = colonyRepository;
         this.playerRepository = playerRepository;
         this.gameRepository = gameRepository;
+        this.moveShipHandler = moveShipHandler;
     }
 
     @Override
     public int createGame(Profile userProfile, String gameName, Profile opponentProfile) {
+
         Game game = new Game();
 
         Player player1 = new Player(userProfile);
         Player player2 = new Player(opponentProfile);
+
         userProfile.getPlayers().add(player1);
         opponentProfile.getPlayers().add(player2);
+
         player1.setCommandPoints(START_COMMAND_POINTS);
         player2.setCommandPoints(START_COMMAND_POINTS);
 
         player1.setGame(game);
         player2.setGame(game);
-        playerRepository.createPlayer(player1);
-        playerRepository.createPlayer(player2);
-
-        game.getPlayers().add(player1);
-        game.getPlayers().add(player2);
 
         Planet planetA = planetRepository.getPlanetByName("a");
         Planet planetA3 = planetRepository.getPlanetByName("a3");
 
         Ship player1StartingShip = new Ship(planetA);
         Ship player2StartingShip = new Ship(planetA3);
+
         player1StartingShip.setStrength(NEWSHIPSTRENGTH);
         player2StartingShip.setStrength(NEWSHIPSTRENGTH);
 
         player1StartingShip.setPlayer(player1);
         player2StartingShip.setPlayer(player2);
 
-        shipRepository.createShip(player1StartingShip);
-        shipRepository.createShip(player2StartingShip);
 
         Colony player1StartingColony = new Colony(planetA);
         Colony player2StartingColony = new Colony(planetA3);
 
+        player1StartingColony.setStrength(NEWCOLONYSTRENGTH);
+        player2StartingColony.setStrength(NEWCOLONYSTRENGTH);
+
         player1StartingColony.setPlayer(player1);
         player2StartingColony.setPlayer(player2);
 
-        player1.getColonies().add(player1StartingColony);
-        player2.getColonies().add(player2StartingColony);
-
-        colonyRepository.createColony(player1StartingColony);
-        colonyRepository.createColony(player2StartingColony);
-
-
-
-        player1.getShips().add(player1StartingShip);
-        player2.getShips().add(player2StartingShip);
-
-        player1StartingShip.setPlayer(player1);
-        player2StartingShip.setPlayer(player2);
-
-        playerRepository.updatePlayer(player1);
-        playerRepository.updatePlayer(player2);
-
-        shipRepository.updateShip(player1StartingShip);
-        shipRepository.updateShip(player2StartingShip);
-
-        colonyRepository.updateColony(player1StartingColony);
-        colonyRepository.updateColony(player2StartingColony);
-
         game.setName(gameName);
 
-        int id = gameRepository.createGame(game);
+        gameRepository.createGame(game);
 
         return game.getGameId();
     }
 
     @Override
-    public void moveShip(Integer shipId, String destinationPlanetName) {
+    public void moveShip(Integer shipId, String planetName) {
+
+
         Ship ship = shipRepository.getShipByShipId(shipId);
+        Game game = ship.getPlayer().getGame();
+        Planet destinationPlanet = planetRepository.getPlanetByName(planetName);
 
-        if (ship.getPlayer().isTurnEnded()) {
-            throw new SpaceCrackNotAcceptableException("Player's turn is ended, not allowed to move!");
-        }
-        Planet sourcePlanet = ship.getPlanet();
-        boolean connected = false;
-        Set<PlanetConnection> planetConnections = sourcePlanet.getPlanetConnections();
-        Planet destinationPlanet = null;
-        for (PlanetConnection planetConnection : planetConnections) {
-            if (planetConnection.getChildPlanet().getName().equals(destinationPlanetName)) {
-                destinationPlanet = planetConnection.getChildPlanet();
-                connected = true;
-            }
-        }
-        if (connected) {
-            Player player = ship.getPlayer();
+        moveShipHandler.validateMove(ship, destinationPlanet);
+        moveShipHandler.moveShip(ship, destinationPlanet);
 
-            Game game = ship.getPlayer().getGame();
-            List<Colony> coloniesByGame = colonyRepository.getColoniesByGame(game);
-            boolean allowCreateColony = true;
-            boolean allowMove = true;
-
-            for (Colony c : coloniesByGame) {
-                if (c.getPlanet().getPlanetId() == destinationPlanet.getPlanetId()) {
-                    if (c.getPlayer().getPlayerId() == player.getPlayerId()) {
-
-                        allowMove = true;
-                        allowCreateColony = false;
-
-                    } else {
-                        throw new SpaceCrackNotAcceptableException("Taking enemy colonies not supported yet!");
-                    }
-
-                }
-            }
-            int cost = 0;
-            if (allowMove) {
-                cost += MOVESHIPCOST;
-                if (allowCreateColony) {
-                    cost += CREATECOLONYCOST;
-                }
-            }
-            if (ship.getPlayer().getCommandPoints() - cost < 0) {
-                throw new SpaceCrackNotAcceptableException("Insufficient command points");
-            }
-            if (allowMove) {
-                player.setCommandPoints(player.getCommandPoints() - MOVESHIPCOST);
-                Ship shipAlreadyOnPlanet = null;
-                for (Ship s : player.getShips()) {
-                    if (s.getPlanet().getName().equals(destinationPlanetName)) {
-                        shipAlreadyOnPlanet = s;
-                    }
-                }
-                if (shipAlreadyOnPlanet == null) {
-                    ship.setPlanet(destinationPlanet);
-
-
-                    if (allowCreateColony) {
-
-                        Colony colony = new Colony(destinationPlanet);
-                        colony.setPlayer(player);
-                        colonyRepository.createColony(colony);
-                        player.getColonies().add(colony);
-                        player.setCommandPoints(player.getCommandPoints() - CREATECOLONYCOST);
-                    }
-                }else{
-                    shipAlreadyOnPlanet.setStrength(shipAlreadyOnPlanet.getStrength() + ship.getStrength());
-                    //HELP ONS VOCHTEN
-                    shipRepository.deleteShip(ship);
-                    player.getShips().remove(ship);
-                    ship = shipAlreadyOnPlanet;
-                }
-
-            }
-
-            playerRepository.updatePlayer(player);
-            shipRepository.updateShip(ship);
-
-
-
-        } else {
-            throw new SpaceCrackNotAcceptableException("Ship cannot be moved to that planet!");
-        }
+        gameRepository.updateGame(game);
     }
+
 
     @Override
     public Planet getShipLocationByShipId(int shipId) {
@@ -221,12 +138,11 @@ public class GameService implements IGameService {
     @Override
     public void endTurn(Integer playerID) {
         Player player = playerRepository.getPlayerByPlayerId(playerID);
+        Game game = player.getGame();
         if (!player.isTurnEnded()) {
             int commandPoints = player.getCommandPoints();
             player.setCommandPoints(commandPoints + COMMANDPOINTSPERTURN);
             player.setTurnEnded(true);
-            playerRepository.updatePlayer(player);
-            Game game = gameRepository.getGameByPlayer(player);
 
             boolean allTurnsEnded = true;
             List<Player> players = game.getPlayers();
@@ -239,7 +155,7 @@ public class GameService implements IGameService {
             if (allTurnsEnded) {
                 for (Player p : players) {
                     p.setTurnEnded(false);
-                    playerRepository.updatePlayer(p);
+
                 }
             }
 
@@ -247,6 +163,7 @@ public class GameService implements IGameService {
         } else {
             throw new SpaceCrackNotAcceptableException("Turn is already ended");
         }
+        gameRepository.updateGame(game);
     }
 
     @Override
@@ -286,6 +203,8 @@ public class GameService implements IGameService {
 
         Colony colony = colonyRepository.getColonyById(colonyId);
         Player player = colony.getPlayer();
+
+        Game game = player.getGame();
         if (player.getCommandPoints() < BUILDSHIPCOST || player.isTurnEnded()) {
             throw new SpaceCrackNotAcceptableException("Dear Sir or Lady, you have either run out of command points or your turn has ended, please wait for the other players to end their turn.");
         }
@@ -301,14 +220,12 @@ public class GameService implements IGameService {
             ship.setStrength(NEWSHIPSTRENGTH);
             ship.setPlayer(player);
             ship.setPlanet(colony.getPlanet());
-            player.getShips().add(ship);
         } else {
             shipOnPlanet.setStrength(shipOnPlanet.getStrength() + NEWSHIPSTRENGTH);
-            ship = shipOnPlanet;
         }
-        shipRepository.updateShip(ship);
+
         player.setCommandPoints(player.getCommandPoints() - BUILDSHIPCOST);
-        playerRepository.updatePlayer(player);
+        gameRepository.updateGame(game);
 
 
     }

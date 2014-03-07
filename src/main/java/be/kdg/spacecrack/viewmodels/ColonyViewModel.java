@@ -9,6 +9,7 @@ package be.kdg.spacecrack.viewmodels;/* Git $Id$
 public class ColonyViewModel {
     private int colonyId;
     private String planetName;
+    private int strength;
 
 
 
@@ -26,5 +27,13 @@ public class ColonyViewModel {
 
     public void setColonyId(int colonyId) {
         this.colonyId = colonyId;
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
+    public void setStrength(int strength) {
+        this.strength = strength;
     }
 }
