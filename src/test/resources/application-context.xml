@@ -19,7 +19,7 @@
             base-package="be.kdg.spacecrack.services"/>
     <context:component-scan
             base-package="be.kdg.spacecrack.utilities"/>
-    <context:component-scan base-package="be.kdg.spacecrack.Exceptions"/>
+    <context:component-scan base-package="be.kdg.spacecrack.exceptions"/>
 
     <bean id="tokenFilter" class="be.kdg.spacecrack.filters.TokenFilter">
     </bean>

@@ -21,7 +21,6 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, Contact
     }, function () {
     });
 
-
     //Loading Spinner
     $scope.startLoading = false;
     $scope.loginData = {
@@ -49,7 +48,6 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, Contact
     };
 
     $scope.fbLogin = function () {
-
         FB.login(function (response) {
             if (response.authResponse) {
                 var user;
@@ -64,7 +62,7 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, Contact
                     Login.save(user, function (data) {
                         Spinner.spinner.stop();
                         $cookieStore.put('accessToken', data.value);
-                        $scope.updateFbProfile();
+                        $scope.updateFbProfile(response);
                         $scope.go('/');
                         $scope.hasLoginFailed = false;
                     }, function () {
@@ -72,12 +70,11 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, Contact
                         $scope.registerFB(response);
                     });
                 });
-
             } else {
 //                    Spinner.spinner.stop();
                 console.log('User cancelled login or did not fully authorize.');
             }
-        }, {scope: 'email'});
+        }, {scope: 'email, user_birthday, user_photos, read_friendlists'});
     };
 
     $scope.registerFB = function (response) {
@@ -91,9 +88,8 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, Contact
 
         Register.save(user, function (data) {
             Spinner.spinner.stop();
-
             $cookieStore.put('accessToken', data.value);
-            $scope.updateFbProfile();
+            $scope.updateFbProfile(response);
             $scope.go('/');
             $scope.alreadyRegistered = false;
         }, function () {
@@ -104,9 +100,18 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, Contact
 
     //Update profile with facebook data
 
-    $scope.updateFbProfile = function () {
-        $scope.contactData.dayOfBirth="1-1-1970";
-        $scope.contactData.firstname = "Samson";
+    $scope.updateFbProfile = function (response) {
+        FB.api("/me/picture", function(response){
+            $scope.contactData.image= response.data.url;
+        });
+        FB.api("/me/birthday", function(response){
+            $scope.contactData.dayOfBirth= response.birthday;
+        });
+        $scope.contactData.firstname=response.name;
+        //$scope.contactData.dayOfBirth="1-1-1970";
+        alert($scope.contactData.firstname );
+        alert($scope.contactData.dayOfBirth);
+
         Contact.save($scope.contactData, function () {
         }, function () {
         })
