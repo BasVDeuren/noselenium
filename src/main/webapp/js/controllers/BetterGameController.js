@@ -143,11 +143,11 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
         this.addChild(miniShipSprite);
 
         miniShipSprite.visible = false;
+        miniShipSprite.inputEnabled = false;
         this.triggerMiniShip = function () {
             miniShipSprite.visible = !miniShipSprite.visible;
+            miniShipSprite.inputEnabled = miniShipSprite.visible;
         }
-
-
     };
     ColonyExtendedSprite.prototype = Object.create(Phaser.Sprite.prototype);
     ColonyExtendedSprite.prototype.constructor = ColonyExtendedSprite;
@@ -339,7 +339,7 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
                     resetGame();
                 });
             } else {
-                showNotification("Too few commandpoints!");
+                showNotification("Insufficient commandpoints!");
             }
 
         } else {
@@ -450,7 +450,7 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
         btnEndTurn.visible = !$scope.isTurnEnded;
 
 
-        function drawShipsOfPlayer(player, image) {
+        /*function drawShipsOfPlayer(player, image) {
             var ships = player.ships;
 
 
@@ -465,6 +465,40 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
                     shipXSprite.enforcePositionChanges();
                 }
                 shipXSprite.drawStrength();
+            }
+        }*/
+
+        function drawShipsOfPlayer(player, image) {
+            var ships = player.ships;
+
+            var shipIds = [];
+            //for (var i = 0;i < ships.length;  i++) {
+            for(var shipKey in ships){
+                var ship = ships[shipKey];
+                shipIds[shipKey] = ship.shipId;
+                var shipXSprite = $scope.game.shipXSpritesById[ship.shipId];
+                if (shipXSprite == undefined || shipXSprite == null) {
+                    shipXSprite = new ShipExtendedSprite(game, ship, player.playerId, image);
+                    $scope.game.shipXSpritesById[ship.shipId] = shipXSprite;
+                } else {
+                    shipXSprite.ship = ship;
+                    shipXSprite.enforcePositionChanges();
+                }
+                shipXSprite.drawStrength();
+            }
+
+            for(var shipId in $scope.game.shipXSpritesById)
+            {
+                if(shipIds.indexOf(shipId) < -1)
+                {
+                    if($scope.game.shipXSpritesById[shipId] != null )
+                    {
+                        var spliceIndex = $scope.game.shipXSpritesById.indexOf($scope.game.shipXSpritesById[shipId]);
+                        $scope.game.shipXSpritesById[shipId].destroy();
+                        $scope.game.shipXSpritesById.splice(spliceIndex, 1);
+                    }
+
+                }
             }
         }
 

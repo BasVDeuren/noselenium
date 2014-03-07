@@ -26,12 +26,8 @@ public abstract class BaseUnitTest {
     @Before
     public void createMap()
     {
-
             MapFactory mapFactory = new MapFactory(sessionFactory,new PlanetRepository(sessionFactory));
             mapFactory.createPlanets();
-
-
-
     }
 
 }

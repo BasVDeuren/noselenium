@@ -1,5 +1,6 @@
 package be.kdg.spacecrack.services;
 
+import be.kdg.spacecrack.Exceptions.SpaceCrackGameOverException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackUnexpectedException;
 import be.kdg.spacecrack.model.*;
@@ -178,9 +179,11 @@ public class GameService implements IGameService {
 
     @Override
     public void checkVictory(Game gameByGameId) {
-        /*if(gameByGameId.getTurnCounter()>MAXIMUMTURNSFORVICTORY){
-            throw new SpaceCrackVictoryException();
-        }*/
+        for(Player player : gameByGameId.getPlayers()){
+            if(player.getColonies().size() == 0){
+                throw new SpaceCrackGameOverException();
+            }
+        }
     }
 
     @Override

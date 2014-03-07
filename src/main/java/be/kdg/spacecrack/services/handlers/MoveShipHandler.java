@@ -85,10 +85,7 @@ public class MoveShipHandler implements IMoveShipHandler {
 
         Colony colony = colonizePlanet(destinationPlanet, player);
         ship.setPlanet(colony.getPlanet());
-        Player player1 = ship.getPlayer();
-        player1.setCommandPoints(player1.getCommandPoints() - IGameService.MOVESHIPCOST - IGameService.CREATECOLONYCOST);
-
-
+        player.setCommandPoints(player.getCommandPoints() - IGameService.MOVESHIPCOST - IGameService.CREATECOLONYCOST);
 
     }
 
@@ -170,7 +167,7 @@ public class MoveShipHandler implements IMoveShipHandler {
     @Override
     public void validateMove(Ship ship, Planet destinationPlanet) {
         if (ship.getPlayer().getCommandPoints() < IGameService.MOVESHIPCOST) {
-            throw new SpaceCrackNotAcceptableException("The player cannot move because he has too few commandPoints!");
+            throw new SpaceCrackNotAcceptableException("The player cannot move because he has insufficient commandPoints!");
         }
 
         if (ship.getPlayer().isTurnEnded()) {

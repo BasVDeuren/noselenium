@@ -1,5 +1,6 @@
 package be.kdg.spacecrack.unittests;
 
+import be.kdg.spacecrack.Exceptions.SpaceCrackGameOverException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.model.*;
 import be.kdg.spacecrack.repositories.*;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.*;
  * 2013-2014
  *
  */
-public class GameServiceTests extends BaseUnitTest{
+public class GameServiceTests extends BaseUnitTest {
 
     private GameService gameService;
     private User user;
@@ -54,7 +55,8 @@ public class GameServiceTests extends BaseUnitTest{
         return game;
     }
 
-    @Transactional @Test
+    @Transactional
+    @Test
     public void moveShipAndBuildColony_validPlanet_shipmovedandColonyBuilt() throws Exception {
         Game game = creategame();
 
@@ -71,7 +73,8 @@ public class GameServiceTests extends BaseUnitTest{
 
     }
 
-    @Transactional @Test(expected = SpaceCrackNotAcceptableException.class)
+    @Transactional
+    @Test(expected = SpaceCrackNotAcceptableException.class)
     public void moveShip_invalidPlanet_shipNotMoved() throws Exception {
         Game game = creategame();
 
@@ -83,7 +86,8 @@ public class GameServiceTests extends BaseUnitTest{
 
     }
 
-    @Transactional @Test
+    @Transactional
+    @Test
     public void moveShipAndCreateColony_validPlanetNoColonyOnPlanet_ColonyPlaced() throws Exception {
         Game game = creategame();
 
@@ -103,7 +107,8 @@ public class GameServiceTests extends BaseUnitTest{
         assertEquals("The second colony the player should have is on planet b.", "b", colonies.get(1).getPlanet().getName());
     }
 
-    @Transactional @Test
+    @Transactional
+    @Test
     public void moveShipAndCreateColony_PlanetAlreadyColonizedByPlayer_NoColonyPlaced() throws Exception {
         Game game = creategame();
 
@@ -126,10 +131,8 @@ public class GameServiceTests extends BaseUnitTest{
     }
 
 
-
-
-
-    @Transactional @Test(expected = SpaceCrackNotAcceptableException.class)
+    @Transactional
+    @Test(expected = SpaceCrackNotAcceptableException.class)
     public void moveShip_NoCommandPoints_SpaceCrackNotAcceptableException() throws Exception {
         Game game = creategame();
 
@@ -151,7 +154,8 @@ public class GameServiceTests extends BaseUnitTest{
 
     }
 
-    @Transactional @Test
+    @Transactional
+    @Test
     public void getAllGamesFromPlayer_validPlayer_gamesRetrieved() throws Exception {
         Game game = creategame();
 
@@ -184,7 +188,8 @@ public class GameServiceTests extends BaseUnitTest{
         assertEquals("Actual gameId should be the same as the expected gameId", expected.getGameId(), actual.getGameId());
     }
 
-    @Transactional @Test(expected = SpaceCrackNotAcceptableException.class)
+    @Transactional
+    @Test(expected = SpaceCrackNotAcceptableException.class)
     public void endPlayerTurn() throws Exception {
 
         Game game = creategame();
@@ -197,7 +202,8 @@ public class GameServiceTests extends BaseUnitTest{
         gameService.moveShip(player.getShips().get(0).getShipId(), "b");
     }
 
-    @Transactional @Test
+    @Transactional
+    @Test
     public void endTurnBothPlayers_newCommandPoints() throws Exception {
         Game game = creategame();
         Player player1 = game.getPlayers().get(0);
@@ -220,7 +226,8 @@ public class GameServiceTests extends BaseUnitTest{
         gameService.moveShip(player2.getShips().get(0).getShipId(), "b3");
     }
 
-    @Transactional @Test
+    @Transactional
+    @Test
     public void buildShip_NoShipOnPlanetEnoughCommandPoints_shipBuilt() {
         Game game = creategame();
         Player player = game.getPlayers().get(0);
@@ -237,13 +244,14 @@ public class GameServiceTests extends BaseUnitTest{
         Ship newShip = playerDbShips.get(1);
         assertEquals("Player should have 1 more ship", oldAmountOfShips + 1, playerDbShips.size());
 
-        assertEquals("The ship should have strength", GameService.NEWSHIPSTRENGTH,  newShip.getStrength());
+        assertEquals("The ship should have strength", GameService.NEWSHIPSTRENGTH, newShip.getStrength());
         assertEquals("Ship should be build on colony's planet", colony.getPlanet().getName(), playerDbShips.get(playerDbShips.size() - 1).getPlanet().getName());
         assertEquals("Player should have lost 3 commandPoints", oldCommandPoints - GameService.BUILDSHIPCOST, playerDb.getCommandPoints());
 
     }
 
-    @Transactional @Test(expected = SpaceCrackNotAcceptableException.class)
+    @Transactional
+    @Test(expected = SpaceCrackNotAcceptableException.class)
     public void buildShip_NoShipOnPlanetNotEnoughCommandPoints_NoShipBuilt() {
         Game game = creategame();
         Player player = game.getPlayers().get(0);
@@ -254,7 +262,8 @@ public class GameServiceTests extends BaseUnitTest{
         gameService.buildShip(colony.getColonyId());
     }
 
-    @Transactional @Test
+    @Transactional
+    @Test
     public void buildShip_ShipOnPlanetEnoughCommandPoints_shipMerged() {
         Game game = creategame();
         Player player = game.getPlayers().get(0);
@@ -277,5 +286,15 @@ public class GameServiceTests extends BaseUnitTest{
         assertEquals("The ship standing on the planet should now be more powerful", oldShipStrength + GameService.NEWSHIPSTRENGTH, shipDb.getStrength());
         assertEquals("Player should have lost 3 commandPoints", oldCommandPoints - GameService.BUILDSHIPCOST, playerDb.getCommandPoints());
 
+    }
+
+    @Transactional
+    @Test(expected = SpaceCrackGameOverException.class)
+    public void checkVictory_player2HasNoColonies_Player1Wins() throws Exception {
+        Game game = creategame();
+        Player player2 = game.getPlayers().get(1);
+        player2.setColonies(new ArrayList<Colony>());
+
+        gameService.checkVictory(game);
     }
 }

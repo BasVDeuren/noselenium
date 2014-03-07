@@ -23,6 +23,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import javax.servlet.http.Cookie;
 
+import java.util.List;
+
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -255,7 +257,47 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
         verify(mockGameService, VerificationModeFactory.times(1)).buildShip(colonyViewModel.getColonyId());
     }
 
-//    @After
+    @Test
+    public void postActionMoveShip_DestroyLastColonyOfPlayer2_IAMATEAPOT() throws Exception {
+        String accessToken = loginAndRetrieveAccessToken();
+        GameActivePlayerWrapper gameActivePlayerWrapper = createAGame(accessToken);
+        GameViewModel game = gameActivePlayerWrapper.getGame();
+
+        PlayerViewModel playerViewModel = game.getPlayer1();
+        List<ShipViewModel> playerViewModelShips = playerViewModel.getShips();
+        //b->dend turn both players->->j->p->q->end turn both players->q3->p3end turn both players->->j3->d3
+        //->b3->end turn both players->a3
+
+        moveShip(accessToken, game, playerViewModel, playerViewModelShips, "b");
+        moveShip(accessToken, game, playerViewModel, playerViewModelShips, "d");
+        /*
+        moveShip(accessToken, game, playerViewModel, playerViewModelShips, "d");
+        moveShip(accessToken, game, playerViewModel, playerViewModelShips, );
+        moveShip(accessToken, game, playerViewModel, playerViewModelShips, destinationPlanetName);
+        moveShip(accessToken, game, playerViewModel, playerViewModelShips, destinationPlanetName);
+        moveShip(accessToken, game, playerViewModel, playerViewModelShips, destinationPlanetName);
+        moveShip(accessToken, game, playerViewModel, playerViewModelShips, destinationPlanetName);
+        moveShip(accessToken, game, playerViewModel, playerViewModelShips, destinationPlanetName);
+        moveShip(accessToken, game, playerViewModel, playerViewModelShips, destinationPlanetName);
+        moveShip(accessToken, game, playerViewModel, playerViewModelShips, destinationPlanetName);
+        moveShip(accessToken, game, playerViewModel, playerViewModelShips, destinationPlanetName);
+        moveShip(accessToken, game, playerViewModel, playerViewModelShips, destinationPlanetName);
+        moveShip(accessToken, game, playerViewModel, playerViewModelShips, destinationPlanetName);
+        moveShip(accessToken, game, playerViewModel, playerViewModelShips, destinationPlanetName);*/
+
+    }
+
+    private void moveShip(String accessToken, GameViewModel game, PlayerViewModel playerViewModel, List<ShipViewModel> playerViewModelShips, String destinationPlanetName) throws Exception {
+        ActionViewModel actionViewModel = new ActionViewModel("MOVESHIP", playerViewModelShips.get(0), destinationPlanetName, null, playerViewModel.getPlayerId(), game.getGameId());
+
+        mockMvc.perform(post("/auth/action")
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(actionViewModel))
+            .cookie(new Cookie("accessToken", accessToken)));
+    }
+
+    //    @After
 //    public void tearDown() throws Exception {
 //        Session session = sessionFactory.getCurrentSession();
 //
