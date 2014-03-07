@@ -54,6 +54,11 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, Contact
                 console.log(response);
                 FB.api('/me', function (response) {
                     console.log(response);
+                    $scope.contactData.dayOfBirth= response.birthday;
+                    FB.api("/me/picture", function(response){
+                        console.log(response);
+                        $scope.contactData.image= response.data.url;
+                    });
                     user = {
                         email: response.email,
                         password: 'facebook' + response.id
@@ -101,16 +106,11 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, Contact
     //Update profile with facebook data
 
     $scope.updateFbProfile = function (response) {
-        FB.api("/me/picture", function(response){
-            $scope.contactData.image= response.data.url;
-        });
-        FB.api("/me/birthday", function(response){
-            $scope.contactData.dayOfBirth= response.birthday;
-        });
+
         $scope.contactData.firstname=response.name;
-        //$scope.contactData.dayOfBirth="1-1-1970";
         alert($scope.contactData.firstname );
         alert($scope.contactData.dayOfBirth);
+        alert($scope.contactData.image);
 
         Contact.save($scope.contactData, function () {
         }, function () {
