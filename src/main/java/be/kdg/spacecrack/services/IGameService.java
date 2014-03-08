@@ -31,9 +31,9 @@ public interface IGameService {
 
     Game getGameByGameId(int gameId);
 
-    void checkVictory(Game gameByGameId);
-
     Player getActivePlayer(User user, Game game);
 
     void buildShip(Integer colonyId);
+
+    void validateAction(Integer playerId);
 }

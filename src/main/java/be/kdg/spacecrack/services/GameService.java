@@ -1,6 +1,5 @@
 package be.kdg.spacecrack.services;
 
-import be.kdg.spacecrack.Exceptions.SpaceCrackGameOverException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackUnexpectedException;
 import be.kdg.spacecrack.model.*;
@@ -60,7 +59,6 @@ public class GameService implements IGameService {
     }
 
     public GameService(IPlanetRepository planetRepository, IColonyRepository colonyRepository, IShipRepository shipRepository, IPlayerRepository playerRepository, IGameRepository gameRepository, IMoveShipHandler moveShipHandler) {
-//        this.mapService = mapService;
         this.planetRepository = planetRepository;
         this.shipRepository = shipRepository;
         this.colonyRepository = colonyRepository;
@@ -117,16 +115,20 @@ public class GameService implements IGameService {
 
     @Override
     public void moveShip(Integer shipId, String planetName) {
-
-
         Ship ship = shipRepository.getShipByShipId(shipId);
         Game game = ship.getPlayer().getGame();
         Planet destinationPlanet = planetRepository.getPlanetByName(planetName);
-
+        validateActionMakeSureGameIsNotFinishedYet(game);
         moveShipHandler.validateMove(ship, destinationPlanet);
         moveShipHandler.moveShip(ship, destinationPlanet);
-
+        checkLost(game);
         gameRepository.updateGame(game);
+    }
+
+    private void validateActionMakeSureGameIsNotFinishedYet(Game game){
+        if(game.getLoserPlayerId() != 0){
+            throw new SpaceCrackNotAcceptableException("Game is already finished.");
+        }
     }
 
 
@@ -177,11 +179,10 @@ public class GameService implements IGameService {
         return gameRepository.getGameByGameId(gameId);
     }
 
-    @Override
-    public void checkVictory(Game gameByGameId) {
+    private void checkLost(Game gameByGameId) {
         for(Player player : gameByGameId.getPlayers()){
             if(player.getColonies().size() == 0){
-                throw new SpaceCrackGameOverException();
+                gameByGameId.setLoserPlayerId(player.getPlayerId());
             }
         }
     }
@@ -231,6 +232,14 @@ public class GameService implements IGameService {
         gameRepository.updateGame(game);
 
 
+    }
+
+    @Override
+    public void validateAction(Integer playerId) {
+        Player player = playerRepository.getPlayerByPlayerId(playerId);
+        if(player.getGame().getLoserPlayerId() != 0){
+            throw new SpaceCrackNotAcceptableException("This game is already ended.");
+        }
     }
 
     // Call when a new colony has been captured, try to find if it is part of a new perimeter

@@ -26,7 +26,7 @@ public class Game {
     private List<Player> players = new ArrayList<Player>();
 
     @Column
-    private int turnCounter;
+    private int loserPlayerId;
 
     public String getName() {
         return name;
@@ -49,14 +49,6 @@ public class Game {
         this.gameId = gameId;
     }
 
-    public int getTurnCounter() {
-        return turnCounter;
-    }
-
-    public void setTurnCounter(int turnCounter) {
-        this.turnCounter = turnCounter;
-    }
-
     public List<Player> getPlayers() {
         return players;
     }
@@ -72,5 +64,13 @@ public class Game {
 
     protected void internalAddPlayer(Player player) {
         players.add(player);
+    }
+
+    public int getLoserPlayerId() {
+        return loserPlayerId;
+    }
+
+    public void setLoserPlayerId(int winnerPlayerId) {
+        this.loserPlayerId = winnerPlayerId;
     }
 }

@@ -1,15 +1,16 @@
 package be.kdg.spacecrack.unittests;
 
-import be.kdg.spacecrack.Exceptions.SpaceCrackGameOverException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.model.*;
 import be.kdg.spacecrack.repositories.*;
 import be.kdg.spacecrack.services.GameService;
+import be.kdg.spacecrack.services.handlers.IMoveShipHandler;
 import be.kdg.spacecrack.services.handlers.MoveShipHandler;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.internal.verification.VerificationModeFactory;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -289,12 +290,54 @@ public class GameServiceTests extends BaseUnitTest {
     }
 
     @Transactional
-    @Test(expected = SpaceCrackGameOverException.class)
+    @Test
     public void checkVictory_player2HasNoColonies_Player1Wins() throws Exception {
+        //region Arrange
         Game game = creategame();
         Player player2 = game.getPlayers().get(1);
         player2.setColonies(new ArrayList<Colony>());
+        Ship ship = game.getPlayers().get(0).getShips().get(0);
 
-        gameService.checkVictory(game);
+        IShipRepository mockShipRepository = mock(IShipRepository.class);
+        stub(mockShipRepository.getShipByShipId(ship.getShipId())).toReturn(ship);
+        IMoveShipHandler mockMoveShipHandler = mock(IMoveShipHandler.class);
+        IGameRepository mockGameRepository = mock(IGameRepository.class);
+        IPlanetRepository mockPlanetRepository = mock(IPlanetRepository.class);
+
+        GameService gameServiceWithMockedMoveShipHandler = new GameService(mockPlanetRepository,null,mockShipRepository, null,mockGameRepository,mockMoveShipHandler);
+        //endregion
+        //region Act
+        gameServiceWithMockedMoveShipHandler.moveShip(ship.getShipId(), "a3");
+        //endregion
+        //region Assert
+        ArgumentCaptor<Game> gameArgumentCaptor = ArgumentCaptor.forClass(Game.class);
+        verify(mockGameRepository, VerificationModeFactory.times(1)).updateGame(gameArgumentCaptor.capture());
+        Game gameResultGame = gameArgumentCaptor.getValue();
+        assertEquals("Player2 should have lost.", game.getPlayers().get(1).getPlayerId(), gameResultGame.getLoserPlayerId());
+        //endregion
+    }
+
+    @Transactional
+    //region Assert
+    @Test(expected = SpaceCrackNotAcceptableException.class)
+    //endregion
+    public void moveShipAfterVictory_Player1HasShipLeft_Player1ShipCantMoveNoMore() throws Exception {
+        //region Arrange
+        Game game = creategame();
+        game.setLoserPlayerId(game.getPlayers().get(0).getPlayerId());
+        Player player2 = game.getPlayers().get(1);
+        Ship ship = player2.getShips().get(0);
+
+        IShipRepository mockShipRepository = mock(IShipRepository.class);
+        stub(mockShipRepository.getShipByShipId(ship.getShipId())).toReturn(ship);
+        IMoveShipHandler mockMoveShipHandler = mock(IMoveShipHandler.class);
+        IGameRepository mockGameRepository = mock(IGameRepository.class);
+        IPlanetRepository mockPlanetRepository = mock(IPlanetRepository.class);
+
+        GameService gameServiceWithMockedMoveShipHandler = new GameService(mockPlanetRepository,null,mockShipRepository, null,mockGameRepository,mockMoveShipHandler);
+        //endregion
+        //region Act
+        gameServiceWithMockedMoveShipHandler.moveShip(ship.getShipId(), "b3");
+        //endregion
     }
 }

@@ -31,8 +31,8 @@ public class ViewModelConverter implements IViewModelConverter {
     {
         GameViewModel gameViewModel = new GameViewModel();
         gameViewModel.setGameId(game.getGameId());
-        gameViewModel.setTurnCounter(game.getTurnCounter());
         gameViewModel.setName(game.getName());
+        gameViewModel.setLoserPlayerId(game.getLoserPlayerId());
 
         PlayerViewModel player1ViewModel = convertPlayerToViewModel(game.getPlayers().get(0));
         gameViewModel.setPlayer1(player1ViewModel);

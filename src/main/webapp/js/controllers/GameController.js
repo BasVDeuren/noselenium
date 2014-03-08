@@ -18,6 +18,7 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
     var yExtraByCamera;
     var firebaseGameRef;
     var commandPointsText;
+    var p;
 
     var planetGroup;
     var shipGroup;
@@ -170,6 +171,7 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
         game.load.image('player2flag', 'assets/player2flag.png');
         game.load.image('player1castle', 'assets/player1castle.png');
         game.load.image('player2castle', 'assets/player2castle.png');
+        game.load.image('winner', 'assets/monkey_winner_icon.png');
     }
 
 
@@ -239,7 +241,8 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
             colonyGroup.z = 1;
             miniShipGroup = game.add.group();
             miniShipGroup.z = 1000;
-            btnEndTurn = game.add.button(500, 75, 'button', onClickEndTurn, this, 2, 1, 0);
+            btnEndTurn = game.add.button(500, 75, 'button', function () {
+            }, this, 2, 1, 0);
             btnEndTurn.events.onInputDown.add(onClickEndTurn);
             btnEndTurn.fixedToCamera = true;
             btnEndTurn.cameraOffset.setTo(CANVASWIDTH / 2 - 180, CANVASHEIGHT - 83);
@@ -288,41 +291,43 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
 
         firebaseGameRef = new Firebase(data.firebaseGameURL);
 
-        var firebasePlayer1ShipsGameRef = new Firebase(data.firebaseGameURL + "/player1/ships");
-        var firebasePlayer2ShipsGameRef = new Firebase(data.firebaseGameURL + "/player2/ships");
-        var firebasePlayer1ColoniesGameRef = new Firebase(data.firebaseGameURL + "/player1/colonies");
-        var firebasePlayer2ColoniesGameRef = new Firebase(data.firebaseGameURL + "/player2/colonies");
+//        var firebasePlayer1ShipsGameRef = new Firebase(data.firebaseGameURL + "/player1/ships");
+//        var firebasePlayer2ShipsGameRef = new Firebase(data.firebaseGameURL + "/player2/ships");
+//        var firebasePlayer1ColoniesGameRef = new Firebase(data.firebaseGameURL + "/player1/colonies");
+//        var firebasePlayer2ColoniesGameRef = new Firebase(data.firebaseGameURL + "/player2/colonies");
 
         firebaseGameRef.on('value', function (snapshot) {
-            var game = snapshot.val();
-            applyGameData(game);
+            var gameData = snapshot.val();
+
+            applyGameData(gameData);
             $scope.selectedSpaceShipXSprite.highlightConnectedPlanets();
+
         });
-
-        firebasePlayer1ShipsGameRef.on('child_removed', shipRemovedListener);
-        firebasePlayer2ShipsGameRef.on('child_removed', shipRemovedListener);
-
-
-        firebasePlayer1ColoniesGameRef.on('child_removed', colonyRemovedListener);
-        firebasePlayer2ColoniesGameRef.on('child_removed', colonyRemovedListener);
+//
+//        firebasePlayer1ShipsGameRef.on('child_removed', shipRemovedListener);
+//        firebasePlayer2ShipsGameRef.on('child_removed', shipRemovedListener);
+//
+//
+//        firebasePlayer1ColoniesGameRef.on('child_removed', colonyRemovedListener);
+//        firebasePlayer2ColoniesGameRef.on('child_removed', colonyRemovedListener);
 
 
     }
 
     //region Listeners
-    function colonyRemovedListener(snapshot) {
-        var colony = snapshot.val();
-        $scope.colonyXSpritesById[colony.colonyId].destroy();
-        $scope.colonyXSpritesById[colony.colonyId] = undefined;
-    }
+//    function colonyRemovedListener(snapshot) {
+//        var colony = snapshot.val();
+//        $scope.colonyXSpritesById[colony.colonyId].destroy();
+//        $scope.colonyXSpritesById[colony.colonyId] = undefined;
+//    }
 
-
-    function shipRemovedListener(snapshot) {
-        var ship = snapshot.val();
-        $scope.game.shipXSpritesById[ship.shipId].destroy();
-        $scope.game.shipXSpritesById[ship.shipId] = undefined;
-
-    }
+//
+//    function shipRemovedListener(snapshot) {
+//        var ship = snapshot.val();
+//        $scope.game.shipXSpritesById[ship.shipId].destroy();
+//        $scope.game.shipXSpritesById[ship.shipId] = undefined;
+//
+//    }
 
     function miniShipListener(miniShipXSprite) {
         if (!$scope.isTurnEnded) {
@@ -361,20 +366,18 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
         if (planetXSprite.isEligibleMove()) {
             if (!$scope.isTurnEnded) {
                 var cost;
-                if (planetXSprite.colonyXSprite != null ){
-                    if(planetXSprite.colonyXSprite.playerId == $scope.game.activePlayerId)
-                    {
+                if (planetXSprite.colonyXSprite != null) {
+                    if (planetXSprite.colonyXSprite.playerId == $scope.game.activePlayerId) {
                         cost = MOVECOST
-                    }else{
+                    } else {
                         cost = COLONIZECOST;
                     }
 
-                }else{
+                } else {
                     cost = COLONIZECOST;
                 }
 
-                if($scope.commandPoints >= cost)
-                {
+                if ($scope.commandPoints >= cost) {
 
                     allPlanetsNormal();
 
@@ -441,63 +444,94 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
 
         }
 
-
         drawShipsOfPlayer(gameData.player1, 'player1spaceship');
         drawShipsOfPlayer(gameData.player2, 'player2spaceship');
-        drawColoniesOfPlayer(gameData.player1, 'player1castle');
         drawColoniesOfPlayer(gameData.player2, 'player2castle');
+        drawColoniesOfPlayer(gameData.player1, 'player1castle');
+
         updateCommandPoints();
-        btnEndTurn.visible = !$scope.isTurnEnded;
+        var loserPlayerId = gameData.loserPlayerId;
+        if (loserPlayerId != 0) {
+            if ($scope.game.activePlayerId == loserPlayerId) {
+                showNotification("You have lost the game.");
+            } else {
+                p = game.add.emitter(game.world.centerX, 200, 200);
+                p.makeParticles('winner');
+                p.start(false, 5000, 20);
+            }
+            for (var colonyKey in $scope.colonyXSpritesById) {
+                $scope.colonyXSpritesById[colonyKey].inputEnabled = false;
+            }
+            for (var shipKey in $scope.game.shipXSpritesById) {
+                $scope.game.shipXSpritesById[shipKey].inputEnabled = false;
+            }
+            $scope.selectedSpaceShipXSprite == undefined;
+            allPlanetsNormal();
+            btnEndTurn.visible = false;
+            btnEndTurn.inputEnabled = false;
+        } else {
+            btnEndTurn.visible = !$scope.isTurnEnded;
+        }
 
 
         /*function drawShipsOfPlayer(player, image) {
-            var ships = player.ships;
+         var ships = player.ships;
 
 
-            for (var shipKey in ships) {
-                var ship = ships[shipKey];
-                var shipXSprite = $scope.game.shipXSpritesById[ship.shipId];
-                if (shipXSprite == undefined || shipXSprite == null) {
-                    shipXSprite = new ShipExtendedSprite(game, ship, player.playerId, image);
-                    $scope.game.shipXSpritesById[ship.shipId] = shipXSprite;
-                } else {
-                    shipXSprite.ship = ship;
-                    shipXSprite.enforcePositionChanges();
-                }
-                shipXSprite.drawStrength();
-            }
-        }*/
+         for (var shipKey in ships) {
+         var ship = ships[shipKey];
+         var shipXSprite = $scope.game.shipXSpritesById[ship.shipId];
+         if (shipXSprite == undefined || shipXSprite == null) {
+         shipXSprite = new ShipExtendedSprite(game, ship, player.playerId, image);
+         $scope.game.shipXSpritesById[ship.shipId] = shipXSprite;
+         } else {
+         shipXSprite.ship = ship;
+         shipXSprite.enforcePositionChanges();
+         }
+         shipXSprite.drawStrength();
+         }
+         }*/
 
         function drawShipsOfPlayer(player, image) {
             var ships = player.ships;
 
             var shipIds = [];
             //for (var i = 0;i < ships.length;  i++) {
-            for(var shipKey in ships){
+            var shipXSpritesById = $scope.game.shipXSpritesById;
+            for (var shipKey in ships) {
                 var ship = ships[shipKey];
                 shipIds[shipKey] = ship.shipId;
-                var shipXSprite = $scope.game.shipXSpritesById[ship.shipId];
+                var shipXSprite = shipXSpritesById[ship.shipId];
                 if (shipXSprite == undefined || shipXSprite == null) {
                     shipXSprite = new ShipExtendedSprite(game, ship, player.playerId, image);
-                    $scope.game.shipXSpritesById[ship.shipId] = shipXSprite;
+                    shipXSpritesById[ship.shipId] = shipXSprite;
                 } else {
                     shipXSprite.ship = ship;
                     shipXSprite.enforcePositionChanges();
                 }
                 shipXSprite.drawStrength();
             }
-
-            for(var shipId in $scope.game.shipXSpritesById)
-            {
-                if(shipIds.indexOf(shipId) < -1)
-                {
-                    if($scope.game.shipXSpritesById[shipId] != null )
-                    {
-                        var spliceIndex = $scope.game.shipXSpritesById.indexOf($scope.game.shipXSpritesById[shipId]);
-                        $scope.game.shipXSpritesById[shipId].destroy();
-                        $scope.game.shipXSpritesById.splice(spliceIndex, 1);
+            if (ships == undefined) {
+                for(var shipId in  shipXSpritesById){
+                    var shipXSpriteById = shipXSpritesById[shipId];
+                    if(shipXSpriteById.playerId == player.playerId){
+                        shipXSpriteById.destroy();
+                        shipXSpritesById.splice(shipXSpritesById.indexOf(shipXSpriteById), 1);
                     }
+                }
+            } else {
+                for (var shipId in shipXSpritesById) {
+                    if (shipIds.indexOf(shipId) < -1) {
+                        var shipXSpriteById = shipXSpritesById[shipId];
 
+                        if (shipXSpriteById != null) {
+                            if (shipXSprite.playerId == player.playerId) {
+                                var spliceIndex = shipXSpritesById.indexOf(shipXSpriteById);
+                                shipXSpriteById.destroy();
+                                shipXSpritesById.splice(spliceIndex, 1);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -507,10 +541,9 @@ spaceApp.controller("BetterGameController", function ($scope, $translate, Map, G
             for (var colonyKey in colonies) {
                 var colony = colonies[colonyKey];
                 if ($scope.planetXSpritesByLetter[colony.planetName].colonyXSprite != null && $scope.planetXSpritesByLetter[colony.planetName].colonyXSprite != undefined) {
-                    try{
+                    try {
                         $scope.planetXSpritesByLetter[colony.planetName].colonyXSprite.destroy();
-                    }catch(err)
-                    {
+                    } catch (err) {
 
                     }
 
