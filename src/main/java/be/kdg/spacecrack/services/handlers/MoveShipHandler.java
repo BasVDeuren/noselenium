@@ -38,7 +38,7 @@ public class MoveShipHandler implements IMoveShipHandler {
     public void moveShip(Ship ship, Planet destinationPlanet) {
         Player player = ship.getPlayer();
         Game game = player.getGame();
-
+        player.setCommandPoints(player.getCommandPoints() -GameService.MOVESHIPCOST);
 
         List<Colony> colonies = colonyRepository.getColoniesByGame(game);
         boolean planetIsColonized = false;
@@ -78,19 +78,20 @@ public class MoveShipHandler implements IMoveShipHandler {
     private void moveAndColonize(Ship ship, Planet destinationPlanet) {
 
         Player player = ship.getPlayer();
-        if(player.getCommandPoints() < IGameService.MOVESHIPCOST + IGameService.CREATECOLONYCOST)
+        if(player.getCommandPoints() < IGameService.CREATECOLONYCOST)
         {
             throw new SpaceCrackNotAcceptableException("Insufficient CommandPoints");
         }
 
         Colony colony = colonizePlanet(destinationPlanet, player);
         ship.setPlanet(colony.getPlanet());
-        player.setCommandPoints(player.getCommandPoints() - IGameService.MOVESHIPCOST - IGameService.CREATECOLONYCOST);
+        player.setCommandPoints(player.getCommandPoints() - IGameService.CREATECOLONYCOST);
 
     }
 
 
     private void attackEnemyColony(Ship actingShip, Colony colony) {
+
 
         Player enemyPlayer = colony.getPlayer();
 
@@ -190,7 +191,6 @@ public class MoveShipHandler implements IMoveShipHandler {
 
     private void moveShipToColony(Ship ship, Colony colony) {
         Player player = ship.getPlayer();
-        player.setCommandPoints(player.getCommandPoints() - IGameService.MOVESHIPCOST);
         Planet planet = colony.getPlanet();
         List<Ship> ships = player.getShips();
 

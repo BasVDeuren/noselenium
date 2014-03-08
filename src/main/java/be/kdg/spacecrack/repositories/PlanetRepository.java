@@ -17,6 +17,7 @@ import java.util.List;
 
 @Service("planetRepository")
 public class PlanetRepository implements IPlanetRepository {
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     SessionFactory sessionFactory;
 

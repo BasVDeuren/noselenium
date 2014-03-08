@@ -32,7 +32,7 @@ public class MoveShipUnitTests extends BaseUnitTest {
     @Transactional
     @Test
     public void moveShip_PlanetHasShipFromSamePlayer_ShipsMerged() throws Exception {
-
+        //Arrange
         int argShipId = 1;
         String argDestinationPlanetName = "b";
 
@@ -58,32 +58,36 @@ public class MoveShipUnitTests extends BaseUnitTest {
 
         Ship ship = new Ship();
         ship.setPlanet(planets[0]);
-        ship.setPlayer(player);
         Ship shipOnDestinationPlanet = new Ship();
         shipOnDestinationPlanet.setPlanet(planets[1]);
-        shipOnDestinationPlanet.setPlayer(player);
-        List<Ship> playerShips = new ArrayList<Ship>();
-        playerShips.add(ship);
-        playerShips.add(shipOnDestinationPlanet);
-        player.setShips(playerShips);
+
+        player.addShip(ship);
+        player.addShip(shipOnDestinationPlanet);
+
         stub(mockShipRepository.getShipByShipId(argShipId)).toReturn(ship);
         IGameRepository mockGameRepository = mock(IGameRepository.class);
         IPlanetRepository mockPlanetRepository = mock(IPlanetRepository.class);
         stub(mockPlanetRepository.getPlanetByName(argDestinationPlanetName)).toReturn(planets[1]);
         GameService gameServiceWithMockedDependencies = new GameService(mockPlanetRepository, mockColonyRepository, mockShipRepository, mockPlayerRepository, mockGameRepository, new MoveShipHandler(mockColonyRepository) );
-
+        int oldAmountOfShips = player.getShips().size();
+        int oldCommandPoints = player.getCommandPoints();
+        int expectedStrength = ship.getStrength() + shipOnDestinationPlanet.getStrength();
+        //Act
         gameServiceWithMockedDependencies.moveShip(argShipId, argDestinationPlanetName);
 
-        Mockito.verify(mockGameRepository, VerificationModeFactory.times(1)).updateGame(any(Game.class));
-
-        // SpaceCrackMap simpleTestMap = new SpaceCrackMap(planets);
-        // stub(mapService.getSpaceCrackMap()).toReturn(simpleTestMap);
-
-
+        //Assert
+        ArgumentCaptor<Game> argumentCaptor = ArgumentCaptor.forClass(Game.class);
+        Mockito.verify(mockGameRepository, VerificationModeFactory.times(1)).updateGame(argumentCaptor.capture());
+        Game resultGame = argumentCaptor.getValue();
+        Player resultPlayer = resultGame.getPlayers().get(0);
+        List<Ship> resultPlayerShips = resultPlayer.getShips();
+        assertEquals("Ships should be merged", oldAmountOfShips - 1, resultPlayerShips.size());
+        assertEquals("Ship's strength should be merged", expectedStrength,  resultPlayerShips.get(0).getStrength()  );
+        assertEquals("Player should have lost a commandPoint", oldCommandPoints - 1, resultGame.getPlayers().get(0).getCommandPoints());
     }
 
     @Transactional @Test
-    public void moveShipConquer_ShipStrengthEqualToEnemyColonyStrenght_ShipLostColonyCreated() throws Exception {
+    public void moveShipConquer_ShipStrengthEqualToEnemyColonyStrenght_ShipLostColonyLost() throws Exception {
 
         int argShipId = 1;
         String argDestinationPlanetName = "b";
@@ -107,7 +111,7 @@ public class MoveShipUnitTests extends BaseUnitTest {
         stub(mockColonyRepository.getColoniesByGame(any(Game.class))).toReturn(gameColonies);
         stub(mockShipRepository.getShipByShipId(argShipId)).toReturn(ship);
         stub(mockPlanetRepository.getPlanetByName(argDestinationPlanetName)).toReturn(planets[1]);
-
+        int oldCommandPoints = ship.getPlayer().getCommandPoints();
         //Act
         gameServiceWithMockedDependencies.moveShip(argShipId, argDestinationPlanetName);
 
@@ -117,6 +121,7 @@ public class MoveShipUnitTests extends BaseUnitTest {
         Game resultGame = gameArgumentCaptor.getValue();
         assertEquals("Ship should be deleted", 0, resultGame.getPlayers().get(0).getShips().size());
         assertEquals("Colony should be deleted", 0, resultGame.getPlayers().get(1).getColonies().size());
+        assertEquals("Player should have lost a commandPoint", oldCommandPoints - 1, resultGame.getPlayers().get(0).getCommandPoints());
     }
 
 
@@ -147,7 +152,7 @@ public class MoveShipUnitTests extends BaseUnitTest {
         stub(mockPlanetRepository.getPlanetByName(argDestinationPlanetName)).toReturn(planets[1]);
 
         GameService gameServiceWithMockedDependencies = new GameService(mockPlanetRepository, mockColonyRepository, mockShipRepository, mockPlayerRepository, mockGameRepository, new MoveShipHandler(mockColonyRepository) );
-
+        int oldCommandPoints = player.getCommandPoints();
         //Act
         gameServiceWithMockedDependencies.moveShip(argShipId, argDestinationPlanetName);
 
@@ -161,7 +166,8 @@ public class MoveShipUnitTests extends BaseUnitTest {
 
         assertEquals("Player 1 should now have 2 colonies", 2, resultPlayer1.getColonies().size());
         assertEquals("Player 2 should now have 0 colonies", 0, resultPlayer2.getColonies().size());
-        assertEquals("resultShip should now have 1 strength", 1, resultShip.getStrength());
+        assertEquals("ResultShip should now have 1 strength", 1, resultShip.getStrength());
+        assertEquals("The player should have lost 2 commandPoints", oldCommandPoints - 2, resultShip.getPlayer().getCommandPoints());
 
 
 
@@ -195,7 +201,7 @@ public class MoveShipUnitTests extends BaseUnitTest {
         stub(mockPlanetRepository.getPlanetByName(argDestinationPlanetName)).toReturn(planets[1]);
 
         GameService gameServiceWithMockedDependencies = new GameService(mockPlanetRepository, mockColonyRepository, mockShipRepository, mockPlayerRepository, mockGameRepository, new MoveShipHandler(mockColonyRepository));
-
+        int oldCommandPoints = player.getCommandPoints();
         //Act
         gameServiceWithMockedDependencies.moveShip(argShipId, argDestinationPlanetName);
 
@@ -208,9 +214,159 @@ public class MoveShipUnitTests extends BaseUnitTest {
         assertEquals("Ship should be gone", 0, resultPlayer.getShips().size());
         Player resultOpponent = resultGame.getPlayers().get(1);
         assertEquals("Colony should be weakened", 1, resultOpponent.getColonies().get(0).getStrength());
+        assertEquals("The player should have lost 1 commandPoint", oldCommandPoints - 1, resultPlayer.getCommandPoints());
 
 
 
+    }
+
+
+    @Transactional @Test
+    public void moveShipToPlanetWithEnemyShip_ShipWeakerThanEnemyShip_ShipGoneEnemyShipWeakened() throws Exception {
+
+        //Arrange
+        int argShipId = 1;
+        String argDestinationPlanetName = "b";
+        int enemyColonyStrength = 1;
+        int alliedShipStrength = 1;
+        int enemyShipStrenght = 2;
+
+        IShipRepository mockShipRepository = mock(IShipRepository.class);
+        IColonyRepository mockColonyRepository = mock(IColonyRepository.class);
+        IPlayerRepository mockPlayerRepository = mock(IPlayerRepository.class);
+        IGameRepository mockGameRepository = mock(IGameRepository.class);
+        IPlanetRepository mockPlanetRepository = mock(IPlanetRepository.class);
+
+        Planet[] planets = getSimpleMapWith2Planets();
+        Game game = new Game();
+        Player player = getActingPlayer(game);
+        Player opponent = getOpponent(game);
+        List<Colony> gameColonies = getAlliedAndEnemyColony(enemyColonyStrength, planets, player, opponent);
+        Ship ship = createShip(alliedShipStrength, planets[0], player);
+        Ship enemyShip =createShip(enemyShipStrenght, planets[1], opponent);
+        int oldEnemyShipStrength = enemyShip.getStrength();
+        stub(mockColonyRepository.getColoniesByGame(any(Game.class))).toReturn(gameColonies);
+        stub(mockShipRepository.getShipByShipId(argShipId)).toReturn(ship);
+        stub(mockPlanetRepository.getPlanetByName(argDestinationPlanetName)).toReturn(planets[1]);
+
+        GameService gameServiceWithMockedDependencies = new GameService(mockPlanetRepository, mockColonyRepository, mockShipRepository, mockPlayerRepository, mockGameRepository, new MoveShipHandler(mockColonyRepository));
+        int oldCommandPoints = player.getCommandPoints();
+        //Act
+        gameServiceWithMockedDependencies.moveShip(argShipId, argDestinationPlanetName);
+
+        //Assert
+        ArgumentCaptor<Game> gameArgumentCaptor = ArgumentCaptor.forClass(Game.class);
+
+        Mockito.verify(mockGameRepository, VerificationModeFactory.times(1)).updateGame(gameArgumentCaptor.capture());
+        Game resultGame = gameArgumentCaptor.getValue();
+        Player resultPlayer = resultGame.getPlayers().get(0);
+        assertEquals("Ship should be gone", 0, resultPlayer.getShips().size());
+        Player resultOpponent = resultGame.getPlayers().get(1);
+        Ship resultEnemyShip = resultOpponent.getShips().get(0);
+        assertEquals("Enemy Ship should be weakened", oldEnemyShipStrength - alliedShipStrength, resultEnemyShip.getStrength());
+        assertEquals("The player should have lost 1 commandPoint", oldCommandPoints - 1, resultPlayer.getCommandPoints());
+    }
+
+    @Transactional @Test
+    public void moveShipToPlanetWithEnemyShip_ShipsStrengthEqual_BothShipsGoneColonyUnharmed() throws Exception {
+
+        //Arrange
+        int argShipId = 1;
+        String argDestinationPlanetName = "b";
+        int enemyColonyStrength = 1;
+        int alliedShipStrength = 2;
+        int enemyShipStrenght = 2;
+
+        IShipRepository mockShipRepository = mock(IShipRepository.class);
+        IColonyRepository mockColonyRepository = mock(IColonyRepository.class);
+        IPlayerRepository mockPlayerRepository = mock(IPlayerRepository.class);
+        IGameRepository mockGameRepository = mock(IGameRepository.class);
+        IPlanetRepository mockPlanetRepository = mock(IPlanetRepository.class);
+
+        Planet[] planets = getSimpleMapWith2Planets();
+        Game game = new Game();
+        Player player = getActingPlayer(game);
+        Player opponent = getOpponent(game);
+        List<Colony> gameColonies = getAlliedAndEnemyColony(enemyColonyStrength, planets, player, opponent);
+        Ship ship = createShip(alliedShipStrength, planets[0], player);
+        Ship enemyShip =createShip(enemyShipStrenght, planets[1], opponent);
+        enemyShip.getStrength();
+        stub(mockColonyRepository.getColoniesByGame(any(Game.class))).toReturn(gameColonies);
+        stub(mockShipRepository.getShipByShipId(argShipId)).toReturn(ship);
+        stub(mockPlanetRepository.getPlanetByName(argDestinationPlanetName)).toReturn(planets[1]);
+
+        GameService gameServiceWithMockedDependencies = new GameService(mockPlanetRepository, mockColonyRepository, mockShipRepository, mockPlayerRepository, mockGameRepository, new MoveShipHandler(mockColonyRepository));
+        int oldEnemyColonyAmount = opponent.getColonies().size();
+        int oldCommandPoints = player.getCommandPoints();
+        //Act
+        gameServiceWithMockedDependencies.moveShip(argShipId, argDestinationPlanetName);
+
+        //Assert
+        ArgumentCaptor<Game> gameArgumentCaptor = ArgumentCaptor.forClass(Game.class);
+
+        Mockito.verify(mockGameRepository, VerificationModeFactory.times(1)).updateGame(gameArgumentCaptor.capture());
+        Game resultGame = gameArgumentCaptor.getValue();
+        Player resultPlayer = resultGame.getPlayers().get(0);
+
+        Player resultOpponent = resultGame.getPlayers().get(1);
+        assertEquals("Ship should be gone", 0, resultPlayer.getShips().size());
+        assertEquals("Enemy Ship should be gone", 0, resultOpponent.getShips().size());
+        assertEquals("The player should have lost 1 commandPoint", oldCommandPoints - 1, resultPlayer.getCommandPoints());
+        assertEquals("the opponent shouldn't have lost any colonies", oldEnemyColonyAmount, resultOpponent.getColonies().size());
+    }
+
+    @Transactional @Test
+    public void moveShipToPlanetWithEnemyShip_ShipStrengthStrongerThanShipWeakerThanCombinedColonyAndShipStrenght_BothShipsDeletedColonyWeakened() throws Exception {
+
+        //Arrange
+        int argShipId = 1;
+        String argDestinationPlanetName = "b";
+        int enemyColonyStrength = 2;
+        int alliedShipStrength = 2;
+        int enemyShipStrenght = 1;
+
+        IShipRepository mockShipRepository = mock(IShipRepository.class);
+        IColonyRepository mockColonyRepository = mock(IColonyRepository.class);
+        IPlayerRepository mockPlayerRepository = mock(IPlayerRepository.class);
+        IGameRepository mockGameRepository = mock(IGameRepository.class);
+        IPlanetRepository mockPlanetRepository = mock(IPlanetRepository.class);
+
+        Planet[] planets = getSimpleMapWith2Planets();
+        Game game = new Game();
+        Player player = getActingPlayer(game);
+        Player opponent = getOpponent(game);
+        List<Colony> gameColonies = getAlliedAndEnemyColony(enemyColonyStrength, planets, player, opponent);
+        Ship ship = createShip(alliedShipStrength, planets[0], player);
+        Ship enemyShip =createShip(enemyShipStrenght, planets[1], opponent);
+
+        stub(mockColonyRepository.getColoniesByGame(any(Game.class))).toReturn(gameColonies);
+        stub(mockShipRepository.getShipByShipId(argShipId)).toReturn(ship);
+        stub(mockPlanetRepository.getPlanetByName(argDestinationPlanetName)).toReturn(planets[1]);
+
+        GameService gameServiceWithMockedDependencies = new GameService(mockPlanetRepository, mockColonyRepository, mockShipRepository, mockPlayerRepository, mockGameRepository, new MoveShipHandler(mockColonyRepository));
+        int oldEnemyColonyAmount = opponent.getColonies().size();
+        int oldCommandPoints = player.getCommandPoints();
+        int oldColonyStrenght = opponent.getColonies().get(0).getStrength();
+        //Act
+        gameServiceWithMockedDependencies.moveShip(argShipId, argDestinationPlanetName);
+
+        //Assert
+        ArgumentCaptor<Game> gameArgumentCaptor = ArgumentCaptor.forClass(Game.class);
+
+        Mockito.verify(mockGameRepository, VerificationModeFactory.times(1)).updateGame(gameArgumentCaptor.capture());
+        Game resultGame = gameArgumentCaptor.getValue();
+        Player resultPlayer = resultGame.getPlayers().get(0);
+
+        Player resultOpponent = resultGame.getPlayers().get(1);
+
+        assertEquals("Ship should be gone", 0, resultPlayer.getShips().size());
+        assertEquals("Ship should be gone", 0, resultOpponent.getShips().size());
+
+        assertEquals("The player should have lost 1 commandPoint", oldCommandPoints - 1, resultPlayer.getCommandPoints());
+        List<Colony> resultOpponentColonies = resultOpponent.getColonies();
+        assertEquals("the opponent shouldn't have lost any colonies", oldEnemyColonyAmount, resultOpponentColonies.size());
+        Colony resultOpponentColony = resultOpponentColonies.get(0);
+        assertEquals("the opponent's colony has lost some strenght", oldColonyStrenght - 1, resultOpponentColony.getStrength());
     }
 
     //region private methods

@@ -25,6 +25,7 @@ public class GameRepository implements IGameRepository {
     }
 
 
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     SessionFactory sessionFactory;
 
