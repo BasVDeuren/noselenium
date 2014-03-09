@@ -44,15 +44,10 @@ spaceApp.controller("createGameController", function ($scope, $translate, Game, 
 
     $scope.foundPlayers = [];
 
-    $scope.searchCriteria = {
-        value: "username"
-    };
+    $scope.searchCriteria = 'email';
 
-    $scope.setSearchCriteria = function (value) {
-        $scope.searchCriteria.value = value;
-    };
     $scope.findPlayers = function (searchString) {
-        if ($scope.searchCriteria.value == "email") {
+        if ($scope.searchCriteria == "email") {
             FindPlayer.findUsersByEmail().get({email: searchString}, function (data, headers) {
                 $scope.foundPlayers = data;
             });

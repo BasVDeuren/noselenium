@@ -19,15 +19,9 @@
                                 translate}}:</label>
 
                             <div class="col-sm-8" id="searchCriteria">
-                                <div class="btn-group" data-toggle="buttons">
-                                    <label class="btn btn-primary" ng-click="setSearchCriteria('username')">
-                                        <input type="radio" name="options" value="username" checked="true"
-                                               ng-model="searchCriteria.value"> {{'USERNAME' | translate}}
-                                    </label>
-                                    <label class="btn btn-primary" ng-click="setSearchCriteria('email')">
-                                        <input type="radio" name="options" value="email"
-                                               ng-model="searchCriteria.value"> Email
-                                    </label>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-primary" ng-model="searchCriteria" btn-radio="'email'">Email</button>
+                                    <button type="button" class="btn btn-primary" ng-model="searchCriteria" btn-radio="'username'">{{'USERNAME' | translate}}</button>
                                 </div>
                             </div>
                         </div>
