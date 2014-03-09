@@ -54,10 +54,10 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, Contact
                 console.log(response);
                 FB.api('/me', function (response) {
                     console.log(response);
-                    $scope.contactData.dayOfBirth= response.birthday;
-                    FB.api("/me/picture", function(response){
+                    $scope.contactData.dayOfBirth = new Date(response.birthday).toLocaleDateString();
+                    FB.api("/me/picture", function (response) {
                         console.log(response);
-                        $scope.contactData.image= response.data.url;
+                        $scope.contactData.image = response.data.url;
                     });
                     user = {
                         email: response.email,
@@ -107,11 +107,9 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, Contact
 
     $scope.updateFbProfile = function (response) {
 
-        $scope.contactData.firstname=response.name;
-        alert($scope.contactData.firstname );
-        alert($scope.contactData.dayOfBirth);
-        alert($scope.contactData.image);
-
+        $scope.contactData.firstname = response.first_name;
+        $scope.contactData.lastname = response.last_name;
+        $scope.contactData.email = response.email;
         Contact.save($scope.contactData, function () {
         }, function () {
         })
