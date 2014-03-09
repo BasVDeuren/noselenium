@@ -16,7 +16,7 @@ import be.kdg.spacecrack.services.IGameService;
 import be.kdg.spacecrack.utilities.IFirebaseUtil;
 import be.kdg.spacecrack.viewmodels.ActionViewModel;
 import be.kdg.spacecrack.viewmodels.GameViewModel;
-import be.kdg.spacecrack.viewmodels.IViewModelConverter;
+import be.kdg.spacecrack.utilities.IViewModelConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,7 +30,7 @@ import java.io.IOException;
 
 @Controller
 @RequestMapping("/auth/action")
-public class ActionController {
+public class ActionController{
     public static final String MOVESHIP = "MOVESHIP";
     public static final String ENDTURN = "ENDTURN";
     public static final String BUILDSHIP = "BUILDSHIP";
@@ -82,6 +82,8 @@ public class ActionController {
         GameViewModel gameViewModel = viewModelConverter.convertGameToViewModel(game);
 
         firebaseUtil.setValue(GameController.GAMESUFFIX + gameViewModel.getName(), gameViewModel);
+
     }
+
 
 }

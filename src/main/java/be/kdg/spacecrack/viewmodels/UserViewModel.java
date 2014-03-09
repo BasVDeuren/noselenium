@@ -1,5 +1,7 @@
 package be.kdg.spacecrack.viewmodels;
 
+import org.hibernate.validator.constraints.Email;
+
 /* Git $Id$
  *
  * Project Application Development
@@ -7,16 +9,18 @@ package be.kdg.spacecrack.viewmodels;
  * 2013-2014
  *
  */
-public class UserWrapper {
+public class UserViewModel {
+
     private String username;
     private String password;
     private String passwordRepeated;
+    @Email
     private String email;
 
-    public UserWrapper() {
+    public UserViewModel() {
     }
 
-    public UserWrapper(String username, String password, String passwordRepeated, String email) {
+    public UserViewModel(String username, String password, String passwordRepeated, String email) {
         this.username = username;
         this.password = password;
         this.passwordRepeated = passwordRepeated;

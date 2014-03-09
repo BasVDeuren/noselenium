@@ -12,6 +12,7 @@ import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.services.GameService;
 import be.kdg.spacecrack.services.IGameService;
 import be.kdg.spacecrack.utilities.IFirebaseUtil;
+import be.kdg.spacecrack.utilities.IViewModelConverter;
 import be.kdg.spacecrack.viewmodels.*;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
@@ -78,8 +79,9 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
         GameParameters gameParameters = new GameParameters(".$[]#/", opponentProfile.getProfileId());
         String gameParametersJson = objectMapper.writeValueAsString(gameParameters);
 
+        MockMvc customMockMvc = MockMvcBuilders.standaloneSetup(baseGameController).setHandlerExceptionResolvers(getGlobalExceptionHandler()).build();
 
-        mockMvc.perform(post("/auth/game")
+        customMockMvc.perform(post("/auth/game")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(gameParametersJson)
@@ -148,12 +150,12 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
     }
 
     private String logOpponentIn() throws Exception {
-        UserWrapper opponentUserWrapper = new UserWrapper("opponent", "opponentpw", "opponentpw", "opponent@gmail.com");
+        UserViewModel opponentUserWrapper = new UserViewModel("opponent", "opponentpw", "opponentpw", "opponent@gmail.com");
         String userWrapperjson = objectMapper.writeValueAsString(opponentUserWrapper);
 
         String opponentAccessTokenJson = mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(userWrapperjson)).andReturn().getResponse().getContentAsString();
+                .content(userWrapperjson)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         AccessToken opponentAccessToken = objectMapper.readValue(opponentAccessTokenJson, AccessToken.class);
 

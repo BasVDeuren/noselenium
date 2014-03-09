@@ -19,10 +19,8 @@
             base-package="be.kdg.spacecrack.services"/>
     <context:component-scan
             base-package="be.kdg.spacecrack.utilities"/>
-    <context:component-scan base-package="be.kdg.spacecrack.exceptions"/>
+    <context:component-scan base-package="be.kdg.spacecrack.Exceptions"/>
 
-    <bean id="tokenFilter" class="be.kdg.spacecrack.filters.TokenFilter">
-    </bean>
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
           destroy-method="close">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>

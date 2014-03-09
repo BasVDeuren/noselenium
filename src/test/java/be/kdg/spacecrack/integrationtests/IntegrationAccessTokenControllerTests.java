@@ -164,6 +164,8 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
         mockMvc.perform(getAccessTokenIsUserLoggedIn).andExpect(status().isUnauthorized());
     }
 
+
+
     @After
     public void tearDown() throws Exception {
 

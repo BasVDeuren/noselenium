@@ -9,7 +9,10 @@ package be.kdg.spacecrack.commands;
 
 import be.kdg.spacecrack.services.IGameService;
 
-
+/**
+ * Command pattern, the gameservice isn't injected by spring here because
+ * using @Configurable isn't possible on a normal Tomcat Server, because it doesn't support Load-time Weaving.
+ */
 public abstract class Action {
 
 

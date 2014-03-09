@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  *
  */
 @ResponseStatus(value = HttpStatus.CONFLICT)
-public class SpaceCrackAlreadyExistsException extends Exception {
+public class SpaceCrackAlreadyExistsException extends RuntimeException {
     public SpaceCrackAlreadyExistsException() {
 
     }

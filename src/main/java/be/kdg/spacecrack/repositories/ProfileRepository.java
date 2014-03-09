@@ -28,7 +28,8 @@ public class ProfileRepository implements IProfileRepository {
         this.sessionFactory = sessionFactory;
     }
 
-    public void createProfile(Profile profile) throws Exception {
+    @Override
+    public void createProfile(Profile profile) {
         Session session = sessionFactory.getCurrentSession();
         session.saveOrUpdate(profile);
     }

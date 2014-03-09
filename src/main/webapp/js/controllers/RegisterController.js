@@ -11,6 +11,7 @@ spaceApp.controller("RegisterController", function ($scope, Register, $cookieSto
             passwordRepeated: ""
         };
         $scope.hasRegistrationFailed = false;
+    $scope.userNameAlreadyInUse = false;
         $scope.register = function () {
             Spinner.spinner.spin(Spinner.target);
             Register.save($scope.registerData, function (data) {
@@ -18,9 +19,15 @@ spaceApp.controller("RegisterController", function ($scope, Register, $cookieSto
                 $cookieStore.put('accessToken', data.value);
                 $scope.go('/spacecrack/home');
                 $scope.hasRegistrationFailed = false;
-            }, function () {
+                $scope.userNameAlreadyInUse = false;
+            }, function (response) {
                 Spinner.spinner.stop();
-                $scope.hasRegistrationFailed = true;
+                if(response.status !== 409)
+                {
+                    $scope.hasRegistrationFailed = true;
+                }
+                $scope.userNameOrEmailAlreadyInUse = true;
+
             });
         };
 

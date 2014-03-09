@@ -11,7 +11,7 @@ import be.kdg.spacecrack.model.User;
  *
  */
 public interface IProfileRepository {
-    public void createProfile(Profile profile) throws Exception;
+    public void createProfile(Profile profile);
 
     public Profile getContact(User user);
 

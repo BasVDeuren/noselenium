@@ -2,7 +2,7 @@ package be.kdg.spacecrack.integrationtests;
 
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.UserRepository;
-import be.kdg.spacecrack.viewmodels.UserWrapper;
+import be.kdg.spacecrack.viewmodels.UserViewModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.CoreMatchers;
 import org.hibernate.Query;
@@ -57,7 +57,7 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
                 .andReturn();
 
 
-        String userMapperJsonValid = objectMapper.writeValueAsString(new UserWrapper("usernameTest", "password", "password", "newEmail"));
+        String userMapperJsonValid = objectMapper.writeValueAsString(new UserViewModel("usernameTest", "password", "password", "newEmail"));
 
         MockHttpServletRequestBuilder putRequestBuilder = post("/auth/user");
         String tokenOfEditedUser = userRepository.getUserByUsername(testUser.getUsername()).getToken().getValue();
@@ -72,7 +72,7 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
     @Test
     public void testRegisterUser_NewUser_Token() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        String validUserWrapperJson = objectMapper.writeValueAsString(new UserWrapper("usernameTest", "password", "password", "emailTest"));
+        String validUserWrapperJson = objectMapper.writeValueAsString(new UserViewModel("usernameTest", "password", "password", "email@gmail.com"));
         MockHttpServletRequestBuilder postRequestBuilder = post("/user");
         mockMvc.perform(postRequestBuilder
                 .contentType(MediaType.APPLICATION_JSON)
@@ -83,9 +83,26 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
     }
 
     @Test
+    public void testRegisterUser_SameUserTwice_Conflict() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        String validUserWrapperJson = objectMapper.writeValueAsString(new UserViewModel("usernameTest", "password", "password", "email@gmail.com"));
+        MockHttpServletRequestBuilder postRequestBuilder = post("/user");
+        mockMvc.perform(postRequestBuilder
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(validUserWrapperJson));
+
+        mockMvc.perform(postRequestBuilder
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(validUserWrapperJson))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
     public void testRegisterUser_Badrepeat_NotAcceptable() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        String invalidUserWrapper = objectMapper.writeValueAsString(new UserWrapper("username", "password", "badpassword", "email"));
+        String invalidUserWrapper = objectMapper.writeValueAsString(new UserViewModel("username", "password", "badpassword", "email@gmail.com"));
         MockHttpServletRequestBuilder postRequestBuilder = post("/user");
         mockMvc.perform(postRequestBuilder
                 .contentType(MediaType.APPLICATION_JSON)
@@ -98,7 +115,7 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
     public void testGetUser_validToken_User() throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        String UserWrapper = objectMapper.writeValueAsString(new UserWrapper("username", "password", "password", "email"));
+        String UserWrapper = objectMapper.writeValueAsString(new UserViewModel("username", "password", "password", "tim.schmitte@gmail.com"));
         MockHttpServletRequestBuilder postRequestBuilder = post("/user");
         mockMvc.perform(postRequestBuilder
                 .contentType(MediaType.APPLICATION_JSON)

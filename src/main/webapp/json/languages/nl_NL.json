@@ -16,7 +16,8 @@
     "REPEAT_PASSWORD":"Herhaal Wachtwoord",
     "REQUIRED":"Verplicht",
     "ERR_ALREADY_REGISTERED":"Email al geregistreerd",
-    "ERR_PASSWORD_MISMATCH":"Wachtwoorden komen niet overeen",
+    "ERR_USERNAME_ALREADY_EXISTS": "De gebruikersnaam of het email-adres is al in gebruik!",
+    "ERR_PASSWORD_MISMATCH":"De wachtwoorden komen niet overeen",
     "ERR_LOGIN_FAILED":"Aanmelden mislukt",
     "ERR_REGISTRATION_FAILED":"Registratie mislukt",
     "SAVE_FAILED":"Opslaan mislukt",
@@ -41,5 +42,10 @@
     "INVITE":"Uitnodigen",
     "NAME":"Naam",
     "SEARCH_BY":"Zoek op",
-    "FIND":"Vind"
+    "FIND":"Zoeken",
+    "RANDOM": "Random",
+    "COMMANDPOINTS": "Commando punten",
+    "INSUFFICIENTCOMMANDPOINTS": "Onvoldoende commando punten",
+    "TURNENDED": "Je beurt is al over!",
+    "LOSTTHEGAME": "Je hebt het spel verloren."
 }

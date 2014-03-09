@@ -14,15 +14,56 @@
 
     <mvc:annotation-driven/>
     <tx:annotation-driven/>
+    <context:component-scan base-package="be.kdg.spacecrack.filters"/>
     <context:component-scan base-package="be.kdg.spacecrack.controllers"/>
     <context:component-scan base-package="be.kdg.spacecrack.viewmodels"/>
+    <context:component-scan base-package="be.kdg.spacecrack.services"/>
+    <!--<bean id="tokenHandlerInterceptor" class ="be.kdg.spacecrack.filters.TokenHandlerInterceptor">-->
+        <!--<property name="authorizationService" ref="authorizationService"/>-->
+    <!--</bean>-->
 
+    <mvc:interceptors>
+
+        <mvc:interceptor>
+            <mvc:mapping path="/auth/**"/>
+
+            <bean class ="be.kdg.spacecrack.filters.TokenHandlerInterceptor" >
+            <property name="authorizationService" ref="authorizationService"/>
+                    </bean>
+
+        </mvc:interceptor>
+
+    </mvc:interceptors>
+    <!--<bean id="handlerMapping"-->
+          <!--class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">-->
+        <!--<property name="interceptors">-->
+            <!--<list>-->
+                <!--<ref bean="tokenHandlerInterceptor" />-->
+            <!--</list>-->
+        <!--</property>-->
+        <!--<property name="mappings">-->
+            <!--<value>-->
+                <!--/api/auth/**=userController-->
+            <!--</value>-->
+        <!--</property>-->
+    <!--</bean>-->
+    <!--<mvc:interceptors>-->
+        <!--<mvc:interceptor>-->
+            <!--<mvc:mapping path="/api/auth/**"/>-->
+            <!--<bean class="be.kdg.spacecrack.filters.TokenHandlerInterceptor"/>-->
+        <!--</mvc:interceptor>-->
+
+    <!--</mvc:interceptors>-->
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/pages/"/>
         <property name="suffix" value=".jsp"/>
 
     </bean>
+
+
+
+
 
 
 </beans>

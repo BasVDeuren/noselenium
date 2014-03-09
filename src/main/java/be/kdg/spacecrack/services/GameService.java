@@ -31,8 +31,12 @@ import java.util.List;
 @Transactional
 public class GameService implements IGameService {
 
+
    
     public static final int NEWCOLONYSTRENGTH = 1;
+
+
+
     @Autowired
     IPlanetRepository planetRepository;
 
@@ -167,6 +171,7 @@ public class GameService implements IGameService {
             throw new SpaceCrackNotAcceptableException("Turn is already ended");
         }
         gameRepository.updateGame(game);
+
     }
 
     @Override
@@ -230,6 +235,7 @@ public class GameService implements IGameService {
 
         player.setCommandPoints(player.getCommandPoints() - BUILDSHIPCOST);
         gameRepository.updateGame(game);
+
 
 
     }

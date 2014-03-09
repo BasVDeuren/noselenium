@@ -6,12 +6,12 @@ import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.services.IAuthorizationService;
 import be.kdg.spacecrack.services.IUserService;
-import be.kdg.spacecrack.viewmodels.UserWrapper;
-import com.fasterxml.jackson.core.JsonParseException;
+import be.kdg.spacecrack.viewmodels.UserViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 //import org.codehaus.jackson.JsonParseException;
@@ -45,26 +45,21 @@ public class UserController {
 
     @RequestMapping(value = "/user", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public AccessToken registerUser(@RequestBody UserWrapper userWrapper) throws Exception {
+    public AccessToken registerUser(@RequestBody @Valid UserViewModel userWrapper) throws Exception {
         AccessToken accessToken;
-        User userByUsername = userService.getUserByUsername(userWrapper.getUsername());
-
-        if (userByUsername == null) {
-            if (userWrapper.getPassword().equals(userWrapper.getPasswordRepeated())) {
-                userService.registerUser(userWrapper.getUsername(), userWrapper.getPassword(), userWrapper.getEmail());
-                accessToken = authorizationService.login(userService.getUserByUsername(userWrapper.getUsername()));
-            } else {
-                throw new SpaceCrackNotAcceptableException("Password and repeat password aren't equal");
-            }
+        if (userWrapper.getPassword().equals(userWrapper.getPasswordRepeated())) {
+            userService.registerUser(userWrapper.getUsername(), userWrapper.getPassword(), userWrapper.getEmail());
+            accessToken = authorizationService.login(userService.getUserByUsername(userWrapper.getUsername()));
         } else {
-            throw new SpaceCrackNotAcceptableException("Username already in use!");
+            throw new SpaceCrackNotAcceptableException("Password and repeat password aren't equal");
         }
+
         return accessToken;
     }
 
     @RequestMapping(value = "/auth/user", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
-    public void editUser(@RequestBody UserWrapper userWrapper, @CookieValue("accessToken") String accessTokenValue) throws Exception {
+    public void editUser(@RequestBody UserViewModel userWrapper, @CookieValue("accessToken") String accessTokenValue) throws Exception {
 
         User user;
 
@@ -89,13 +84,8 @@ public class UserController {
     public User getUserByToken(@CookieValue("accessToken") String cookieAccessTokenvalue) throws Exception {
         User user;
 
-        try {
-            user = userService.getUserByAccessToken(authorizationService.getAccessTokenByValue(cookieAccessTokenvalue));
-        } catch (JsonParseException ex) {
-            //todo: checken op juiste input ipv exception catchen...
+        user = userService.getUserByAccessToken(authorizationService.getAccessTokenByValue(cookieAccessTokenvalue));
 
-            throw new SpaceCrackUnauthorizedException();
-        }
         if (user == null) {
             throw new SpaceCrackUnauthorizedException();
         }
@@ -106,12 +96,9 @@ public class UserController {
     @ResponseBody
     public List<User> getUsersByString(@PathVariable String username) throws Exception {
         List<User> foundUsers;
-        try {
-            foundUsers = userService.getUsersByString(username);
-        } catch (JsonParseException ex) {
-            //todo: checken op juiste input ipv exception catchen...
-            throw new SpaceCrackUnauthorizedException();
-        }
+
+        foundUsers = userService.getUsersByString(username);
+
         return foundUsers;
     }
 
@@ -119,28 +106,19 @@ public class UserController {
     @ResponseBody
     public List<User> getUsersByEmail(@PathVariable String email) throws Exception {
         List<User> foundUsers;
-        try {
-            foundUsers = userService.getUsersByEmail(email);
-        } catch (JsonParseException ex) {
-            //todo: checken op juiste input ipv exception catchen...
 
-            throw new SpaceCrackUnauthorizedException();
-        }
+        foundUsers = userService.getUsersByEmail(email);
+
         return foundUsers;
     }
 
-    @RequestMapping(value = "/auth/findUserByUserId/{userId}",method = RequestMethod.GET)
+    @RequestMapping(value = "/auth/findUserByUserId/{userId}", method = RequestMethod.GET)
     @ResponseBody
     public User getRandomUser(@PathVariable int userId) throws Exception {
-        User foundUser = null;
-        try {
-            foundUser = userService.getRandomUser(userId);
-        }catch (JsonParseException ex){
+        User foundUser;
 
-            //todo: checken op juiste input ipv exception catchen...
+        foundUser = userService.getRandomUser(userId);
 
-            throw new SpaceCrackUnauthorizedException();
-        }
         return foundUser;
     }
 

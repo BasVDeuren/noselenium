@@ -66,7 +66,7 @@ public class AuthorizationService implements IAuthorizationService {
     }
 
     private void createTestUser(String testemail, String testUsername, String testPassword) {
-        List<User> list = userRepository.getUsersByEmail(testemail);
+        List<User> list = userRepository.findUsersByEmailPart(testemail);
         if (list.size() < 1) {
 
 

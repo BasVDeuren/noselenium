@@ -6,7 +6,6 @@ package be.kdg.spacecrack.controllers;/* Git $Id
  *
  */
 
-import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.model.Game;
 import be.kdg.spacecrack.model.Player;
 import be.kdg.spacecrack.model.Profile;
@@ -20,7 +19,7 @@ import be.kdg.spacecrack.utilities.IFirebaseUtil;
 import be.kdg.spacecrack.viewmodels.GameActivePlayerWrapper;
 import be.kdg.spacecrack.viewmodels.GameParameters;
 import be.kdg.spacecrack.viewmodels.GameViewModel;
-import be.kdg.spacecrack.viewmodels.IViewModelConverter;
+import be.kdg.spacecrack.utilities.IViewModelConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -111,4 +110,5 @@ public class GameController {
         }
         return gameViewModels;
     }
+
 }

@@ -3,10 +3,12 @@
         <p class="col-md-12">Use the arrow keys to navigate the map.</p>
     </div>
     <div class="row">
-        <div class="col-md-10">
-            <div id="game"></div>
-        </div>
-        <div class="col-md-2" ng-controller="ChatController">
+        <!--<div class="col-md-10">-->
+            <div id="game" ></div>
+        <!--</div>-->
+    </div>
+    <div class="row">
+        <div id="gameChat" ng-controller="ChatController">
             <div class="panel panel-default" id="chatPanel">
                 <div class="panel-heading">
                     Chat <button class="btn btn-danger" ng-click="removeAllMessages()" >Delete all</button>

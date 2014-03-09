@@ -6,6 +6,7 @@ package be.kdg.spacecrack.services;/* Git $Id
  *
  */
 
+import be.kdg.spacecrack.Exceptions.SpaceCrackAlreadyExistsException;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
@@ -50,7 +51,18 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void registerUser(String username, String password, String email) throws Exception {
+    public void registerUser(String username, String password, String email)  {
+        User userByUsername = userRepository.getUserByUsername(username);
+        if(userByUsername != null)
+        {
+            throw new SpaceCrackAlreadyExistsException();
+        }
+
+        User userByEmail = userRepository.getUserByEmail(email);
+        if(userByEmail != null)
+        {
+            throw new SpaceCrackAlreadyExistsException();
+        }
         User user = userRepository.addUser(username, password, email);
         Profile profile = new Profile();
 
@@ -74,18 +86,18 @@ public class UserService implements IUserService {
 
     @Override
     public List<User> getUsersByString(String username) throws Exception {
-        return userRepository.getUsersByString(username);
+        return userRepository.findUsersByUsernamePart(username);
     }
 
     @Override
     public List<User> getUsersByEmail(String email) throws Exception {
-        return userRepository.getUsersByEmail(email);
+        return userRepository.findUsersByEmailPart(email);
     }
 
     @Override
     public User getRandomUser(int userId) throws Exception {
         User foundUser;
-        List<User> users = userRepository.getUsers();
+        List<User> users = userRepository.getLoggedInUsers();
         do{
             Random random = new Random();
             foundUser = users.get(random.nextInt(users.size()));

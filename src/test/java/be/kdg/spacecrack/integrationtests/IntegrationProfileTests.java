@@ -8,7 +8,7 @@ package be.kdg.spacecrack.integrationtests;/* Git $Id
 
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.viewmodels.ProfileWrapper;
-import be.kdg.spacecrack.viewmodels.UserWrapper;
+import be.kdg.spacecrack.viewmodels.UserViewModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -33,7 +33,7 @@ public class IntegrationProfileTests extends BaseFilteredIntegrationTests {
 
     @Before
     public void setUp() throws Exception {
-        String UserWrapper = objectMapper.writeValueAsString(new UserWrapper(USERNAME, "password", "password", "email"));
+        String UserWrapper = objectMapper.writeValueAsString(new UserViewModel(USERNAME, "password", "password", "email@gmail.com"));
         MockHttpServletRequestBuilder postRequestBuilder = post("/user");
         String stringAccessToken = mockMvc.perform(postRequestBuilder
                 .contentType(MediaType.APPLICATION_JSON)

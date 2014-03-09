@@ -1,5 +1,6 @@
 package be.kdg.spacecrack.unittests;
 
+import be.kdg.spacecrack.Exceptions.SpaceCrackAlreadyExistsException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.controllers.UserController;
@@ -9,7 +10,7 @@ import be.kdg.spacecrack.repositories.IUserRepository;
 import be.kdg.spacecrack.services.IAuthorizationService;
 import be.kdg.spacecrack.services.IUserService;
 import be.kdg.spacecrack.services.UserService;
-import be.kdg.spacecrack.viewmodels.UserWrapper;
+import be.kdg.spacecrack.viewmodels.UserViewModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -66,7 +67,7 @@ public class UserControllerTest extends BaseUnitTest {
     public void RegisterUser_validUser_usercreated() throws Exception {
         AccessToken expected = new AccessToken("test1234");
         stub(tokenService.login(any(User.class))).toReturn(expected);
-        UserWrapper userWrapper = new UserWrapper("username", "password", "password", "email");
+        UserViewModel userWrapper = new UserViewModel("username", "password", "password", "email");
 
         AccessToken actual = userController.registerUser(userWrapper);
         assertEquals("Accesstoken should be returned after registering. ", expected, actual);
@@ -75,22 +76,11 @@ public class UserControllerTest extends BaseUnitTest {
 
     @Test(expected = SpaceCrackNotAcceptableException.class)
     public void RegisterUser_BadRepeatPassword_SpaceCrackNotAcceptableException() throws Exception {
-        User user = new User("username", "password", "email");
-        userController.registerUser(new UserWrapper("username", "password", "badRepeat", "email"));
+        userController.registerUser(new UserViewModel("username", "password", "badRepeat", "email"));
     }
 
-    @Test
-    public void RegisterUser_ExistingUsername_SpaceCrackNotAcceptableException() throws Exception {
-        expectedEx.expect(SpaceCrackNotAcceptableException.class);
-        expectedEx.expectMessage("Username already in use!");
-
-        userController.registerUser(new UserWrapper("username", "password", "password", "email"));
-        stub(userService.getUserByUsername("username")).toReturn(new User());
-        userController.registerUser(new UserWrapper("username", "password2", "password2", "email2"));
 
 
-        //assertEquals("Should return first registered user", "password", userController.getUserByUsername("username").getPassword());
-    }
 
     @Test
     public void editUser_ValidFields_UserEdited() throws Exception {
@@ -101,12 +91,11 @@ public class UserControllerTest extends BaseUnitTest {
         User user = new User("username", "password", "email");
         when(userService.getUserByAccessToken(any(AccessToken.class))).thenReturn(user);
 
-        userController.editUser(new UserWrapper("username", "password", "password", "email"), objectMapper.writeValueAsString(new AccessToken("accesstoken1234")));
+        userController.editUser(new UserViewModel("username", "password", "password", "email"), objectMapper.writeValueAsString(new AccessToken("accesstoken1234")));
 
         Mockito.verify(userService, VerificationModeFactory.times(1)).updateUser(user);
     }
 
-    //Todo: fix
     @Test
     public void EditUser_BadRepeatPassword_SpaceCrackNotAcceptableException() throws Exception {
         expectedEx.expect(SpaceCrackNotAcceptableException.class);
@@ -116,8 +105,8 @@ public class UserControllerTest extends BaseUnitTest {
         User user = new User("username", "password", "email");
         when(userRepository.getUserByAccessToken(any(AccessToken.class))).thenReturn(user);
 
-        userController.registerUser(new UserWrapper("username", "password", "password", "email"));
-        userController.editUser(new UserWrapper("username", "newPassword", "newBadRepeatedPassword", "newEmail"), objectMapper.writeValueAsString(new AccessToken("accesstoken1234")));
+        userController.registerUser(new UserViewModel("username", "password", "password", "email"));
+        userController.editUser(new UserViewModel("username", "newPassword", "newBadRepeatedPassword", "newEmail"), objectMapper.writeValueAsString(new AccessToken("accesstoken1234")));
     }
 
     @Test

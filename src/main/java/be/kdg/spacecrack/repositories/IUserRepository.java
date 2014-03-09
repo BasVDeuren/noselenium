@@ -18,7 +18,7 @@ public interface IUserRepository {
 
     User addUser(String username, String password, String email);
 
-    User getUserByUsername(String username) throws Exception;
+    User getUserByUsername(String username);
 
     void updateUser(User user);
 
@@ -26,11 +26,12 @@ public interface IUserRepository {
 
     User getUserByAccessToken(AccessToken accessToken);
 
-    List<User> getUsersByString(String username) throws Exception;
+    List<User> findUsersByUsernamePart(String username) throws Exception;
 
-    List<User> getUsersByEmail(String username) ;
+    List<User> findUsersByEmailPart(String username) ;
 
-    List<User> getUsers() throws Exception;
+    List<User> getLoggedInUsers() throws Exception;
 
 
+    User getUserByEmail(String email);
 }

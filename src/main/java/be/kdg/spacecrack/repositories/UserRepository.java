@@ -56,7 +56,7 @@ public class UserRepository implements IUserRepository {
     }
 
     @Override
-    public User getUserByUsername(String username) throws Exception {
+    public User getUserByUsername(String username){
         Session session = sessionFactory.getCurrentSession();
         User user;
 
@@ -68,8 +68,9 @@ public class UserRepository implements IUserRepository {
         return user;
     }
 
+
     @Override
-    public List<User> getUsersByString(String username) throws Exception {
+    public List<User> findUsersByUsernamePart(String username) throws Exception {
         Session session = sessionFactory.getCurrentSession();
         List<User> foundUsers;
 
@@ -82,12 +83,12 @@ public class UserRepository implements IUserRepository {
     }
 
     @Override
-    public List<User> getUsersByEmail(String email){
+    public List<User> findUsersByEmailPart(String emailPart){
         Session session = sessionFactory.getCurrentSession();
         List<User> foundUsers;
 
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from User u where u.email LIKE :email");
-        q.setParameter("email", "%" + email + "%");
+        q.setParameter("email", "%" + emailPart + "%");
         foundUsers = q.list();
 
         return foundUsers;
@@ -121,7 +122,7 @@ public class UserRepository implements IUserRepository {
     }
 
     @Override
-    public List<User> getUsers() throws Exception {
+    public List<User> getLoggedInUsers() throws Exception {
         Session session = sessionFactory.getCurrentSession();
         List<User> foundUsers;
 
@@ -129,6 +130,18 @@ public class UserRepository implements IUserRepository {
         foundUsers = q.list();
 
         return foundUsers;
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        Session session = sessionFactory.getCurrentSession();
+        List<User> foundUsers;
+
+        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from User u WHERE u.email = :email ");
+        q.setParameter("email", email);
+        User user = (User) q.uniqueResult();
+
+        return user;
     }
 
 

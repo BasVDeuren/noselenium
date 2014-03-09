@@ -16,6 +16,7 @@
     "REPEAT_PASSWORD":"Repeat Password",
     "REQUIRED":"Required",
     "ERR_ALREADY_REGISTERED":"Email already registered",
+    "ERR_USERNAME_ALREADY_EXISTS": "Username or email-adress already exists!",
     "ERR_PASSWORD_MISMATCH":"Passwords don't match",
     "ERR_LOGIN_FAILED":"Login Failed",
     "ERR_REGISTRATION_FAILED":"Registration Failed",
@@ -41,5 +42,10 @@
     "INVITE":"Invite",
     "NAME":"Name",
     "SEARCH_BY":"Search By",
-    "FIND": "Find"
+    "FIND": "Find",
+    "RANDOM": "Random",
+    "COMMANDPOINTS": "Command Points",
+    "INSUFFICIENTCOMMANDPOINTS": "Insufficient command points",
+    "TURNENDED": "Your turn has ended!",
+    "LOSTTHEGAME": "You have lost the game."
 }

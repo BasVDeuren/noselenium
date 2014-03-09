@@ -32,14 +32,7 @@
         <url-pattern>/api/auth/*</url-pattern>
     </filter-mapping>
 
-    <filter>
-        <filter-name>TokenFilter</filter-name> <!-- mandatory -->
-        <filter-class>be.kdg.spacecrack.filters.TokenFilter</filter-class> <!-- mandatory -->
-    </filter>
-    <filter-mapping>
-        <filter-name>TokenFilter</filter-name>
-        <url-pattern>/api/auth/*</url-pattern>
-    </filter-mapping>
+
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
