@@ -32,8 +32,8 @@ spaceApp.controller("createGameController", function ($scope, $translate, Game, 
         })
     };
 
-    $scope.selectRandomPlayer = function(){
-        FindPlayer.findUserByUserId().get({userId: $scope.loggedInProfileId}, function (data){
+    $scope.selectRandomPlayer = function () {
+        FindPlayer.findUserByUserId().get({userId: $scope.loggedInProfileId}, function (data) {
             $scope.gameData.opponentProfileId = data.profile.profileId;
             Game.save($scope.gameData, function (data) {
                 $scope.gameId = data[0];
@@ -68,6 +68,13 @@ spaceApp.controller("createGameController", function ($scope, $translate, Game, 
         } else {
             return image;
         }
+    };
+
+    $scope.findFbfriends = function () {
+        FB.ui({app_id: '649165391811913',
+            method: 'apprequests',
+            message: 'Do you want to play Spacecrack ?'
+        });
     }
 })
 ;
