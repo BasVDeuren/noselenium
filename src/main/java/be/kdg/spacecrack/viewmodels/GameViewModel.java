@@ -11,6 +11,7 @@ public class GameViewModel {
     private int gameId;
     private String name;
     private int loserPlayerId;
+    private int actionNumber;
 
     private PlayerViewModel player1;
 
@@ -54,5 +55,13 @@ public class GameViewModel {
 
     public void setLoserPlayerId(int loserPlayerId) {
         this.loserPlayerId = loserPlayerId;
+    }
+
+    public int getActionNumber() {
+        return actionNumber;
+    }
+
+    public void setActionNumber(int actionNumber) {
+        this.actionNumber = actionNumber;
     }
 }

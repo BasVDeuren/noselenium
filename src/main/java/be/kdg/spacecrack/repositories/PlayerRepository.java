@@ -45,11 +45,18 @@ public class PlayerRepository implements IPlayerRepository {
     @Override
     public Player getPlayerByPlayerId(int playerId) {
         Session session = sessionFactory.getCurrentSession();
-        Player player;
+        Player player = null;
 
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Player p where p.playerId = :playerId");
         q.setParameter("playerId", playerId);
-        player = (Player) q.uniqueResult();
+        try{
+            player = (Player) q.uniqueResult();
+
+        }catch (Exception ex)
+        {
+            boolean b = true;
+        }
+
 
 
         return player;

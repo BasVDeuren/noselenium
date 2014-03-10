@@ -7,7 +7,6 @@ package be.kdg.spacecrack.services;/* Git $Id
  */
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
-import be.kdg.spacecrack.Exceptions.SpaceCrackUnexpectedException;
 import be.kdg.spacecrack.controllers.TokenController;
 import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.model.Profile;
@@ -33,7 +32,6 @@ public class AuthorizationService implements IAuthorizationService {
     IUserRepository userRepository;
 
 
-
     @Autowired
     private ITokenStringGenerator tokenStringGenerator;
 
@@ -50,11 +48,9 @@ public class AuthorizationService implements IAuthorizationService {
 
     @Override
     public AccessToken getAccessTokenByValue(String accessTokenValue) {
-        try {
-            return tokenRepository.getAccessTokenByValue(accessTokenValue);
-        } catch (Exception e) {
-            throw new SpaceCrackUnauthorizedException("Unauthorized Request");
-        }
+
+        return tokenRepository.getAccessTokenByValue(accessTokenValue);
+
     }
 
 
@@ -68,27 +64,18 @@ public class AuthorizationService implements IAuthorizationService {
     private void createTestUser(String testemail, String testUsername, String testPassword) {
         List<User> list = userRepository.findUsersByEmailPart(testemail);
         if (list.size() < 1) {
-
-
-
             Profile profile = new Profile();
-
-            User user =  new User(testUsername, testPassword, testemail);
+            User user = new User(testUsername, testPassword, testemail);
             user.setProfile(profile);
             profile.setUser(user);
             userRepository.createUser(user);
         }
-
-
     }
 
     @Override
     public AccessToken login(User user) {
         User dbUser;
-
         dbUser = userRepository.getUser(user);
-
-
         if (dbUser == null) {
             throw new SpaceCrackUnauthorizedException();
         }
@@ -109,17 +96,12 @@ public class AuthorizationService implements IAuthorizationService {
     @Override
     public void logout(String accessTokenValue) {
         AccessToken accessToken = null;
-        try {
-            accessToken = tokenRepository.getAccessTokenByValue(accessTokenValue);
-        } catch (Exception e) {
-
-        }
-
-        try {
+        accessToken = tokenRepository.getAccessTokenByValue(accessTokenValue);
+        if(accessToken != null)
+        {
             tokenRepository.deleteAccessToken(accessToken);
-        } catch (Exception ex) {
-            throw new SpaceCrackUnexpectedException("Unexpected exception happened while logging out");
         }
+
     }
 
     @Override

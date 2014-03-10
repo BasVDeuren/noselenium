@@ -52,7 +52,7 @@ public class ShipRepositoryTests extends  BaseUnitTest{
         ship.setPlayer(player);
         player.getShips().add(ship);
         //Create the game in the database
-        int gameId = gameRepository.createGame(game);
+        int gameId = gameRepository.createOrUpdateGame(game);
         Game gameDb = gameRepository.getGameByGameId(gameId);
         //endregion
 
@@ -80,7 +80,7 @@ public class ShipRepositoryTests extends  BaseUnitTest{
         ship.setPlayer(player);
         player.getShips().add(ship);
         //Create the game in the database
-        int gameId = gameRepository.createGame(game);
+        int gameId = gameRepository.createOrUpdateGame(game);
         return gameRepository.getGameByGameId(gameId);
     }
 

@@ -12,9 +12,9 @@ import be.kdg.spacecrack.model.User;
  */
 public interface ITokenRepository {
 
-    AccessToken getAccessTokenByValue(String value) throws Exception;
+    AccessToken getAccessTokenByValue(String value);
 
     void saveAccessToken(User dbUser, AccessToken accessToken);
 
-    void deleteAccessToken(AccessToken accessToken) throws Exception;
+    void deleteAccessToken(AccessToken accessToken);
 }

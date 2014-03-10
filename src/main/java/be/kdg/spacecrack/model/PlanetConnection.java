@@ -6,9 +6,13 @@ package be.kdg.spacecrack.model;/* Git $Id
  *
  */
 
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
+
 import javax.persistence.*;
 
 @Entity
+@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 @Table
 public class PlanetConnection {
     @Id

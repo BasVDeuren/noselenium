@@ -6,9 +6,12 @@ package be.kdg.spacecrack.model;/* Git $Id$
  *
  */
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 
+@Audited
 @MappedSuperclass
 public abstract class Piece {
 

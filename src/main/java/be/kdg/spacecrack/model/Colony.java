@@ -8,9 +8,12 @@ package be.kdg.spacecrack.model;/* Git $Id
 
 //import org.codehaus.jackson.annotate.JsonIgnore;
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 
 @Entity
+@Audited
 @Table(name = "T_Colony")
 public class Colony extends Piece {
     @Id

@@ -70,7 +70,7 @@ public class UserRepository implements IUserRepository {
 
 
     @Override
-    public List<User> findUsersByUsernamePart(String username) throws Exception {
+    public List<User> findUsersByUsernamePart(String username) {
         Session session = sessionFactory.getCurrentSession();
         List<User> foundUsers;
 
@@ -122,7 +122,7 @@ public class UserRepository implements IUserRepository {
     }
 
     @Override
-    public List<User> getLoggedInUsers() throws Exception {
+    public List<User> getLoggedInUsers() {
         Session session = sessionFactory.getCurrentSession();
         List<User> foundUsers;
 

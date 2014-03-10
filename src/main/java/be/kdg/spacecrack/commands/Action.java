@@ -20,8 +20,6 @@ public abstract class Action {
 
     protected Integer playerId;
 
-
-
     protected Action(IGameService gameService, Integer playerId) {
         this.gameService = gameService;
 

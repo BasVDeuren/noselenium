@@ -14,6 +14,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.transaction.annotation.Transactional;
@@ -100,7 +101,8 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
 
         MockHttpServletRequestBuilder requestBuilder = post("/accesstokens").contentType(MediaType.APPLICATION_JSON).content("{\"username\":\"badUser\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON);
 
-        mockMvc.perform(requestBuilder).andExpect(status().isUnauthorized());
+        MockMvc mockMvcWithoutGlobalExceptionHandler = mvcBuilderWithoutGlobalExceptionHandler.build();
+        mockMvcWithoutGlobalExceptionHandler.perform(requestBuilder).andExpect(status().isUnauthorized());
 
     }
 
@@ -124,7 +126,7 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
         MockHttpServletRequestBuilder logoutRequestBuilder = delete("/accesstokens");
         mockMvc.perform(logoutRequestBuilder
                 .cookie(new Cookie("accessToken", "\"" + accessToken.getValue() + "\"")))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk());
 
 
     }
@@ -134,7 +136,7 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
     public void logout_invalidtoken_ok() throws Exception {
         MockHttpServletRequestBuilder deleteRequestBuilder = delete("/accesstokens")
                 .cookie(new Cookie("accessToken", "\"" + new AccessToken("invalid").getValue() + "\""));
-        mockMvc.perform(deleteRequestBuilder).andExpect(status().isBadRequest());
+        mockMvc.perform(deleteRequestBuilder).andExpect(status().isOk());
     }
 
     @Test

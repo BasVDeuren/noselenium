@@ -11,10 +11,7 @@ import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.services.IAuthorizationService;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
+import javax.servlet.http.*;
 
 public class TokenHandlerInterceptor extends HandlerInterceptorAdapter {
 
@@ -48,33 +45,41 @@ public class TokenHandlerInterceptor extends HandlerInterceptorAdapter {
         if (requestWrapper.getCookies() == null || requestWrapper.getCookies().length < 1) {
             unauthorized = true;
         } else {
-            String tokenValue = requestWrapper.getCookies()[0].getValue();
-            //  tokenValue =  tokenValue.replaceAll("%22", "");
-            tokenValue = tokenValue.substring(3, tokenValue.length() - 3);
-            requestWrapper.getCookies()[0].setValue(tokenValue);
-            if (requestWrapper.getCookies().length < 1 || tokenValue == null || tokenValue.isEmpty()) {
-                unauthorized = true;
-                System.out.println("token was null");
-
-            } else {
-
-                AccessToken token = null;
-                try {
-                    token = authorizationService.getAccessTokenByValue(tokenValue);
-                } catch (SpaceCrackUnauthorizedException ex) {
-                    responseWrapper.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are unauthorized for this request");
-                }
-
-                if (token != null) {
-                    unauthorized = false;
-
-                } else {
-                    unauthorized = true;
-
+            String tokenValue = null;
+            for (Cookie cookie : requestWrapper.getCookies()) {
+                if (cookie.getName().equals("accessToken")) {
+                    tokenValue = cookie.getValue();
+                    if(tokenValue == null || tokenValue.isEmpty())
+                    {
+                        responseWrapper.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are unauthorized for this request");
+                        return false;
+                    }
+                    tokenValue = tokenValue.substring(3, tokenValue.length() - 3);
+                    cookie.setValue(tokenValue);
                 }
             }
+
+
+
+            AccessToken token = null;
+            try {
+                token = authorizationService.getAccessTokenByValue(tokenValue);
+            } catch (SpaceCrackUnauthorizedException ex) {
+                responseWrapper.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are unauthorized for this request");
+            }
+
+            if (token != null) {
+                unauthorized = false;
+
+            } else {
+                unauthorized = true;
+
+            }
+
+
+
         }
-        if (unauthorized == true) {
+        if (unauthorized) {
             responseWrapper.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are unauthorized for this request");
 
             return false;

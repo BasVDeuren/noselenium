@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 
 
 public class GameRepositoryTests extends BaseUnitTest {
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     SessionFactory sessionFactory;
 
@@ -91,7 +92,7 @@ public class GameRepositoryTests extends BaseUnitTest {
 
         GameRepository gameRepository = new GameRepository(sessionFactory);
 
-        int expectedId = gameRepository.createGame(expected);
+        int expectedId = gameRepository.createOrUpdateGame(expected);
 
         Game actual = gameRepository.getGameByGameId(expectedId);
 

@@ -5,6 +5,7 @@ package be.kdg.spacecrack.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.util.*;
@@ -17,6 +18,7 @@ import java.util.*;
  *
  */
 @Entity
+@Audited
 @Table(name = "T_Planet")
 public class Planet {
     @GeneratedValue

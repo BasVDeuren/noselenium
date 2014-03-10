@@ -14,7 +14,7 @@ import java.util.List;
 
 public interface IGameRepository {
 
-    int createGame(Game game);
+    int createOrUpdateGame(Game game);
 
     int updateGame(Game game);
 
@@ -23,4 +23,8 @@ public interface IGameRepository {
     Game getGameByGameId(int gameId);
 
     Game getGameByPlayer(Player player);
+
+    Game getGameRevision(Number number, int gameId);
+
+    List<Number> getRevisionNumbers(int gameId);
 }

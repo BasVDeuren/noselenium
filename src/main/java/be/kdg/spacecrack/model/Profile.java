@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Type;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ import java.util.List;
  *
  */
 @Entity
+@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 @Table(name = "T_Profile")
 public class Profile {
     @Id

@@ -2,6 +2,7 @@ package be.kdg.spacecrack.model;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "T_Player")
+@Audited
 public class Player {
     @Id
     @GeneratedValue

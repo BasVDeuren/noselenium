@@ -32,7 +32,7 @@ public class TokenRepository implements ITokenRepository {
 
 
     @Override
-    public AccessToken getAccessTokenByValue(String value) throws Exception {
+    public AccessToken getAccessTokenByValue(String value) {
         Session session = sessionFactory.getCurrentSession();
         AccessToken accessToken = null;
 
@@ -56,7 +56,8 @@ public class TokenRepository implements ITokenRepository {
     }
 
     @Override
-    public void deleteAccessToken(AccessToken accessToken) throws Exception {
+    public void deleteAccessToken(AccessToken accessToken) {
+
         Session session = sessionFactory.getCurrentSession();
 
 

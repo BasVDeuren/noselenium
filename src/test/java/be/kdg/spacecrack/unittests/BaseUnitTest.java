@@ -17,8 +17,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration( locations = {"classpath:application-context.xml"})
-
 public abstract class BaseUnitTest {
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     SessionFactory sessionFactory;
 
@@ -26,8 +26,8 @@ public abstract class BaseUnitTest {
     @Before
     public void createMap()
     {
-            MapFactory mapFactory = new MapFactory(sessionFactory,new PlanetRepository(sessionFactory));
-            mapFactory.createPlanets();
+        MapFactory mapFactory = new MapFactory(sessionFactory,new PlanetRepository(sessionFactory));
+        mapFactory.createPlanets();
     }
 
 }

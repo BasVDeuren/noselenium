@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import javax.servlet.http.Cookie;
@@ -92,6 +93,7 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(validUserWrapperJson));
 
+
         mockMvc.perform(postRequestBuilder
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -104,7 +106,9 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
         ObjectMapper objectMapper = new ObjectMapper();
         String invalidUserWrapper = objectMapper.writeValueAsString(new UserViewModel("username", "password", "badpassword", "email@gmail.com"));
         MockHttpServletRequestBuilder postRequestBuilder = post("/user");
-        mockMvc.perform(postRequestBuilder
+        MockMvc mockMvcWithoutGlobalExceptionHandler = mvcBuilderWithoutGlobalExceptionHandler.build();
+
+        mockMvcWithoutGlobalExceptionHandler.perform(postRequestBuilder
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(invalidUserWrapper))

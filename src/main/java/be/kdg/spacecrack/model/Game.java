@@ -8,23 +8,28 @@ package be.kdg.spacecrack.model;/* Git $Id
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Audited
 @Table(name = "T_Game")
 public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY )
     private int gameId;
+    @Column(unique = true)
     private String name;
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "game")
     private List<Player> players = new ArrayList<Player>();
 
+    @Column
+    private int actionNumber;
     @Column
     private int loserPlayerId;
 
@@ -72,5 +77,17 @@ public class Game {
 
     public void setLoserPlayerId(int winnerPlayerId) {
         this.loserPlayerId = winnerPlayerId;
+    }
+
+    public int getActionNumber() {
+        return actionNumber;
+    }
+
+    public void setActionNumber(int actionNumber) {
+        this.actionNumber = actionNumber;
+    }
+
+    public void incrementActionNumber() {
+        actionNumber++;
     }
 }

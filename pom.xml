@@ -75,6 +75,11 @@
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.boot</groupId>-->
+            <!--<artifactId>spring-boot-starter</artifactId>-->
+            <!--<version>1.0.0.RC1</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>commons-dbcp</groupId>
@@ -189,12 +194,16 @@
             <artifactId>jgrapht-core</artifactId>
             <version>0.9.0</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.hibernate</groupId>-->
-            <!--<artifactId>hibernate-core</artifactId>-->
-            <!--<version>4.1.9.Final</version>-->
-        <!--</dependency>-->
-
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-envers</artifactId>
+            <version>4.1.9.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.javaconfig</groupId>
+            <artifactId>spring-javaconfig</artifactId>
+            <version>1.0-m2</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>

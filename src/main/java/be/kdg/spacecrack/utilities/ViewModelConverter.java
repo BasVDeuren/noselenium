@@ -37,6 +37,7 @@ public class ViewModelConverter implements IViewModelConverter {
         gameViewModel.setGameId(game.getGameId());
         gameViewModel.setName(game.getName());
         gameViewModel.setLoserPlayerId(game.getLoserPlayerId());
+        gameViewModel.setActionNumber(game.getActionNumber());
 
         PlayerViewModel player1ViewModel = convertPlayerToViewModel(game.getPlayers().get(0));
         gameViewModel.setPlayer1(player1ViewModel);

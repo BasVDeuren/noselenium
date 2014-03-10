@@ -12,6 +12,8 @@ import be.kdg.spacecrack.model.Profile;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.envers.AuditReader;
+import org.hibernate.envers.AuditReaderFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,18 +37,18 @@ public class GameRepository implements IGameRepository {
     }
 
     @Override
-    public int createGame(Game game) {
+    public int createOrUpdateGame(Game game) {
+        game.incrementActionNumber();
         Session session = sessionFactory.getCurrentSession();
 
         session.saveOrUpdate(game);
-
 
         return game.getGameId();
     }
 
     @Override
     public int updateGame(Game game) {
-        return createGame(game); // Because saveorupdate
+        return createOrUpdateGame(game);
     }
 
     @Override
@@ -87,4 +89,17 @@ public class GameRepository implements IGameRepository {
     }
 
 
+    @Override
+    public Game getGameRevision(Number number, int gameId) {
+        AuditReader reader = AuditReaderFactory.get(sessionFactory.getCurrentSession());
+        return reader.find(Game.class, gameId, number);
+    }
+
+    @Override
+    public List<Number> getRevisionNumbers(int gameId) {
+
+        AuditReader reader = AuditReaderFactory.get(sessionFactory.getCurrentSession());
+        return reader.getRevisions(Game.class, gameId);
+
+    }
 }

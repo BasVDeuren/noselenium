@@ -26,11 +26,11 @@ public interface IUserRepository {
 
     User getUserByAccessToken(AccessToken accessToken);
 
-    List<User> findUsersByUsernamePart(String username) throws Exception;
+    List<User> findUsersByUsernamePart(String username);
 
     List<User> findUsersByEmailPart(String username) ;
 
-    List<User> getLoggedInUsers() throws Exception;
+    List<User> getLoggedInUsers();
 
 
     User getUserByEmail(String email);
