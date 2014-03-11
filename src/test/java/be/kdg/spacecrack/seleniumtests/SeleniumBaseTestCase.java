@@ -22,6 +22,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/mvc-dispatcher-servlet.xml", "file:src/main/resources/application-context.xml"})
 @WebAppConfiguration
@@ -36,7 +37,8 @@ public abstract class SeleniumBaseTestCase  {
     @Before
     public void setUp() throws Exception {
 
-        String path = this.getClass().getResource("/chromedriver.exe").getPath();
+        URL resource = this.getClass().getResource("/chromedriver.exe");
+        String path = resource.getPath();
         path = path.replaceAll("%20", " ");
         System.setProperty("webdriver.chrome.driver", path);
         driver = new ChromeDriver();

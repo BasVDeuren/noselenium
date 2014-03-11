@@ -89,13 +89,8 @@ public class MapFactory implements IMapFactory {
 
     @Override
     public SpaceCrackMap getSpaceCrackMap() {
-
         Planet[] planets = planetRepository.getAll();
-
-
-        SpaceCrackMap spaceCrackMap = new SpaceCrackMap(planets);
-
-        return spaceCrackMap;
+        return new SpaceCrackMap(planets);
     }
 
     public void createPlanets() {
@@ -283,7 +278,6 @@ public class MapFactory implements IMapFactory {
 
             session.saveOrUpdate(connection.getParentPlanet());
             session.saveOrUpdate(connection.getChildPlanet());
-            //session.delete(connection); // Should be cascaded
         }
 
 

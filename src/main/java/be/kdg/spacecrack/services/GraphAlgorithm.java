@@ -14,12 +14,11 @@ import java.util.Set;
  * Created by Janne on 5/03/14.
  */
 
-@Component("graphService")
-public class GraphService implements IGraphService {
+public class GraphAlgorithm {
 
-    public GraphService() {}
+    public GraphAlgorithm() {}
 
-    public List<List<String>> calculateChordlessCyclesFromVertex(UndirectedGraph<String, DefaultEdge> graph, String baseVertex) {
+    public static List<List<String>> calculateChordlessCyclesFromVertex(UndirectedGraph<String, DefaultEdge> graph, String baseVertex) {
         List<List<String>> cycles = new ArrayList<List<String>>(); // Cycles to output
         NeighborIndex<String, DefaultEdge> neighborIndex = new NeighborIndex<String, DefaultEdge>(graph); // Create a NeighbourIndex for the graph
         Set<DefaultEdge> edgesSet = graph.edgesOf(baseVertex); // Get all the edges of the base vertex we want to test
@@ -56,7 +55,7 @@ public class GraphService implements IGraphService {
         return cycles;
     }
 
-    private List<List<String>> evaluateVector(List<String> vector, List<List<String>> cycles, NeighborIndex<String, DefaultEdge> neighborIndex) {
+    private static List<List<String>> evaluateVector(List<String> vector, List<List<String>> cycles, NeighborIndex<String, DefaultEdge> neighborIndex) {
         String lastNode = vector.get(vector.size() - 1); // Last node in the vertex (the node we will be working with)
         String secondToLastNode = vector.get(vector.size() - 2); // The node before that
         String firstNode = vector.get(0); // The first node (which we are trying to circle back to)
