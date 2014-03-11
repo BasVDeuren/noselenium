@@ -1,5 +1,7 @@
 package be.kdg.spacecrack.model;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import java.util.List;
 
 /**
@@ -30,5 +32,14 @@ public class Perimeter {
 
     public void setInsidePlanets(List<Planet> insidePlanets) {
         this.insidePlanets = insidePlanets;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if(!(other instanceof Perimeter)) {
+            return false;
+        }
+        Perimeter otherPerimeter = (Perimeter) other;
+        return CollectionUtils.isEqualCollection(outsidePlanets, otherPerimeter.getOutsidePlanets()) && CollectionUtils.isEqualCollection(insidePlanets, otherPerimeter.getInsidePlanets());
     }
 }
