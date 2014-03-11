@@ -36,6 +36,8 @@ public class GameService implements IGameService {
 
     public static final int NEWCOLONYSTRENGTH = 1;
 
+
+
     @Autowired
     IPlanetRepository planetRepository;
 
@@ -60,8 +62,7 @@ public class GameService implements IGameService {
     @Autowired
     IViewModelConverter viewModelConverter;
 
-    @Autowired
-    IGraphService graphService;
+
 
     @Autowired
     AsyncConfig asyncConfig;
@@ -156,12 +157,11 @@ public class GameService implements IGameService {
         moveShipHandler.validateMove(ship, destinationPlanet);
         moveShipHandler.moveShip(ship, destinationPlanet);
         checkLost(game);
-        updateGame(game);
-
+        gameRepository.updateGame(game);
     }
 
-    private void validateActionMakeSureGameIsNotFinishedYet(Game game) {
-        if (game.getLoserPlayerId() != 0) {
+    private void validateActionMakeSureGameIsNotFinishedYet(Game game){
+        if(game.getLoserPlayerId() != 0){
             throw new SpaceCrackNotAcceptableException("Game is already finished.");
         }
     }
@@ -201,7 +201,7 @@ public class GameService implements IGameService {
         } else {
             throw new SpaceCrackNotAcceptableException("Turn is already ended");
         }
-        updateGame(game);
+        gameRepository.updateGame(game);
 
     }
 
@@ -216,8 +216,8 @@ public class GameService implements IGameService {
     }
 
     private void checkLost(Game gameByGameId) {
-        for (Player player : gameByGameId.getPlayers()) {
-            if (player.getColonies().size() == 0) {
+        for(Player player : gameByGameId.getPlayers()){
+            if(player.getColonies().size() == 0){
                 gameByGameId.setLoserPlayerId(player.getPlayerId());
             }
         }
@@ -286,7 +286,7 @@ public class GameService implements IGameService {
 
 
     // Call when a new colony has been captured, try to find if it is part of a new perimeter
-    private List<Perimeter> detectPerimeter(Player player, Colony newColony) {
+    public List<Perimeter> detectPerimeter(Player player, Colony newColony) {
         // List of perimeters to return
         List<Perimeter> perimeters = new ArrayList<Perimeter>();
         // Get all colonies of this player (= the graph to find perimeters within)
@@ -294,13 +294,24 @@ public class GameService implements IGameService {
         List<Colony> colonies = player.getColonies();
         Map<String, Planet> playerPlanetsMap = new HashMap<String, Planet>();
         List<Planet> playerPlanetsList = new ArrayList<Planet>();
-        for (Colony colony : colonies) {
+        // add colonies to the graph
+        for(Colony colony : colonies) {
             Planet planet = colony.getPlanet();
             playerPlanetsList.add(planet);
             playerPlanetsMap.put(planet.getName(), planet);
             graph.addVertex(planet.getName());
-            for (PlanetConnection connection : planet.getPlanetConnections()) {
-                graph.addEdge(connection.getParentPlanet().getName(), connection.getChildPlanet().getName());
+        }
+        // add the new colony as well
+        Planet newPlanet = newColony.getPlanet();
+        playerPlanetsList.add(newPlanet);
+        playerPlanetsMap.put(newPlanet.getName(), newPlanet);
+        graph.addVertex(newPlanet.getName());
+        // add connections between colonies to the graph
+        for(Planet planet : playerPlanetsList) {
+            for(PlanetConnection connection : planet.getPlanetConnections()) {
+                if(playerPlanetsList.contains(connection.getChildPlanet())) {
+                    graph.addEdge(connection.getParentPlanet().getName(), connection.getChildPlanet().getName());
+                }
             }
         }
 
@@ -309,12 +320,12 @@ public class GameService implements IGameService {
         targetPlanets.removeAll(playerPlanetsList); // all planets without already captured planets
 
         // Find chordless cycles of the graph
-        List<List<String>> cycles = graphService.calculateChordlessCyclesFromVertex(graph, newColony.getPlanet().getName());
+        List<List<String>> cycles = GraphAlgorithm.calculateChordlessCyclesFromVertex(graph, newColony.getPlanet().getName());
 
         // For every cycles, make a possible perimeter
-        for (List<String> cycle : cycles) {
-            Perimeter perimeter = new Perimeter();
-            for (String vertex : cycle) {
+        for(List<String> cycle : cycles) {
+            Perimeter perimeter = new Perimeter(new ArrayList<Planet>(), new ArrayList<Planet>());
+            for(String vertex : cycle) {
                 Planet planet = playerPlanetsMap.get(vertex);
                 perimeter.getOutsidePlanets().add(planet);
             }
@@ -322,34 +333,36 @@ public class GameService implements IGameService {
         }
 
         // For every polygon (=cycle) test if it contains a target planet
-        for (Planet target : targetPlanets) {
+        for(Planet target : targetPlanets) {
             List<Perimeter> perimetersForTarget = new ArrayList<Perimeter>();
-            for (Perimeter perimeter : perimeters) {
+            for(Perimeter perimeter : perimeters) {
                 Polygon polygon = new Polygon();
-                for (Planet planet : perimeter.getOutsidePlanets()) {
+                for(Planet planet : perimeter.getOutsidePlanets()) {
                     polygon.addPoint(planet.getX(), planet.getY());
                 }
 
-                if (polygon.contains(target.getX(), target.getY())) {
+                if(polygon.contains(target.getX(), target.getY())) {
                     // This is a perimeter for this target planet (but check if it is the smallest)
                     perimetersForTarget.add(perimeter);
                 }
             }
 
-            Perimeter smallestPerimeter = perimetersForTarget.get(0);
-            for (Perimeter perimeter : perimetersForTarget) {
-                if (perimeter.getOutsidePlanets().size() < smallestPerimeter.getOutsidePlanets().size()) {
-                    smallestPerimeter = perimeter;
+            if(!perimetersForTarget.isEmpty()) {
+                Perimeter smallestPerimeter = perimetersForTarget.get(0);
+                for(Perimeter perimeter : perimetersForTarget) {
+                    if(perimeter.getOutsidePlanets().size() < smallestPerimeter.getOutsidePlanets().size()) {
+                        smallestPerimeter = perimeter;
+                    }
                 }
-            }
 
-            smallestPerimeter.getInsidePlanets().add(target);
+                smallestPerimeter.getInsidePlanets().add(target);
+            }
         }
 
         // Remove all the perimeters without inside planets
-        for (Iterator<Perimeter> i = perimeters.iterator(); i.hasNext(); ) {
+        for(Iterator<Perimeter> i = perimeters.iterator(); i.hasNext(); ) {
             Perimeter perimeter = i.next();
-            if (perimeter.getInsidePlanets().size() == 0) {
+            if(perimeter.getInsidePlanets().size() == 0) {
                 i.remove();
             }
         }

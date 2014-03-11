@@ -34,12 +34,14 @@ public class GameServiceTests extends BaseUnitTest {
     private GameService gameService;
     private User user;
     private IPlayerRepository playerRepository;
+    private IPlanetRepository planetRepository;
     private Profile opponentProfile;
 
 
     @Before
     public void setUp() throws Exception {
         playerRepository = new PlayerRepository(sessionFactory);
+        planetRepository = new PlanetRepository(sessionFactory);
         ColonyRepository colonyRepository = new ColonyRepository(sessionFactory);
         ShipRepository shipRepository = new ShipRepository(sessionFactory);
         gameService = new GameService(new PlanetRepository(sessionFactory), colonyRepository, shipRepository, playerRepository, new GameRepository(sessionFactory), new MoveShipHandler(colonyRepository), new ViewModelConverter(), mock(IFirebaseUtil.class));
@@ -343,4 +345,79 @@ public class GameServiceTests extends BaseUnitTest {
         //endregion
     }
 
+    @Transactional
+    @Test
+    public void detectPerimeter_perimeterWithPlanetNotOnEdge_perimeterDetected() throws Exception {
+        Game game = createGame();
+        Player player = game.getPlayers().get(0);
+
+        MapFactory factory = new MapFactory(sessionFactory, planetRepository);
+        SpaceCrackMap map = factory.getSpaceCrackMap();
+
+        String[] planetNames = { "e", "f", "h", "i"}; // perimeter (without last conquered planet)
+        String conqueredPlanetName = "c";
+        String surrounded = "g"; // inside
+        List<Planet> expectedPerimeter = new ArrayList<Planet>();
+
+        for(String name : planetNames) {
+            Planet planet = planetRepository.getPlanetByName(name);
+            Colony colony = new Colony(planet);
+            player.addColony(colony);
+            expectedPerimeter.add(planet);
+        }
+
+        Planet conqueredPlanet = planetRepository.getPlanetByName(conqueredPlanetName);
+        Colony newColony = new Colony(conqueredPlanet);
+        expectedPerimeter.add(conqueredPlanet);
+
+        List<Perimeter> perimeters = gameService.detectPerimeter(player, newColony);
+
+        // perimeters should only include 1 perimeter [hence get(0)]
+        System.out.println(perimeters.get(0).getInsidePlanets().get(0).getName());
+        assertEquals("Only one planet should be surrounded by this perimeter.", perimeters.get(0).getInsidePlanets().size(), 1);
+        assertEquals("Planet 'b' should be surrounded by this perimeter.", perimeters.get(0).getInsidePlanets().get(0).getName().toLowerCase(), surrounded.toLowerCase());
+        assertTrue("Outside planets of perimeter should match.", CollectionUtils.isEqualCollection(perimeters.get(0).getOutsidePlanets(), expectedPerimeter));
+    }
+
+/*
+    @Transactional
+    @Test
+    public void detectPerimeter_perimeterWithPlanetOnEdge_perimeterDetected() throws Exception {
+        Game game = creategame();
+        Player player = game.getPlayers().get(0);
+
+
+        //IPlanetRepository mockPlanetRepository = mock(IPlanetRepository.class);
+       // MapFactory factory = new MapFactory(sessionFactory, mockPlanetRepository);
+        MapFactory factory = new MapFactory(sessionFactory, planetRepository);
+        SpaceCrackMap map = factory.getSpaceCrackMap();
+
+        String[] planetNames = { "a", "b2", "d2", "c"}; // perimeter (without last conquered planet)
+        String conqueredPlanetName = "d";
+        String surrounded = "b"; // inside
+        List<Planet> expectedPerimeter = new ArrayList<Planet>();
+
+        for(String name : planetNames) {
+            Planet planet = planetRepository.getPlanetByName(name);
+            Colony colony = new Colony(planet);
+            player.addColony(colony);
+            expectedPerimeter.add(planet);
+        }
+
+        Planet conqueredPlanet = planetRepository.getPlanetByName(conqueredPlanetName);
+        Colony newColony = new Colony(conqueredPlanet);
+        expectedPerimeter.add(conqueredPlanet);
+
+        List<Perimeter> perimeters = gameService.detectPerimeter(player, newColony);
+
+        // perimeters should only include 1 perimeter [hence get(0)]
+        assertEquals("Only one planet should be surrounded by this perimeter.", perimeters.get(0).getInsidePlanets().size(), 1);
+        assertEquals("Planet 'b' should be surrounded by this perimeter.", perimeters.get(0).getInsidePlanets().get(0).getName().toLowerCase(), surrounded.toLowerCase());
+        assertTrue("Outside planets of perimeter should match.", CollectionUtils.isEqualCollection(perimeters.get(0).getOutsidePlanets(), expectedPerimeter));
+    }
+
+
+    public void detectPerimeter_perimeterWithTwoPlanets_perimeterDetected() throws Exception {}
+    public void detectPerimeter_twoPerimeters_bothPerimetersDetected() throws Exception {}
+    */
 }

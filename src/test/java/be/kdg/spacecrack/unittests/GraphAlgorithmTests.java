@@ -1,6 +1,6 @@
 package be.kdg.spacecrack.unittests;
 
-import be.kdg.spacecrack.services.GraphService;
+import be.kdg.spacecrack.services.GraphAlgorithm;
 import junit.framework.Assert;
 import org.jgrapht.Graphs;
 import org.jgrapht.UndirectedGraph;
@@ -15,16 +15,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+
 
 /**
  * Created by Janne on 5/03/14.
  */
-public class GraphServiceTests extends BaseUnitTest {
-    private GraphService graphService;
+public class GraphAlgorithmTests extends BaseUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        graphService = new GraphService();
     }
 
     @Test
@@ -36,7 +36,7 @@ public class GraphServiceTests extends BaseUnitTest {
         // Calculate cycles
         // Returns a list of cycles
         // A cycles = an ordered list of vertices (but undirected)
-        List<List<String>> cyclesFound = graphService.calculateChordlessCyclesFromVertex(graph, getBaseVertex());
+        List<List<String>> cyclesFound = GraphAlgorithm.calculateChordlessCyclesFromVertex(graph, getBaseVertex());
 
         // Rotate to keep the order but synchronize the starting vertex
         for(List<String> cycle : cyclesFound) {
@@ -53,7 +53,7 @@ public class GraphServiceTests extends BaseUnitTest {
         cyclesExpected.add(Arrays.asList("A", "D", "E", "B"));
         cyclesExpected.add(Arrays.asList("A", "D", "G", "H", "I", "F", "C", "B"));
 
-        Assert.assertEquals("Chordless cycles should match", cyclesExpected, cyclesFound); // Test output
+        assertEquals("Chordless cycles should match", cyclesExpected, cyclesFound); // Test output
     }
 
     @Test
@@ -65,7 +65,7 @@ public class GraphServiceTests extends BaseUnitTest {
         // Calculate cycles
         // Returns a list of cycles
         // A cycles = an ordered list of vertices (but undirected)
-        List<List<String>> cyclesFound = graphService.calculateChordlessCyclesFromVertex(graph, "B"); // A is the baseVertex, so take another one
+        List<List<String>> cyclesFound = GraphAlgorithm.calculateChordlessCyclesFromVertex(graph, "B"); // A is the baseVertex, so take another one
 
         // Rotate to keep the order but synchronize the starting vertex
         for(List<String> cycle : cyclesFound) {
@@ -92,7 +92,7 @@ public class GraphServiceTests extends BaseUnitTest {
         UndirectedGraph<String, DefaultEdge> graph = createGraphWithoutCycles();
 
         // Get cycles
-        List<List<String>> cyclesFound = graphService.calculateChordlessCyclesFromVertex(graph, "H"); // Test from H to test more than 1 node away
+        List<List<String>> cyclesFound = GraphAlgorithm.calculateChordlessCyclesFromVertex(graph, "H"); // Test from H to test more than 1 node away
 
         Assert.assertTrue("List of cycles found should be empty", cyclesFound.isEmpty());
     }
