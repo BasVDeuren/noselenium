@@ -8,7 +8,6 @@ package be.kdg.spacecrack.repositories;/* Git $Id
 
 import be.kdg.spacecrack.model.Colony;
 import be.kdg.spacecrack.model.Game;
-import be.kdg.spacecrack.services.IColonyRepository;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -31,17 +30,7 @@ public class ColonyRepository implements IColonyRepository {
         this.sessionFactory = sessionFactory;
     }
 
-    @Override
-    public void createColony(Colony colony) {
-        Session session = sessionFactory.getCurrentSession();
-        session.saveOrUpdate(colony);
-    }
 
-    @Override
-    public void updateColony(Colony colony) {
-        Session session = sessionFactory.getCurrentSession();
-        session.update(colony);
-    }
 
     @Override
     public List<Colony> getColoniesByGame(Game game) {
@@ -74,9 +63,5 @@ public class ColonyRepository implements IColonyRepository {
 
     }
 
-    @Override
-    public void deleteColony(Colony colony) {
-        Session session = sessionFactory.getCurrentSession();
-        session.delete(colony);
-    }
+
 }

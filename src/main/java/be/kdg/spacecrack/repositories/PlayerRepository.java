@@ -27,20 +27,7 @@ public class PlayerRepository implements IPlayerRepository {
         this.sessionFactory = sessionFactory;
     }
 
-    @Override
-    public void createPlayer(Player player) {
-        Session session = sessionFactory.getCurrentSession();
-        session.saveOrUpdate(player);
-    }
 
-    @Override
-    public void updatePlayer(Player player) {
-        Session session = sessionFactory.getCurrentSession();
-
-        session.update(player);
-
-
-    }
 
     @Override
     public Player getPlayerByPlayerId(int playerId) {
@@ -49,13 +36,9 @@ public class PlayerRepository implements IPlayerRepository {
 
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Player p where p.playerId = :playerId");
         q.setParameter("playerId", playerId);
-        try{
+
             player = (Player) q.uniqueResult();
 
-        }catch (Exception ex)
-        {
-            boolean b = true;
-        }
 
 
 

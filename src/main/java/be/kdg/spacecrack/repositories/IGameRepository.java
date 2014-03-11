@@ -7,7 +7,6 @@ package be.kdg.spacecrack.repositories;/* Git $Id
  */
 
 import be.kdg.spacecrack.model.Game;
-import be.kdg.spacecrack.model.Player;
 import be.kdg.spacecrack.model.Profile;
 
 import java.util.List;
@@ -22,7 +21,7 @@ public interface IGameRepository {
 
     Game getGameByGameId(int gameId);
 
-    Game getGameByPlayer(Player player);
+
 
     Game getGameRevision(Number number, int gameId);
 

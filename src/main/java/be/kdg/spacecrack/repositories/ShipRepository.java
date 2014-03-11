@@ -27,14 +27,7 @@ public class ShipRepository implements IShipRepository {
         this.sessionFactory = sessionFactory;
     }
 
-    @Override
-    public void createShip(Ship ship) {
-        Session session = sessionFactory.getCurrentSession();
 
-        session.saveOrUpdate(ship);
-
-
-    }
 
     @Override
     public Ship getShipByShipId(int shipId) {
@@ -49,23 +42,5 @@ public class ShipRepository implements IShipRepository {
         return ship;
     }
 
-    @Override
-    public void updateShip(Ship ship) {
-        Session session = sessionFactory.getCurrentSession();
 
-        session.saveOrUpdate(ship);
-
-
-    }
-
-    @Override
-    public void deleteShip(Ship ship) {
-
-        Session session = sessionFactory.getCurrentSession();
-
-
-        session.delete(ship);
-
-
-    }
 }

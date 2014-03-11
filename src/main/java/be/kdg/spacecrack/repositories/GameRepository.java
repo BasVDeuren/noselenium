@@ -7,7 +7,6 @@ package be.kdg.spacecrack.repositories;/* Git $Id
  */
 
 import be.kdg.spacecrack.model.Game;
-import be.kdg.spacecrack.model.Player;
 import be.kdg.spacecrack.model.Profile;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -77,17 +76,6 @@ public class GameRepository implements IGameRepository {
         return game;
     }
 
-    @Override
-    public Game getGameByPlayer(Player player) {
-        Session session = sessionFactory.getCurrentSession();
-        Game game;
-
-        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Game g where :player in (from Player p where p.game = g)");
-        q.setParameter("player", player);
-        game = (Game) q.uniqueResult();
-
-        return game;
-    }
 
 
     @Override

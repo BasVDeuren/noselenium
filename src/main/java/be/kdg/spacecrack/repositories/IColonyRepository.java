@@ -1,4 +1,4 @@
-package be.kdg.spacecrack.services;/* Git $Id
+package be.kdg.spacecrack.repositories;/* Git $Id
  *
  * Project Application Development
  * Karel de Grote-Hogeschool
@@ -12,13 +12,11 @@ import be.kdg.spacecrack.model.Game;
 import java.util.List;
 
 public interface IColonyRepository {
-    void createColony(Colony colony);
 
-    void updateColony(Colony colony);
 
     List<Colony> getColoniesByGame(Game game);
 
     Colony getColonyById(Integer colonyId);
 
-    void deleteColony(Colony opponentColony);
+
 }

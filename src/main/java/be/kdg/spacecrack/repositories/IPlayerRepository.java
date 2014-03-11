@@ -9,9 +9,7 @@ package be.kdg.spacecrack.repositories;/* Git $Id
 import be.kdg.spacecrack.model.Player;
 
 public interface IPlayerRepository {
-    void createPlayer(Player player);
 
-    void updatePlayer(Player player);
 
     Player getPlayerByPlayerId(int playerId);
 }

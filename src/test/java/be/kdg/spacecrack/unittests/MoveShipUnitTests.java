@@ -12,7 +12,7 @@ import be.kdg.spacecrack.repositories.IPlanetRepository;
 import be.kdg.spacecrack.repositories.IPlayerRepository;
 import be.kdg.spacecrack.repositories.IShipRepository;
 import be.kdg.spacecrack.services.GameService;
-import be.kdg.spacecrack.services.IColonyRepository;
+import be.kdg.spacecrack.repositories.IColonyRepository;
 import be.kdg.spacecrack.services.handlers.MoveShipHandler;
 import be.kdg.spacecrack.utilities.IFirebaseUtil;
 import be.kdg.spacecrack.utilities.ViewModelConverter;
