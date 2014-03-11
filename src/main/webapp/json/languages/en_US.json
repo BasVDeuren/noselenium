@@ -47,5 +47,7 @@
     "COMMANDPOINTS": "Command Points",
     "INSUFFICIENTCOMMANDPOINTS": "Insufficient command points",
     "TURNENDED": "Your turn has ended!",
-    "LOSTTHEGAME": "You have lost the game."
+    "LOSTTHEGAME": "You have lost the game.",
+    "ARROWS": "Use the arrow keys to navigate the map.",
+    "REPLAY":"From what game do you want to see the replay?"
 }

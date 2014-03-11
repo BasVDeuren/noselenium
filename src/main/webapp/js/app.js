@@ -10,8 +10,7 @@ function appRouter($routeProvider, $httpProvider) {
 
     var interceptor = ['$rootScope', '$q', '$location', function ($rootScope, $q, $location) {
         function success(response) {
-            if(response.config.url.indexOf("/api/auth") > -1)
-            {
+            if (response.config.url.indexOf("/api/auth") > -1) {
                 $rootScope.loggedInBool = true;
                 $rootScope.$apply();
             }
@@ -92,6 +91,9 @@ function appRouter($routeProvider, $httpProvider) {
         }).when('/spacecrack/oldgame/:gameId', {
             templateUrl: 'partials/oldgame.html',
             controller: 'ReplayGameController'
+        }).when('/spacecrack/matchhistory', {
+            templateUrl: 'partials/matchhistory.html',
+            controller: 'ActiveGamesController'
         });
 
     $routeProvider.otherwise({redirectTo: '/notFound'});
@@ -128,10 +130,11 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
 
 });
 
-(function(d, s, id) {
+(function (d, s, id) {
     var js, fjs = d.getElementsByTagName(s)[0];
     if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
+    js = d.createElement(s);
+    js.id = id;
     js.src = "//connect.facebook.net/nl_NL/all.js#xfbml=1";
     fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));

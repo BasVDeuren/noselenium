@@ -47,5 +47,7 @@
     "COMMANDPOINTS": "Commando punten",
     "INSUFFICIENTCOMMANDPOINTS": "Onvoldoende commando punten",
     "TURNENDED": "Je beurt is al over!",
-    "LOSTTHEGAME": "Je hebt het spel verloren."
+    "LOSTTHEGAME": "Je hebt het spel verloren.",
+    "ARROWS": "Use the arrow keys to navigate the map.",
+    "REPLAY":"Van welk spel wil je de replay bekijken?"
 }

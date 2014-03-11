@@ -86,6 +86,7 @@ public class Player {
 
     public void setProfile(Profile profile) {
         this.profile = profile;
+        profile.internalAddPlayer(this);
     }
 
 
@@ -121,7 +122,7 @@ public class Player {
     public void addColony(Colony colony) {
 
         colonies.add(colony);
-        colony.setPlayer(this);
+        colony.internalSetPlayer(this);
     }
 
     public void removeColony(Colony colony) {

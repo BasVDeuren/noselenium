@@ -363,4 +363,6 @@ public class GameService implements IGameService {
         return viewModelConverter.convertGameToViewModel(gameRevision);
 
     }
+
+
 }
