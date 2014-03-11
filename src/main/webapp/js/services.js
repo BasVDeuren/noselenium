@@ -83,4 +83,6 @@ angular.module('spaceServices', ['ngResource'])
 
     }).factory('AuthorizationService', function($resource){
         return $resource('/api/auth/accesstokens');
+    }).factory('ReplayGame', function($resource){
+        return $resource('/api/auth/replay/:playerId', {playerId: '@playerId'});
     });

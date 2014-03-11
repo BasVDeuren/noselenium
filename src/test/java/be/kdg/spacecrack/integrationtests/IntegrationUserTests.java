@@ -5,9 +5,7 @@ import be.kdg.spacecrack.repositories.UserRepository;
 import be.kdg.spacecrack.viewmodels.UserViewModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.CoreMatchers;
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
@@ -145,13 +143,4 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
         mockMvc.perform(getUserRequestBuilder).andExpect(status().isUnauthorized());
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Session session = sessionFactory.getCurrentSession();
-
-        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User");
-        q.executeUpdate();
-
-
-    }
 }

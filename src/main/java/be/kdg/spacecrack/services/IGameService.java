@@ -7,6 +7,7 @@ package be.kdg.spacecrack.services;/* Git $Id
  */
 
 import be.kdg.spacecrack.model.*;
+import be.kdg.spacecrack.viewmodels.GameViewModel;
 
 import java.util.List;
 
@@ -37,5 +38,11 @@ public interface IGameService {
 
     void validateAction(Integer playerId);
 
-    void startReplay(int playerId, String firebaseURL);
+    void startReplay(int playerId, String firebaseSuffix);
+
+    List<Number> getRevisionNumbers(int gameId);
+
+
+
+    GameViewModel getGameRevisionByNumber(int gameId, Number number);
 }

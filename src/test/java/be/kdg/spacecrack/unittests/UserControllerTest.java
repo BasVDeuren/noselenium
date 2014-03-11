@@ -1,6 +1,5 @@
 package be.kdg.spacecrack.unittests;
 
-import be.kdg.spacecrack.Exceptions.SpaceCrackAlreadyExistsException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackUnauthorizedException;
 import be.kdg.spacecrack.controllers.UserController;
@@ -12,9 +11,6 @@ import be.kdg.spacecrack.services.IUserService;
 import be.kdg.spacecrack.services.UserService;
 import be.kdg.spacecrack.viewmodels.UserViewModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -207,13 +203,4 @@ public class UserControllerTest extends BaseUnitTest {
         assertEquals("Users from usercontroller should be the same as from db", actualUser, user2);
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Session session = sessionFactory.getCurrentSession();
-
-        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User");
-        q.executeUpdate();
-
-
-    }
 }

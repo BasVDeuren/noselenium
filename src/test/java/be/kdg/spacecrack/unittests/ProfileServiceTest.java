@@ -11,9 +11,7 @@ import be.kdg.spacecrack.repositories.UserRepository;
 import be.kdg.spacecrack.services.AuthorizationService;
 import be.kdg.spacecrack.services.ProfileService;
 import be.kdg.spacecrack.utilities.TokenStringGenerator;
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.verification.VerificationModeFactory;
@@ -124,12 +122,4 @@ public class ProfileServiceTest extends BaseUnitTest{
         verify(profileRepository, VerificationModeFactory.times(1)).editContact(profile);
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Session session = sessionFactory.getCurrentSession();
-
-        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User");
-        q.executeUpdate();
-
-    }
 }

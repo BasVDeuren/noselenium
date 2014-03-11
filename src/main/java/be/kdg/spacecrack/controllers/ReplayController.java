@@ -6,9 +6,9 @@ package be.kdg.spacecrack.controllers;/* Git $Id$
  *
  */
 
+import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.services.IGameService;
-import be.kdg.spacecrack.utilities.FirebaseUtil;
-import be.kdg.spacecrack.viewmodels.FirebaseURLViewModel;
+import be.kdg.spacecrack.viewmodels.GameViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
+
 @Controller
-@RequestMapping(value = "/auth/replay/{playerId}")
+@RequestMapping(value = "/auth/replay/{gameId}")
 public class ReplayController {
 
 
@@ -35,15 +37,33 @@ public class ReplayController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public FirebaseURLViewModel getGameByGameId(@PathVariable final String playerId) {
-        final String firebaseURL = FirebaseUtil.FIREBASEURLBASE + "oldGame/" + playerId;
+    public List<Number> getRevisionNumbers(@PathVariable final String gameId) {
+        try {
+            return gameService.getRevisionNumbers(Integer.parseInt(gameId));
+        } catch (NumberFormatException numberFormatException) {
+            throw new SpaceCrackNotAcceptableException("Invalid number format for pathvariable gameId");
+        }
+    }
 
-        gameService.startReplay(Integer.parseInt(playerId), firebaseURL);
+    @RequestMapping(method = RequestMethod.GET, value = "/{revisionNumber}")
+    @ResponseBody
+    public GameViewModel getRevision(@PathVariable("gameId") final String gameId, @PathVariable("revisionNumber") final String revisionNumber) {
+        int revisionNumberInt;
+        try {
+            revisionNumberInt = Integer.parseInt(revisionNumber);
+        } catch (NumberFormatException numberFormatException) {
+            throw new SpaceCrackNotAcceptableException("Invalid number format for pathvariable revisionNumber");
+        }
 
-        System.out.println("THIS SHOULD HAPPEN FIRST");
-        FirebaseURLViewModel firebaseURLViewModel = new FirebaseURLViewModel();
-        firebaseURLViewModel.setFirebaseUrl(firebaseURL);
-        return firebaseURLViewModel;
+        int gameIdInt;
+        try {
+            gameIdInt = Integer.parseInt(gameId);
+        } catch (NumberFormatException numberFormatException) {
+            throw new SpaceCrackNotAcceptableException("Invalid number format for pathvariable gameId");
+        }
+
+        return gameService.getGameRevisionByNumber(gameIdInt, revisionNumberInt);
+
     }
 
 }

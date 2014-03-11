@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.Executor;
 
 
 /* Git $Id$
@@ -292,19 +291,26 @@ public class GameService implements IGameService {
     }
 
     @Override
-   // @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    public void startReplay(final int playerId, final String firebaseURL) {
+    public void startReplay(final int playerId, final String firebaseSuffix) {
         Player playerByPlayerId = playerRepository.getPlayerByPlayerId(playerId);
         final Game game = playerByPlayerId.getGame();
         final List<Number> revisions = gameRepository.getRevisionNumbers(game.getGameId());
-        final List<Game> gameRevisions = new ArrayList<Game>();
+        final List<GameViewModel> gameRevisionViewModels = new ArrayList<GameViewModel>();
         for (Number number : revisions) {
-            gameRevisions.add(gameRepository.getGameRevision(number, game.getGameId()));
+            Game gameRevision = gameRepository.getGameRevision(number, game.getGameId());
+            GameViewModel gameViewModel = viewModelConverter.convertGameToViewModel(gameRevision);
+            gameRevisionViewModels.add(gameViewModel);
         }
-        Executor asyncExecutor = asyncConfig.getAsyncExecutor();
+        //Executor asyncExecutor = asyncConfig.getAsyncExecutor();
 
-        asyncExecutor.execute(new ReplayHandler(viewModelConverter, firebaseUtil, gameRevisions, firebaseURL));
+        //asyncExecutor.execute(new ReplayHandler(viewModelConverter, firebaseUtil, gameRevisions, firebaseURL));
+        Thread replayHandler = new ReplayHandler( firebaseUtil, gameRevisionViewModels, firebaseSuffix);
+        replayHandler.start();
+    }
 
+    @Override
+    public List<Number> getRevisionNumbers(int gameId) {
+        return gameRepository.getRevisionNumbers(gameId);
     }
 
 
@@ -380,4 +386,10 @@ public class GameService implements IGameService {
         return perimeters;
     }
 
+    @Override
+    public GameViewModel getGameRevisionByNumber(int gameId, Number number) {
+        Game gameRevision = gameRepository.getGameRevision(number, gameId);
+        return viewModelConverter.convertGameToViewModel(gameRevision);
+
+    }
 }

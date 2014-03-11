@@ -12,7 +12,6 @@ import be.kdg.spacecrack.services.AuthorizationService;
 import be.kdg.spacecrack.utilities.ITokenStringGenerator;
 import be.kdg.spacecrack.utilities.TokenStringGenerator;
 import org.hibernate.Session;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -93,11 +92,4 @@ public class TokenControllerTests extends BaseUnitTest{
     }
 
 
-    @After
-    public void tearDown() throws Exception {
-        Session session = sessionFactory.getCurrentSession();
-
-        session.delete(testUser);
-
-    }
 }

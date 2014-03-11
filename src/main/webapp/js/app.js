@@ -55,7 +55,7 @@ function appRouter($routeProvider, $httpProvider) {
         })
         .when('/spacecrack/game', {
             templateUrl: 'partials/game.html',
-            controller: 'BetterGameController'
+            controller: 'GameController'
         })
         .when('/spacecrack/register', {
             templateUrl: 'partials/register.html',
@@ -71,7 +71,7 @@ function appRouter($routeProvider, $httpProvider) {
         })
         .when('/spacecrack/game/:gameId', {
             templateUrl: 'partials/game.html',
-            controller: 'BetterGameController'
+            controller: 'GameController'
         })
         .when('/spacecrack/activegames', {
             templateUrl: 'partials/activeGames.html',
@@ -89,6 +89,9 @@ function appRouter($routeProvider, $httpProvider) {
         }).when('/spacecrack/chat', {
             templateUrl: 'partials/chat.html',
             controller: 'ChatController'
+        }).when('/spacecrack/oldgame/:gameId', {
+            templateUrl: 'partials/oldgame.html',
+            controller: 'ReplayGameController'
         });
 
     $routeProvider.otherwise({redirectTo: '/notFound'});

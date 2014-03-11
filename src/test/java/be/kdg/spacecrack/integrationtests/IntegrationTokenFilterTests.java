@@ -9,7 +9,6 @@ import be.kdg.spacecrack.services.AuthorizationService;
 import be.kdg.spacecrack.utilities.TokenStringGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.Session;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -85,11 +84,5 @@ public class IntegrationTokenFilterTests extends BaseFilteredIntegrationTests {
         mockMvc.perform(requestBuilder.cookie(new Cookie("accessToken", "%22" + validToken.getValue() + "%22"))).andExpect(status().isOk());
     }
 
-    @After
-    public void tearDown() throws Exception {
-        Session session = sessionFactory.getCurrentSession();
 
-        session.delete(testUser);
-
-    }
 }

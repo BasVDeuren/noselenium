@@ -6,6 +6,7 @@ package be.kdg.spacecrack.controllers;/* Git $Id
  *
  */
 
+import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.model.Game;
 import be.kdg.spacecrack.model.Player;
 import be.kdg.spacecrack.model.Profile;
@@ -87,7 +88,12 @@ public class GameController {
     @RequestMapping(value = "/specificGame/{gameId}", method = RequestMethod.GET)
     @ResponseBody
     public GameActivePlayerWrapper getGameByGameId(@CookieValue("accessToken") String accessTokenValue, @PathVariable String gameId) {
-        Game game = gameService.getGameByGameId(Integer.parseInt(gameId));
+        Game game;
+        try {
+            game = gameService.getGameByGameId(Integer.parseInt(gameId));
+        } catch (NumberFormatException nex) {
+            throw new SpaceCrackNotAcceptableException("Invalid number format for pathvariable gameId");
+        }
         User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
         Player player = gameService.getActivePlayer(user, game);
         GameViewModel gameViewModel = viewModelConverter.convertGameToViewModel(game);

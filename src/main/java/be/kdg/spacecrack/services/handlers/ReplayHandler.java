@@ -6,37 +6,37 @@ package be.kdg.spacecrack.services.handlers;/* Git $Id$
  *
  */
 
-import be.kdg.spacecrack.model.Game;
 import be.kdg.spacecrack.utilities.IFirebaseUtil;
-import be.kdg.spacecrack.utilities.IViewModelConverter;
 import be.kdg.spacecrack.viewmodels.GameViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class ReplayHandler implements Runnable {
+public class ReplayHandler extends Thread {
 
-    IViewModelConverter viewModelConverter;
 
     IFirebaseUtil firebaseUtil;
 
-    List<Game> gameRevisions = new ArrayList<Game>();
+    List<GameViewModel> gameRevisions = new ArrayList<GameViewModel>();
     private String firebaseURL;
 
-    public ReplayHandler(IViewModelConverter viewModelConverter, IFirebaseUtil firebaseUtil, List<Game> gameRevisions, String firebaseURL) {
-        this.viewModelConverter = viewModelConverter;
+    public ReplayHandler(IFirebaseUtil firebaseUtil, List<GameViewModel> gameRevisionViewModels, String firebaseURL) {
         this.firebaseUtil = firebaseUtil;
-        this.gameRevisions = gameRevisions;
+        this.gameRevisions = gameRevisionViewModels;
         this.firebaseURL = firebaseURL;
     }
 
     @Override
     public void run() {
         System.out.println("started Replay");
-        for (Game gameRevision : gameRevisions) {
-            GameViewModel gameViewModel = viewModelConverter.convertGameToViewModel(gameRevision);
-            firebaseUtil.setValue(firebaseURL, gameViewModel);
+        for (GameViewModel gameRevision : gameRevisions) {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+           firebaseUtil.setValue(firebaseURL, gameRevision);
         }
     }
 }

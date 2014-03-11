@@ -8,9 +8,6 @@ import be.kdg.spacecrack.repositories.TokenRepository;
 import be.kdg.spacecrack.repositories.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.CoreMatchers;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
@@ -168,15 +165,4 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
 
 
 
-    @After
-    public void tearDown() throws Exception {
-
-        Session session = sessionFactory.getCurrentSession();
-
-
-        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User");
-        q.executeUpdate();
-
-
-    }
 }

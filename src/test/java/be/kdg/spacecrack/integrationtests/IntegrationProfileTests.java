@@ -10,9 +10,6 @@ import be.kdg.spacecrack.model.AccessToken;
 import be.kdg.spacecrack.viewmodels.ProfileWrapper;
 import be.kdg.spacecrack.viewmodels.UserViewModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.MediaType;
@@ -59,14 +56,5 @@ public class IntegrationProfileTests extends BaseFilteredIntegrationTests {
     }
 
 
-    @After
-    public void tearDown() throws Exception {
-        Session session = sessionFactory.getCurrentSession();
 
-
-        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User u where u.username= :name  ");
-        q.setParameter("name", USERNAME);
-        q.executeUpdate();
-
-    }
 }
