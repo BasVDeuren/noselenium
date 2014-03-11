@@ -83,6 +83,13 @@ angular.module('spaceServices', ['ngResource'])
 
     }).factory('AuthorizationService', function($resource){
         return $resource('/api/auth/accesstokens');
-    }).factory('ReplayGame', function($resource){
-        return $resource('/api/auth/replay/:playerId', {playerId: '@playerId'});
+    }).factory('ReplayGame', function($resource) {
+        var factory = {};
+        factory.getRevisionsByGameId = function() {
+            return $resource('/api/auth/replay/:gameId', {gameId: '@gameId'},{'get': { method: 'GET', params: {gameId: '@gameId'}, format: 'json', isArray: false }})
+        };
+        factory.getRevisionByRevisionNumber = function() {
+            return $resource('/api/auth/replay/:gameId/:revisionNumber', {gameId:'@gameId', revisionNumber: '@revisionNumber'},{'get': { method: 'GET', params: {gameId: '@gameId', revisionNumber:'@revisionNumber'}, format: 'json', isArray: false }})
+        };
+        return factory;
     });

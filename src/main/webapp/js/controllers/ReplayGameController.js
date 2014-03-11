@@ -10,8 +10,6 @@ spaceApp.controller("ReplayGameController", function ($scope, $translate, Map, G
     var cursors;
     var xExtraByCamera;
     var yExtraByCamera;
-    var firebaseGameRef;
-    var p;
 
     var planetGroup;
     var shipGroup;
@@ -20,6 +18,8 @@ spaceApp.controller("ReplayGameController", function ($scope, $translate, Map, G
 
     $scope.planetXSpritesByLetter = [];
     $scope.colonyXSpritesById = [];
+    $scope.nextRevisionNumber = undefined;
+    $scope.revisionNumbers = undefined;
 
     $scope.game = {
         gameId: "",
@@ -68,6 +68,7 @@ spaceApp.controller("ReplayGameController", function ($scope, $translate, Map, G
     function render() {
 
     }
+
     //endregion
 
     function drawGame() {
@@ -78,7 +79,14 @@ spaceApp.controller("ReplayGameController", function ($scope, $translate, Map, G
             //assign planets to their sprites;
             drawPlanets(data);
             drawConnections();
-            resetGame();
+            if ($scope.revisionNumbers == undefined) {
+
+                ReplayGame.getRevisionsByGameId().get({gameId: $routeParams.gameId}, function (data) {
+                    $scope.revisionNumbers = data.revisions;
+                    $scope.nextRevisionNumber = data.revisions[0];
+                    resetGame();
+                })
+            }
         });
 
         function drawPlanets(data) {
@@ -96,7 +104,8 @@ spaceApp.controller("ReplayGameController", function ($scope, $translate, Map, G
             for (var planetKey in planetArray) {
                 var planet = planetArray[planetKey];
 
-                $scope.planetXSpritesByLetter[planet.name] = new PlanetExtendedSprite(game, planet.x, planet.y, planet, function(){});
+                $scope.planetXSpritesByLetter[planet.name] = new PlanetExtendedSprite(game, planet.x, planet.y, planet, function () {
+                });
                 var planetXSprite = $scope.planetXSpritesByLetter[planet.name];
                 planetGroup.add(planetXSprite);
             }
@@ -119,21 +128,28 @@ spaceApp.controller("ReplayGameController", function ($scope, $translate, Map, G
     }
 
     function resetGame() {
-        ReplayGame.get({playerId: 1}, applyGameActiveViewModelData);
+        var drawRevisions = setInterval(function () {
+            ReplayGame.getRevisionByRevisionNumber().get({gameId: $routeParams.gameId, revisionNumber: $scope.nextRevisionNumber}, applyGameData, function(){
+                clearInterval(drawRevisions);
+            });
+        }, 2000);
     }
 
-    function applyGameActiveViewModelData(data) {
-        $scope.game.activePlayerId = null;
-
-        firebaseGameRef = new Firebase(data.firebaseUrl);
-
-        firebaseGameRef.on('value', function (snapshot) {
-            var gameData = snapshot.val();
-            applyGameData(gameData);
-        });
-    }
 
     function applyGameData(gameData) {
+        var nextRevisionNumber = 0;
+        var takeNextRevisionNumber = false;
+        for (var revisionNumber in $scope.revisionNumbers) {
+            if (takeNextRevisionNumber) {
+                nextRevisionNumber = $scope.revisionNumbers[revisionNumber];
+                takeNextRevisionNumber = false;
+            }
+            if ($scope.nextRevisionNumber == $scope.revisionNumbers[revisionNumber]) {
+                takeNextRevisionNumber = true;
+            }
+        }
+        $scope.nextRevisionNumber = nextRevisionNumber;
+
         $scope.game.gameId = gameData.gameId;
 
         var player1IsActive = false;
@@ -143,20 +159,7 @@ spaceApp.controller("ReplayGameController", function ($scope, $translate, Map, G
         drawColonies(gameData);
         var loserPlayerId = gameData.loserPlayerId;
         if (loserPlayerId != 0) {
-            if ($scope.game.activePlayerId == loserPlayerId) {
-                showNotification($translate('LOSTTHEGAME'));
-
-            } else {
-                p = game.add.emitter(game.world.centerX, 200, 200);
-                p.makeParticles('winner');
-                p.start(false, 5000, 20);
-            }
-            for (var colonyKey in $scope.colonyXSpritesById) {
-                $scope.colonyXSpritesById[colonyKey].inputEnabled = false;
-            }
-            for (var shipKey in $scope.game.shipXSpritesById) {
-                $scope.game.shipXSpritesById[shipKey].inputEnabled = false;
-            }
+            showNotification($translate('Game over'));
         }
 
         function drawShips(gameData) {
@@ -173,7 +176,8 @@ spaceApp.controller("ReplayGameController", function ($scope, $translate, Map, G
             var ships = player.ships;
             for (var shipKey in ships) {
                 var ship = ships[shipKey];
-                var shipXSprite = new ShipExtendedSprite(game, ship, player.playerId, image, function(){}, false, shipGroup, $scope.planetXSpritesByLetter);
+                var shipXSprite = new ShipExtendedSprite(game, ship, player.playerId, image, function () {
+                }, false, shipGroup, $scope.planetXSpritesByLetter);
                 $scope.game.shipXSpritesById[ship.shipId] = shipXSprite;
             }
         }
@@ -196,11 +200,25 @@ spaceApp.controller("ReplayGameController", function ($scope, $translate, Map, G
                 var colony = colonies[colonyKey];
                 var colonyXSprite;
 
-                colonyXSprite = new ColonyExtendedSprite(game, colony, colony.planetName, player.playerId, image, colonyGroup, $scope.planetXSpritesByLetter, function(){}, function(){}, null);
+                colonyXSprite = new ColonyExtendedSprite(game, colony, colony.planetName, player.playerId, image, colonyGroup, $scope.planetXSpritesByLetter, function () {
+                }, function () {
+                }, null);
 
                 $scope.colonyXSpritesById[colony.colonyId] = colonyXSprite;
                 $scope.planetXSpritesByLetter[colony.planetName].colonyXSprite = colonyXSprite;
             }
         }
+    }
+
+    function showNotification(string) {
+        var sprite = game.add.sprite(0, 0);
+        var text = game.add.text(5, 5, string, { font: '20px Arial', fill: '#FF0000'});
+        sprite.addChild(text);
+        sprite.fixedToCamera = true;
+        sprite.cameraOffset.setTo(CANVASWIDTH / 2 - text.width / 2, CANVASHEIGHT / 2 - text.height / 2);
+
+        setTimeout(function () {
+            sprite.destroy();
+        }, 5000);
     }
 });

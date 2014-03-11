@@ -9,7 +9,7 @@ package be.kdg.spacecrack.integrationtests;
 
 import be.kdg.spacecrack.viewmodels.GameActivePlayerWrapper;
 import be.kdg.spacecrack.viewmodels.GameViewModel;
-import com.fasterxml.jackson.core.type.TypeReference;
+import be.kdg.spacecrack.viewmodels.RevisionListViewModel;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -24,7 +24,6 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.http.Cookie;
-import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -53,14 +52,14 @@ public class IntegrationReplayControllerTests extends BaseFilteredIntegrationTes
                 .accept(MediaType.APPLICATION_JSON)
                 .cookie(new Cookie("accessToken", accessToken)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0]", CoreMatchers.not(0)))
-                .andExpect(jsonPath("$", Matchers.hasSize(1)))
+                .andExpect(jsonPath("$.revisions[0]", CoreMatchers.not(0)))
+                .andExpect(jsonPath("$.revisions", Matchers.hasSize(1)))
                 .andReturn();
         transactionManager.commit(status1);
         TransactionStatus status2 = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
         String contentAsString = result.getResponse().getContentAsString();
-        List<Number> numbers = objectMapper.readValue(contentAsString, new TypeReference<List<Number>>() {});
-        String urlTemplate = "/auth/replay/" + game.getGameId() + "/" + numbers.get(0);
+        RevisionListViewModel revisionListViewModel = objectMapper.readValue(contentAsString, RevisionListViewModel.class);
+        String urlTemplate = "/auth/replay/" + game.getGameId() + "/" + revisionListViewModel.getRevisions().get(0);
         mockMvc.perform(get(urlTemplate)
                 .accept(MediaType.APPLICATION_JSON)
                 .cookie(new Cookie("accessToken", accessToken)))

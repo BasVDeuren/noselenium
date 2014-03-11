@@ -89,7 +89,7 @@ public class ReplayTests {
 
         TransactionStatus status5 = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
         //region Act
-        List<Number> revisionNumbers = gameService.getRevisionNumbers(game.getGameId());
+        List<Integer> revisionNumbers = gameService.getRevisionNumbers(game.getGameId());
         //endregion
         transactionManager.commit(status5);
 
@@ -122,7 +122,7 @@ public class ReplayTests {
 
         TransactionStatus status2 = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
 
-        List<Number> revisionNumbers = gameService.getRevisionNumbers(game.getGameId());
+        List<Integer> revisionNumbers = gameService.getRevisionNumbers(game.getGameId());
 
         transactionManager.commit(status2);
         //endregion

@@ -9,6 +9,7 @@ package be.kdg.spacecrack.controllers;/* Git $Id$
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.services.IGameService;
 import be.kdg.spacecrack.viewmodels.GameViewModel;
+import be.kdg.spacecrack.viewmodels.RevisionListViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,9 +38,13 @@ public class ReplayController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public List<Number> getRevisionNumbers(@PathVariable final String gameId) {
+    public RevisionListViewModel getRevisionNumbers(@PathVariable final String gameId) {
         try {
-            return gameService.getRevisionNumbers(Integer.parseInt(gameId));
+            List<Integer> revisionNumbers = gameService.getRevisionNumbers(Integer.parseInt(gameId));
+
+            RevisionListViewModel revisionListViewModel = new RevisionListViewModel();
+            revisionListViewModel.setRevisions(revisionNumbers);
+            return revisionListViewModel;
         } catch (NumberFormatException numberFormatException) {
             throw new SpaceCrackNotAcceptableException("Invalid number format for pathvariable gameId");
         }

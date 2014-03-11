@@ -36,13 +36,7 @@ public interface IGameService {
 
     void buildShip(Integer colonyId);
 
-    void validateAction(Integer playerId);
-
-    void startReplay(int playerId, String firebaseSuffix);
-
-    List<Number> getRevisionNumbers(int gameId);
-
-
+    List<Integer> getRevisionNumbers(int gameId);
 
     GameViewModel getGameRevisionByNumber(int gameId, Number number);
 }

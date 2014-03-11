@@ -10,7 +10,6 @@ import be.kdg.spacecrack.repositories.IPlanetRepository;
 import be.kdg.spacecrack.repositories.IPlayerRepository;
 import be.kdg.spacecrack.repositories.IShipRepository;
 import be.kdg.spacecrack.services.handlers.IMoveShipHandler;
-import be.kdg.spacecrack.services.handlers.ReplayHandler;
 import be.kdg.spacecrack.utilities.IFirebaseUtil;
 import be.kdg.spacecrack.utilities.IViewModelConverter;
 import be.kdg.spacecrack.viewmodels.GameViewModel;
@@ -283,33 +282,8 @@ public class GameService implements IGameService {
     }
 
     @Override
-    public void validateAction(Integer playerId) {
-        Player player = playerRepository.getPlayerByPlayerId(playerId);
-        if (player.getGame().getLoserPlayerId() != 0) {
-            throw new SpaceCrackNotAcceptableException("This game is already ended.");
-        }
-    }
+    public List<Integer> getRevisionNumbers(int gameId) {
 
-    @Override
-    public void startReplay(final int playerId, final String firebaseSuffix) {
-        Player playerByPlayerId = playerRepository.getPlayerByPlayerId(playerId);
-        final Game game = playerByPlayerId.getGame();
-        final List<Number> revisions = gameRepository.getRevisionNumbers(game.getGameId());
-        final List<GameViewModel> gameRevisionViewModels = new ArrayList<GameViewModel>();
-        for (Number number : revisions) {
-            Game gameRevision = gameRepository.getGameRevision(number, game.getGameId());
-            GameViewModel gameViewModel = viewModelConverter.convertGameToViewModel(gameRevision);
-            gameRevisionViewModels.add(gameViewModel);
-        }
-        //Executor asyncExecutor = asyncConfig.getAsyncExecutor();
-
-        //asyncExecutor.execute(new ReplayHandler(viewModelConverter, firebaseUtil, gameRevisions, firebaseURL));
-        Thread replayHandler = new ReplayHandler( firebaseUtil, gameRevisionViewModels, firebaseSuffix);
-        replayHandler.start();
-    }
-
-    @Override
-    public List<Number> getRevisionNumbers(int gameId) {
         return gameRepository.getRevisionNumbers(gameId);
     }
 

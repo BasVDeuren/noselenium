@@ -17,6 +17,7 @@ import org.hibernate.envers.AuditReaderFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service("gameRepository")
@@ -96,10 +97,17 @@ public class GameRepository implements IGameRepository {
     }
 
     @Override
-    public List<Number> getRevisionNumbers(int gameId) {
+    public List<Integer> getRevisionNumbers(int gameId) {
 
         AuditReader reader = AuditReaderFactory.get(sessionFactory.getCurrentSession());
-        return reader.getRevisions(Game.class, gameId);
+        List<Number> revisions = reader.getRevisions(Game.class, gameId);
+        List<Integer> revisionsIntegers = new ArrayList<Integer>();
+        for (int i = 0; i < revisions.size(); i++) {
+            revisionsIntegers.add((Integer) revisions.get(i));
+
+        }
+
+       return revisionsIntegers;
 
     }
 }
