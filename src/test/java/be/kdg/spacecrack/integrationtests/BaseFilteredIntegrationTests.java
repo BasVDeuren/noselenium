@@ -61,64 +61,72 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
 public abstract class BaseFilteredIntegrationTests {
-    protected MockMvc mockMvc;
+    protected static MockMvc mockMvc;
     @Autowired
     protected ServletContext servletContext;
     protected WebApplicationContext ctx;
-    protected ObjectMapper objectMapper;
+    protected static ObjectMapper objectMapper;
 
 
     @Autowired
     SessionFactory sessionFactory;
-    protected GameController baseGameController;
-    protected StandaloneMockMvcBuilder mvcBuilderWithoutGlobalExceptionHandler;
+    protected static GameController baseGameController;
+    protected static StandaloneMockMvcBuilder mvcBuilderWithoutGlobalExceptionHandler;
 
     @Before
     public void setupMockMVC() throws Exception {
 
         ctx = WebApplicationContextUtils.getWebApplicationContext(servletContext);
 
+        if(mvcBuilderWithoutGlobalExceptionHandler == null)
+        {
+            IPlanetRepository planetRepository = new PlanetRepository(sessionFactory);
+            IColonyRepository colonyRepository = new ColonyRepository(sessionFactory);
+            IShipRepository shipRepository = new ShipRepository(sessionFactory);
+            IPlayerRepository playerRepository = new PlayerRepository(sessionFactory);
+            IGameRepository gameRepository = new GameRepository(sessionFactory);
+            IMapFactory mapFactory = new MapFactory(sessionFactory, planetRepository);
+            ITokenRepository tokenRepository = new TokenRepository(sessionFactory);
+            IProfileRepository profileRepository = new ProfileRepository(sessionFactory);
+            IUserRepository userRepository = new UserRepository(sessionFactory);
+            ITokenStringGenerator tokenStringGenerator = new TokenStringGenerator();
 
-        IPlanetRepository planetRepository = new PlanetRepository(sessionFactory);
-        IColonyRepository colonyRepository = new ColonyRepository(sessionFactory);
-        IShipRepository shipRepository = new ShipRepository(sessionFactory);
-        IPlayerRepository playerRepository = new PlayerRepository(sessionFactory);
-        IGameRepository gameRepository = new GameRepository(sessionFactory);
-        IMapFactory mapFactory = new MapFactory(sessionFactory, planetRepository);
-        ITokenRepository tokenRepository = new TokenRepository(sessionFactory);
-        IProfileRepository profileRepository = new ProfileRepository(sessionFactory);
-        IUserRepository userRepository = new UserRepository(sessionFactory);
-        ITokenStringGenerator tokenStringGenerator = new TokenStringGenerator();
-
-        IMoveShipHandler moveShipHandler = new MoveShipHandler(colonyRepository);
-        ViewModelConverter viewModelConverter = new ViewModelConverter();
-        IFirebaseUtil firebaseUtil = mock(IFirebaseUtil.class);
-        AsyncConfig asyncConfig = new AsyncConfig();
-        IGameService gameService = new GameService(planetRepository, colonyRepository, shipRepository, playerRepository, gameRepository, moveShipHandler, viewModelConverter, firebaseUtil, asyncConfig, new HibernateTransactionManager(sessionFactory));
-        IAuthorizationService authorizationService = new AuthorizationService(tokenRepository, userRepository, tokenStringGenerator);
-
-
-        IUserService userService = new UserService(userRepository, profileRepository);
-        IProfileService profileService = new ProfileService(profileRepository, userRepository);
+            IMoveShipHandler moveShipHandler = new MoveShipHandler(colonyRepository);
+            ViewModelConverter viewModelConverter = new ViewModelConverter();
+            IFirebaseUtil firebaseUtil = mock(IFirebaseUtil.class);
+            AsyncConfig asyncConfig = new AsyncConfig();
+            IGameService gameService = new GameService(planetRepository, colonyRepository, shipRepository, playerRepository, gameRepository, moveShipHandler, viewModelConverter, firebaseUtil, asyncConfig, new HibernateTransactionManager(sessionFactory));
+            IAuthorizationService authorizationService = new AuthorizationService(tokenRepository, userRepository, tokenStringGenerator);
 
 
-        ActionController actionController = new ActionController(gameService, viewModelConverter, firebaseUtil);
-        baseGameController = new GameController(authorizationService, gameService, profileService, viewModelConverter, firebaseUtil);
-        MapController mapController = new MapController(mapFactory);
-        ProfileController profileController = new ProfileController(profileService, userService, tokenRepository, authorizationService);
-        TokenController tokenController = new TokenController(authorizationService);
-        UserController userController = new UserController(userService, authorizationService);
+            IUserService userService = new UserService(userRepository, profileRepository);
+            IProfileService profileService = new ProfileService(profileRepository, userRepository);
 
 
-        //GameParametersValidator validator = new GameParametersValidator();
-        BeanValidator validator = new BeanValidator();
+            ActionController actionController = new ActionController(gameService, viewModelConverter, firebaseUtil);
+            baseGameController = new GameController(authorizationService, gameService, profileService, viewModelConverter, firebaseUtil);
+            MapController mapController = new MapController(mapFactory);
+            ProfileController profileController = new ProfileController(profileService, userService, tokenRepository, authorizationService);
+            TokenController tokenController = new TokenController(authorizationService);
+            UserController userController = new UserController(userService, authorizationService);
 
-        ReplayController replayController = new ReplayController(gameService);
-        mvcBuilderWithoutGlobalExceptionHandler = MockMvcBuilders.standaloneSetup(actionController, baseGameController, mapController, profileController, tokenController, userController, replayController)
-                .setValidator(validator).addInterceptors(new TokenHandlerInterceptor(authorizationService));
 
-        mockMvc = mvcBuilderWithoutGlobalExceptionHandler.build();
-        objectMapper = new ObjectMapper();
+            //GameParametersValidator validator = new GameParametersValidator();
+            BeanValidator validator = new BeanValidator();
+
+            ReplayController replayController = new ReplayController(gameService);
+            mvcBuilderWithoutGlobalExceptionHandler = MockMvcBuilders.standaloneSetup(actionController, baseGameController, mapController, profileController, tokenController, userController, replayController)
+                    .setValidator(validator).addInterceptors(new TokenHandlerInterceptor(authorizationService));
+
+            mockMvc = mvcBuilderWithoutGlobalExceptionHandler.build();
+
+        }
+
+        if(objectMapper == null)
+        {
+            objectMapper = new ObjectMapper();
+        }
+
     }
 
     protected ExceptionHandlerExceptionResolver getGlobalExceptionHandler() {
