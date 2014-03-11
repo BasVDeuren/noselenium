@@ -5,8 +5,6 @@ import be.kdg.spacecrack.model.User;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +17,6 @@ import org.springframework.stereotype.Component;
  */
 @Component("tokenRepository")
 public class TokenRepository implements ITokenRepository {
-    Logger logger = LoggerFactory.getLogger(TokenRepository.class);
     @Autowired
     SessionFactory sessionFactory;
 

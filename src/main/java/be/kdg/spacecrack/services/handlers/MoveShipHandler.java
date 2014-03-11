@@ -9,7 +9,7 @@ package be.kdg.spacecrack.services.handlers;/* Git $Id$
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.model.*;
 import be.kdg.spacecrack.services.GameService;
-import be.kdg.spacecrack.services.IColonyRepository;
+import be.kdg.spacecrack.repositories.IColonyRepository;
 import be.kdg.spacecrack.services.IGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

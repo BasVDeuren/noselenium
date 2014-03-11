@@ -16,7 +16,5 @@ public class SpaceCrackUnauthorizedException extends RuntimeException{
         super();
     }
 
-    public SpaceCrackUnauthorizedException(String message) {
-        super(message);
-    }
+
 }

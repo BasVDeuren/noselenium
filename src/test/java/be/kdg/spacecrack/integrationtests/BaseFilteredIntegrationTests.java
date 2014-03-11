@@ -109,9 +109,6 @@ public abstract class BaseFilteredIntegrationTests {
             ProfileController profileController = new ProfileController(profileService, userService, tokenRepository, authorizationService);
             TokenController tokenController = new TokenController(authorizationService);
             UserController userController = new UserController(userService, authorizationService);
-
-
-            //GameParametersValidator validator = new GameParametersValidator();
             BeanValidator validator = new BeanValidator();
 
             ReplayController replayController = new ReplayController(gameService);
