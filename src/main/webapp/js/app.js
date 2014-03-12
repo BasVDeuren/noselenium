@@ -92,8 +92,11 @@ function appRouter($routeProvider, $httpProvider) {
             templateUrl: 'partials/oldgame.html',
             controller: 'ReplayGameController'
         }).when('/spacecrack/matchhistory', {
-            templateUrl: 'partials/matchhistory.html',
+            templateUrl: 'partials/matchHistory.html',
             controller: 'ActiveGamesController'
+        }).when('/spacecrack/statistics', {
+            templateUrl: 'partials/statistics.html',
+            controller: 'StatisticsController'
         });
 
     $routeProvider.otherwise({redirectTo: '/notFound'});

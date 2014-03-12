@@ -26,7 +26,7 @@
     "NEWGAME": "Nieuw Spel",
     "ACTIVEGAMES": "Actieve Spelen",
     "MATCHHISTORY": "Geschiedenis",
-    "ACCOUNT": "Account",
+    "STATISTICS": "Statistieken",
     "EDIT_PROFILE":"Profiel bewerken",
     "SAVE":"Opslaan" ,
     "INVALID_EMAIL": "Ongeldige email",
@@ -49,5 +49,8 @@
     "TURNENDED": "Je beurt is al over!",
     "LOSTTHEGAME": "Je hebt het spel verloren.",
     "ARROWS": "Use the arrow keys to navigate the map.",
-    "REPLAY":"Van welk spel wil je de replay bekijken?"
+    "REPLAY":"Van welk spel wil je de replay bekijken?",
+    "BUTTON":"button_sprite_sheet_nl",
+    "TURNHASBEGUN":"Er is een beurt begonnen!"
+
 }

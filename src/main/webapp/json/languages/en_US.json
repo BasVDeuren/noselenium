@@ -26,7 +26,7 @@
     "NEWGAME": "New Game",
     "ACTIVEGAMES": "Active Games",
     "MATCHHISTORY": "Match History",
-    "ACCOUNT": "Account",
+    "STATISTICS": "Statistics",
     "EDIT_PROFILE":"Edit profile",
     "SAVE":"Save" ,
     "INVALID_EMAIL": "Invalid email",
@@ -49,5 +49,7 @@
     "TURNENDED": "Your turn has ended!",
     "LOSTTHEGAME": "You have lost the game.",
     "ARROWS": "Use the arrow keys to navigate the map.",
-    "REPLAY":"From what game do you want to see the replay?"
+    "REPLAY":"From what game do you want to see the replay?",
+    "BUTTON":"button_sprite_sheet",
+    "TURNHASBEGUN":"A turn has started!"
 }

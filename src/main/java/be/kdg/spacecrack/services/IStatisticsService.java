@@ -6,9 +6,8 @@ package be.kdg.spacecrack.services;/* Git $Id
  *
  */
 
-import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.viewmodels.StatisticsViewModel;
 
 public interface IStatisticsService {
-    public StatisticsViewModel getStatistics(Profile profile);
+    public StatisticsViewModel getStatistics(int profileId);
 }

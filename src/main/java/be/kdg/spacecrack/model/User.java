@@ -38,7 +38,7 @@ public class User implements Serializable {
     private AccessToken token;
 
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name= "profileId", nullable = true)
     @JsonManagedReference
     private Profile profile;

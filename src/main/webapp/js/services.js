@@ -92,4 +92,6 @@ angular.module('spaceServices', ['ngResource'])
             return $resource('/api/auth/replay/:gameId/:revisionNumber', {gameId:'@gameId', revisionNumber: '@revisionNumber'},{'get': { method: 'GET', params: {gameId: '@gameId', revisionNumber:'@revisionNumber'}, format: 'json', isArray: false }})
         };
         return factory;
+    }).factory('StatisticsService', function($resource){
+        return $resource('/api/auth/statistics');
     });

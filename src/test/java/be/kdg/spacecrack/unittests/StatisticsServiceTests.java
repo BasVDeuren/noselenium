@@ -37,6 +37,7 @@ public class StatisticsServiceTests extends BaseUnitTest{
 
     private User user;
     private Profile opponentProfile;
+    private IProfileRepository mockProfileRepository;
 
     @Before
     public void setUp() throws Exception {
@@ -45,8 +46,9 @@ public class StatisticsServiceTests extends BaseUnitTest{
         ShipRepository shipRepository = new ShipRepository(sessionFactory);
         gameService = new GameService(new PlanetRepository(sessionFactory), colonyRepository, shipRepository, playerRepository, new GameRepository(sessionFactory), new MoveShipHandler(colonyRepository), new ViewModelConverter(), mock(IFirebaseUtil.class));
 
-        mockGameRepository = mock(GameRepository.class);
-        statisticsService = new StatisticsService(mockGameRepository);
+        mockGameRepository = mock(IGameRepository.class);
+        mockProfileRepository = mock(IProfileRepository.class);
+        statisticsService = new StatisticsService(mockGameRepository, mockProfileRepository);
 
         user = new User();
         Profile profile = new Profile();
@@ -56,6 +58,24 @@ public class StatisticsServiceTests extends BaseUnitTest{
         user.setProfile(profile);
     }
 
+    @Transactional
+    @Test
+    public void getStatistics_ProfilePlayed0Games_allStatistics0() throws Exception {
+        Profile profile = new Profile();
+
+        stub(mockGameRepository.getGamesByProfile(profile)).toReturn(new ArrayList<Game>());
+
+
+        stub(mockProfileRepository.getProfileByProfileId(1)).toReturn(profile);
+        StatisticsViewModel statisticsViewModel = statisticsService.getStatistics(1);
+
+        verify(mockGameRepository, VerificationModeFactory.times(1)).getGamesByProfile(profile);
+
+        assertEquals("Statistics should contain 0 game", 0, statisticsViewModel.getAmountOfGames());
+        assertTrue("Statistics winratio should be 0% ", statisticsViewModel.getWinRatio() == 0.0);
+        assertTrue("Statistics average amount of colonies per win should be 0", statisticsViewModel.getAverageAmountOfColoniesPerWin() == 0);
+        assertTrue("Statistics average amount of ships per win should be 0", statisticsViewModel.getAverageAmountOfShipsPerWin() == 0);
+    }
 
     @Transactional
     @Test
@@ -66,10 +86,12 @@ public class StatisticsServiceTests extends BaseUnitTest{
         games.add(game);
         Player player = game.getPlayers().get(0);
         Profile profile = player.getProfile();
-
+        int profileId = 1;
         stub(mockGameRepository.getGamesByProfile(profile)).toReturn(games);
 
-        StatisticsViewModel statisticsViewModel = statisticsService.getStatistics(profile);
+        stub(mockProfileRepository.getProfileByProfileId(profileId)).toReturn(profile);
+
+        StatisticsViewModel statisticsViewModel = statisticsService.getStatistics(profileId);
 
         verify(mockGameRepository, VerificationModeFactory.times(1)).getGamesByProfile(profile);
 
@@ -84,7 +106,8 @@ public class StatisticsServiceTests extends BaseUnitTest{
     public void getStatistics_ProfilePlayed3GamesWon2withmanycoloniesandships_Game66PercentWinratio() throws Exception {
 
         Profile profile = new Profile();
-        profile.setProfileId(1);
+        int profileId = 1;
+        profile.setProfileId(profileId);
         Game game1 = getOverGameWithColoniesAndShips(1,20,5, 1, profile, opponentProfile);
         Game game2 = getOverGameWithColoniesAndShips(2,100,3, 1, profile, opponentProfile);
         Game game3 = getOverGameWithColoniesAndShips(3,0,0, 0,profile, opponentProfile);
@@ -96,8 +119,9 @@ public class StatisticsServiceTests extends BaseUnitTest{
 
 
         stub(mockGameRepository.getGamesByProfile(profile)).toReturn(games);
+        stub(mockProfileRepository.getProfileByProfileId(profileId)).toReturn(profile);
 
-        StatisticsViewModel statisticsViewModel = statisticsService.getStatistics(profile);
+        StatisticsViewModel statisticsViewModel = statisticsService.getStatistics(profileId);
 
         verify(mockGameRepository, VerificationModeFactory.times(1)).getGamesByProfile(profile);
 

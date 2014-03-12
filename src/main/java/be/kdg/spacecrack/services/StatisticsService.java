@@ -10,6 +10,7 @@ import be.kdg.spacecrack.model.Game;
 import be.kdg.spacecrack.model.Player;
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.repositories.IGameRepository;
+import be.kdg.spacecrack.repositories.IProfileRepository;
 import be.kdg.spacecrack.viewmodels.StatisticsViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,15 +23,22 @@ public class StatisticsService implements IStatisticsService {
     @Autowired
     IGameRepository gameRepository;
 
-    public StatisticsService(IGameRepository gameRepository) {
-        this.gameRepository = gameRepository;
-    }
+    @Autowired
+    IProfileRepository profileRepository;
+
 
     public StatisticsService() {
     }
 
+    public StatisticsService(IGameRepository mockGameRepository, IProfileRepository mockProfileRepository) {
+
+        gameRepository = mockGameRepository;
+        profileRepository = mockProfileRepository;
+    }
+
     @Override
-    public StatisticsViewModel getStatistics(Profile profile) {
+    public StatisticsViewModel getStatistics(int profileId) {
+        Profile profile = profileRepository.getProfileByProfileId(profileId);
         List<Game> games = gameRepository.getGamesByProfile(profile);
         int amountOfGames = 0;
         int amountOfWonGames = 0;
@@ -45,7 +53,7 @@ public class StatisticsService implements IStatisticsService {
                     playerInGame = player;
                 }
             }
-            if (game.getLoserPlayerId() != playerInGame.getPlayerId()) {
+            if (game.getLoserPlayerId() != playerInGame.getPlayerId() && game.getLoserPlayerId() != 0) {
                 amountOfWonGames += 1;
                 totalColoniesWhenWon += playerInGame.getColonies().size();
                 totalShipsWhenWon += playerInGame.getShips().size();
