@@ -110,11 +110,26 @@ public class GameController {
         List<GameViewModel> gameViewModels = new ArrayList<GameViewModel>();
         for (Game g : games) {
             GameViewModel gameViewModel = new GameViewModel();
-            gameViewModel.setName(g.getName());
-            gameViewModel.setGameId(g.getGameId());
+            gameViewModel = viewModelConverter.convertGameToViewModel(g);
             gameViewModels.add(gameViewModel);
         }
         return gameViewModels;
     }
+
+    @RequestMapping(value="/invite/{gameId}",method = RequestMethod.DELETE)
+    @ResponseBody
+    public void deleteGame(@CookieValue("accessToken") String accessTokenValue,@PathVariable String gameId) throws Exception {
+        User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
+        gameService.deleteGame(Integer.parseInt(gameId));
+    }
+
+    @RequestMapping(value = "/invite/{gameId}", method = RequestMethod.POST)
+    @ResponseBody
+    public void acceptGameInvite(@CookieValue("accessToken") String accessTokenValue, @PathVariable String gameId) {
+        User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
+        gameService.acceptGameInvite(Integer.parseInt(gameId));
+
+    }
+
 
 }

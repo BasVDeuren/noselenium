@@ -46,6 +46,9 @@ public class Player {
     private boolean turnEnded;
 
 
+    @Column
+    private boolean requestAccepted;
+
     @ManyToOne(cascade = CascadeType.ALL)
     private Game game;
 
@@ -55,6 +58,14 @@ public class Player {
 
     public void setCommandPoints(int commandPoints) {
         this.commandPoints = commandPoints;
+    }
+
+    public boolean isRequestAccepted() {
+        return requestAccepted;
+    }
+
+    public void setRequestAccepted(boolean requestAccepted) {
+        this.requestAccepted = requestAccepted;
     }
 
     public Player() {

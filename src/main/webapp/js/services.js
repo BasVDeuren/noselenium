@@ -58,6 +58,9 @@ angular.module('spaceServices', ['ngResource'])
     .factory('ActiveGame', function ($resource) {
         return $resource('/api/auth/game/specificGame/:gameId', {gameId: '@GameId'})
     })
+    .factory('GameInvite',function ($resource){
+        return $resource('/api/auth/game/invite/:gameId',{gameId: '@gameId'})
+    })
 //    .factory('FindPlayer', function ($resource) {
 //        return $resource('/api/auth/findusersbyusername/:username', {username: '@username'},{'get': { method: 'GET', params: {username: '@username'}, format: 'json', isArray: true }})
 //    })

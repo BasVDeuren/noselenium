@@ -21,7 +21,7 @@ public interface IGameRepository {
 
     Game getGameByGameId(int gameId);
 
-
+    void deleteGame(int gameId);
 
     Game getGameRevision(Number number, int gameId);
 

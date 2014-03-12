@@ -39,4 +39,8 @@ public interface IGameService {
     List<Integer> getRevisionNumbers(int gameId);
 
     GameViewModel getGameRevisionByNumber(int gameId, Number number);
+
+    void acceptGameInvite(int gameId);
+
+    void deleteGame(int gameId);
 }

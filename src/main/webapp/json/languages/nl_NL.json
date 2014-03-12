@@ -51,6 +51,13 @@
     "ARROWS": "Use the arrow keys to navigate the map.",
     "REPLAY":"Van welk spel wil je de replay bekijken?",
     "BUTTON":"button_sprite_sheet_nl",
-    "TURNHASBEGUN":"Er is een beurt begonnen!"
+    "TURNHASBEGUN":"Er is een beurt begonnen!",
+    "ACTIVE_GAMES":"Actieve spellen" ,
+    "PENDING_GAMES":"Wachtende spellen" ,
+    "INVITED_GAMES":"Uitgenodigde spellen" ,
+    "PLAY":"Speel" ,
+    "GAME":"Spel" ,
+    "ACCEPT":"Accepteer",
+    "DECLINE":"Weiger"
 
 }
