@@ -269,7 +269,7 @@ public class GameService implements IGameService {
         for (Player p : game.getPlayers()) {
             p.setRequestAccepted(true);
         }
-        updateGame(game);
+        gameSynchronizer.updateGame(game);
     }
 
     @Override
