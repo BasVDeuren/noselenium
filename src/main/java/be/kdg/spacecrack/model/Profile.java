@@ -131,4 +131,8 @@ public class Profile {
     public void setPlayers(List<Player> players) {
         this.players = players;
     }
+
+    public void internalAddPlayer(Player player) {
+        players.add(player);
+    }
 }

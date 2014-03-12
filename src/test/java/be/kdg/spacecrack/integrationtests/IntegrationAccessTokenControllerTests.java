@@ -150,7 +150,6 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
     public void checkIfLoggedIn_noAccessToken_SpaceCrackUnauthorizedException() throws Exception {
         MockHttpServletRequestBuilder getAccessTokenIsUserLoggedIn = get("/auth/accesstokens")
                 .accept(MediaType.APPLICATION_JSON);
-
         mockMvc.perform(getAccessTokenIsUserLoggedIn).andExpect(status().isUnauthorized());
     }
 
@@ -159,10 +158,6 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
         MockHttpServletRequestBuilder getAccessTokenIsUserLoggedIn = get("/auth/accesstokens")
                 .accept(MediaType.APPLICATION_JSON)
                 .cookie(new Cookie("accessToken", "blablabla"));
-
         mockMvc.perform(getAccessTokenIsUserLoggedIn).andExpect(status().isUnauthorized());
     }
-
-
-
 }

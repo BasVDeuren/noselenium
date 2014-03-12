@@ -31,7 +31,10 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
     $scope.colonyXSpritesById = [];
     $scope.selectedSpaceShipXSprite = null;
     $scope.commandPoints = 0;
+    var oldTurnEnded = true;
     $scope.isTurnEnded = true;
+    var otherTurnEnded = true;
+    var oldOtherTurnEnded = true;
     $scope.activePlayerMiniShipImage = null;
 
     $scope.game = {
@@ -48,7 +51,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
 //region Lifecycle Methods
     function preload() {
      //   game.load.image('bg', 'assets/SpaceCrackBackground.jpg');
-        game.load.spritesheet('button', 'assets/button_sprite_sheet.png', 193, 71);
+        game.load.spritesheet('button', 'assets/'+$translate('BUTTON')+'.png', 193, 71);
         game.load.image('planet1', 'assets/planet1_small.png');
         game.load.image('planet1_selected', 'assets/planet1_small_selected.png');
         game.load.image('player1spaceship', 'assets/player1spaceship.png');
@@ -120,12 +123,12 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
             colonyGroup = game.add.group();
             colonyGroup.z = 1;
             miniShipGroup = game.add.group();
-            miniShipGroup.z = 1000;
-            btnEndTurn = game.add.button(500, 75, 'button', function () {
+            miniShipGroup.z = 5;
+            btnEndTurn = game.add.button(1500, 75, 'button', function () {
             }, this, 2, 1, 0);
             btnEndTurn.events.onInputDown.add(onClickEndTurn);
             btnEndTurn.fixedToCamera = true;
-            btnEndTurn.cameraOffset.setTo(CANVASWIDTH / 2 - 180, CANVASHEIGHT - 83);
+            btnEndTurn.cameraOffset.setTo(CANVASWIDTH / 2 - 92, CANVASHEIGHT - 83);
             planetGroup.add(btnEndTurn);
             var planetArray = data.planets;
 
@@ -270,13 +273,18 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
 
         var player1IsActive = false;
         var player2IsActive = false;
+
+        oldTurnEnded = $scope.isTurnEnded;
+        oldOtherTurnEnded = otherTurnEnded;
         if ($scope.game.activePlayerId == gameData.player1.playerId) {
             $scope.game.opponentPlayerId = gameData.player2.playerId;
             $scope.game.opponentPlayerColonyImage = 'player2castle';
             $scope.game.activePlayerColonyImage = 'player1castle';
             $scope.activePlayerMiniShipImage = 'miniplayer1spaceship';
             $scope.commandPoints = gameData.player1.commandPoints;
+
             $scope.isTurnEnded = gameData.player1.turnEnded;
+            otherTurnEnded = gameData.player2.turnEnded;
 
             player1IsActive= true;
         } else if ($scope.game.activePlayerId == gameData.player2.playerId) {
@@ -286,8 +294,16 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
             $scope.activePlayerMiniShipImage = 'miniplayer2spaceship';
             $scope.commandPoints = gameData.player2.commandPoints;
             $scope.isTurnEnded = gameData.player2.turnEnded;
+            otherTurnEnded = gameData.player1.turnEnded;
             player2IsActive = true;
 
+        }
+        if(oldOtherTurnEnded || oldTurnEnded  )
+        {
+            if(!$scope.isTurnEnded && !otherTurnEnded )
+            {
+                showNotification($translate('TURNHASBEGUN'))
+            }
         }
         drawShips(gameData);
         drawColonies(gameData);
@@ -395,6 +411,6 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
 
         setTimeout(function () {
             sprite.destroy();
-        }, 5000);
+        }, 2500);
     }
 });

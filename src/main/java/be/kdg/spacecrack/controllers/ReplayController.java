@@ -66,9 +66,7 @@ public class ReplayController {
         } catch (NumberFormatException numberFormatException) {
             throw new SpaceCrackNotAcceptableException("Invalid number format for pathvariable gameId");
         }
-
         return gameService.getGameRevisionByNumber(gameIdInt, revisionNumberInt);
-
     }
 
 }
