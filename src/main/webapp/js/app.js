@@ -2,7 +2,7 @@
  * Created by Dimi on 3/02/14.
  */
 
-var spaceApp = angular.module('spaceApp', ['ngRoute', 'spaceServices', 'ngCookies', 'ngAnimate', 'pascalprecht.translate', 'ui.bootstrap', 'imageupload', 'firebase'])
+var spaceApp = angular.module('spaceApp', ['ngRoute', 'spaceServices', 'ngCookies', 'ngAnimate', 'pascalprecht.translate', 'ui.bootstrap', 'imageupload', 'firebase','mgcrea.ngStrap'])
     .config(appRouter);
 
 //Navigation
@@ -129,7 +129,10 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
 
         });
 
-    }
+    };
+
+    //Notifications
+    $scope.invites = ["invite1","invite2","invite3"];
 
 });
 

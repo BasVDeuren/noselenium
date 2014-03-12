@@ -73,6 +73,8 @@
     <script src="js/bootstrap.file-input.js"></script>
     <script src='https://cdn.firebase.com/v0/firebase.js'></script>
     <script src='https://cdn.firebase.com/libs/angularfire/0.6.0/angularfire.min.js'></script>
+    <script src="js/angular-strap.min.js"></script>
+    <script src="js/angular-strap.tpl.min.js"></script>
 
 </head>
 <body ng-controller="MainController" id="mainContainer">
@@ -103,10 +105,16 @@
             </ul>
             <form class="navbar-form navbar-right">
                 <div class="row">
-
-                    <div class="fb-share-button"
-                         data-href="https://apps.facebook.com/649165391811913/?fb_source=search&ref=ts&fref=ts"
-                         data-type="button_count"></div>
+                    <div class="btn-group" id="notificationBar">
+                        <span class="notificationIcon" data-placement="bottom" data-trigger="click" data-content="test"
+                              data-template="partials/invites.html" bs-popover="">
+                            <i class="fa fa-users fa-2x notificationIcon"></i>
+                            <span class="badge badge-invite" style="">41</span>
+                        </span>
+                        <span class="notificationIcon"><i class="fa fa-envelope fa-2x"></i>
+                        <span class="badge badge-message">42</span>
+                        </span>
+                    </div>
                     <button name="english" class="btn btn-default" ng-click="changeLanguage('en_US')">EN</button>
                     <button name="dutch" class="btn btn-default" ng-click="changeLanguage('nl_NL')">NL</button>
                     <div class="btn-group" ng-show="loggedInBool">
@@ -139,6 +147,9 @@
 
     <footer>
         <p>&copy;2014 - Created by Team G - All Rights Reserved.</p>
+        <div class="fb-share-button"
+             data-href="https://apps.facebook.com/649165391811913/?fb_source=search&ref=ts&fref=ts"
+             data-type="button_count"></div>
     </footer>
 </div>
 <!-- /container -->

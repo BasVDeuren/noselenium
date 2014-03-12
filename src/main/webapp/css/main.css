@@ -5,7 +5,7 @@
    ========================================================================== */
 html{
 
-    background: url("../assets/spacebackground1.jpg");
+    background: url("../assets/spacebackground.jpg");
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -105,6 +105,41 @@ a {
     min-width: 1120px;
     min-height: 250px;
 }
+
+#notificationBar {
+    margin-right: 10px;
+}
+
+#notificationBar span {
+    margin-right: 8px;
+}
+
+.notificationIconClicked {
+    box-shadow: 0 0 25px #000;
+}
+
+.notificationIcon:hover {
+    cursor: pointer;
+    color: #ffffff;
+}
+
+.badge {
+    background: red;
+    margin-bottom: 20px;
+    position: absolute;
+    top: -8px;
+    z-index: 1;
+    font-size: 10px;
+}
+
+.badge-message {
+    left: 55px;
+}
+
+.badge-invite {
+    left: 15px;
+}
+
 
 
 
