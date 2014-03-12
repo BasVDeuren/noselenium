@@ -91,6 +91,9 @@ public class GameService implements IGameService {
         player1.setCommandPoints(START_COMMAND_POINTS);
         player2.setCommandPoints(START_COMMAND_POINTS);
 
+        player1.setRequestAccepted(true);
+        player2.setRequestAccepted(false);
+
         player1.setGame(game);
         player2.setGame(game);
 
@@ -258,6 +261,20 @@ public class GameService implements IGameService {
         Game gameRevision = gameRepository.getGameRevision(number, gameId);
         return viewModelConverter.convertGameToViewModel(gameRevision);
 
+    }
+
+    @Override
+    public void acceptGameInvite(int gameId) {
+        Game game = getGameByGameId(gameId);
+        for (Player p : game.getPlayers()) {
+            p.setRequestAccepted(true);
+        }
+        updateGame(game);
+    }
+
+    @Override
+    public void deleteGame(int gameId) {
+        gameRepository.deleteGame(gameId);
     }
 
 

@@ -52,6 +52,9 @@ public class ViewModelConverter implements IViewModelConverter {
        PlayerViewModel playerViewModel = new PlayerViewModel();
        playerViewModel.setCommandPoints(player.getCommandPoints());
        playerViewModel.setTurnEnded(player.isTurnEnded());
+       playerViewModel.setRequestAccepted(player.isRequestAccepted());
+       playerViewModel.setProfileId(player.getProfile().getProfileId());
+       playerViewModel.setPlayerName(player.getProfile().getFirstname() + " " + player.getProfile().getLastname());
        playerViewModel.setPlayerId(player.getPlayerId());
        List<ShipViewModel> shipViewModels  = new ArrayList<ShipViewModel>();
        for(Ship ship: player.getShips())

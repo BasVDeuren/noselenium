@@ -20,6 +20,36 @@ public class PlayerViewModel {
 
     private boolean turnEnded;
 
+    private boolean requestAccepted;
+
+    private int profileId;
+
+    private String playerName;
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
+
+    public int getProfileId() {
+        return profileId;
+    }
+
+    public void setProfileId(int profileId) {
+        this.profileId = profileId;
+    }
+
+    public boolean isRequestAccepted() {
+        return requestAccepted;
+    }
+
+    public void setRequestAccepted(boolean requestAccepted) {
+        this.requestAccepted = requestAccepted;
+    }
+
     public int getPlayerId() {
         return playerId;
     }

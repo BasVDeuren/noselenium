@@ -57,14 +57,16 @@ public class AuthorizationService implements IAuthorizationService {
     @Override
     public void createTestUsers() {
 
-        createTestUser("test@gmail.com", "test", "test");
-        createTestUser("opponentje@gmail.com", "OpponentTest", "test");
+        createTestUser("test@gmail.com", "test", "test","jack","black");
+        createTestUser("opponentje@gmail.com", "OpponentTest", "test","speedy","gonzales");
     }
 
-    private void createTestUser(String testemail, String testUsername, String testPassword) {
+    private void createTestUser(String testemail, String testUsername, String testPassword,String firstname, String lastname) {
         List<User> list = userRepository.findUsersByEmailPart(testemail);
         if (list.size() < 1) {
             Profile profile = new Profile();
+            profile.setFirstname(firstname);
+            profile.setLastname(lastname);
             User user = new User(testUsername, testPassword, testemail);
             user.setProfile(profile);
             profile.setUser(user);

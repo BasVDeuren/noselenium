@@ -51,5 +51,12 @@
     "ARROWS": "Use the arrow keys to navigate the map.",
     "REPLAY":"From what game do you want to see the replay?",
     "BUTTON":"button_sprite_sheet",
-    "TURNHASBEGUN":"A turn has started!"
+    "TURNHASBEGUN":"A turn has started!",
+    "ACTIVE_GAMES":"Active games" ,
+    "PENDING_GAMES":"Pending games" ,
+    "INVITED_GAMES":"Invited games" ,
+    "PLAY":"Play" ,
+    "GAME":"Game" ,
+    "ACCEPT":"Accept",
+    "DECLINE":"Decline"
 }

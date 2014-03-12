@@ -77,7 +77,6 @@ public class GameRepository implements IGameRepository {
     }
 
 
-
     @Override
     public Game getGameRevision(Number number, int gameId) {
         AuditReader reader = AuditReaderFactory.get(sessionFactory.getCurrentSession());
@@ -95,7 +94,22 @@ public class GameRepository implements IGameRepository {
 
         }
 
-       return revisionsIntegers;
+        return revisionsIntegers;
 
+    }
+
+    @Override
+    public void deleteGame(int gameId) {
+        Session session = sessionFactory.getCurrentSession();
+
+
+        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Game g where g.gameId = :id");
+        q.setParameter("id", gameId);
+        Game game = (Game) q.uniqueResult();
+        if (game != null) {
+            game.getPlayers().get(0).setGame(null);
+            game.getPlayers().get(1).setGame(null);
+            session.delete(game);
+        }
     }
 }
