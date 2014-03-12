@@ -5,7 +5,6 @@ import be.kdg.spacecrack.Exceptions.SpaceCrackUnexpectedException;
 import be.kdg.spacecrack.model.*;
 import be.kdg.spacecrack.repositories.*;
 import be.kdg.spacecrack.services.handlers.IMoveShipHandler;
-import be.kdg.spacecrack.utilities.IFirebaseUtil;
 import be.kdg.spacecrack.utilities.IViewModelConverter;
 import be.kdg.spacecrack.viewmodels.GameViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,11 +81,11 @@ public class GameService implements IGameService {
 
         Game game = new Game();
 
-        Player player1 = new Player(userProfile);
-        Player player2 = new Player(opponentProfile);
+        Player player1 = new Player();
+        Player player2 = new Player();
 
-        userProfile.getPlayers().add(player1);
-        opponentProfile.getPlayers().add(player2);
+        userProfile.addPlayer(player1);
+        opponentProfile.addPlayer(player2);
 
         player1.setCommandPoints(START_COMMAND_POINTS);
         player2.setCommandPoints(START_COMMAND_POINTS);
@@ -259,7 +258,7 @@ public class GameService implements IGameService {
     @Override
     public GameViewModel getGameRevisionByNumber(int gameId, Number number) {
         Game gameRevision = gameRepository.getGameRevision(number, gameId);
-        return viewModelConverter.convertGameToViewModel(gameRevision);
+        return viewModelConverter.convertGameToReplayViewModel(gameRevision);
 
     }
 

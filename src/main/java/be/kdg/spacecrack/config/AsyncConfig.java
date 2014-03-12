@@ -2,8 +2,7 @@ package be.kdg.spacecrack.config;/* Git $Id$
  *
  * Project Application Development
  * Karel de Grote-Hogeschool
- * 2013-2014
- *
+ * 2013-20144
  */
 
 import org.springframework.context.annotation.Bean;

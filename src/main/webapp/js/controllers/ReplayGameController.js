@@ -4,8 +4,12 @@
 var spaceApp = angular.module('spaceApp');
 spaceApp.controller("ReplayGameController", function ($scope, $translate, Map, Game, Action, $route, $routeParams, ReplayGame) {
     //region Declarations
-    const CANVASWIDTH = 1180;
-    const CANVASHEIGHT = 600;
+
+    //const not supported in internet explorer
+    //region Constants
+    var CANVASWIDTH = 1180;
+    var CANVASHEIGHT = 600;
+    //endregion
     var game = new Phaser.Game(CANVASWIDTH, CANVASHEIGHT, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render });
     var cursors;
     var xExtraByCamera;

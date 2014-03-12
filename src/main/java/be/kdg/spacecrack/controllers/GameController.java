@@ -79,7 +79,6 @@ public class GameController {
 
         profileId = gameData.getOpponentProfileId();
 
-
         Profile opponentProfile = profileService.getProfileByProfileId(profileId);
         int gameId = gameService.createGame(user.getProfile(), gameData.getGameName(), opponentProfile);
         return gameId + "";
@@ -109,7 +108,7 @@ public class GameController {
         List<Game> games = gameService.getGames(user);
         List<GameViewModel> gameViewModels = new ArrayList<GameViewModel>();
         for (Game g : games) {
-            GameViewModel gameViewModel = new GameViewModel();
+            GameViewModel gameViewModel;
             gameViewModel = viewModelConverter.convertGameToViewModel(g);
             gameViewModels.add(gameViewModel);
         }

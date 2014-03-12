@@ -27,7 +27,7 @@ public class Player {
     @GeneratedValue
     private int playerId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "profileId")
     private Profile profile;
 
@@ -44,7 +44,6 @@ public class Player {
 
     @Column
     private boolean turnEnded;
-
 
     @Column
     private boolean requestAccepted;
@@ -157,5 +156,9 @@ public class Player {
 
     protected void internalSetGame(Game game) {
         this.game = game;
+    }
+
+    public void internalSetProfile(Profile profile) {
+        this.profile = profile;
     }
 }

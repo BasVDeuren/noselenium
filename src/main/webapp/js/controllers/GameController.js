@@ -4,14 +4,17 @@
 var spaceApp = angular.module('spaceApp');
 spaceApp.controller("GameController", function ($scope, $translate, Map, Game, Action, ActiveGame, $route, $routeParams) {
     //region Declarations
+//Consts not supported internet explorer
 
-    const BUILDSHIPCOST = 3;
-    const COLONIZECOST = 2;
-    const MOVECOST = 1;
-    const CANVASWIDTH = 1180;
-    const CANVASHEIGHT = 600;
-    const FARRESTPOINTOFCAMERA = 661;
-    const MIDPOINTOFCAMERA = 200;
+    //region Constants
+    var BUILDSHIPCOST = 3;
+    var COLONIZECOST = 2;
+    var MOVECOST = 1;
+    var CANVASWIDTH = 1180;
+    var CANVASHEIGHT = 600;
+    var FARRESTPOINTOFCAMERA = 661;
+    var MIDPOINTOFCAMERA = 200;
+    //endregion
     var game = new Phaser.Game(CANVASWIDTH, CANVASHEIGHT, Phaser.AUTO, 'game', { preload: preload, create: create, update: update, render: render });
     var cursors;
     var xExtraByCamera;
@@ -124,7 +127,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
             colonyGroup.z = 1;
             miniShipGroup = game.add.group();
             miniShipGroup.z = 5;
-            btnEndTurn = game.add.button(1500, 75, 'button', function () {
+            btnEndTurn = game.add.button(2000, 75, 'button', function () {
             }, this, 2, 1, 0);
             btnEndTurn.events.onInputDown.add(onClickEndTurn);
             btnEndTurn.fixedToCamera = true;

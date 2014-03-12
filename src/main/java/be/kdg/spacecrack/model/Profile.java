@@ -121,11 +121,9 @@ public class Profile {
     }
 
     public void addPlayer(Player player) {
-        if(players == null)
-        {
-            players = new ArrayList<Player>();
-        }
+
         players.add(player);
+        player.internalSetProfile(this);
     }
 
     public void setPlayers(List<Player> players) {

@@ -75,6 +75,33 @@ public class ViewModelConverter implements IViewModelConverter {
        return playerViewModel;
    }
 
+    public PlayerViewModel convertPlayerToReplayViewModel(Player player)
+    {
+        PlayerViewModel playerViewModel = new PlayerViewModel();
+        playerViewModel.setCommandPoints(player.getCommandPoints());
+        playerViewModel.setTurnEnded(player.isTurnEnded());
+        playerViewModel.setRequestAccepted(player.isRequestAccepted());
+        playerViewModel.setPlayerId(player.getPlayerId());
+        List<ShipViewModel> shipViewModels  = new ArrayList<ShipViewModel>();
+        for(Ship ship: player.getShips())
+        {
+            ShipViewModel shipViewModel = convertShipToViewModel(ship);
+
+            shipViewModels.add(shipViewModel);
+        }
+        playerViewModel.setShips(shipViewModels);
+        List<ColonyViewModel> colonyViewModels = new ArrayList<ColonyViewModel>();
+        for(Colony colony: player.getColonies())
+        {
+            ColonyViewModel colonyViewModel = convertColonyToViewModel(colony);
+            colonyViewModels.add(colonyViewModel);
+
+        }
+        playerViewModel.setColonies(colonyViewModels);
+        return playerViewModel;
+    }
+
+
     @Override
     public ShipViewModel convertShipToViewModel(Ship ship) {
         ShipViewModel shipViewModel = new ShipViewModel();
@@ -82,5 +109,21 @@ public class ViewModelConverter implements IViewModelConverter {
         shipViewModel.setPlanetName(ship.getPlanet().getName());
         shipViewModel.setStrength(ship.getStrength());
         return shipViewModel;
+    }
+
+    @Override
+    public GameViewModel convertGameToReplayViewModel(Game game) {
+        GameViewModel gameViewModel = new GameViewModel();
+        gameViewModel.setGameId(game.getGameId());
+        gameViewModel.setName(game.getName());
+        gameViewModel.setLoserPlayerId(game.getLoserPlayerId());
+        gameViewModel.setActionNumber(game.getActionNumber());
+
+        PlayerViewModel player1ViewModel = convertPlayerToReplayViewModel(game.getPlayers().get(0));
+        gameViewModel.setPlayer1(player1ViewModel);
+        PlayerViewModel player2ViewModel = convertPlayerToReplayViewModel(game.getPlayers().get(1));
+        gameViewModel.setPlayer2(player2ViewModel);
+        return gameViewModel;
+
     }
 }

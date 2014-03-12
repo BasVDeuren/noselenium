@@ -23,4 +23,6 @@ public interface IViewModelConverter {
     PlayerViewModel convertPlayerToViewModel(Player player);
 
     ShipViewModel convertShipToViewModel(Ship ship);
+
+    GameViewModel convertGameToReplayViewModel(Game gameRevision);
 }
