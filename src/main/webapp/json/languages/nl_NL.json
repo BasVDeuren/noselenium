@@ -59,6 +59,7 @@
     "GAME":"Spel" ,
     "ACCEPT":"Accepteer",
     "DECLINE":"Weiger",
+    "INVALID_GAMENAME": "Je mag geen symbolen gebruiken!",
     "HELPOBJECTTITLE": "Doel",
     "HELPGAMEOBJECT":"Het doel van het spel is om alle kolonies van de tegenspeler te vernietigen. Elke beurt krijgen de spelers een aantal commando punten en ze kunnen deze gebruiken om een aantal acties te doen: ",
     "HELPMOVESHIP":"Verplaats een schip van een planeet naar een buurplaneet",

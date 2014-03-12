@@ -76,5 +76,6 @@
     "HELPATTACKSAMESTRENGTH":"If you attack a colony or ship with the same strength as your attacking ship's strength, both of the pieces will be destroyed. When this piece was a colony, a planet will be again unoccupied.",
     "HELPWHENTOUSECOMMANDPOINTS":"A player may make their moves at any time as long as they have the command points to do so. When all players have clicked the end turn button, the turn is ended and will receive new commandpoints.",
     "HELPWINCONDITION": "The game is played out until one of the players has no more colonies left, then the other player is won.",
-    "HELP":""
+    "HELP":"",
+    "INVALID_GAMENAME": "You may not use symbols"
 }
