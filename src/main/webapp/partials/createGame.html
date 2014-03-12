@@ -9,7 +9,7 @@
                                 *</label>
                             <div class="col-sm-8">
                                 <input type="text" id="gameName" class="form-control" placeholder="gameName"
-                                       name="gameName" ng-pattern="/[^a-zA-Z0-9]/" ng-model="gameName" required>
+                                       name="gameName" ng-pattern="/[^a-zA-Z0-9]/" ng-model="gameData.gameName" required>
                                 <span ng-hide="gameForm.gameName.$error.pattern"  class="label label-danger">{{'INVALID_GAMENAME' | translate}}</span>
                             </div>
                         </div>
