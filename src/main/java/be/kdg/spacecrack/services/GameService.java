@@ -2,24 +2,16 @@ package be.kdg.spacecrack.services;
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
 import be.kdg.spacecrack.Exceptions.SpaceCrackUnexpectedException;
-import be.kdg.spacecrack.config.AsyncConfig;
-import be.kdg.spacecrack.controllers.GameController;
 import be.kdg.spacecrack.model.*;
 import be.kdg.spacecrack.repositories.*;
 import be.kdg.spacecrack.services.handlers.IMoveShipHandler;
 import be.kdg.spacecrack.utilities.IFirebaseUtil;
 import be.kdg.spacecrack.utilities.IViewModelConverter;
 import be.kdg.spacecrack.viewmodels.GameViewModel;
-import org.jgrapht.UndirectedGraph;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleGraph;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.*;
-import java.util.*;
 import java.util.List;
 
 
@@ -54,26 +46,24 @@ public class GameService implements IGameService {
     IGameRepository gameRepository;
 
     @Autowired
+    public
     IMoveShipHandler moveShipHandler;
 
-    @Autowired
-    IFirebaseUtil firebaseUtil;
+
 
     @Autowired
     IViewModelConverter viewModelConverter;
 
-
-
     @Autowired
-    AsyncConfig asyncConfig;
+    IGameSynchronizer gameSynchronizer;
 
-    @Autowired
-    HibernateTransactionManager transactionManager;
+
+
 
     public GameService() {
     }
 
-    public GameService(IPlanetRepository planetRepository, IColonyRepository colonyRepository, IShipRepository shipRepository, IPlayerRepository playerRepository, IGameRepository gameRepository, IMoveShipHandler moveShipHandler, IViewModelConverter viewModelConverter, IFirebaseUtil firebaseUtil, AsyncConfig asyncConfig, HibernateTransactionManager transactionManager) {
+    public GameService(IPlanetRepository planetRepository, IColonyRepository colonyRepository, IShipRepository shipRepository, IPlayerRepository playerRepository, IGameRepository gameRepository, IMoveShipHandler moveShipHandler, IViewModelConverter viewModelConverter, IGameSynchronizer gameSynchronizer) {
 
         this.planetRepository = planetRepository;
         this.shipRepository = shipRepository;
@@ -82,25 +72,10 @@ public class GameService implements IGameService {
         this.gameRepository = gameRepository;
         this.moveShipHandler = moveShipHandler;
         this.viewModelConverter = viewModelConverter;
-        this.firebaseUtil = firebaseUtil;
-        this.asyncConfig = asyncConfig;
-        this.transactionManager = transactionManager;
+        this.gameSynchronizer = gameSynchronizer;
     }
 
-    public GameService(IPlanetRepository planetRepository, IColonyRepository colonyRepository, IShipRepository shipRepository, IPlayerRepository playerRepository, IGameRepository gameRepository, IMoveShipHandler moveShipHandler, IViewModelConverter viewModelConverter, IFirebaseUtil firebaseUtil) {
 
-        this.planetRepository = planetRepository;
-        this.shipRepository = shipRepository;
-        this.colonyRepository = colonyRepository;
-        this.playerRepository = playerRepository;
-        this.gameRepository = gameRepository;
-        this.moveShipHandler = moveShipHandler;
-        this.viewModelConverter = viewModelConverter;
-        this.firebaseUtil = firebaseUtil;
-        this.asyncConfig = null;
-        this.transactionManager = null;
-
-    }
 
     @Override
     public int createGame(Profile userProfile, String gameName, Profile opponentProfile) {
@@ -265,18 +240,11 @@ public class GameService implements IGameService {
         }
 
         player.setCommandPoints(player.getCommandPoints() - BUILDSHIPCOST);
-        updateGame(game);
+        gameSynchronizer.updateGame(game);
 
 
     }
 
-    private void updateGame(Game game) {
-
-        GameViewModel gameViewModel = viewModelConverter.convertGameToViewModel(game);
-
-        firebaseUtil.setValue(GameController.GAMESUFFIX + gameViewModel.getName(), gameViewModel);
-        gameRepository.updateGame(game);
-    }
 
     @Override
     public List<Integer> getRevisionNumbers(int gameId) {
@@ -284,91 +252,6 @@ public class GameService implements IGameService {
         return gameRepository.getRevisionNumbers(gameId);
     }
 
-
-    // Call when a new colony has been captured, try to find if it is part of a new perimeter
-    public List<Perimeter> detectPerimeter(Player player, Colony newColony) {
-        // List of perimeters to return
-        List<Perimeter> perimeters = new ArrayList<Perimeter>();
-        // Get all colonies of this player (= the graph to find perimeters within)
-        UndirectedGraph<String, DefaultEdge> graph = new SimpleGraph<String, DefaultEdge>(DefaultEdge.class);
-        List<Colony> colonies = player.getColonies();
-        Map<String, Planet> playerPlanetsMap = new HashMap<String, Planet>();
-        List<Planet> playerPlanetsList = new ArrayList<Planet>();
-        // add colonies to the graph
-        for(Colony colony : colonies) {
-            Planet planet = colony.getPlanet();
-            playerPlanetsList.add(planet);
-            playerPlanetsMap.put(planet.getName(), planet);
-            graph.addVertex(planet.getName());
-        }
-        // add the new colony as well
-        Planet newPlanet = newColony.getPlanet();
-        playerPlanetsList.add(newPlanet);
-        playerPlanetsMap.put(newPlanet.getName(), newPlanet);
-        graph.addVertex(newPlanet.getName());
-        // add connections between colonies to the graph
-        for(Planet planet : playerPlanetsList) {
-            for(PlanetConnection connection : planet.getPlanetConnections()) {
-                if(playerPlanetsList.contains(connection.getChildPlanet())) {
-                    graph.addEdge(connection.getParentPlanet().getName(), connection.getChildPlanet().getName());
-                }
-            }
-        }
-
-        // Get all the other planets of the map (all planets - player colonies)
-        List<Planet> targetPlanets = new ArrayList<Planet>(Arrays.asList(planetRepository.getAll())); // all planets
-        targetPlanets.removeAll(playerPlanetsList); // all planets without already captured planets
-
-        // Find chordless cycles of the graph
-        List<List<String>> cycles = GraphAlgorithm.calculateChordlessCyclesFromVertex(graph, newColony.getPlanet().getName());
-
-        // For every cycles, make a possible perimeter
-        for(List<String> cycle : cycles) {
-            Perimeter perimeter = new Perimeter(new ArrayList<Planet>(), new ArrayList<Planet>());
-            for(String vertex : cycle) {
-                Planet planet = playerPlanetsMap.get(vertex);
-                perimeter.getOutsidePlanets().add(planet);
-            }
-            perimeters.add(perimeter);
-        }
-
-        // For every polygon (=cycle) test if it contains a target planet
-        for(Planet target : targetPlanets) {
-            List<Perimeter> perimetersForTarget = new ArrayList<Perimeter>();
-            for(Perimeter perimeter : perimeters) {
-                Polygon polygon = new Polygon();
-                for(Planet planet : perimeter.getOutsidePlanets()) {
-                    polygon.addPoint(planet.getX(), planet.getY());
-                }
-
-                if(polygon.contains(target.getX(), target.getY())) {
-                    // This is a perimeter for this target planet (but check if it is the smallest)
-                    perimetersForTarget.add(perimeter);
-                }
-            }
-
-            if(!perimetersForTarget.isEmpty()) {
-                Perimeter smallestPerimeter = perimetersForTarget.get(0);
-                for(Perimeter perimeter : perimetersForTarget) {
-                    if(perimeter.getOutsidePlanets().size() < smallestPerimeter.getOutsidePlanets().size()) {
-                        smallestPerimeter = perimeter;
-                    }
-                }
-
-                smallestPerimeter.getInsidePlanets().add(target);
-            }
-        }
-
-        // Remove all the perimeters without inside planets
-        for(Iterator<Perimeter> i = perimeters.iterator(); i.hasNext(); ) {
-            Perimeter perimeter = i.next();
-            if(perimeter.getInsidePlanets().size() == 0) {
-                i.remove();
-            }
-        }
-
-        return perimeters;
-    }
 
     @Override
     public GameViewModel getGameRevisionByNumber(int gameId, Number number) {

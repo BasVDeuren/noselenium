@@ -8,12 +8,8 @@ package be.kdg.spacecrack.unittests;/* Git $Id
 
 import be.kdg.spacecrack.model.*;
 import be.kdg.spacecrack.repositories.*;
-import be.kdg.spacecrack.services.GameService;
-import be.kdg.spacecrack.services.IGameService;
-import be.kdg.spacecrack.services.IStatisticsService;
-import be.kdg.spacecrack.services.StatisticsService;
+import be.kdg.spacecrack.services.*;
 import be.kdg.spacecrack.services.handlers.MoveShipHandler;
-import be.kdg.spacecrack.utilities.IFirebaseUtil;
 import be.kdg.spacecrack.utilities.ViewModelConverter;
 import be.kdg.spacecrack.viewmodels.StatisticsViewModel;
 import org.junit.Before;
@@ -44,7 +40,9 @@ public class StatisticsServiceTests extends BaseUnitTest{
         PlayerRepository playerRepository = new PlayerRepository(sessionFactory);
         ColonyRepository colonyRepository = new ColonyRepository(sessionFactory);
         ShipRepository shipRepository = new ShipRepository(sessionFactory);
-        gameService = new GameService(new PlanetRepository(sessionFactory), colonyRepository, shipRepository, playerRepository, new GameRepository(sessionFactory), new MoveShipHandler(colonyRepository), new ViewModelConverter(), mock(IFirebaseUtil.class));
+        PlanetRepository planetRepository = new PlanetRepository(sessionFactory);
+        IGameSynchronizer mockGameSynchronizer = mock(IGameSynchronizer.class);
+        gameService = new GameService(planetRepository, colonyRepository, shipRepository, playerRepository, new GameRepository(sessionFactory), new MoveShipHandler(colonyRepository,planetRepository, mockGameSynchronizer), new ViewModelConverter(), mockGameSynchronizer);
 
         mockGameRepository = mock(IGameRepository.class);
         mockProfileRepository = mock(IProfileRepository.class);

@@ -6,13 +6,13 @@ package be.kdg.spacecrack.unittests;/* Git $Id$
  *
  */
 
-import be.kdg.spacecrack.config.AsyncConfig;
 import be.kdg.spacecrack.model.Game;
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.Ship;
 import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.*;
 import be.kdg.spacecrack.services.GameService;
+import be.kdg.spacecrack.services.GameSynchronizer;
 import be.kdg.spacecrack.services.handlers.MoveShipHandler;
 import be.kdg.spacecrack.utilities.IFirebaseUtil;
 import be.kdg.spacecrack.utilities.ViewModelConverter;
@@ -63,7 +63,8 @@ public class ReplayTests {
         ColonyRepository colonyRepository = new ColonyRepository(sessionFactory);
         ShipRepository shipRepository = new ShipRepository(sessionFactory);
         IFirebaseUtil mockedFirebaseUtil = mock(IFirebaseUtil.class);
-        gameService = new GameService(new PlanetRepository(sessionFactory), colonyRepository, shipRepository, playerRepository, new GameRepository(sessionFactory), new MoveShipHandler(colonyRepository), new ViewModelConverter(), mockedFirebaseUtil, new AsyncConfig(), new HibernateTransactionManager(sessionFactory));
+        GameSynchronizer gameSynchronizer = new GameSynchronizer(new ViewModelConverter(), firebaseUtil, new GameRepository());
+        gameService = new GameService(new PlanetRepository(sessionFactory), colonyRepository, shipRepository, playerRepository, new GameRepository(sessionFactory), new MoveShipHandler(colonyRepository, new PlanetRepository(sessionFactory), gameSynchronizer), new ViewModelConverter(), gameSynchronizer);
     }
 
 

@@ -36,6 +36,8 @@ public interface IGameService {
 
     void buildShip(Integer colonyId);
 
+
+
     List<Integer> getRevisionNumbers(int gameId);
 
     GameViewModel getGameRevisionByNumber(int gameId, Number number);

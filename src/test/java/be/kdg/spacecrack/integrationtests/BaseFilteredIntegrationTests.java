@@ -22,7 +22,6 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -78,8 +77,7 @@ public abstract class BaseFilteredIntegrationTests {
 
         ctx = WebApplicationContextUtils.getWebApplicationContext(servletContext);
 
-        if(mvcBuilderWithoutGlobalExceptionHandler == null)
-        {
+        if(mvcBuilderWithoutGlobalExceptionHandler == null) {
             IPlanetRepository planetRepository = new PlanetRepository(sessionFactory);
             IColonyRepository colonyRepository = new ColonyRepository(sessionFactory);
             IShipRepository shipRepository = new ShipRepository(sessionFactory);
@@ -91,17 +89,16 @@ public abstract class BaseFilteredIntegrationTests {
             IUserRepository userRepository = new UserRepository(sessionFactory);
             ITokenStringGenerator tokenStringGenerator = new TokenStringGenerator();
 
-            IMoveShipHandler moveShipHandler = new MoveShipHandler(colonyRepository);
             ViewModelConverter viewModelConverter = new ViewModelConverter();
             IFirebaseUtil firebaseUtil = mock(IFirebaseUtil.class);
-            AsyncConfig asyncConfig = new AsyncConfig();
-            IGameService gameService = new GameService(planetRepository, colonyRepository, shipRepository, playerRepository, gameRepository, moveShipHandler, viewModelConverter, firebaseUtil, asyncConfig, new HibernateTransactionManager(sessionFactory));
-            IAuthorizationService authorizationService = new AuthorizationService(tokenRepository, userRepository, tokenStringGenerator);
+            IMoveShipHandler moveShipHandler = new MoveShipHandler(colonyRepository, planetRepository, new GameSynchronizer(viewModelConverter, firebaseUtil, gameRepository));
 
+            AsyncConfig asyncConfig = new AsyncConfig();
+            IGameService gameService = new GameService(planetRepository, colonyRepository, shipRepository, playerRepository, gameRepository, moveShipHandler, viewModelConverter, mock(GameSynchronizer.class));
+            IAuthorizationService authorizationService = new AuthorizationService(tokenRepository, userRepository, tokenStringGenerator);
 
             IUserService userService = new UserService(userRepository, profileRepository);
             IProfileService profileService = new ProfileService(profileRepository, userRepository);
-
 
             ActionController actionController = new ActionController(gameService, viewModelConverter, firebaseUtil);
             baseGameController = new GameController(authorizationService, gameService, profileService, viewModelConverter, firebaseUtil);
@@ -114,13 +111,10 @@ public abstract class BaseFilteredIntegrationTests {
             ReplayController replayController = new ReplayController(gameService);
             mvcBuilderWithoutGlobalExceptionHandler = MockMvcBuilders.standaloneSetup(actionController, baseGameController, mapController, profileController, tokenController, userController, replayController)
                     .setValidator(validator).addInterceptors(new TokenHandlerInterceptor(authorizationService));
-
             mockMvc = mvcBuilderWithoutGlobalExceptionHandler.build();
+    }
 
-        }
-
-        if(objectMapper == null)
-        {
+        if(objectMapper == null) {
             objectMapper = new ObjectMapper();
         }
 

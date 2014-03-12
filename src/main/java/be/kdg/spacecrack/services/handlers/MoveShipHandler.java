@@ -7,15 +7,34 @@ package be.kdg.spacecrack.services.handlers;/* Git $Id$
  */
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
+import be.kdg.spacecrack.config.AsyncConfig;
 import be.kdg.spacecrack.model.*;
+import be.kdg.spacecrack.repositories.IGameRepository;
+import be.kdg.spacecrack.repositories.IPlanetRepository;
 import be.kdg.spacecrack.services.GameService;
 import be.kdg.spacecrack.repositories.IColonyRepository;
+import be.kdg.spacecrack.services.GraphAlgorithm;
 import be.kdg.spacecrack.services.IGameService;
+import be.kdg.spacecrack.services.IGameSynchronizer;
+import org.jgrapht.UndirectedGraph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.SimpleGraph;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import javax.ejb.AsyncResult;
+import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Component("moveShipHandler")
 public class MoveShipHandler implements IMoveShipHandler {
@@ -23,14 +42,23 @@ public class MoveShipHandler implements IMoveShipHandler {
     @Autowired
     private IColonyRepository colonyRepository;
 
+    @Autowired
+    private IPlanetRepository planetRepository;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+    @Autowired
+    private IGameSynchronizer gameSynchronizer;
+
 
     public MoveShipHandler() {
     }
 
-    public MoveShipHandler(IColonyRepository colonyRepository)
+    public MoveShipHandler(IColonyRepository colonyRepository, IPlanetRepository planetRepository, IGameSynchronizer gameSynchronizer)
     {
         this.colonyRepository = colonyRepository;
-
+        this.planetRepository = planetRepository;
+        this.gameSynchronizer = gameSynchronizer;
     }
 
 
@@ -67,11 +95,37 @@ public class MoveShipHandler implements IMoveShipHandler {
     }
 
 
-    private Colony colonizePlanet(Planet planet, Player player) {
-        Colony colony = new Colony();
+    private Colony colonizePlanet(Planet planet, final Player player) {
+        final Colony colony = new Colony();
         colony.setPlanet(planet);
         colony.setPlayer(player);
         colony.setStrength(GameService.NEWCOLONYSTRENGTH);
+
+       ExecutorService executorService = Executors.newSingleThreadExecutor();
+       executorService.submit(new Callable<List<Perimeter>>() {
+           @Override
+           public List<Perimeter> call() throws Exception {
+               HibernateTransactionManager transactionManager = (HibernateTransactionManager) applicationContext.getBean("transactionManager");
+               TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
+
+               List<Perimeter> perimeters = detectPerimeter(player, colony);
+               for (Perimeter perimeter : perimeters) {
+                   List<Planet> insidePlanets = perimeter.getInsidePlanets();
+                   for(Planet insidePlanet: insidePlanets){
+                       Colony colony1 = new Colony();
+                       colony1.setStrength(1);
+                       colony1.setPlanet(insidePlanet);
+                       colony1.setPlayer(player);
+                   }
+               }
+
+               gameSynchronizer.updateGame(player.getGame());
+               transactionManager.commit(status);
+               return perimeters;
+           }
+       });
+
+
         return colony;
     }
 
@@ -217,6 +271,94 @@ public class MoveShipHandler implements IMoveShipHandler {
         deletePiece(shipToMerge);
         return shipToMergeWith;
     }
+    public Future<List<Perimeter>> detectPerimeterAsync(Player player, Colony newColony)
+    {
+        return new AsyncResult<List<Perimeter>>(detectPerimeter(player, newColony));
+    }
 
+    // Call when a new colony has been captured, try to find if it is part of a new perimeter
+    @Override
+    public List<Perimeter> detectPerimeter(Player player, Colony newColony) {
+        // List of perimeters to return
+        List<Perimeter> perimeters = new ArrayList<Perimeter>();
+        // Get all colonies of this player (= the graph to find perimeters within)
+        UndirectedGraph<String, DefaultEdge> graph = new SimpleGraph<String, DefaultEdge>(DefaultEdge.class);
+        List<Colony> colonies = player.getColonies();
+        Map<String, Planet> playerPlanetsMap = new HashMap<String, Planet>();
+        List<Planet> playerPlanetsList = new ArrayList<Planet>();
+        // add colonies to the graph
+        for(Colony colony : colonies) {
+            Planet planet = colony.getPlanet();
+            playerPlanetsList.add(planet);
+            playerPlanetsMap.put(planet.getName(), planet);
+            graph.addVertex(planet.getName());
+        }
+        // add the new colony as well
+        Planet newPlanet = newColony.getPlanet();
+        playerPlanetsList.add(newPlanet);
+        playerPlanetsMap.put(newPlanet.getName(), newPlanet);
+        graph.addVertex(newPlanet.getName());
+        // add connections between colonies to the graph
+        for(Planet planet : playerPlanetsList) {
+            for(PlanetConnection connection : planet.getPlanetConnections()) {
+                if(playerPlanetsList.contains(connection.getChildPlanet())) {
+                    graph.addEdge(connection.getParentPlanet().getName(), connection.getChildPlanet().getName());
+                }
+            }
+        }
 
+        // Get all the other planets of the map (all planets - player colonies)
+        List<Planet> targetPlanets = new ArrayList<Planet>(Arrays.asList(planetRepository.getAll())); // all planets
+        targetPlanets.removeAll(playerPlanetsList); // all planets without already captured planets
+
+        // Find chordless cycles of the graph
+        List<List<String>> cycles = GraphAlgorithm.calculateChordlessCyclesFromVertex(graph, newColony.getPlanet().getName());
+
+        // For every cycles, make a possible perimeter
+        for(List<String> cycle : cycles) {
+            Perimeter perimeter = new Perimeter(new ArrayList<Planet>(), new ArrayList<Planet>());
+            for(String vertex : cycle) {
+                Planet planet = playerPlanetsMap.get(vertex);
+                perimeter.getOutsidePlanets().add(planet);
+            }
+            perimeters.add(perimeter);
+        }
+
+        // For every polygon (=cycle) test if it contains a target planet
+        for(Planet target : targetPlanets) {
+            List<Perimeter> perimetersForTarget = new ArrayList<Perimeter>();
+            for(Perimeter perimeter : perimeters) {
+                Polygon polygon = new Polygon();
+                for(Planet planet : perimeter.getOutsidePlanets()) {
+                    polygon.addPoint(planet.getX(), planet.getY());
+                }
+
+                if(polygon.contains(target.getX(), target.getY())) {
+                    // This is a perimeter for this target planet (but check if it is the smallest)
+                    perimetersForTarget.add(perimeter);
+                }
+            }
+
+            if(!perimetersForTarget.isEmpty()) {
+                Perimeter smallestPerimeter = perimetersForTarget.get(0);
+                for(Perimeter perimeter : perimetersForTarget) {
+                    if(perimeter.getOutsidePlanets().size() < smallestPerimeter.getOutsidePlanets().size()) {
+                        smallestPerimeter = perimeter;
+                    }
+                }
+
+                smallestPerimeter.getInsidePlanets().add(target);
+            }
+        }
+
+        // Remove all the perimeters without inside planets
+        for(Iterator<Perimeter> i = perimeters.iterator(); i.hasNext(); ) {
+            Perimeter perimeter = i.next();
+            if(perimeter.getInsidePlanets().size() == 0) {
+                i.remove();
+            }
+        }
+
+        return perimeters;
+    }
 }
