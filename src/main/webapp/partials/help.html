@@ -2,78 +2,39 @@
     <div class="panel panel-default">
         <div class="panel-heading">Game Info</div>
         <div class="panel-body">
-            <h4>Object</h4>
-
-            <p>
-                The object of the game is to control the most planets after a set number of turns have elapsed. On each
-                turn,
-                players are awarded a fixed number of command points and they can use those points to take two actions:
-
+            <h4>{{'HELPOBJECTTITLE' | translate}}</h4>
+<p>
+           {{'HELPGAMEOBJECT' | translate}}
             <ul>
-                <li>Move a ship from one planet to a neighboring planet</li>
-                <li>Build a new ship at a planet they control</li>
-                <li>Each action costs one command point.</li>
+                <li>{{'HELPMOVESHIP' | translate}}</li>
+                <li>{{'HELPBUILDSHIP' | translate}}</li>
+                <li>{{'HELPCOMMANDPOINTCOSTS' | translate}}</li>
+                <ul>
+                    <li>{{'HELPMOVESHIPCOMMANDPOINTSCOST' | translate}}</li>
+                    <li>{{'HELPBUILDSHIPCOMMANDPOINTSCOST' | translate}}</li>
+                </ul>
+                <li>{{'HELPCOLONIZEANDCOLONIZECOST' | translate}}</li>
             </ul>
             </p>
-            <h4>Moves</h4>
+            <h4>{{'MOVES' | translate}}</h4>
 
             <p>
-                When moving a ship, a number of things can happen:
+                {{'HELPMOVESHIPSTORIES' | translate}}
             <ul>
-                <li>If the planet is unoccupied by a ship, the player takes control of the planet without a battle
-                    If the planet is occupied by a ship owned by the player, the two ships are combined into a new ship
-                    that
-                    is
-                    the
-                    sum of their size
+                <li>{{'HELPTAKEOVERCLEANPLANET' | translate}}</li>
+                <li>{{'HELPACTIVEPLAYERSHIPONPLANET' | translate}}.</li>
                 </li>
-                <li>If the planet is occupied by an opposing ship larger than the player's (attacking) ship, the
-                    player's
-                    ship
-                    is
-                    destroyed and the defending ship's size is reduced by one half of the size of the attacking ship
+                <li>{{'HELPOPPONENTSTRONGERPLAYERSHIPONPLANET' | translate}}</li>
+                <li>{{'HELPOPPONENTWEAKERPLAYERSHIPONPLANET' | translate}}
                 </li>
-                <li>If the planet is occupied by an opposing ship smaller than the player's ship, the defending ship is
-                    destroyed,
-                    the player takes control of the planet and the player's (attacking) ship is reduced in size by one
-                    half
-                    the
-                    size
-                    of the defending ship
-                </li>
-                <li>If the planet is occupied by an opposing ship the same size as the player's ship, both ships are
-                    destroyed
+                <li>{{'HELPATTACKSAMESTRENGTH' | translate}}
                 </li>
             </ul>
-            A player may make their moves at any time as long as they have the command points to do so. When all
-            players
-            have exhausted their command points, the turn is ended. Players are awarded crack based on the planets
-            they
-            control.
-            </p>
-
-            <h4>Crack</h4>
-
-            <p>
-
-                All planets produce crack equal to one half of their size (using the default settings)
-                Planets that are surrounded on six sides by friendly planets are "core" planets and produce a bonus
-                quantity
-                of
-                crack (an additional half using the default settings)
-                Crack is used to build ships. A planet consumes units of crack in equal numbers to its size to build a
-                ship
-                and
-                the constructed ship is the size of the creating planet.
+            {{'HELPWHENTOUSECOMMANDPOINTS' | translate}}
             </p>
 
             <p>
-                In this way the game is played out turn by turn until the final turn elapses and the player that
-                controls
-                the
-                most planets (regardless of planet size) is the winner. Ties are broken by the players' remaining crack
-                supplies
-                and if that ties as well, then there is simply a tie.
+                {{'HELPWINCONDITION' | translate }}
             </p>
         </div>
     </div>
