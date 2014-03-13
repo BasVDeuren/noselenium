@@ -21,17 +21,14 @@ import java.util.List;
 public class StatisticsService implements IStatisticsService {
 
     @Autowired
-    IGameRepository gameRepository;
+    private IGameRepository gameRepository;
 
     @Autowired
-    IProfileRepository profileRepository;
+    private IProfileRepository profileRepository;
 
-
-    public StatisticsService() {
-    }
+    public StatisticsService() {}
 
     public StatisticsService(IGameRepository mockGameRepository, IProfileRepository mockProfileRepository) {
-
         gameRepository = mockGameRepository;
         profileRepository = mockProfileRepository;
     }

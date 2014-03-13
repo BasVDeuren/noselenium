@@ -17,8 +17,6 @@ public class SeleniumGameTests extends SeleniumBaseTestCase {
     @Test
     public void testNavigateToCreateGamePage() throws Exception {
          navigateToNewGame();
-
-
     }
 
     protected void navigateToNewGame() throws InterruptedException {
@@ -42,10 +40,5 @@ public class SeleniumGameTests extends SeleniumBaseTestCase {
 
         WebElement btnInvite = driver.findElement(By.name("btnInvite"));
         wait.until(ExpectedConditions.visibilityOf(btnInvite));
-
-
-
     }
-
-
 }

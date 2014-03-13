@@ -14,23 +14,16 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.*;
 
 public class TokenHandlerInterceptor extends HandlerInterceptorAdapter {
-
-
-
-
     private IAuthorizationService authorizationService;
 
-    public TokenHandlerInterceptor() {
-    }
+    public TokenHandlerInterceptor() {}
 
     public TokenHandlerInterceptor(IAuthorizationService authorizationService) {
-
         this.authorizationService = authorizationService;
     }
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
-
         boolean unauthorized;
 
         HttpServletResponseWrapper responseWrapper = new HttpServletResponseWrapper( httpServletResponse);
@@ -59,8 +52,6 @@ public class TokenHandlerInterceptor extends HandlerInterceptorAdapter {
                 }
             }
 
-
-
             AccessToken token = null;
             try {
                 token = authorizationService.getAccessTokenByValue(tokenValue);
@@ -75,9 +66,6 @@ public class TokenHandlerInterceptor extends HandlerInterceptorAdapter {
                 unauthorized = true;
 
             }
-
-
-
         }
         if (unauthorized) {
             responseWrapper.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You are unauthorized for this request");

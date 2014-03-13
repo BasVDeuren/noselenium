@@ -15,32 +15,23 @@ import org.springframework.stereotype.Component;
 
 @Component("shipRepository")
 public class ShipRepository implements IShipRepository {
-
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
-    public ShipRepository() {
-    }
+    public ShipRepository() {}
 
     public ShipRepository(SessionFactory sessionFactory) {
-
         this.sessionFactory = sessionFactory;
     }
-
-
 
     @Override
     public Ship getShipByShipId(int shipId) {
         Session session = sessionFactory.getCurrentSession();
-        Ship ship;
 
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Ship s where s.shipId = :shipId");
         q.setParameter("shipId", shipId);
-        ship = (Ship) q.uniqueResult();
 
-
-        return ship;
+        return (Ship) q.uniqueResult();
     }
-
-
 }

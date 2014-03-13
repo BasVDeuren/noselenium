@@ -40,16 +40,13 @@ public class ActionController{
 
     @Autowired
     private IViewModelConverter viewModelConverter;
+
     @Autowired
     private IFirebaseUtil firebaseUtil;
 
-
-    public ActionController() {
-
-    }
+    public ActionController() {}
 
     public ActionController(IGameService gameService, IViewModelConverter viewModelConverter, IFirebaseUtil firebaseUtil) {
-
         this.gameService = gameService;
         this.viewModelConverter = viewModelConverter;
         this.firebaseUtil = firebaseUtil;
@@ -61,6 +58,7 @@ public class ActionController{
         if (actionViewModel.getPlayerId() == null || actionViewModel.getPlayerId() < 1) {
             throw new SpaceCrackNotAcceptableException("An action must contain a valid playerId");
         }
+
         if (actionViewModel.getGameId() == null || actionViewModel.getGameId() < 1) {
             throw new SpaceCrackNotAcceptableException("An action must contain a valid gameId");
         }
@@ -68,10 +66,9 @@ public class ActionController{
         String actionType = actionViewModel.getActionType();
         Action action;
         if (actionType.equals(MOVESHIP)) {
-           action = new MoveShipAction(gameService, actionViewModel.getPlayerId(), actionViewModel.getShip(), actionViewModel.getDestinationPlanetName());
-       } else if (actionType.equals(ENDTURN)) {
+            action = new MoveShipAction(gameService, actionViewModel.getPlayerId(), actionViewModel.getShip(), actionViewModel.getDestinationPlanetName());
+        } else if (actionType.equals(ENDTURN)) {
             action = new EndTurnAction(gameService, actionViewModel.getPlayerId());
-
         } else if (actionType.equals(BUILDSHIP)) {
             action = new BuildShipAction(gameService, actionViewModel.getPlayerId(), actionViewModel.getColony());
         } else {

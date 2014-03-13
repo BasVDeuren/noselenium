@@ -9,21 +9,13 @@ package be.kdg.spacecrack.viewmodels;/* Git $Id$
 import java.util.List;
 
 public class PlayerViewModel {
-
     private int playerId;
-
     private List<ColonyViewModel> colonies;
-
     private List<ShipViewModel> ships;
-
     private int commandPoints;
-
     private boolean turnEnded;
-
     private boolean requestAccepted;
-
     private int profileId;
-
     private String playerName;
 
     public String getPlayerName() {

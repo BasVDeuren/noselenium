@@ -32,8 +32,5 @@ public class SeleniumChangeLanguage extends SeleniumBaseTestCase {
         btnEngels.click();
         wait.until(ExpectedConditions.textToBePresentInElement(By.name("createGame"), "New Game"));
         assertEquals("New Game", btnnewgame.getText());
-
     }
-
-
 }

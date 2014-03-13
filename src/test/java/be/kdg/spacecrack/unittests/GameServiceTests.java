@@ -33,13 +33,11 @@ import static org.mockito.Mockito.*;
  *
  */
 public class GameServiceTests extends BaseUnitTest {
-
     private GameService gameService;
     private User user;
     private IPlayerRepository playerRepository;
     private IPlanetRepository planetRepository;
     private Profile opponentProfile;
-
 
     @Before
     public void setUp() throws Exception {
@@ -79,37 +77,30 @@ public class GameServiceTests extends BaseUnitTest {
 
         assertEquals("b", shipLocation.getName());
         assertEquals("Player should have lost commandPoints", oldCommandPoints - GameService.MOVESHIPCOST - GameService.CREATECOLONYCOST, playerDb.getCommandPoints());
-
     }
 
     @Transactional
     @Test(expected = SpaceCrackNotAcceptableException.class)
     public void moveShip_invalidPlanet_shipNotMoved() throws Exception {
         Game game = createGame();
-
         Ship ship = game.getPlayers().get(0).getShips().get(0);
         gameService.moveShip(ship.getShipId(), "f");
         Planet shipLocation = gameService.getShipLocationByShipId(ship.getShipId());
 
         assertEquals("a", shipLocation.getName());
-
     }
 
     @Transactional
     @Test
     public void moveShipAndCreateColony_validPlanetNoColonyOnPlanet_ColonyPlaced() throws Exception {
         Game game = createGame();
-
         Ship ship = game.getPlayers().get(0).getShips().get(0);
-
         gameService.moveShip(ship.getShipId(), "b");
-
         Session session = sessionFactory.getCurrentSession();
 
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Ship s where s.shipId = :shipId");
         q.setParameter("shipId", ship.getShipId());
         Ship shipDb = (Ship) q.uniqueResult();
-
 
         List<Colony> colonies = shipDb.getPlayer().getColonies();
         assertEquals("The player should have 2 colonies", 2, colonies.size());
@@ -120,11 +111,8 @@ public class GameServiceTests extends BaseUnitTest {
     @Test
     public void moveShipAndCreateColony_PlanetAlreadyColonizedByPlayer_NoColonyPlaced() throws Exception {
         Game game = createGame();
-
         Ship ship = game.getPlayers().get(0).getShips().get(0);
-
         gameService.moveShip(ship.getShipId(), "b");
-
         gameService.moveShip(ship.getShipId(), "a");
 
         Session session = sessionFactory.getCurrentSession();
@@ -133,20 +121,15 @@ public class GameServiceTests extends BaseUnitTest {
         q.setParameter("shipId", ship.getShipId());
         Ship shipDb = (Ship) q.uniqueResult();
 
-
         List<Colony> colonies = shipDb.getPlayer().getColonies();
         assertEquals("The player should have Only 2 colonies", 2, colonies.size());
-
     }
-
 
     @Transactional
     @Test(expected = SpaceCrackNotAcceptableException.class)
     public void moveShip_NoCommandPoints_SpaceCrackNotAcceptableException() throws Exception {
         Game game = createGame();
-
         Ship ship = game.getPlayers().get(0).getShips().get(0);
-
 
         gameService.moveShip(ship.getShipId(), "b");
         gameService.moveShip(ship.getShipId(), "c");
@@ -182,7 +165,6 @@ public class GameServiceTests extends BaseUnitTest {
         verify(gameRepository, VerificationModeFactory.times(1)).getGamesByProfile(user.getProfile());
         assertEquals(expected, actual);
     }
-
 
     @Test
     @Transactional
@@ -260,7 +242,6 @@ public class GameServiceTests extends BaseUnitTest {
         assertEquals("The ship should have strength", GameService.NEWSHIPSTRENGTH, newShip.getStrength());
         assertEquals("Ship should be build on colony's planet", colony.getPlanet().getName(), playerDbShips.get(playerDbShips.size() - 1).getPlanet().getName());
         assertEquals("Player should have lost 3 commandPoints", oldCommandPoints - GameService.BUILDSHIPCOST, playerDb.getCommandPoints());
-
     }
 
     @Transactional
@@ -284,7 +265,6 @@ public class GameServiceTests extends BaseUnitTest {
         int oldShipStrength = ship.getStrength();
         int oldAmountOfShips = player.getShips().size();
 
-
         Player playerDb = playerRepository.getPlayerByPlayerId(player.getPlayerId());
         int oldCommandPoints = playerDb.getCommandPoints();
         Colony colony = player.getColonies().get(0);
@@ -293,12 +273,10 @@ public class GameServiceTests extends BaseUnitTest {
         Ship shipDb = playerDb.getShips().get(0);
         List<Ship> playerDbShips = playerDb.getShips();
 
-
         assertEquals("Player shouldn't have more ships than before", oldAmountOfShips, playerDbShips.size());
         assertEquals("Ship should be build on colony's planet", colony.getPlanet().getName(), playerDbShips.get(playerDbShips.size() - 1).getPlanet().getName());
         assertEquals("The ship standing on the planet should now be more powerful", oldShipStrength + GameService.NEWSHIPSTRENGTH, shipDb.getStrength());
         assertEquals("Player should have lost 3 commandPoints", oldCommandPoints - GameService.BUILDSHIPCOST, playerDb.getCommandPoints());
-
     }
 
     @Transactional
@@ -321,21 +299,15 @@ public class GameServiceTests extends BaseUnitTest {
         //endregion
         //region Act
         gameServiceWithMockedMoveShipHandler.moveShip(ship.getShipId(), "a3");
-        //endregion
-        //region Assert
         ArgumentCaptor<Game> gameArgumentCaptor = ArgumentCaptor.forClass(Game.class);
         verify(mockGameSynchronizer, VerificationModeFactory.times(1)).updateGame(gameArgumentCaptor.capture());
         Game gameResultGame = gameArgumentCaptor.getValue();
         assertEquals("Player2 should have lost.", game.getPlayers().get(1).getPlayerId(), gameResultGame.getLoserPlayerId());
-        //endregion
     }
 
     @Transactional
-    //region Assert
     @Test(expected = SpaceCrackNotAcceptableException.class)
-    //endregion
     public void moveShipAfterVictory_Player1HasShipLeft_Player1ShipCantMoveNoMore() throws Exception {
-        //region Arrange
         Game game = createGame();
         game.setLoserPlayerId(game.getPlayers().get(0).getPlayerId());
         Player player2 = game.getPlayers().get(1);
@@ -348,10 +320,7 @@ public class GameServiceTests extends BaseUnitTest {
         IPlanetRepository mockPlanetRepository = mock(IPlanetRepository.class);
 
         GameService gameServiceWithMockedMoveShipHandler = new GameService(mockPlanetRepository,null,mockShipRepository, null,mockGameRepository,mockMoveShipHandler, new ViewModelConverter(), mock(GameSynchronizer.class));
-        //endregion
-        //region Act
         gameServiceWithMockedMoveShipHandler.moveShip(ship.getShipId(), "b3");
-        //endregion
     }
 
     @Transactional
@@ -452,8 +421,6 @@ public class GameServiceTests extends BaseUnitTest {
         for(String name : surroundedPlanetNames) {
             surroundedPlanets.add(planetRepository.getPlanetByName(name));
         }
-
-
 
         assertTrue("A perimeter should exist", !perimeters.isEmpty());
         assertEquals("Two planets should be surrounded by this perimeter.", perimeters.get(0).getInsidePlanets().size(), 2);

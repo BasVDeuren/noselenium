@@ -22,6 +22,7 @@ import javax.xml.bind.ValidationException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
     @ResponseStatus(value = HttpStatus.NOT_ACCEPTABLE)

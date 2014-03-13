@@ -29,12 +29,10 @@ public class GameRepositoryTests extends BaseUnitTest {
     @Test
     @Transactional
     public void GetAllGamesByProfile() throws Exception {
-
         Profile profile1;
         Profile profile2;
         Game expected;
         Session session = sessionFactory.getCurrentSession();
-
 
         profile1 = new Profile();
         profile2 = new Profile();
@@ -48,14 +46,11 @@ public class GameRepositoryTests extends BaseUnitTest {
         session.saveOrUpdate(player1);
         session.saveOrUpdate(player2);
 
-
         expected.getPlayers().add(player1);
         expected.getPlayers().add(player2);
         session.saveOrUpdate(expected);
-        //
 
         GameRepository gameRepository = new GameRepository(sessionFactory);
-
 
         List<Game> games = gameRepository.getGamesByProfile(profile1);
 
@@ -71,7 +66,6 @@ public class GameRepositoryTests extends BaseUnitTest {
         Game expected;
         Session session = sessionFactory.getCurrentSession();
 
-
         profile1 = new Profile();
         profile2 = new Profile();
         session.saveOrUpdate(profile1);
@@ -84,20 +78,14 @@ public class GameRepositoryTests extends BaseUnitTest {
         session.saveOrUpdate(player1);
         session.saveOrUpdate(player2);
 
-
         expected.getPlayers().add(player1);
         expected.getPlayers().add(player2);
         session.saveOrUpdate(expected);
 
-
         GameRepository gameRepository = new GameRepository(sessionFactory);
-
         int expectedId = gameRepository.createOrUpdateGame(expected);
-
         Game actual = gameRepository.getGameByGameId(expectedId);
 
         assertEquals("GameId from repository should be the same as actual gameId", expectedId, actual.getGameId());
     }
-
-
 }

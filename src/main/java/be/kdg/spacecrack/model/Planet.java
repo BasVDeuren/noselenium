@@ -24,12 +24,16 @@ public class Planet {
     @GeneratedValue
     @Id
     private int planetId;
+
     @Column(unique = true)
     private String name;
+
     @Column
     private int x;
+
     @Column
     private int y;
+
     @JsonIgnore
     @OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<PlanetConnection> planetConnections;
@@ -39,8 +43,6 @@ public class Planet {
 
     @OneToMany
     private Set<Ship> ships;
-
-
 
     public Planet(String name, int x, int y) {
         this.name = name;
@@ -108,7 +110,6 @@ public class Planet {
     public String getName() {
         return name;
     }
-
 
     public void removeConnectionToPlanet(Planet planet) {
         Iterator iterator = planetConnections.iterator();

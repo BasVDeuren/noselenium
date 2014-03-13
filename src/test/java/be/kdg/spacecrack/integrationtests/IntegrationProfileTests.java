@@ -24,9 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class IntegrationProfileTests extends BaseFilteredIntegrationTests {
     public static final String USERNAME = "profiletestusername";
-
-
-    AccessToken accessToken;
+    private AccessToken accessToken;
 
     @Before
     public void setUp() throws Exception {
@@ -54,7 +52,4 @@ public class IntegrationProfileTests extends BaseFilteredIntegrationTests {
                 .content(profileJson)
                 .cookie(new Cookie("accessToken", "%22" + accessToken.getValue() + "%22"))).andExpect(status().isOk());
     }
-
-
-
 }

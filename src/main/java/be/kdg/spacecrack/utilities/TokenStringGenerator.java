@@ -14,7 +14,8 @@ import java.util.Random;
  */
 @Component("generator")
 public class TokenStringGenerator implements ITokenStringGenerator {
- Random random;
+    private Random random;
+
     public TokenStringGenerator(long seed) {
         random = new Random(seed);
     }
@@ -22,7 +23,6 @@ public class TokenStringGenerator implements ITokenStringGenerator {
     public TokenStringGenerator() {
          random = new Random();
     }
-
 
     @Override
     public String generateTokenString() {

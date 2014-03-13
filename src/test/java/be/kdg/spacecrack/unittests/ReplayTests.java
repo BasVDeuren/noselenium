@@ -65,7 +65,6 @@ public class ReplayTests {
         IFirebaseUtil mockedFirebaseUtil = mock(IFirebaseUtil.class);
         GameRepository gameRepository = new GameRepository(sessionFactory);
         IGameSynchronizer gameSynchronizer = new GameSynchronizer(new ViewModelConverter(), mockedFirebaseUtil, gameRepository);
-
         gameService = new GameService(new PlanetRepository(sessionFactory), colonyRepository, shipRepository, playerRepository, gameRepository, new MoveShipHandler(colonyRepository, new PlanetRepository(sessionFactory), gameSynchronizer), new ViewModelConverter(), gameSynchronizer);
     }
 
@@ -85,20 +84,14 @@ public class ReplayTests {
         Ship ship = game.getPlayers().get(0).getShips().get(0);
         transactionManager.commit(status);
         //endregion
-
         doMoves(transactionManager, ship);
         //endregion
-
-
         TransactionStatus status5 = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
         //region Act
         List<Integer> revisionNumbers = gameService.getRevisionNumbers(game.getGameId());
         //endregion
         transactionManager.commit(status5);
-
-
         //region Assert
-
         assertEquals("Game should have 4 revisions", 4, revisionNumbers.size());
         //endregion
 
@@ -114,11 +107,9 @@ public class ReplayTests {
 
         int gameId = gameService.createGame(user.getProfile(), "SpaceCrackName2", opponentProfile);
 
-
         Game game = gameService.getGameByGameId(gameId);
         Ship ship = game.getPlayers().get(0).getShips().get(0);
         transactionManager.commit(status);
-
 
         doMoves(transactionManager, ship);
 
@@ -144,9 +135,7 @@ public class ReplayTests {
         assertEquals("player should have 3 colony", 3, viewModels.get(2).getPlayer1().getColonies().size());
         assertEquals("player should have 3 colony", 3, viewModels.get(3).getPlayer1().getColonies().size());
 
-
         transactionManager.commit(status3);
-
     }
 
     private void doMoves(HibernateTransactionManager transactionManager, Ship ship) {
@@ -181,5 +170,4 @@ public class ReplayTests {
         MapFactory mapFactory = new MapFactory(sessionFactory, new PlanetRepository(sessionFactory));
         mapFactory.createPlanets();
     }
-
 }

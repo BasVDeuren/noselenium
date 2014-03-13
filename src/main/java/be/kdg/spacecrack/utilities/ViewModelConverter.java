@@ -31,8 +31,7 @@ public class ViewModelConverter implements IViewModelConverter {
     }
 
     @Override
-    public GameViewModel convertGameToViewModel(Game game)
-    {
+    public GameViewModel convertGameToViewModel(Game game) {
         GameViewModel gameViewModel = new GameViewModel();
         gameViewModel.setGameId(game.getGameId());
         gameViewModel.setName(game.getName());
@@ -47,8 +46,7 @@ public class ViewModelConverter implements IViewModelConverter {
     }
 
     @Override
-    public PlayerViewModel convertPlayerToViewModel(Player player)
-   {
+    public PlayerViewModel convertPlayerToViewModel(Player player) {
        PlayerViewModel playerViewModel = new PlayerViewModel();
        playerViewModel.setCommandPoints(player.getCommandPoints());
        playerViewModel.setTurnEnded(player.isTurnEnded());
@@ -57,23 +55,19 @@ public class ViewModelConverter implements IViewModelConverter {
        playerViewModel.setPlayerName(player.getProfile().getFirstname() + " " + player.getProfile().getLastname());
        playerViewModel.setPlayerId(player.getPlayerId());
        List<ShipViewModel> shipViewModels  = new ArrayList<ShipViewModel>();
-       for(Ship ship: player.getShips())
-       {
+       for(Ship ship: player.getShips()) {
            ShipViewModel shipViewModel = convertShipToViewModel(ship);
-
            shipViewModels.add(shipViewModel);
        }
        playerViewModel.setShips(shipViewModels);
        List<ColonyViewModel> colonyViewModels = new ArrayList<ColonyViewModel>();
-       for(Colony colony: player.getColonies())
-       {
+       for(Colony colony: player.getColonies()) {
            ColonyViewModel colonyViewModel = convertColonyToViewModel(colony);
            colonyViewModels.add(colonyViewModel);
-
        }
        playerViewModel.setColonies(colonyViewModels);
        return playerViewModel;
-   }
+    }
 
     public PlayerViewModel convertPlayerToReplayViewModel(Player player)
     {
@@ -83,24 +77,19 @@ public class ViewModelConverter implements IViewModelConverter {
         playerViewModel.setRequestAccepted(player.isRequestAccepted());
         playerViewModel.setPlayerId(player.getPlayerId());
         List<ShipViewModel> shipViewModels  = new ArrayList<ShipViewModel>();
-        for(Ship ship: player.getShips())
-        {
+        for(Ship ship: player.getShips()) {
             ShipViewModel shipViewModel = convertShipToViewModel(ship);
-
             shipViewModels.add(shipViewModel);
         }
         playerViewModel.setShips(shipViewModels);
         List<ColonyViewModel> colonyViewModels = new ArrayList<ColonyViewModel>();
-        for(Colony colony: player.getColonies())
-        {
+        for(Colony colony: player.getColonies()) {
             ColonyViewModel colonyViewModel = convertColonyToViewModel(colony);
             colonyViewModels.add(colonyViewModel);
-
         }
         playerViewModel.setColonies(colonyViewModels);
         return playerViewModel;
     }
-
 
     @Override
     public ShipViewModel convertShipToViewModel(Ship ship) {
@@ -124,6 +113,5 @@ public class ViewModelConverter implements IViewModelConverter {
         PlayerViewModel player2ViewModel = convertPlayerToReplayViewModel(game.getPlayers().get(1));
         gameViewModel.setPlayer2(player2ViewModel);
         return gameViewModel;
-
     }
 }

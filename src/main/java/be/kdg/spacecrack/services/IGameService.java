@@ -25,7 +25,6 @@ public interface IGameService {
 
     Planet getShipLocationByShipId(int shipId);
 
-
     void endTurn(Integer playerID);
 
     List<Game> getGames(User user);
@@ -35,8 +34,6 @@ public interface IGameService {
     Player getActivePlayer(User user, Game game);
 
     void buildShip(Integer colonyId);
-
-
 
     List<Integer> getRevisionNumbers(int gameId);
 

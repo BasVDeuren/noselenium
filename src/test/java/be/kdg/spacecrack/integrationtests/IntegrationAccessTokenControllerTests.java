@@ -36,28 +36,12 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
     private User testUser;
     private ObjectMapper objectMapper;
 
-
     @Before
     public void setUp() throws Exception {
-
-
-        //mockTokenGenerator = mock(ITokenStringGenerator.class);
-
         objectMapper = new ObjectMapper();
-
-
-//        session.saveOrUpdate(testUser);
         IUserRepository repository = new UserRepository(sessionFactory);
         testUser = repository.addUser("testUsername", "testPassword", "testEmail@gmail.com");
-
-
     }
-
-  /* @Test
-    public void testLoginIntegrated() throws Exception {
-        ResultActions resultActions = mockMvc.perform(post("/tokens").param("username", "testUser").param("password", "testPassword")).andExpect(jsonPath("token", notNullValue()));
-    }*/
-
 
     @Test
     @Transactional
@@ -72,8 +56,6 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(jsonPath("$.value", CoreMatchers.notNullValue()));
-
-
     }
 
     @Test
@@ -95,12 +77,9 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
 
     @Test
     public void login_InvalidUser_Unauthorized() throws Exception {
-
         MockHttpServletRequestBuilder requestBuilder = post("/accesstokens").contentType(MediaType.APPLICATION_JSON).content("{\"username\":\"badUser\",\"password\":\"testPassword\"}").accept(MediaType.APPLICATION_JSON);
-
         MockMvc mockMvcWithoutGlobalExceptionHandler = mvcBuilderWithoutGlobalExceptionHandler.build();
         mockMvcWithoutGlobalExceptionHandler.perform(requestBuilder).andExpect(status().isUnauthorized());
-
     }
 
 
@@ -124,8 +103,6 @@ public class IntegrationAccessTokenControllerTests extends BaseFilteredIntegrati
         mockMvc.perform(logoutRequestBuilder
                 .cookie(new Cookie("accessToken", "\"" + accessToken.getValue() + "\"")))
                 .andExpect(status().isOk());
-
-
     }
 
 

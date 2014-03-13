@@ -31,38 +31,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  */
 public class IntegrationTokenFilterTests extends BaseFilteredIntegrationTests {
-
-
-    MockHttpServletRequestBuilder requestBuilder = get("/auth/user");
-
+    MockHttpServletRequestBuilder requestBuilder;
     private User testUser;
-    private ObjectMapper objectMapper;
-
 
     @Before
     public void setUp() throws Exception {
         objectMapper = new ObjectMapper();
-
+        requestBuilder = get("/auth/user");
         Session session = sessionFactory.getCurrentSession();
-
         testUser = new User("testUsername", "testPassword", "testEmail");
         session.saveOrUpdate(testUser);
-
-
     }
 
     @Test
     public void getAuthUser_NoToken_Unauthorized() throws Exception {
-
-
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isUnauthorized());
-
     }
 
     @Test
     public void getAuthUser_InvalidToken_Unauthorized() throws Exception {
-
         String invalidTokenValue = new TokenStringGenerator(1235).generateTokenString();
         AccessToken invalidToken = new AccessToken(invalidTokenValue);
 
@@ -83,6 +71,4 @@ public class IntegrationTokenFilterTests extends BaseFilteredIntegrationTests {
         AccessToken validToken = tokenController.login(testUser);
         mockMvc.perform(requestBuilder.cookie(new Cookie("accessToken", "%22" + validToken.getValue() + "%22"))).andExpect(status().isOk());
     }
-
-
 }

@@ -25,17 +25,15 @@ import java.util.List;
 @Service("mapFactory")
 @Transactional
 public class MapFactory implements IMapFactory {
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
     @Autowired
-    IPlanetRepository planetRepository;
+    private IPlanetRepository planetRepository;
 
-    public MapFactory() {
-    }
-
+    public MapFactory() {}
 
     public MapFactory(SessionFactory sessionFactory, IPlanetRepository planetRepository) {
-
         this.sessionFactory = sessionFactory;
         this.planetRepository = planetRepository;
     }
@@ -57,13 +55,10 @@ public class MapFactory implements IMapFactory {
                 double distance = Math.sqrt((pX - cX) * (pX - cX) + (pY - cY) * (pY - cY));
                 if (checkPlanet != planet) {
                     if (distance < radius) {
-
                         PlanetConnection planetConnection = new PlanetConnection(checkPlanet, planet);
-
                         session.saveOrUpdate(planetConnection);
                         checkPlanet.addConnection(planetConnection);
                         session.saveOrUpdate(checkPlanet);
-
                     }
                 }
             }
@@ -82,8 +77,6 @@ public class MapFactory implements IMapFactory {
 
         session.saveOrUpdate(p1);
         session.saveOrUpdate(p2);
-
-
     }
 
 
@@ -94,10 +87,7 @@ public class MapFactory implements IMapFactory {
     }
 
     public void createPlanets() {
-
         if (planetRepository.getPlanetByName("a") == null) {
-
-
             Planet a = new Planet("a", 50, 250);
             Planet a3 = new Planet("a3", 750, 250);
 
@@ -181,7 +171,6 @@ public class MapFactory implements IMapFactory {
             Planet q3 = new Planet("q3", MapController.MAP_LENGTH - 380, 200);
             Planet q4 = new Planet("q4", MapController.MAP_LENGTH - 380, MapController.MAP_HEIGHT - 200);
 
-
             Planet[] planets = {
                     a, a3,
                     b, b2, b3, b4,
@@ -208,16 +197,17 @@ public class MapFactory implements IMapFactory {
                 planet.setY((int) (planet.getY() * 2));
             }
 
-
             planetRepository.createPlanets(planets);
 
             connectPlanetsByRadius(planets, 105 * 2);
             removeCrossingConnections(planets);
+
             // There is a bug in the algorithm removing a few connections to many, for now we add them manually
             connectPlanets(d, j);
             connectPlanets(d2, j2);
             connectPlanets(d3, j3);
             connectPlanets(d4, j4);
+
             // We could also add certain connections manually to make the playing field more interesting
             connectPlanets(j, p);
             connectPlanets(j2, p2);
@@ -226,19 +216,18 @@ public class MapFactory implements IMapFactory {
         }
     }
 
+    // Remove intersecting lines
+    // Optimalisation might be possible
+    /* Current algorithm:
+     * 1. Go through all the planets (starting with the first)
+     * 2. Map out all connections from that planet
+     * 3. Go through all the planets (neighbours) that are directly (first degree) connected to that planet
+     * 4. Map out all connections of every neighbour
+     * 5. Check all connections of the planet against all connections of every neighbour
+     * 6. If line segments intersect: remove connection both intersecting connections
+     * 7. Go to the next planet (back to step 1)
+     */
     private void removeCrossingConnections(Planet[] planets) {
-        // Remove intersecting lines
-        // Optimalisation might be possible
-        /* Current algorithm:
-         * 1. Go through all the planets (starting with the first)
-         * 2. Map out all connections from that planet
-         * 3. Go through all the planets (neighbours) that are directly (first degree) connected to that planet
-         * 4. Map out all connections of every neighbour
-         * 5. Check all connections of the planet against all connections of every neighbour
-         * 6. If line segments intersect: remove connection both intersecting connections
-         * 7. Go to the next planet (back to step 1)
-         */
-
         List<PlanetConnection> connectionsToRemove = new ArrayList<PlanetConnection>();
         for (int i = 0; i < planets.length; i++) {
             Planet currentPlanet = planets[i];
@@ -279,7 +268,5 @@ public class MapFactory implements IMapFactory {
             session.saveOrUpdate(connection.getParentPlanet());
             session.saveOrUpdate(connection.getChildPlanet());
         }
-
-
     }
 }

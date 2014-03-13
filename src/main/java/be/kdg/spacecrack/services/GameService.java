@@ -24,46 +24,35 @@ import java.util.List;
 @Component(value = "gameService")
 @Transactional
 public class GameService implements IGameService {
-
-    public static final int NEWCOLONYSTRENGTH = 1;
-
-
+    public static final int NEW_COLONY_STRENGHT = 1;
 
     @Autowired
-    IPlanetRepository planetRepository;
+    private IPlanetRepository planetRepository;
 
     @Autowired
-    IShipRepository shipRepository;
+    private IShipRepository shipRepository;
 
     @Autowired
-    IColonyRepository colonyRepository;
+    private IColonyRepository colonyRepository;
 
     @Autowired
-    IPlayerRepository playerRepository;
+    private IPlayerRepository playerRepository;
 
     @Autowired
-    IGameRepository gameRepository;
+    private IGameRepository gameRepository;
 
     @Autowired
-    public
-    IMoveShipHandler moveShipHandler;
-
-
+    public IMoveShipHandler moveShipHandler;
 
     @Autowired
-    IViewModelConverter viewModelConverter;
+    private IViewModelConverter viewModelConverter;
 
     @Autowired
-    IGameSynchronizer gameSynchronizer;
+    private IGameSynchronizer gameSynchronizer;
 
-
-
-
-    public GameService() {
-    }
+    public GameService() {}
 
     public GameService(IPlanetRepository planetRepository, IColonyRepository colonyRepository, IShipRepository shipRepository, IPlayerRepository playerRepository, IGameRepository gameRepository, IMoveShipHandler moveShipHandler, IViewModelConverter viewModelConverter, IGameSynchronizer gameSynchronizer) {
-
         this.planetRepository = planetRepository;
         this.shipRepository = shipRepository;
         this.colonyRepository = colonyRepository;
@@ -74,11 +63,8 @@ public class GameService implements IGameService {
         this.gameSynchronizer = gameSynchronizer;
     }
 
-
-
     @Override
     public int createGame(Profile userProfile, String gameName, Profile opponentProfile) {
-
         Game game = new Game();
 
         Player player1 = new Player();
@@ -134,7 +120,7 @@ public class GameService implements IGameService {
         moveShipHandler.validateMove(ship, destinationPlanet);
         moveShipHandler.moveShip(ship, destinationPlanet);
         checkLost(game);
-        gameSynchronizer.updateGame(game);
+        gameRepository.updateGame(game);
     }
 
     private void validateActionMakeSureGameIsNotFinishedYet(Game game){
@@ -178,7 +164,7 @@ public class GameService implements IGameService {
         } else {
             throw new SpaceCrackNotAcceptableException("Turn is already ended");
         }
-        gameSynchronizer.updateGame(game);
+        gameRepository.updateGame(game);
 
     }
 

@@ -12,10 +12,8 @@ import org.springframework.stereotype.Component;
 @Component("firebaseUtil")
 public class FirebaseUtil implements IFirebaseUtil {
     public static final String FIREBASEURLBASE = "https://vivid-fire-9476.firebaseio.com/";
-    public FirebaseUtil() {
-    }
 
-
+    public FirebaseUtil() {}
 
     @Override
     public void setValue(String firebaseSuffix, Object object) {

@@ -397,7 +397,6 @@ public class MoveShipUnitTests extends BaseUnitTest {
         opponentColony.setPlanet(planets[1]);
         opponentColony.setPlayer(opponent);
 
-
         List<Colony> gameColonies = new ArrayList<Colony>();
         gameColonies.addAll(player.getColonies());
         gameColonies.addAll(opponent.getColonies());
@@ -448,7 +447,4 @@ public class MoveShipUnitTests extends BaseUnitTest {
         ship.setPlayer(player);
         return ship;
     }
-    //endregion
-
-
 }

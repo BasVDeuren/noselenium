@@ -25,21 +25,16 @@ import java.util.List;
  */
 @Controller
 public class UserController {
-
     @Autowired
     private IUserService userService;
 
     @Autowired
     private IAuthorizationService authorizationService;
 
-
-    public UserController() {
-
-    }
+    public UserController() {}
 
     public UserController(IUserService userService, IAuthorizationService authorizationService) {
         this.userService = userService;
-
         this.authorizationService = authorizationService;
     }
 
@@ -60,13 +55,8 @@ public class UserController {
     @RequestMapping(value = "/auth/user", method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
     public void editUser(@RequestBody UserViewModel userWrapper, @CookieValue("accessToken") String accessTokenValue) throws Exception {
-
-        User user;
-
-
         AccessToken accessToken = authorizationService.getAccessTokenByValue(accessTokenValue);
-        user = userService.getUserByAccessToken(accessToken);
-
+        User user = userService.getUserByAccessToken(accessToken);;
 
         if (userWrapper.getPassword().equals(userWrapper.getPasswordRepeated())) {
             user.setPassword(userWrapper.getPassword());
@@ -76,50 +66,34 @@ public class UserController {
         } else {
             throw new SpaceCrackNotAcceptableException("Passwords should be the same!");
         }
-
     }
 
     @RequestMapping(value = "/auth/user", method = RequestMethod.GET)
     @ResponseBody
     public User getUserByToken(@CookieValue("accessToken") String cookieAccessTokenvalue) throws Exception {
-        User user;
-
-        user = userService.getUserByAccessToken(authorizationService.getAccessTokenByValue(cookieAccessTokenvalue));
-
+        User user = userService.getUserByAccessToken(authorizationService.getAccessTokenByValue(cookieAccessTokenvalue));
         if (user == null) {
             throw new SpaceCrackUnauthorizedException();
         }
+
         return user;
     }
 
     @RequestMapping(value = "/auth/findusersbyusername/{username}", method = RequestMethod.GET)
     @ResponseBody
     public List<User> getUsersByString(@PathVariable String username) throws Exception {
-        List<User> foundUsers;
-
-        foundUsers = userService.getUsersByString(username);
-
-        return foundUsers;
+        return userService.getUsersByString(username);
     }
 
     @RequestMapping(value = "/auth/findusersbyemail/{email}", method = RequestMethod.GET)
     @ResponseBody
     public List<User> getUsersByEmail(@PathVariable String email) throws Exception {
-        List<User> foundUsers;
-
-        foundUsers = userService.getUsersByEmail(email);
-
-        return foundUsers;
+        return userService.getUsersByEmail(email);
     }
 
     @RequestMapping(value = "/auth/findUserByUserId/{userId}", method = RequestMethod.GET)
     @ResponseBody
     public User getRandomUser(@PathVariable int userId) throws Exception {
-        User foundUser;
-
-        foundUser = userService.getRandomUser(userId);
-
-        return foundUser;
+        return userService.getRandomUser(userId);
     }
-
 }

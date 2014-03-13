@@ -31,7 +31,6 @@ public class IntegrationStatisticsTests {
 
     @Test
     public void getStatistics() throws Exception {
-
         int profileId = 1;
         IAuthorizationService mockAuthorizationService = mock(IAuthorizationService.class);
         IStatisticsService mockStatisticsService = mock(IStatisticsService.class);
@@ -57,7 +56,5 @@ public class IntegrationStatisticsTests {
                 .andExpect(jsonPath("$.amountOfGames", CoreMatchers.is(5)))
                 .andExpect(jsonPath("$.averageAmountOfColoniesPerWin", CoreMatchers.is(33.3)))
                 .andExpect(jsonPath("$.averageAmountOfShipsPerWin", CoreMatchers.is(20.5)));
-
-
     }
 }

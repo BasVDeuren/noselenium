@@ -15,8 +15,7 @@ import java.util.Set;
 
 public class GraphAlgorithm {
 
-    public GraphAlgorithm() {}
-
+    // Used in the GameService to detect perimeters
     public static List<List<String>> calculateChordlessCyclesFromVertex(UndirectedGraph<String, DefaultEdge> graph, String baseVertex) {
         List<List<String>> cycles = new ArrayList<List<String>>(); // Cycles to output
         NeighborIndex<String, DefaultEdge> neighborIndex = new NeighborIndex<String, DefaultEdge>(graph); // Create a NeighbourIndex for the graph

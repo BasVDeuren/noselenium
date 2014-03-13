@@ -27,8 +27,6 @@ import static junit.framework.Assert.assertEquals;
  *
  */
 public class TokenControllerTests extends BaseUnitTest{
-
-
     private TokenController tokenController;
     private TokenStringGenerator fixedSeedGenerator;
     private User testUser;
@@ -44,25 +42,21 @@ public class TokenControllerTests extends BaseUnitTest{
 
         testUser = new User("testUsername2", "testPassword2", "testEmail2");
         session.saveOrUpdate(testUser);
-
     }
 
     @Test(expected = SpaceCrackUnauthorizedException.class)
     @Transactional
     public void testRequestAccessToken_InvalidUser_UserNotFoundException() {
-
         String name = "badUser";
         String pw = "badPw";
         String email = "badEmail";
         User user = new User(name, pw, email);
         tokenController.login(user);
-
     }
 
     @Test
     @Transactional
-    public void testRequestAccessToken_ValidUser_Ok()
-    {
+    public void testRequestAccessToken_ValidUser_Ok() {
         ITokenStringGenerator mockTokenGenerator = Mockito.mock(ITokenStringGenerator.class);
         TokenRepository tokenRepository = new TokenRepository(sessionFactory);
         UserRepository userRepository = new UserRepository(sessionFactory);
@@ -88,8 +82,5 @@ public class TokenControllerTests extends BaseUnitTest{
         TokenRepository tokenRepository = new TokenRepository();
         TokenController tokenController1 = new TokenController(new AuthorizationService(tokenRepository, userRepository, fixedSeedGenerator));
         tokenController1.login(user);
-
     }
-
-
 }

@@ -28,7 +28,6 @@ public class Ship extends Piece {
     @JoinColumn(name = "planetId")
     private Planet planet;
 
-
     public int getShipId() {
         return shipId;
     }
@@ -37,8 +36,7 @@ public class Ship extends Piece {
         this.shipId = shipId;
     }
 
-    public Ship() {
-    }
+    public Ship() {}
 
     public Ship(Planet planet) {
         this.planet = planet;
@@ -60,7 +58,6 @@ public class Ship extends Piece {
         this.player = player;
         player.internalAddShip(this);
     }
-
 
     protected void internalSetPlayer(Player player) {
         this.player = player;

@@ -13,11 +13,11 @@ import javax.validation.constraints.Pattern;
 
 public class GameParameters {
     @NotNull @NotEmpty @Pattern(message = "The game name should only contain letters and/or numbers",regexp = "^[a-zA-Z0-9]+$")
-    String gameName;
+    private String gameName;
     @NotNull
-    int opponentProfileId;
-    public GameParameters() {
-    }
+    private int opponentProfileId;
+
+    public GameParameters() {}
 
     public GameParameters(String gameName, int opponentProfileId) {
         this.gameName = gameName;

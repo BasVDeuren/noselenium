@@ -41,7 +41,6 @@ public class Profile {
     @Type(type="text")
     private String image;
 
-
     @Cascade(value = CascadeType.ALL)
     @OneToOne(mappedBy = "profile")
     @JsonBackReference
@@ -51,7 +50,6 @@ public class Profile {
     @JsonIgnore
     private List<Player> players = new ArrayList<Player>();
 
-
     public User getUser() {
         return user;
     }
@@ -60,8 +58,7 @@ public class Profile {
         this.user = user;
     }
 
-    public Profile() {
-    }
+    public Profile() {}
 
     public Profile(String firstname, String lastname,Date dayOfBirth, String image) {
 
@@ -88,7 +85,6 @@ public class Profile {
         this.lastname = lastname;
     }
 
-
     public Date getDayOfBirth() {
         return dayOfBirth;
     }
@@ -105,8 +101,6 @@ public class Profile {
         this.image = image;
     }
 
-
-
     public int getProfileId() {
         return profileId;
     }
@@ -114,7 +108,6 @@ public class Profile {
     public void setProfileId(int profileId) {
         this.profileId = profileId;
     }
-
 
     public List<Player> getPlayers() {
         return players;

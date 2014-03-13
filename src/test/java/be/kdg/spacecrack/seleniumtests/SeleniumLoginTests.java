@@ -16,10 +16,8 @@ import static org.junit.Assert.assertEquals;
 
 public class SeleniumLoginTests extends SeleniumBaseTestCase {
 
-
     @Test
     public void Login_validCredentials_spacecrackhome() throws Exception {
-
         driver.get(baseUrl);
         WebElement uname = driver.findElement(By.name("uname"));
         WebElement password = driver.findElement(By.name("password"));
@@ -30,13 +28,10 @@ public class SeleniumLoginTests extends SeleniumBaseTestCase {
         WebDriverWait wait = new WebDriverWait(driver, 10);
         wait.until(ExpectedConditions.elementToBeClickable(By.name("createGame")));
         assertEquals("http://localhost:8080/#/", driver.getCurrentUrl());
-
-
     }
 
     @Test
     public void Login_invalidCredentials_errormessage() throws Exception {
-
         driver.get(baseUrl);
         WebElement uname = driver.findElement(By.name("uname"));
         WebElement password = driver.findElement(By.name("password"));
@@ -48,8 +43,5 @@ public class SeleniumLoginTests extends SeleniumBaseTestCase {
         WebElement loginfailedDiv = driver.findElement(By.name("loginfailed"));
         wait.until(ExpectedConditions.visibilityOf(loginfailedDiv));
         assertEquals("http://localhost:8080/#/login", driver.getCurrentUrl());
-
     }
-
-
 }

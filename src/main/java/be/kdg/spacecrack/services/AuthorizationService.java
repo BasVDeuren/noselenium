@@ -28,20 +28,16 @@ import java.util.List;
 @Service("authorizationService")
 @Transactional
 public class AuthorizationService implements IAuthorizationService {
+    @Autowired
+    private ITokenRepository tokenRepository;
 
     @Autowired
-    ITokenRepository tokenRepository;
-    @Autowired
-    IUserRepository userRepository;
-
+    private IUserRepository userRepository;
 
     @Autowired
     private ITokenStringGenerator tokenStringGenerator;
 
-    static Logger logger = LoggerFactory.getLogger(TokenController.class);
-
-    public AuthorizationService() {
-    }
+    public AuthorizationService() {}
 
     public AuthorizationService(ITokenRepository tokenRepository, IUserRepository userRepository, ITokenStringGenerator tokenStringGenerator) {
         this.tokenRepository = tokenRepository;
@@ -51,13 +47,8 @@ public class AuthorizationService implements IAuthorizationService {
 
     @Override
     public AccessToken getAccessTokenByValue(String accessTokenValue) {
-
         return tokenRepository.getAccessTokenByValue(accessTokenValue);
-
     }
-
-
-
 
     @Override
     public String getMD5HashedPassword(String testPassword) {
@@ -110,16 +101,12 @@ public class AuthorizationService implements IAuthorizationService {
         return accessToken;
     }
 
-
     @Override
     public void logout(String accessTokenValue) {
-        AccessToken accessToken = null;
-        accessToken = tokenRepository.getAccessTokenByValue(accessTokenValue);
-        if(accessToken != null)
-        {
+        AccessToken accessToken = tokenRepository.getAccessTokenByValue(accessTokenValue);
+        if(accessToken != null) {
             tokenRepository.deleteAccessToken(accessToken);
         }
-
     }
 
     @Override

@@ -21,16 +21,11 @@ import java.util.List;
 
 @Service("gameRepository")
 public class GameRepository implements IGameRepository {
-
-
-    public GameRepository() {
-    }
-
-
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
+    public GameRepository() {}
 
     public GameRepository(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -40,7 +35,6 @@ public class GameRepository implements IGameRepository {
     public int createOrUpdateGame(Game game) {
         game.incrementActionNumber();
         Session session = sessionFactory.getCurrentSession();
-
         session.saveOrUpdate(game);
 
         return game.getGameId();
@@ -85,23 +79,19 @@ public class GameRepository implements IGameRepository {
 
     @Override
     public List<Integer> getRevisionNumbers(int gameId) {
-
         AuditReader reader = AuditReaderFactory.get(sessionFactory.getCurrentSession());
         List<Number> revisions = reader.getRevisions(Game.class, gameId);
         List<Integer> revisionsIntegers = new ArrayList<Integer>();
         for (int i = 0; i < revisions.size(); i++) {
             revisionsIntegers.add((Integer) revisions.get(i));
-
         }
 
         return revisionsIntegers;
-
     }
 
     @Override
     public void deleteGame(int gameId) {
         Session session = sessionFactory.getCurrentSession();
-
 
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Game g where g.gameId = :id");
         q.setParameter("id", gameId);

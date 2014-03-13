@@ -67,8 +67,7 @@ public class Player {
         this.requestAccepted = requestAccepted;
     }
 
-    public Player() {
-    }
+    public Player() {}
 
     public Player(Profile profile) {
         this.profile = profile;

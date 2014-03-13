@@ -63,7 +63,6 @@ public class StatisticsServiceTests extends BaseUnitTest{
 
         stub(mockGameRepository.getGamesByProfile(profile)).toReturn(new ArrayList<Game>());
 
-
         stub(mockProfileRepository.getProfileByProfileId(1)).toReturn(profile);
         StatisticsViewModel statisticsViewModel = statisticsService.getStatistics(1);
 
@@ -86,11 +85,8 @@ public class StatisticsServiceTests extends BaseUnitTest{
         Profile profile = player.getProfile();
         int profileId = 1;
         stub(mockGameRepository.getGamesByProfile(profile)).toReturn(games);
-
         stub(mockProfileRepository.getProfileByProfileId(profileId)).toReturn(profile);
-
         StatisticsViewModel statisticsViewModel = statisticsService.getStatistics(profileId);
-
         verify(mockGameRepository, VerificationModeFactory.times(1)).getGamesByProfile(profile);
 
         assertEquals("Statistics should contain 1 game", 1, statisticsViewModel.getAmountOfGames());
@@ -102,7 +98,6 @@ public class StatisticsServiceTests extends BaseUnitTest{
     @Transactional
     @Test
     public void getStatistics_ProfilePlayed3GamesWon2withmanycoloniesandships_Game66PercentWinratio() throws Exception {
-
         Profile profile = new Profile();
         int profileId = 1;
         profile.setProfileId(profileId);
@@ -114,7 +109,6 @@ public class StatisticsServiceTests extends BaseUnitTest{
         games.add(game1);
         games.add(game2);
         games.add(game3);
-
 
         stub(mockGameRepository.getGamesByProfile(profile)).toReturn(games);
         stub(mockProfileRepository.getProfileByProfileId(profileId)).toReturn(profile);
@@ -142,17 +136,15 @@ public class StatisticsServiceTests extends BaseUnitTest{
         opponentPlayer.setPlayerId(2);
         game.addPlayer(opponentPlayer);
 
-        for(int i = 0; i < amountOfShips; i++)
-        {
+        for(int i = 0; i < amountOfShips; i++) {
             player1.addShip(new Ship());
         }
 
-        for(int i = 0; i < amountOfColonies; i++){
+        for(int i = 0; i < amountOfColonies; i++) {
             Colony colony = new Colony();
             colony.setPlanet(new Planet());
             player1.addColony(colony);
         }
-
 
         game.setLoserPlayerId(game.getPlayers().get(lostPlayerIndex).getPlayerId());
         return game;

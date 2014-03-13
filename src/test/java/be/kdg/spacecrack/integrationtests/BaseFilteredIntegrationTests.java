@@ -48,8 +48,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//import org.codehaus.jackson.map.ObjectMapper;
-
 /* Git $Id$
  *
  * Project Application Development
@@ -62,21 +60,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
 public abstract class BaseFilteredIntegrationTests {
-    protected static MockMvc mockMvc;
-    @Autowired
-    protected ServletContext servletContext;
-    protected WebApplicationContext ctx;
     protected static ObjectMapper objectMapper;
-
-
-    @Autowired
-    SessionFactory sessionFactory;
+    protected static MockMvc mockMvc;
     protected static GameController baseGameController;
     protected static StandaloneMockMvcBuilder mvcBuilderWithoutGlobalExceptionHandler;
 
+    @Autowired
+    protected ServletContext servletContext;
+    protected WebApplicationContext ctx;
+
+    @Autowired
+    SessionFactory sessionFactory;
+
     @Before
     public void setupMockMVC() throws Exception {
-
         ctx = WebApplicationContextUtils.getWebApplicationContext(servletContext);
 
         if(mvcBuilderWithoutGlobalExceptionHandler == null) {
@@ -93,10 +90,11 @@ public abstract class BaseFilteredIntegrationTests {
 
             ViewModelConverter viewModelConverter = new ViewModelConverter();
             IFirebaseUtil firebaseUtil = mock(IFirebaseUtil.class);
-            IMoveShipHandler moveShipHandler = new MoveShipHandler(colonyRepository, planetRepository, new GameSynchronizer(viewModelConverter, firebaseUtil, gameRepository));
+            GameSynchronizer gameSynchronizer = new GameSynchronizer(viewModelConverter, firebaseUtil, gameRepository);
+            IMoveShipHandler moveShipHandler = new MoveShipHandler(colonyRepository, planetRepository, gameSynchronizer);
 
-            AsyncConfig asyncConfig = new AsyncConfig();
-            IGameService gameService = new GameService(planetRepository, colonyRepository, shipRepository, playerRepository, gameRepository, moveShipHandler, viewModelConverter, mock(GameSynchronizer.class));
+            GameSynchronizer mockGameSynchronizer = mock(GameSynchronizer.class);
+            IGameService gameService = new GameService(planetRepository, colonyRepository, shipRepository, playerRepository, gameRepository, moveShipHandler, viewModelConverter, mockGameSynchronizer);
             IAuthorizationService authorizationService = new AuthorizationService(tokenRepository, userRepository, tokenStringGenerator);
 
             IUserService userService = new UserService(userRepository, profileRepository);
@@ -105,21 +103,21 @@ public abstract class BaseFilteredIntegrationTests {
             ActionController actionController = new ActionController(gameService, viewModelConverter, firebaseUtil);
             baseGameController = new GameController(authorizationService, gameService, profileService, viewModelConverter, firebaseUtil);
             MapController mapController = new MapController(mapFactory);
-            ProfileController profileController = new ProfileController(profileService, userService, tokenRepository, authorizationService);
+            ProfileController profileController = new ProfileController(profileService, userService, authorizationService);
             TokenController tokenController = new TokenController(authorizationService);
             UserController userController = new UserController(userService, authorizationService);
             BeanValidator validator = new BeanValidator();
 
             ReplayController replayController = new ReplayController(gameService);
-            mvcBuilderWithoutGlobalExceptionHandler = MockMvcBuilders.standaloneSetup(actionController, baseGameController, mapController, profileController, tokenController, userController, replayController)
-                    .setValidator(validator).addInterceptors(new TokenHandlerInterceptor(authorizationService));
+            mvcBuilderWithoutGlobalExceptionHandler = MockMvcBuilders.standaloneSetup(actionController, baseGameController, mapController, profileController, tokenController, userController, replayController);
+            TokenHandlerInterceptor tokenHandlerInterceptor = new TokenHandlerInterceptor(authorizationService);
+            mvcBuilderWithoutGlobalExceptionHandler.setValidator(validator).addInterceptors(tokenHandlerInterceptor);
             mockMvc = mvcBuilderWithoutGlobalExceptionHandler.build();
-    }
+        }
 
         if(objectMapper == null) {
             objectMapper = new ObjectMapper();
         }
-
     }
 
     protected ExceptionHandlerExceptionResolver getGlobalExceptionHandler() {
@@ -133,23 +131,22 @@ public abstract class BaseFilteredIntegrationTests {
         return exceptionResolver;
     }
     protected String loginAndRetrieveAccessToken() throws Exception {
-
         String md5HashedPassword = getMD5HashedPassword("test");
         User testUser = new User("test", md5HashedPassword, "test@gmail.com");
-        String userjson = objectMapper.writeValueAsString(testUser);
+        String userJson = objectMapper.writeValueAsString(testUser);
 
         MockHttpServletRequestBuilder requestBuilder = post("/accesstokens");
         String accessTokenJson = mockMvc.perform(requestBuilder
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(userjson)
+                .content(userJson)
                 .accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         AccessToken accessToken = objectMapper.readValue(accessTokenJson, AccessToken.class);
-        return "%22" + accessToken.getValue() + "%22";
 
+        return "%22" + accessToken.getValue() + "%22";
     }
 
     protected Profile createOpponent() throws Exception {
-        ProfileWrapper profileWrapper = new ProfileWrapper("pponentname", "opponentlastname", "opponentemail@gmail.com", "12-07-1992", "image");
+        ProfileWrapper profileWrapper = new ProfileWrapper("opponentname", "opponentlastname", "opponentemail@gmail.com", "12-07-1992", "image");
         String profileWrapperJson = objectMapper.writeValueAsString(profileWrapper);
         String opponentAccessToken = logOpponentIn();
 
@@ -188,6 +185,7 @@ public abstract class BaseFilteredIntegrationTests {
                 .andReturn().getResponse().getContentAsString();
 
         AccessToken accessToken = objectMapper.readValue(accessTokenJson, AccessToken.class);
+
         return "%22" + accessToken.getValue() + "%22";
     }
 

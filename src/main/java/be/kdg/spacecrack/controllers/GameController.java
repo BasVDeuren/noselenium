@@ -17,10 +17,10 @@ import be.kdg.spacecrack.services.IGameService;
 import be.kdg.spacecrack.services.IProfileService;
 import be.kdg.spacecrack.utilities.FirebaseUtil;
 import be.kdg.spacecrack.utilities.IFirebaseUtil;
+import be.kdg.spacecrack.utilities.IViewModelConverter;
 import be.kdg.spacecrack.viewmodels.GameActivePlayerWrapper;
 import be.kdg.spacecrack.viewmodels.GameParameters;
 import be.kdg.spacecrack.viewmodels.GameViewModel;
-import be.kdg.spacecrack.utilities.IViewModelConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -43,25 +43,18 @@ public class GameController {
     private IGameService gameService;
 
     @Autowired
-    IProfileService profileService;
+    private IProfileService profileService;
 
     @Autowired
-    IViewModelConverter viewModelConverter;
+    private IViewModelConverter viewModelConverter;
 
     @Autowired
-    IFirebaseUtil firebaseUtil;
+    private IFirebaseUtil firebaseUtil;
 
     @Autowired
-    IMapFactory mapFactory;
+    private IMapFactory mapFactory;
 
-    public GameController() {
-    }
-
-    @PostConstruct
-    private void createMap() {
-
-        mapFactory.createPlanets();
-    }
+    public GameController() {}
 
     public GameController(IAuthorizationService authorizationService, IGameService gameService, IProfileService profileService, IViewModelConverter viewModelConverter, IFirebaseUtil firebaseUtil) {
         this.viewModelConverter = viewModelConverter;
@@ -69,6 +62,11 @@ public class GameController {
         this.firebaseUtil = firebaseUtil;
         this.gameService = gameService;
         this.profileService = profileService;
+    }
+
+    @PostConstruct
+    private void createMap() {
+        mapFactory.createPlanets();
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -117,18 +115,13 @@ public class GameController {
 
     @RequestMapping(value="/invite/{gameId}",method = RequestMethod.DELETE)
     @ResponseBody
-    public void deleteGame(@CookieValue("accessToken") String accessTokenValue,@PathVariable String gameId) throws Exception {
-        User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
+    public void deleteGame(@PathVariable String gameId) throws Exception {
         gameService.deleteGame(Integer.parseInt(gameId));
     }
 
     @RequestMapping(value = "/invite/{gameId}", method = RequestMethod.POST)
     @ResponseBody
-    public void acceptGameInvite(@CookieValue("accessToken") String accessTokenValue, @PathVariable String gameId) {
-        User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
+    public void acceptGameInvite(@PathVariable String gameId) {
         gameService.acceptGameInvite(Integer.parseInt(gameId));
-
     }
-
-
 }

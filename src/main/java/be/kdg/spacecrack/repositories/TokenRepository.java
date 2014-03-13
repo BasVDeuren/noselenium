@@ -17,46 +17,37 @@ import org.springframework.stereotype.Component;
  */
 @Component("tokenRepository")
 public class TokenRepository implements ITokenRepository {
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
-    public TokenRepository() {
-    }
+    public TokenRepository() {}
 
     public TokenRepository(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
-
     @Override
     public AccessToken getAccessTokenByValue(String value) {
         Session session = sessionFactory.getCurrentSession();
-        AccessToken accessToken = null;
 
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from AccessToken a where a.value = :value");
         q.setParameter("value", value);
-        accessToken = (AccessToken) q.uniqueResult();
-        return accessToken;
+
+        return (AccessToken) q.uniqueResult();
     }
 
 
     @Override
     public void saveAccessToken(User dbUser, AccessToken accessToken) {
         Session session = sessionFactory.getCurrentSession();
-
-
         session.saveOrUpdate(accessToken);
-
         session.saveOrUpdate(dbUser);
-
-
     }
 
     @Override
     public void deleteAccessToken(AccessToken accessToken) {
-
         Session session = sessionFactory.getCurrentSession();
-
 
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from AccessToken a where a.accessTokenId = :id and a.value = :value");
         q.setParameter("id", accessToken.getAccessTokenId());
@@ -66,9 +57,5 @@ public class TokenRepository implements ITokenRepository {
             dbAccessToken.getUser().setToken(null);
             session.delete(dbAccessToken);
         }
-
-
     }
-
-
 }

@@ -8,7 +8,5 @@ package be.kdg.spacecrack.utilities;
  *
  */
 public interface ITokenStringGenerator {
-
-
    public String generateTokenString();
 }

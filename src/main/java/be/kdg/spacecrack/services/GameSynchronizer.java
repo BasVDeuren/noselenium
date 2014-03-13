@@ -15,13 +15,13 @@ import org.springframework.stereotype.Component;
 @Component("gameSynchronizer")
 public class GameSynchronizer implements IGameSynchronizer {
     @Autowired
-    IViewModelConverter viewModelConverter;
+    private IViewModelConverter viewModelConverter;
 
     @Autowired
-    IFirebaseUtil firebaseUtil;
+    private IFirebaseUtil firebaseUtil;
 
     @Autowired
-    IGameRepository gameRepository;
+    private IGameRepository gameRepository;
 
     GameSynchronizer() {}
 
@@ -33,9 +33,7 @@ public class GameSynchronizer implements IGameSynchronizer {
 
     @Override
     public void updateGame(Game game) {
-
         GameViewModel gameViewModel = viewModelConverter.convertGameToViewModel(game);
-
         firebaseUtil.setValue(GameController.GAMESUFFIX + gameViewModel.getGameId(), gameViewModel);
         gameRepository.updateGame(game);
     }

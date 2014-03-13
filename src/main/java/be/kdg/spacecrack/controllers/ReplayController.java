@@ -22,18 +22,13 @@ import java.util.List;
 @Controller
 @RequestMapping(value = "/auth/replay/{gameId}")
 public class ReplayController {
-
-
     @Autowired
     private IGameService gameService;
 
-
-    public ReplayController() {
-    }
+    public ReplayController() {}
 
     public ReplayController(IGameService gameService) {
         this.gameService = gameService;
-
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -41,9 +36,9 @@ public class ReplayController {
     public RevisionListViewModel getRevisionNumbers(@PathVariable final String gameId) {
         try {
             List<Integer> revisionNumbers = gameService.getRevisionNumbers(Integer.parseInt(gameId));
-
             RevisionListViewModel revisionListViewModel = new RevisionListViewModel();
             revisionListViewModel.setRevisions(revisionNumbers);
+
             return revisionListViewModel;
         } catch (NumberFormatException numberFormatException) {
             throw new SpaceCrackNotAcceptableException("Invalid number format for pathvariable gameId");
@@ -66,7 +61,7 @@ public class ReplayController {
         } catch (NumberFormatException numberFormatException) {
             throw new SpaceCrackNotAcceptableException("Invalid number format for pathvariable gameId");
         }
+
         return gameService.getGameRevisionByNumber(gameIdInt, revisionNumberInt);
     }
-
 }
