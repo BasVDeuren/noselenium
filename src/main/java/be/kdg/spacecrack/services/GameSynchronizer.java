@@ -36,7 +36,7 @@ public class GameSynchronizer implements IGameSynchronizer {
 
         GameViewModel gameViewModel = viewModelConverter.convertGameToViewModel(game);
 
-        firebaseUtil.setValue(GameController.GAMESUFFIX + gameViewModel.getName(), gameViewModel);
+        firebaseUtil.setValue(GameController.GAMESUFFIX + gameViewModel.getGameId(), gameViewModel);
         gameRepository.updateGame(game);
     }
 }

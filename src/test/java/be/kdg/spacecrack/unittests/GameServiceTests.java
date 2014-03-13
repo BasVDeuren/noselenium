@@ -316,14 +316,15 @@ public class GameServiceTests extends BaseUnitTest {
         IGameRepository mockGameRepository = mock(IGameRepository.class);
         IPlanetRepository mockPlanetRepository = mock(IPlanetRepository.class);
 
-        GameService gameServiceWithMockedMoveShipHandler = new GameService(mockPlanetRepository,null,mockShipRepository, null,mockGameRepository,mockMoveShipHandler, new ViewModelConverter(), mock(GameSynchronizer.class));
+        GameSynchronizer mockGameSynchronizer = mock(GameSynchronizer.class);
+        GameService gameServiceWithMockedMoveShipHandler = new GameService(mockPlanetRepository,null,mockShipRepository, null,mockGameRepository,mockMoveShipHandler, new ViewModelConverter(), mockGameSynchronizer);
         //endregion
         //region Act
         gameServiceWithMockedMoveShipHandler.moveShip(ship.getShipId(), "a3");
         //endregion
         //region Assert
         ArgumentCaptor<Game> gameArgumentCaptor = ArgumentCaptor.forClass(Game.class);
-        verify(mockGameRepository, VerificationModeFactory.times(1)).updateGame(gameArgumentCaptor.capture());
+        verify(mockGameSynchronizer, VerificationModeFactory.times(1)).updateGame(gameArgumentCaptor.capture());
         Game gameResultGame = gameArgumentCaptor.getValue();
         assertEquals("Player2 should have lost.", game.getPlayers().get(1).getPlayerId(), gameResultGame.getLoserPlayerId());
         //endregion

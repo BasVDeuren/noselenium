@@ -134,7 +134,7 @@ public class GameService implements IGameService {
         moveShipHandler.validateMove(ship, destinationPlanet);
         moveShipHandler.moveShip(ship, destinationPlanet);
         checkLost(game);
-        gameRepository.updateGame(game);
+        gameSynchronizer.updateGame(game);
     }
 
     private void validateActionMakeSureGameIsNotFinishedYet(Game game){
@@ -178,7 +178,7 @@ public class GameService implements IGameService {
         } else {
             throw new SpaceCrackNotAcceptableException("Turn is already ended");
         }
-        gameRepository.updateGame(game);
+        gameSynchronizer.updateGame(game);
 
     }
 

@@ -81,7 +81,7 @@ public class ActionController{
         Game game = gameService.getGameByGameId(actionViewModel.getGameId());
         GameViewModel gameViewModel = viewModelConverter.convertGameToViewModel(game);
 
-        firebaseUtil.setValue(GameController.GAMESUFFIX + gameViewModel.getName(), gameViewModel);
+        firebaseUtil.setValue(GameController.GAMESUFFIX + gameViewModel.getGameId(), gameViewModel);
 
     }
 

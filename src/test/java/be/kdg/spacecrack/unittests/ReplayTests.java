@@ -13,6 +13,7 @@ import be.kdg.spacecrack.model.User;
 import be.kdg.spacecrack.repositories.*;
 import be.kdg.spacecrack.services.GameService;
 import be.kdg.spacecrack.services.GameSynchronizer;
+import be.kdg.spacecrack.services.IGameSynchronizer;
 import be.kdg.spacecrack.services.handlers.MoveShipHandler;
 import be.kdg.spacecrack.utilities.IFirebaseUtil;
 import be.kdg.spacecrack.utilities.ViewModelConverter;
@@ -52,8 +53,7 @@ public class ReplayTests {
     private IPlayerRepository playerRepository;
     private Profile opponentProfile;
 
-    @Autowired
-    IFirebaseUtil firebaseUtil;
+
     private HibernateTransactionManager transactionManager;
     private GameService gameService;
 
@@ -63,8 +63,10 @@ public class ReplayTests {
         ColonyRepository colonyRepository = new ColonyRepository(sessionFactory);
         ShipRepository shipRepository = new ShipRepository(sessionFactory);
         IFirebaseUtil mockedFirebaseUtil = mock(IFirebaseUtil.class);
-        GameSynchronizer gameSynchronizer = new GameSynchronizer(new ViewModelConverter(), firebaseUtil, new GameRepository());
-        gameService = new GameService(new PlanetRepository(sessionFactory), colonyRepository, shipRepository, playerRepository, new GameRepository(sessionFactory), new MoveShipHandler(colonyRepository, new PlanetRepository(sessionFactory), gameSynchronizer), new ViewModelConverter(), gameSynchronizer);
+        GameRepository gameRepository = new GameRepository(sessionFactory);
+        IGameSynchronizer gameSynchronizer = new GameSynchronizer(new ViewModelConverter(), mockedFirebaseUtil, gameRepository);
+
+        gameService = new GameService(new PlanetRepository(sessionFactory), colonyRepository, shipRepository, playerRepository, gameRepository, new MoveShipHandler(colonyRepository, new PlanetRepository(sessionFactory), gameSynchronizer), new ViewModelConverter(), gameSynchronizer);
     }
 
 
@@ -84,7 +86,7 @@ public class ReplayTests {
         transactionManager.commit(status);
         //endregion
 
-        doMoves(transactionManager, gameService, ship);
+        doMoves(transactionManager, ship);
         //endregion
 
 
@@ -118,7 +120,7 @@ public class ReplayTests {
         transactionManager.commit(status);
 
 
-        doMoves(transactionManager, gameService, ship);
+        doMoves(transactionManager, ship);
 
 
         TransactionStatus status2 = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
@@ -147,7 +149,7 @@ public class ReplayTests {
 
     }
 
-    private void doMoves(HibernateTransactionManager transactionManager, GameService gameService, Ship ship) {
+    private void doMoves(HibernateTransactionManager transactionManager, Ship ship) {
         TransactionStatus status2 = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
         gameService.moveShip(ship.getShipId(), "b");
         transactionManager.commit(status2);

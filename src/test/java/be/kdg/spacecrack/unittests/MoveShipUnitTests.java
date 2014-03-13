@@ -76,7 +76,7 @@ public class MoveShipUnitTests extends BaseUnitTest {
         IPlanetRepository mockPlanetRepository = mock(IPlanetRepository.class);
         stub(mockPlanetRepository.getPlanetByName(argDestinationPlanetName)).toReturn(planets[1]);
         IGameSynchronizer mockGameSynchronizer = mock(IGameSynchronizer.class);
-        GameService gameServiceWithMockedDependencies = new GameService(mockPlanetRepository, mockColonyRepository, mockShipRepository, mockPlayerRepository, mockGameRepository, new MoveShipHandler(mockColonyRepository, mockPlanetRepository, mockGameSynchronizer), new ViewModelConverter(), mock(GameSynchronizer.class));
+        GameService gameServiceWithMockedDependencies = new GameService(mockPlanetRepository, mockColonyRepository, mockShipRepository, mockPlayerRepository, mockGameRepository, new MoveShipHandler(mockColonyRepository, mockPlanetRepository, mockGameSynchronizer), new ViewModelConverter(), mockGameSynchronizer);
         int oldAmountOfShips = player.getShips().size();
         int oldCommandPoints = player.getCommandPoints();
         int expectedStrength = ship.getStrength() + shipOnDestinationPlanet.getStrength();
@@ -85,7 +85,7 @@ public class MoveShipUnitTests extends BaseUnitTest {
 
         //Assert
         ArgumentCaptor<Game> argumentCaptor = ArgumentCaptor.forClass(Game.class);
-        Mockito.verify(mockGameRepository, VerificationModeFactory.times(1)).updateGame(argumentCaptor.capture());
+        Mockito.verify(mockGameSynchronizer, VerificationModeFactory.times(1)).updateGame(argumentCaptor.capture());
         Game resultGame = argumentCaptor.getValue();
         Player resultPlayer = resultGame.getPlayers().get(0);
         List<Ship> resultPlayerShips = resultPlayer.getShips();
@@ -107,7 +107,8 @@ public class MoveShipUnitTests extends BaseUnitTest {
         IPlayerRepository mockPlayerRepository = mock(IPlayerRepository.class);
         IGameRepository mockGameRepository = mock(IGameRepository.class);
         IPlanetRepository mockPlanetRepository = mock(IPlanetRepository.class);
-        GameService gameServiceWithMockedDependencies = new GameService(mockPlanetRepository, mockColonyRepository, mockShipRepository, mockPlayerRepository, mockGameRepository, new MoveShipHandler(mockColonyRepository, mockPlanetRepository, mock(IGameSynchronizer.class)) , new ViewModelConverter(), mock(GameSynchronizer.class));
+        GameSynchronizer mockGameSynchronizer = mock(GameSynchronizer.class);
+        GameService gameServiceWithMockedDependencies = new GameService(mockPlanetRepository, mockColonyRepository, mockShipRepository, mockPlayerRepository, mockGameRepository, new MoveShipHandler(mockColonyRepository, mockPlanetRepository, mock(IGameSynchronizer.class)) , new ViewModelConverter(), mockGameSynchronizer);
 
         Planet[] planets = createSimpleMapWith2Planets();
         Game game =new Game();
@@ -125,7 +126,7 @@ public class MoveShipUnitTests extends BaseUnitTest {
 
         //Assert
         ArgumentCaptor<Game> gameArgumentCaptor = ArgumentCaptor.forClass(Game.class);
-        Mockito.verify(mockGameRepository, VerificationModeFactory.times(1)).updateGame(gameArgumentCaptor.capture());
+        Mockito.verify(mockGameSynchronizer, VerificationModeFactory.times(1)).updateGame(gameArgumentCaptor.capture());
         Game resultGame = gameArgumentCaptor.getValue();
         assertEquals("Ship should be deleted", 0, resultGame.getPlayers().get(0).getShips().size());
         assertEquals("Colony should be deleted", 0, resultGame.getPlayers().get(1).getColonies().size());
@@ -167,7 +168,7 @@ public class MoveShipUnitTests extends BaseUnitTest {
 
          //Assert
         ArgumentCaptor<Game> gameArgumentCaptor = ArgumentCaptor.forClass(Game.class);
-        Mockito.verify(mockGameRepository, VerificationModeFactory.times(1)).updateGame(gameArgumentCaptor.capture());
+        Mockito.verify(mockGameSynchronizer, VerificationModeFactory.times(1)).updateGame(gameArgumentCaptor.capture());
         Game resultGame = gameArgumentCaptor.getValue();
         Player resultPlayer1 = resultGame.getPlayers().get(0);
         Player resultPlayer2 = resultGame.getPlayers().get(1);
@@ -218,7 +219,7 @@ public class MoveShipUnitTests extends BaseUnitTest {
         //Assert
         ArgumentCaptor<Game> gameArgumentCaptor = ArgumentCaptor.forClass(Game.class);
 
-        Mockito.verify(mockGameRepository, VerificationModeFactory.times(1)).updateGame(gameArgumentCaptor.capture());
+        Mockito.verify(mockGameSynchronizer, VerificationModeFactory.times(1)).updateGame(gameArgumentCaptor.capture());
         Game resultGame = gameArgumentCaptor.getValue();
         Player resultPlayer = resultGame.getPlayers().get(0);
         assertEquals("Ship should be gone", 0, resultPlayer.getShips().size());
@@ -269,7 +270,7 @@ public class MoveShipUnitTests extends BaseUnitTest {
         //region Assert
         ArgumentCaptor<Game> gameArgumentCaptor = ArgumentCaptor.forClass(Game.class);
 
-        Mockito.verify(mockGameRepository, VerificationModeFactory.times(1)).updateGame(gameArgumentCaptor.capture());
+        Mockito.verify(mockGameSynchronizer, VerificationModeFactory.times(1)).updateGame(gameArgumentCaptor.capture());
         Game resultGame = gameArgumentCaptor.getValue();
         Player resultPlayer = resultGame.getPlayers().get(0);
         assertEquals("Ship should be gone", 0, resultPlayer.getShips().size());
@@ -318,7 +319,7 @@ public class MoveShipUnitTests extends BaseUnitTest {
         //region Assert
         ArgumentCaptor<Game> gameArgumentCaptor = ArgumentCaptor.forClass(Game.class);
 
-        Mockito.verify(mockGameRepository, VerificationModeFactory.times(1)).updateGame(gameArgumentCaptor.capture());
+        Mockito.verify(mockGameSynchronizer, VerificationModeFactory.times(1)).updateGame(gameArgumentCaptor.capture());
         Game resultGame = gameArgumentCaptor.getValue();
         Player resultPlayer = resultGame.getPlayers().get(0);
 
@@ -369,7 +370,7 @@ public class MoveShipUnitTests extends BaseUnitTest {
         //region Assert
         ArgumentCaptor<Game> gameArgumentCaptor = ArgumentCaptor.forClass(Game.class);
 
-        Mockito.verify(mockGameRepository, VerificationModeFactory.times(1)).updateGame(gameArgumentCaptor.capture());
+        Mockito.verify(mockGameSynchronizer, VerificationModeFactory.times(1)).updateGame(gameArgumentCaptor.capture());
         Game resultGame = gameArgumentCaptor.getValue();
         Player resultPlayer = resultGame.getPlayers().get(0);
 
