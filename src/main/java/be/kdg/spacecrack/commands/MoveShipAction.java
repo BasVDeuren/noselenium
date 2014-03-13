@@ -13,7 +13,6 @@ public class MoveShipAction extends Action{
     private  ShipViewModel ship;
     private  String planetName;
 
-
     public MoveShipAction(IGameService gameService, Integer player, ShipViewModel ship, String destinationPlanetName) {
         super(gameService, player);
         this.ship = ship;

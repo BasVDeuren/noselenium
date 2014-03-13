@@ -14,7 +14,6 @@ import javax.persistence.MappedSuperclass;
 @Audited
 @MappedSuperclass
 public abstract class Piece {
-
     @Column
     private int strength;
 

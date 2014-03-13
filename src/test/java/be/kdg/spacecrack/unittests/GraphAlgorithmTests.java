@@ -22,26 +22,13 @@ import static org.junit.Assert.*;
  */
 public class GraphAlgorithmTests extends BaseUnitTest {
 
-    @Before
-    public void setUp() throws Exception {
-    }
-
     @Test
     @Transactional
     public void calculateChordlessCyclesFromVertex_GraphWithCyclesFromVertex_ChordlessCyclesFound() {
-        // Create graph to test
         UndirectedGraph<String, DefaultEdge> graph = createGraphWithCycles();
 
-        // Calculate cycles
-        // Returns a list of cycles
-        // A cycles = an ordered list of vertices (but undirected)
         List<List<String>> cyclesFound = GraphAlgorithm.calculateChordlessCyclesFromVertex(graph, getBaseVertex());
-
-        // Rotate to keep the order but synchronize the starting vertex
-        for(List<String> cycle : cyclesFound) {
-            int index = cycle.indexOf(getBaseVertex());
-            Collections.rotate(cycle, -index); // Rotate the vertex to the index 0
-        }
+        rotateCycles(cyclesFound);
 
         // Expected output =
         /*
@@ -58,19 +45,10 @@ public class GraphAlgorithmTests extends BaseUnitTest {
     @Test
     @Transactional
     public void calculateChorlessCyclesFromVertex_GraphWithCyclesNotFromVertex_DifferentCyclesFound() {
-        // Create graph to test
         UndirectedGraph<String, DefaultEdge> graph = createGraphWithCycles();
 
-        // Calculate cycles
-        // Returns a list of cycles
-        // A cycles = an ordered list of vertices (but undirected)
         List<List<String>> cyclesFound = GraphAlgorithm.calculateChordlessCyclesFromVertex(graph, "B"); // A is the baseVertex, so take another one
-
-        // Rotate to keep the order but synchronize the starting vertex
-        for(List<String> cycle : cyclesFound) {
-            int index = cycle.indexOf(getBaseVertex());
-            Collections.rotate(cycle, -index); // Rotate the vertex to the index 0
-        }
+        rotateCycles(cyclesFound);
 
         // Expected output for baseVertex A (so they should not match) =
         /*
@@ -81,18 +59,14 @@ public class GraphAlgorithmTests extends BaseUnitTest {
         cyclesExpected.add(Arrays.asList("A", "D", "E", "B"));
         cyclesExpected.add(Arrays.asList("A", "D", "G", "H", "I", "F", "C", "B"));
 
-        assertNotSame("Chordless cycles should not match for vertex A and vertex B", cyclesExpected, cyclesFound); // Test output
+        assertNotEquals("Chordless cycles should not match for vertex A and vertex B", cyclesExpected, cyclesFound); // Test output
     }
 
     @Test
     @Transactional
     public void calculateChordlessCyclesFromVertex_GraphWithoutCycles_NoCyclesFound() {
-        // Create graph without cycles to test
         UndirectedGraph<String, DefaultEdge> graph = createGraphWithoutCycles();
-
-        // Get cycles
         List<List<String>> cyclesFound = GraphAlgorithm.calculateChordlessCyclesFromVertex(graph, "H"); // Test from H to test more than 1 node away
-
         assertTrue("List of cycles found should be empty", cyclesFound.isEmpty());
     }
 
@@ -155,4 +129,12 @@ public class GraphAlgorithmTests extends BaseUnitTest {
         return graph;
     }
 
+    // Rotate to keep the order but synchronize the starting vertex
+    private List<List<String>> rotateCycles(List<List<String>> cycles) {
+        for(List<String> cycle : cycles) {
+            int index = cycle.indexOf(getBaseVertex());
+            Collections.rotate(cycle, -index); // Rotate the vertex to the index 0
+        }
+        return cycles;
+    }
 }

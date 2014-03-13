@@ -28,7 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  *
  */
 public class IntegrationUserTests extends BaseFilteredIntegrationTests {
-
     private UserRepository userRepository;
 
     @Before
@@ -45,7 +44,6 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
         User testUser = new User("usernameTest²", "password", "email");
         session.saveOrUpdate(testUser);
 
-
         String userjson = objectMapper.writeValueAsString(testUser);
 
         MockHttpServletRequestBuilder requestBuilder = post("/accesstokens");
@@ -54,7 +52,6 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
                 .content(userjson)
                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn();
-
 
         String userMapperJsonValid = objectMapper.writeValueAsString(new UserViewModel("usernameTest", "password", "password", "newEmail"));
 
@@ -91,7 +88,6 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(validUserWrapperJson));
 
-
         mockMvc.perform(postRequestBuilder
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -124,7 +120,6 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(UserWrapper));
 
-
         User user = userRepository.getUserByUsername("username");
 
         MockHttpServletRequestBuilder getUserRequestBuilder = get("/auth/user")
@@ -135,12 +130,9 @@ public class IntegrationUserTests extends BaseFilteredIntegrationTests {
 
     @Test
     public void testGetUser_InvalidToken_SpaceCrackUnauthorisedException() throws Exception {
-        //   testRegisterUser_NewUser_Token();
-
         MockHttpServletRequestBuilder getUserRequestBuilder = get("/auth/user")
                 .cookie(new Cookie("accessToken", "invalidToken"));
 
         mockMvc.perform(getUserRequestBuilder).andExpect(status().isUnauthorized());
     }
-
 }

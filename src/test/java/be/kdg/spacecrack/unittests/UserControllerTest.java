@@ -37,16 +37,14 @@ import static org.mockito.Mockito.*;
  */
 @Transactional
 public class UserControllerTest extends BaseUnitTest {
-
-    private UserController userController;
-
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
-    private IUserRepository userRepository;
 
+    private IUserRepository userRepository;
     private IAuthorizationService tokenService;
     private IUserService userService;
     private ObjectMapper objectMapper;
+    private UserController userController;
 
     @Before
     public void setUp() throws Exception {
@@ -67,7 +65,6 @@ public class UserControllerTest extends BaseUnitTest {
 
         AccessToken actual = userController.registerUser(userWrapper);
         assertEquals("Accesstoken should be returned after registering. ", expected, actual);
-
     }
 
     @Test(expected = SpaceCrackNotAcceptableException.class)
@@ -75,15 +72,8 @@ public class UserControllerTest extends BaseUnitTest {
         userController.registerUser(new UserViewModel("username", "password", "badRepeat", "email"));
     }
 
-
-
-
     @Test
     public void editUser_ValidFields_UserEdited() throws Exception {
-        //   userController = new UserController(new UserRepository());
-        ObjectMapper objectMapper = new ObjectMapper();
-
-
         User user = new User("username", "password", "email");
         when(userService.getUserByAccessToken(any(AccessToken.class))).thenReturn(user);
 
@@ -97,7 +87,6 @@ public class UserControllerTest extends BaseUnitTest {
         expectedEx.expect(SpaceCrackNotAcceptableException.class);
         expectedEx.expectMessage("Passwords should be the same!");
 
-        ObjectMapper objectMapper = new ObjectMapper();
         User user = new User("username", "password", "email");
         when(userRepository.getUserByAccessToken(any(AccessToken.class))).thenReturn(user);
 
@@ -107,20 +96,16 @@ public class UserControllerTest extends BaseUnitTest {
 
     @Test
     public void testGetUser_validToken_User() throws Exception {
-        User user = new User("username", "password", "email");
+        User expextedUser = new User("username", "password", "email");
         AccessToken accessToken = new AccessToken("accesstoken123");
-        user.setToken(accessToken);
+        expextedUser.setToken(accessToken);
 
-        stub(userService.getUserByAccessToken(accessToken)).toReturn(user);
+        stub(userService.getUserByAccessToken(accessToken)).toReturn(expextedUser);
         stub(tokenService.getAccessTokenByValue(accessToken.getValue())).toReturn(accessToken);
 
-        //User actual = userController.getUserByToken(accessToken);
         User actual = userController.getUserByToken(accessToken.getValue());
-        //User actual = userController.getUserByToken();
 
-        User expected = user;
-
-        assertEquals("User from usercontroller should be the same as from db", expected, actual);
+        assertEquals("User from usercontroller should be the same as from db", expextedUser, actual);
     }
 
     @Test
@@ -128,31 +113,10 @@ public class UserControllerTest extends BaseUnitTest {
         expectedEx.expect(SpaceCrackUnauthorizedException.class);
 
         AccessToken invalidAccessToken = new AccessToken("TokenNotInDb");
-
         when(userRepository.getUserByAccessToken(any(AccessToken.class))).thenReturn(null);
 
-        //User actual = userController.getUserByToken(invalidAccessToken);
         userController.getUserByToken(invalidAccessToken.getValue());
-        //userController.getUserByToken();
     }
-
-    /*@Test
-    public void testGetUser_TokenInDbButNotFromLoggedOnUser_SpaceCrackNotAcceptableException() throws Exception {
-        expectedEx.expect(SpaceCrackNotAcceptableException.class);
-        expectedEx.expectMessage("This request is not acceptable!");
-
-        User notUserThatIsRequesting = new User("badUsername", "badPassword", "badEmail");
-        AccessToken invalidAccessToken = new AccessToken("TokenNotWithUser");
-        notUserThatIsRequesting.setToken(invalidAccessToken);
-
-        User user = new User("username", "password", "email");
-        AccessToken accessToken = new AccessToken("validAccessToken");
-        user.setToken(accessToken);
-
-        when(userRepository.getUserByAccessToken(any(AccessToken.class))).thenReturn(notUserThatIsRequesting);
-
-        userController.getUserByToken(invalidAccessToken);
-    }*/
 
     @Test
     public void testGetUsers_validUserName_User() throws Exception {
@@ -162,12 +126,9 @@ public class UserControllerTest extends BaseUnitTest {
         user.setToken(accessToken);
         foundUsers.add(user);
         stub(userService.getUsersByString("Jac")).toReturn(foundUsers);
-        //stub(tokenService.getAccessTokenByValue(accessToken.getValue())).toReturn(accessToken);
 
-        //User actual = userController.getUserByToken(accessToken);
         List<User> actualUsers = new ArrayList<User>();
         actualUsers = userController.getUsersByString("Jac");
-        //User actual = userController.getUserByToken();
 
         assertEquals("Users from usercontroller should be the same as from db", foundUsers.get(0), actualUsers.get(0));
     }
@@ -202,5 +163,4 @@ public class UserControllerTest extends BaseUnitTest {
 
         assertEquals("Users from usercontroller should be the same as from db", actualUser, user2);
     }
-
 }

@@ -9,7 +9,6 @@ package be.kdg.spacecrack.viewmodels;/* Git $Id$
 import javax.validation.constraints.NotNull;
 
 public class ShipViewModel {
-
     @NotNull
     private int shipId;
     private String planetName;

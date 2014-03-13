@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNotNull;
 
 
 public class ShipRepositoryTests extends  BaseUnitTest{
-
     private IShipRepository shipRepository;
     IGameRepository gameRepository;
 
@@ -29,17 +28,12 @@ public class ShipRepositoryTests extends  BaseUnitTest{
     public void setUp() throws Exception {
         shipRepository = new ShipRepository(sessionFactory);
         gameRepository = new GameRepository(sessionFactory);
-
     }
 
     @Test
     @Transactional
     public void saveGameWithPlayerAndShip_valid_shipandplayerCreatedIn1Query() {
-
-
-
         //region Arrange
-
         Ship ship = new Ship();
         Player player = new Player();
         Game game = new Game();
@@ -55,39 +49,12 @@ public class ShipRepositoryTests extends  BaseUnitTest{
         Game gameDb = gameRepository.getGameByGameId(gameId);
         //endregion
 
-
         //region Act
          Ship result = shipRepository.getShipByShipId(gameDb.getPlayers().get(0).getShips().get(0).getShipId());
         //endregion
-
 
         //Assert
         assertNotNull(result);
         assertNotNull(result.getPlayer());
     }
-
-
-
-    /*@Test
-    @Transactional
-    public void deleteShip_shipInDb_shipDeleted() {
-        Game game = createGameWithShip();
-
-        int playerId = game.getPlayers().get(0).getPlayerId();
-        PlayerRepository playerRepository = new PlayerRepository(sessionFactory);
-
-        Ship ship = game.getPlayers().get(0).getShips().get(0);
-        deleteShipTransactional(ship);
-        Ship result = shipRepository.getShipByShipId(ship.getShipId());
-        assertEquals("Ship should no longer be in db",null, result);
-        Player playerByPlayerId = playerRepository.getPlayerByPlayerId(playerId);
-        assertNotNull(playerByPlayerId);
-        assertEquals("player should no longer have ships", 0,playerByPlayerId.getShips().size());
-    }
-
-    private void deleteShipTransactional(Ship ship) {
-        shipRepository.deleteShip(ship);
-    }
-    */
-
 }

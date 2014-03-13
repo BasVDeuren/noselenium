@@ -70,36 +70,22 @@ public class ReplayTests {
 
     @Test @Transactional
     public void getRevisionNumbers_gameWith3Moves_ListOfRevisions() throws Exception {
-        //region Arrange
-        //region Make map and setup game
         TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
         createMap();
         createProfiles();
 
         int gameId = gameService.createGame(user.getProfile(), "SpaceCrackName", opponentProfile);
-
-
         Game game = gameService.getGameByGameId(gameId);
         Ship ship = game.getPlayers().get(0).getShips().get(0);
         transactionManager.commit(status);
-        //endregion
 
         doMoves(transactionManager, gameService, ship);
-        //endregion
-
 
         TransactionStatus status5 = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
-        //region Act
         List<Integer> revisionNumbers = gameService.getRevisionNumbers(game.getGameId());
-        //endregion
         transactionManager.commit(status5);
 
-
-        //region Assert
-
         assertEquals("Game should have 4 revisions", 4, revisionNumbers.size());
-        //endregion
-
     }
 
     @Test @Transactional
@@ -112,19 +98,14 @@ public class ReplayTests {
 
         int gameId = gameService.createGame(user.getProfile(), "SpaceCrackName2", opponentProfile);
 
-
         Game game = gameService.getGameByGameId(gameId);
         Ship ship = game.getPlayers().get(0).getShips().get(0);
         transactionManager.commit(status);
 
-
         doMoves(transactionManager, gameService, ship);
 
-
         TransactionStatus status2 = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
-
         List<Integer> revisionNumbers = gameService.getRevisionNumbers(game.getGameId());
-
         transactionManager.commit(status2);
         //endregion
 
@@ -142,9 +123,7 @@ public class ReplayTests {
         assertEquals("player should have 3 colony", 3, viewModels.get(2).getPlayer1().getColonies().size());
         assertEquals("player should have 3 colony", 3, viewModels.get(3).getPlayer1().getColonies().size());
 
-
         transactionManager.commit(status3);
-
     }
 
     private void doMoves(HibernateTransactionManager transactionManager, GameService gameService, Ship ship) {
@@ -179,5 +158,4 @@ public class ReplayTests {
         MapFactory mapFactory = new MapFactory(sessionFactory, new PlanetRepository(sessionFactory));
         mapFactory.createPlanets();
     }
-
 }

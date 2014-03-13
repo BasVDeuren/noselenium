@@ -29,9 +29,8 @@ public class SeleniumLogOutTests extends SeleniumBaseTestCase {
 
         assertEquals("http://localhost:8080/#/login", driver.getCurrentUrl());
         WebElement uname = driver.findElement(By.name("uname"));
-       wait.until(ExpectedConditions.visibilityOf(uname));
+        wait.until(ExpectedConditions.visibilityOf(uname));
 
         assertEquals(false, btnAction.isDisplayed());
-
     }
 }

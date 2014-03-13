@@ -7,12 +7,11 @@ package be.kdg.spacecrack.viewmodels;/* Git $Id$
  */
 
 public class GameActivePlayerWrapper {
-    GameViewModel game;
-    int activePlayerId;
-    String firebaseGameURL;
+    private GameViewModel game;
+    private int activePlayerId;
+    private String firebaseGameURL;
 
-    public GameActivePlayerWrapper() {
-    }
+    public GameActivePlayerWrapper() {}
 
     public GameActivePlayerWrapper(GameViewModel game, int activePlayerId, String firebaseGameURL) {
         this.game = game;

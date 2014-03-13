@@ -10,15 +10,13 @@ import org.hibernate.validator.constraints.Email;
  *
  */
 public class UserViewModel {
-
     private String username;
     private String password;
     private String passwordRepeated;
     @Email
     private String email;
 
-    public UserViewModel() {
-    }
+    public UserViewModel() {}
 
     public UserViewModel(String username, String password, String passwordRepeated, String email) {
         this.username = username;

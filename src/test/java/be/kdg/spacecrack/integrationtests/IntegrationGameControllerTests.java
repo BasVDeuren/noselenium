@@ -54,18 +54,17 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
                 .cookie(new Cookie("accessToken", accessTokenValue)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.game.player1.colonies[0].planetName", CoreMatchers.is("a")))
-                .andExpect(jsonPath("$.game.player1.colonies[0].strength", CoreMatchers.is(GameService.NEWCOLONYSTRENGTH)))
+                .andExpect(jsonPath("$.game.player1.colonies[0].strength", CoreMatchers.is(GameService.NEW_COLONY_STRENGHT)))
                 .andExpect(jsonPath("$.game.player1.ships[0].planetName", CoreMatchers.is("a")))
                 .andExpect(jsonPath("$.game.player1.ships[0].shipId", CoreMatchers.notNullValue()))
                 .andExpect(jsonPath("$.game.player1.ships[0].shipId", CoreMatchers.not(0)))
                 .andExpect(jsonPath("$.game.player1.ships[0].strength", CoreMatchers.is(GameService.NEWSHIPSTRENGTH)))
                 .andExpect(jsonPath("$.game.player2.colonies[0].planetName", CoreMatchers.is("a3")))
-                .andExpect(jsonPath("$.game.player2.colonies[0].strength", CoreMatchers.is(GameService.NEWCOLONYSTRENGTH)))
+                .andExpect(jsonPath("$.game.player2.colonies[0].strength", CoreMatchers.is(GameService.NEW_COLONY_STRENGHT)))
                 .andExpect(jsonPath("$.game.player2.ships[0].planetName", CoreMatchers.is("a3")))
                 .andExpect(jsonPath("$.game.player2.ships[0].shipId", CoreMatchers.notNullValue()))
                 .andExpect(jsonPath("$.game.player2.ships[0].shipId", CoreMatchers.not(0)))
-                .andExpect(jsonPath("$.game.player2.ships[0].strength", CoreMatchers.is(GameService.NEWSHIPSTRENGTH)))
-        ;
+                .andExpect(jsonPath("$.game.player2.ships[0].strength", CoreMatchers.is(GameService.NEWSHIPSTRENGTH)));
     }
 
     @Test
@@ -163,13 +162,10 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
 
     @Test
     public void postActionBuildShip_validAction_fireBaseCalled() throws Exception {
-
-
         String accessToken = loginAndRetrieveAccessToken();
         GameActivePlayerWrapper gameActivePlayerWrapper = createAGame(accessToken);
         GameViewModel game = gameActivePlayerWrapper.getGame();
         ColonyViewModel colonyViewModel = game.getPlayer1().getColonies().get(0);
-
 
         IFirebaseUtil mockFireBaseUtil = mock(IFirebaseUtil.class);
         IViewModelConverter mockViewModelConverter = mock(IViewModelConverter.class);
@@ -183,7 +179,6 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
         MockMvc standAloneMockMVC = MockMvcBuilders.standaloneSetup(actionController).build();
         String actionViewModelJSon = objectMapper.writeValueAsString(new ActionViewModel("BUILDSHIP", null, "", colonyViewModel, game.getPlayer1().getPlayerId(), game.getGameId()));
 
-//        Mockito.verify(mockFireBaseUtil, VerificationModeFactory.times(1)).setValue(any(String.class), any(Object.class));
         standAloneMockMVC.perform(post("/auth/action")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -200,8 +195,6 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
 
         PlayerViewModel playerViewModel = game.getPlayer1();
         List<ShipViewModel> playerViewModelShips = playerViewModel.getShips();
-        //b->dend turn both players->->j->p->q->end turn both players->q3->p3end turn both players->->j3->d3
-        //->b3->end turn both players->build ship on b3 for enough strength to destroy the colony on a3->a3
 
         moveShip(accessToken, game, playerViewModel, playerViewModelShips, "b");
         moveShip(accessToken, game, playerViewModel, playerViewModelShips, "d");
@@ -278,14 +271,4 @@ public class IntegrationGameControllerTests extends BaseFilteredIntegrationTests
             .content(objectMapper.writeValueAsString(actionViewModel))
             .cookie(new Cookie("accessToken", accessToken)));
     }
-
-    //    @After
-//    public void tearDown() throws Exception {
-//        Session session = sessionFactory.getCurrentSession();
-//
-//        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User");
-//        q.executeUpdate();
-//
-//
-//    }
 }

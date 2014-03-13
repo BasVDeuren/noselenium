@@ -27,11 +27,9 @@ public class PlanetConnection {
     @JoinColumn(name="childPlanetId")
     private Planet childPlanet;
 
-    public PlanetConnection() {
-    }
+    public PlanetConnection() {}
 
     public PlanetConnection(Planet parentPlanet, Planet childPlanet) {
-
         this.parentPlanet = parentPlanet;
         this.childPlanet = childPlanet;
     }

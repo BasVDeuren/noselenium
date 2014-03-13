@@ -20,7 +20,5 @@ public class TokenStringGeneratorTests {
         ITokenStringGenerator tokenValueGenerator = new TokenStringGenerator(1234L);
         String actual = tokenValueGenerator.generateTokenString();
         assertEquals("38gqit55s18bd2r37jf3lsgf7l", actual);
-
-
     }
 }

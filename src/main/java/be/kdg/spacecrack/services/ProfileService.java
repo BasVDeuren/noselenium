@@ -20,15 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ProfileService implements IProfileService {
     @Autowired
-    IProfileRepository profileRepository;
+    private IProfileRepository profileRepository;
 
     @Autowired
-    IUserRepository userRepository;
+    private IUserRepository userRepository;
 
-
-    public ProfileService() {
-
-    }
+    public ProfileService() {}
 
     public ProfileService(IProfileRepository profileRepository, IUserRepository userRepository) {
         this.profileRepository = profileRepository;
@@ -37,17 +34,14 @@ public class ProfileService implements IProfileService {
 
     @Override
     public void createProfile(Profile profile, User user) throws Exception {
-
-        if(user.getProfile() == null){
+        if(user.getProfile() == null) {
             profile.setUser(user);
             user.setProfile(profile);
             profileRepository.createProfile(profile);
             userRepository.updateUser(user);
-
-        }else{
+        } else {
             throw new SpaceCrackAlreadyExistsException();
         }
-
     }
 
     @Override

@@ -29,11 +29,9 @@ public class ProfileRepositoryTest extends BaseUnitTest {
         Session session = sessionFactory.getCurrentSession();
         Profile actual;
 
-                @SuppressWarnings("JpaQlInspection")Query q = session.createQuery("FROM Profile p WHERE p = :profile");
-                q.setParameter("profile", profile);
-
-                actual = (Profile) q.uniqueResult();
-
+        @SuppressWarnings("JpaQlInspection")Query q = session.createQuery("FROM Profile p WHERE p = :profile");
+        q.setParameter("profile", profile);
+        actual = (Profile) q.uniqueResult();
 
         assertEquals("Should be in the db", profile.getProfileId(), actual.getProfileId());
     }

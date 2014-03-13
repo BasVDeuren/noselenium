@@ -7,7 +7,6 @@ package be.kdg.spacecrack.viewmodels;/* Git $Id$
  */
 
 public class GameViewModel {
-
     private int gameId;
     private String name;
     private int loserPlayerId;

@@ -17,7 +17,6 @@ import java.io.Serializable;
 @Entity
 @Table(name = "T_User")
 public class User implements Serializable {
-
     @Id
     @GeneratedValue
     private int userId;
@@ -31,7 +30,6 @@ public class User implements Serializable {
     @Column(unique = true)
     private String email;
 
-    //@OneToOne(mappedBy = "user")
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "accesstokenid", nullable = true)
     @JsonManagedReference
@@ -43,8 +41,7 @@ public class User implements Serializable {
     @JsonManagedReference
     private Profile profile;
 
-    public User() {
-    }
+    public User() {}
 
     public User(String username, String password) {
         this.username = username;

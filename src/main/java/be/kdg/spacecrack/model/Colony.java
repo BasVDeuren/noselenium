@@ -28,8 +28,12 @@ public class Colony extends Piece {
     @JoinColumn(name = "playerId")
     private Player player;
 
+    public Colony() {}
 
-    public Colony() {
+    public Colony(Planet planet, Player player, int strenght) {
+        this.planet = planet;
+        setPlayer(player);
+        setStrength(strenght);
     }
 
     public Colony(Planet planet) {
@@ -43,8 +47,6 @@ public class Colony extends Piece {
     public void setPlanet(Planet planet) {
         this.planet = planet;
     }
-
-
 
     public int getColonyId() {
         return colonyId;
@@ -63,9 +65,7 @@ public class Colony extends Piece {
         player.internalAddColony(this);
     }
 
-    protected void internalSetPlayer(Player player)
-    {
+    protected void internalSetPlayer(Player player){
        this.player = player;
     }
-
 }

@@ -8,13 +8,11 @@ package be.kdg.spacecrack.model;
  *
  */
 public class SpaceCrackMap {
-
     private Planet[] planets;
 
     public SpaceCrackMap(Planet[] planets ) {
         this.planets = planets;
     }
-
 
     public Planet[] getPlanets() {
         return planets;
@@ -23,6 +21,4 @@ public class SpaceCrackMap {
     public void setPlanets(Planet[] planets) {
         this.planets = planets;
     }
-
-
 }

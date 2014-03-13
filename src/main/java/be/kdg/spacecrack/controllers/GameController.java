@@ -33,9 +33,8 @@ import java.util.List;
 @Controller
 @RequestMapping("/auth/game")
 public class GameController {
+    public static final String GAME_SUFFIX = "/gameName/";
 
-
-    public static final String GAMESUFFIX = "/gameName/";
     @Autowired
     private IAuthorizationService authorizationService;
 
@@ -43,25 +42,18 @@ public class GameController {
     private IGameService gameService;
 
     @Autowired
-    IProfileService profileService;
+    private IProfileService profileService;
 
     @Autowired
-    IViewModelConverter viewModelConverter;
+    private IViewModelConverter viewModelConverter;
 
     @Autowired
-    IFirebaseUtil firebaseUtil;
+    private IFirebaseUtil firebaseUtil;
 
     @Autowired
-    IMapFactory mapFactory;
+    private IMapFactory mapFactory;
 
-    public GameController() {
-    }
-
-    @PostConstruct
-    private void createMap() {
-
-        mapFactory.createPlanets();
-    }
+    public GameController() {}
 
     public GameController(IAuthorizationService authorizationService, IGameService gameService, IProfileService profileService, IViewModelConverter viewModelConverter, IFirebaseUtil firebaseUtil) {
         this.viewModelConverter = viewModelConverter;
@@ -69,6 +61,11 @@ public class GameController {
         this.firebaseUtil = firebaseUtil;
         this.gameService = gameService;
         this.profileService = profileService;
+    }
+
+    @PostConstruct
+    private void createMap() {
+        mapFactory.createPlanets();
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -96,8 +93,8 @@ public class GameController {
         User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
         Player player = gameService.getActivePlayer(user, game);
         GameViewModel gameViewModel = viewModelConverter.convertGameToViewModel(game);
-        GameActivePlayerWrapper gameActivePlayerWrapper = new GameActivePlayerWrapper(gameViewModel, player.getPlayerId(), FirebaseUtil.FIREBASEURLBASE + GAMESUFFIX + game.getName());
-        firebaseUtil.setValue(GAMESUFFIX + game.getName(), gameViewModel);
+        GameActivePlayerWrapper gameActivePlayerWrapper = new GameActivePlayerWrapper(gameViewModel, player.getPlayerId(), FirebaseUtil.FIREBASEURLBASE + GAME_SUFFIX + game.getName());
+        firebaseUtil.setValue(GAME_SUFFIX + game.getName(), gameViewModel);
         return gameActivePlayerWrapper;
     }
 
@@ -117,18 +114,13 @@ public class GameController {
 
     @RequestMapping(value="/invite/{gameId}",method = RequestMethod.DELETE)
     @ResponseBody
-    public void deleteGame(@CookieValue("accessToken") String accessTokenValue,@PathVariable String gameId) throws Exception {
-        User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
+    public void deleteGame(@PathVariable String gameId) throws Exception {
         gameService.deleteGame(Integer.parseInt(gameId));
     }
 
     @RequestMapping(value = "/invite/{gameId}", method = RequestMethod.POST)
     @ResponseBody
-    public void acceptGameInvite(@CookieValue("accessToken") String accessTokenValue, @PathVariable String gameId) {
-        User user = authorizationService.getUserByAccessTokenValue(accessTokenValue);
+    public void acceptGameInvite(@PathVariable String gameId) {
         gameService.acceptGameInvite(Integer.parseInt(gameId));
-
     }
-
-
 }

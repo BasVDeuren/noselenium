@@ -47,6 +47,7 @@ public class SeleniumEditProfileTests extends SeleniumBaseTestCase {
 
         assertEquals("http://localhost:8080/#/spacecrack/editProfile", driver.getCurrentUrl());
     }
+
     @Test
     public void ChangePassword_Oké() throws Exception {
         login();
@@ -91,46 +92,6 @@ public class SeleniumEditProfileTests extends SeleniumBaseTestCase {
 
         assertEquals(false,btnSave.isEnabled());
     }
-/*
-    @Test
-    public void ChangeProfiel_OK() throws Exception {
-        loginAndRetrieveAccessToken();
-        navigateToEditProfile();
-
-        WebDriverWait wait = new WebDriverWait(driver,10);
-        WebElement dateOfBirth = driver.findElement(By.name("date2"));
-        wait.until(ExpectedConditions.visibilityOf(dateOfBirth));
-        dateOfBirth.sendKeys(Keys.CONTROL + "a");
-        dateOfBirth.sendKeys(Keys.DELETE);
-        dateOfBirth.sendKeys("1991/07/16");
-
-        fillProfileFields();
-
-        WebElement btnSubmit = driver.findElement(By.id("btnSubmit"));
-        btnSubmit.click();
-
-        WebElement contactSuccesMsg = driver.findElement(By.id("contactSuccesMsg"));
-        wait.until(ExpectedConditions.visibilityOf(contactSuccesMsg));
-
-        assertEquals(true, contactSuccesMsg.isDisplayed());
-    }
-    @Test
-    public void ChangeProfiel_FAIL() throws Exception {
-        loginAndRetrieveAccessToken();
-        navigateToEditProfile();
-
-        WebDriverWait wait = new WebDriverWait(driver,10);
-        WebElement dateOfBirth = driver.findElement(By.name("date2"));
-        wait.until(ExpectedConditions.visibilityOf(dateOfBirth));
-        dateOfBirth.sendKeys(Keys.CONTROL + "a");
-        dateOfBirth.sendKeys(Keys.DELETE);
-
-        fillProfileFields();
-
-        WebElement btnSubmit = driver.findElement(By.id("btnSubmit"));
-        wait.until(ExpectedConditions.visibilityOf(btnSubmit));
-        assertEquals(false, btnSubmit.isEnabled());
-    }*/
 
     public void fillProfileFields() throws InterruptedException {
 
@@ -148,6 +109,5 @@ public class SeleniumEditProfileTests extends SeleniumBaseTestCase {
         lnkProfile.click();
         Thread.sleep(500);
         lnkProfile.click();
-
     }
 }

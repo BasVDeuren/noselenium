@@ -21,15 +21,15 @@ import java.util.List;
  */
 @Component("userRepository")
 public class UserRepository implements IUserRepository {
-    Logger logger = LoggerFactory.getLogger(UserRepository.class);
-    @Autowired
-    SessionFactory sessionFactory;
+    private Logger logger = LoggerFactory.getLogger(UserRepository.class);
 
-    public UserRepository() {
-    }
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @Autowired
+    private SessionFactory sessionFactory;
+
+    public UserRepository() {}
 
     public UserRepository(SessionFactory sessionFactory) {
-
         this.sessionFactory = sessionFactory;
     }
 
@@ -64,85 +64,67 @@ public class UserRepository implements IUserRepository {
         q.setParameter("username", username);
         user = (User) q.uniqueResult();
 
-
         return user;
     }
-
 
     @Override
     public List<User> findUsersByUsernamePart(String username) {
         Session session = sessionFactory.getCurrentSession();
-        List<User> foundUsers;
 
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from User u where u.username LIKE :username");
         q.setParameter("username", "%" + username + "%");
-        foundUsers = q.list();
 
-
-        return foundUsers;
+        return q.list();
     }
 
     @Override
     public List<User> findUsersByEmailPart(String emailPart){
         Session session = sessionFactory.getCurrentSession();
-        List<User> foundUsers;
 
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from User u where u.email LIKE :email");
         q.setParameter("email", "%" + emailPart + "%");
-        foundUsers = q.list();
 
-        return foundUsers;
+        return q.list();
     }
 
     @Override
     public void updateUser(User user) {
         Session session = sessionFactory.getCurrentSession();
-
         session.saveOrUpdate(user);
-
     }
 
     @Override
     public void createUser(User user) {
         Session session = sessionFactory.getCurrentSession();
-
         session.saveOrUpdate(user);
-
     }
+
     @Override
     public User getUserByAccessToken(AccessToken accessToken) {
-        User user;
         Session session = sessionFactory.getCurrentSession();
 
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from User u where u.token = :token");
         q.setParameter("token", accessToken);
-        user = (User) q.uniqueResult();
 
-        return user;
+        return (User) q.uniqueResult();
     }
 
     @Override
     public List<User> getLoggedInUsers() {
         Session session = sessionFactory.getCurrentSession();
-        List<User> foundUsers;
 
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from User u WHERE u.token IS NOT NULL ");
-        foundUsers = q.list();
 
-        return foundUsers;
+        return q.list();
     }
 
     @Override
     public User getUserByEmail(String email) {
         Session session = sessionFactory.getCurrentSession();
-        List<User> foundUsers;
 
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from User u WHERE u.email = :email ");
         q.setParameter("email", email);
-        User user = (User) q.uniqueResult();
 
-        return user;
+        return (User) q.uniqueResult();
     }
-
-
 }

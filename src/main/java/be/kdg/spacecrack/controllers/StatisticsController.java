@@ -18,22 +18,20 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping(value = "/auth/statistics")
 public class StatisticsController {
-
-@Autowired
+    @Autowired
     private IAuthorizationService authorizationService;
 
     @Autowired
     private IStatisticsService statisticsService;
 
-    public StatisticsController() {
-    }
+    public StatisticsController() {}
 
     public StatisticsController(IAuthorizationService authorizationService, IStatisticsService statisticsService)
     {
-
         this.authorizationService = authorizationService;
         this.statisticsService = statisticsService;
     }
+
     @RequestMapping(method = RequestMethod.GET)
     public @ResponseBody StatisticsViewModel getStatisticsForProfile(@CookieValue("accessToken") String accessToken)
     {

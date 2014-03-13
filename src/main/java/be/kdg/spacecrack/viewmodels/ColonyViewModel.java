@@ -11,8 +11,6 @@ public class ColonyViewModel {
     private String planetName;
     private int strength;
 
-
-
     public String getPlanetName() {
         return planetName;
     }

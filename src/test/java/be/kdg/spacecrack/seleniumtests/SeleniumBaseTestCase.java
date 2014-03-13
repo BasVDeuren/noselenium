@@ -36,16 +36,12 @@ public abstract class SeleniumBaseTestCase {
 
     @Before
     public void setUp() throws Exception {
-
         URL resource = this.getClass().getResource("/chromedriver.exe");
         String path = resource.getPath();
         path = path.replaceAll("%20", " ");
         System.setProperty("webdriver.chrome.driver", path);
         driver = new ChromeDriver();
-
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-
-
     }
     protected void login() {
         driver.get(baseUrl);
@@ -69,11 +65,8 @@ public abstract class SeleniumBaseTestCase {
         lnkEditProfile.click();
     }
 
-
-
     @After
     public void tearDown() throws Exception {
         driver.quit();
-
     }
 }

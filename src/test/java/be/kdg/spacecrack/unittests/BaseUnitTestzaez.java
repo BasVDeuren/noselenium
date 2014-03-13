@@ -24,12 +24,10 @@ public abstract class BaseUnitTestzaez {
     @Autowired
     SessionFactory sessionFactory;
 
-
     @Before
     public void createMap()
     {
         MapFactory mapFactory = new MapFactory(sessionFactory,new PlanetRepository(sessionFactory));
         mapFactory.createPlanets();
     }
-
 }

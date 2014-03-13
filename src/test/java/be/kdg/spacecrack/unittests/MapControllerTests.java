@@ -30,7 +30,6 @@ public class MapControllerTests extends BaseUnitTest {
         Planet startPlanet = planets[0];
 
         ArrayList<Planet> connectedPlanets = new ArrayList<Planet>();
-
         writeConnectedPlanetstoList(startPlanet, connectedPlanets);
 
         List<Planet> planetList = Arrays.asList(planets);
@@ -39,7 +38,6 @@ public class MapControllerTests extends BaseUnitTest {
 
     private synchronized void writeConnectedPlanetstoList(Planet startPlanet, ArrayList<Planet> out) {
         out.add(startPlanet);
-
         for(PlanetConnection planetConnection : startPlanet.getPlanetConnections())
         {
             if(planetConnection != null){
@@ -48,9 +46,5 @@ public class MapControllerTests extends BaseUnitTest {
                 }
             }
         }
-
-
     }
-
-
 }

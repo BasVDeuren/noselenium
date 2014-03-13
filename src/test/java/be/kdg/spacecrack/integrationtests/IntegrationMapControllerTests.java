@@ -27,6 +27,5 @@ public class IntegrationMapControllerTests extends BaseFilteredIntegrationTests 
                /* .andExpect(jsonPath("$.planets[0].connectedPlanets[0].name", CoreMatchers.notNullValue()))*/.andReturn();
         String contentAsString = mvcResult.getResponse().getContentAsString();
         boolean b = true;
-
     }
 }

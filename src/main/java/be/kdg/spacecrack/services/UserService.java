@@ -22,23 +22,18 @@ import java.util.Random;
 @Component("userService")
 @Transactional
 public class UserService implements IUserService {
+    @Autowired
+    private IUserRepository userRepository;
 
     @Autowired
-    IUserRepository userRepository;
+    private IProfileRepository profileRepository;
 
-    @Autowired
-    IProfileRepository profileRepository;
-
-    public UserService() {
-
-    }
-
+    public UserService() {}
 
     public UserService(IUserRepository userRepository, IProfileRepository profileRepository) {
         this.userRepository = userRepository;
         this.profileRepository = profileRepository;
     }
-
 
     @Override
     public User getUserByAccessToken(AccessToken accessToken) throws Exception {
@@ -53,30 +48,23 @@ public class UserService implements IUserService {
     @Override
     public void registerUser(String username, String password, String email)  {
         User userByUsername = userRepository.getUserByUsername(username);
-        if(userByUsername != null)
-        {
+        if(userByUsername != null) {
             throw new SpaceCrackAlreadyExistsException();
         }
 
         User userByEmail = userRepository.getUserByEmail(email);
-        if(userByEmail != null)
-        {
+        if(userByEmail != null) {
             throw new SpaceCrackAlreadyExistsException();
         }
         User user = userRepository.addUser(username, password, email);
-        Profile profile = new Profile();
-
 
         if(user.getProfile() == null){
+            Profile profile = new Profile();
             profile.setUser(user);
             user.setProfile(profile);
             profileRepository.createProfile(profile);
             userRepository.updateUser(user);
-
-        }else{
-            //throw new SpaceCrackAlreadyExistsException();
         }
-
     }
 
     @Override
@@ -98,11 +86,10 @@ public class UserService implements IUserService {
     public User getRandomUser(int userId) throws Exception {
         User foundUser;
         List<User> users = userRepository.getLoggedInUsers();
-        do{
+        do {
             Random random = new Random();
             foundUser = users.get(random.nextInt(users.size()));
-        }while(foundUser.getUserId() == userId);
+        } while(foundUser.getUserId() == userId);
         return foundUser;
     }
-
 }

@@ -33,8 +33,7 @@ public class IntegrationReplayControllerTests extends BaseFilteredIntegrationTes
     @Autowired
     private ApplicationContext applicationContext;
 
-
-    @Test//Transactional(propagation = Propagation.NESTED  )
+    @Test
     public void getRevisionByNumber_validGameId_Revision() throws Exception {
         HibernateTransactionManager transactionManager = (HibernateTransactionManager) applicationContext.getBean("transactionManager");
         TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
@@ -45,7 +44,6 @@ public class IntegrationReplayControllerTests extends BaseFilteredIntegrationTes
         GameActivePlayerWrapper gameActivePlayerWrapper = createAGame(accessToken);
         GameViewModel game = gameActivePlayerWrapper.getGame();
 
-
         transactionManager.commit(status);
         TransactionStatus status1 = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
         MvcResult result = mockMvc.perform(get("/auth/replay/" + game.getGameId())
@@ -55,6 +53,7 @@ public class IntegrationReplayControllerTests extends BaseFilteredIntegrationTes
                 .andExpect(jsonPath("$.revisions[0]", CoreMatchers.not(0)))
                 .andExpect(jsonPath("$.revisions", Matchers.hasSize(1)))
                 .andReturn();
+
         transactionManager.commit(status1);
         TransactionStatus status2 = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
         String contentAsString = result.getResponse().getContentAsString();
@@ -68,6 +67,5 @@ public class IntegrationReplayControllerTests extends BaseFilteredIntegrationTes
                 .andExpect(jsonPath("$.gameId", CoreMatchers.is(game.getGameId())));
 
         transactionManager.commit(status2);
-
     }
 }

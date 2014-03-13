@@ -14,17 +14,8 @@ import be.kdg.spacecrack.services.IGameService;
  * using @Configurable isn't possible on a normal Tomcat Server, because it doesn't support Load-time Weaving.
  */
 public abstract class Action {
-
-
     protected IGameService gameService;
-
     protected Integer playerId;
-
-    protected Action(IGameService gameService, Integer playerId) {
-        this.gameService = gameService;
-
-        this.playerId = playerId;
-    }
 
     public abstract void execute();
 
@@ -33,6 +24,11 @@ public abstract class Action {
     }
 
     public void setPlayerId(Integer playerId) {
+        this.playerId = playerId;
+    }
+
+    protected Action(IGameService gameService, Integer playerId) {
+        this.gameService = gameService;
         this.playerId = playerId;
     }
 }

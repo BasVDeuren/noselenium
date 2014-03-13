@@ -6,9 +6,7 @@ import be.kdg.spacecrack.services.IAuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.PostConstruct;
-
 
 /* Git $Id$
  *
@@ -19,20 +17,14 @@ import javax.annotation.PostConstruct;
  */
 @Controller
 public class TokenController{
-
-
     @Autowired
     private IAuthorizationService tokenService;
 
-
-    public TokenController() {
-
-    }
+    public TokenController() {}
 
     public TokenController(IAuthorizationService tokenService) {
         this.tokenService = tokenService;
     }
-
 
     @PostConstruct
     public void createTestUsers() {
@@ -44,7 +36,6 @@ public class TokenController{
 
     @RequestMapping(value="/accesstokens", method = RequestMethod.POST, consumes = "application/json")
     public @ResponseBody AccessToken login(@RequestBody User user) {
-       // tokenService.createTestUsers();
         AccessToken accessToken = tokenService.login(user);
 
         return accessToken;
@@ -57,9 +48,12 @@ public class TokenController{
         tokenService.logout(substring);
     }
 
+    /**
+     * Used for forcing a call to the handler interceptor to check if the user is logged in to enforce authorization
+     * Method should be empty
+     * @throws Exception
+     */
     @RequestMapping(value="/auth/accesstokens", method = RequestMethod.GET)
     @ResponseBody
-    public void checkUserLoggedIn(@CookieValue("accessToken") String accessTokenValue) throws Exception{
-    }
-
+    public void checkUserLoggedIn() throws Exception {}
 }

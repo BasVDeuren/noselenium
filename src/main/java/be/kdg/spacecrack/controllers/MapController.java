@@ -20,23 +20,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("/map")
 public class MapController {
-    @Autowired
-    public IMapFactory mapService;
-
     public static final int MAP_HEIGHT = 500;
     public static final int MAP_LENGTH = 800;
 
-    public MapController() {
-    }
+    @Autowired
+    public IMapFactory mapService;
+
+    public MapController() {}
 
     public MapController(IMapFactory mapService) {
-
         this.mapService = mapService;
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody SpaceCrackMap getMap()
-    {
+    public @ResponseBody SpaceCrackMap getMap() {
         return mapService.getSpaceCrackMap();
     }
 

@@ -10,17 +10,11 @@ import be.kdg.spacecrack.model.User;
 
 public class ProfileWrapper {
     private int contactId;
-
     private String firstname;
-
     private String lastname;
-
     private String email;
-
     private String dayOfBirth;
-
     private String image;
-
     private User user;
 
     public int getContactId() {

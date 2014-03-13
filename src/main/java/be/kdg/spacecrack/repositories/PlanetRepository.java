@@ -19,10 +19,9 @@ import java.util.List;
 public class PlanetRepository implements IPlanetRepository {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
-    public PlanetRepository() {
-    }
+    public PlanetRepository() {}
 
     public PlanetRepository(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -37,7 +36,6 @@ public class PlanetRepository implements IPlanetRepository {
         q.setParameter("name", planetName);
         planet = (Planet) q.uniqueResult();
 
-
         return planet;
     }
 
@@ -48,10 +46,7 @@ public class PlanetRepository implements IPlanetRepository {
         for (Planet planet : planets) {
             session.saveOrUpdate(planet);
         }
-
-
     }
-
 
     public Planet[] getAll() {
         Session session = sessionFactory.getCurrentSession();
@@ -61,12 +56,12 @@ public class PlanetRepository implements IPlanetRepository {
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Planet");
         result = q.list();
 
-
         int size = result.size();
         planets = new Planet[size];
         for (int i = 0; i < size; i++) {
             planets[i] = (Planet) result.get(i);
         }
+
         return planets;
     }
 }

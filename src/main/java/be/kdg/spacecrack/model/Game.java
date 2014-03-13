@@ -21,6 +21,7 @@ public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY )
     private int gameId;
+
     @Column(unique = true)
     private String name;
 
@@ -30,6 +31,7 @@ public class Game {
 
     @Column
     private int actionNumber;
+
     @Column
     private int loserPlayerId;
 
@@ -40,7 +42,6 @@ public class Game {
     public void setName(String name) {
         this.name = name;
     }
-
 
     public Game() {
        players = new ArrayList<Player>();

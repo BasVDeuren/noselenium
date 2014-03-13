@@ -12,45 +12,23 @@ import java.util.Set;
 
 @Component
 public class BeanValidator implements org.springframework.validation.Validator, InitializingBean {
-
- 
-
     private Validator validator;
 
- 
-
     public void afterPropertiesSet() throws Exception {
-
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
-
         validator = validatorFactory.usingContext().getValidator();
-
     }
-
- 
 
     public boolean supports(Class clazz) {
-
         return true;
-
     }
-
- 
 
     public void validate(Object target, Errors errors) {
-
         Set<ConstraintViolation<Object>> constraintViolations = validator.validate(target);
-
         for (ConstraintViolation<Object> constraintViolation : constraintViolations) {
-
             String propertyPath = constraintViolation.getPropertyPath().toString();
-
             String message = constraintViolation.getMessage();
-
             errors.rejectValue(propertyPath, "", message);
-
         }
-
     }
-
 }

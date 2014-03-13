@@ -22,18 +22,18 @@ import java.util.Date;
 @Controller
 @RequestMapping("/auth/profile")
 public class ProfileController {
-
     @Autowired
     IUserService userService;
+
     @Autowired
     IAuthorizationService tokenService;
+
     @Autowired
     IProfileService profileService;
-    public ProfileController() {
 
-    }
+    public ProfileController() {}
 
-    public ProfileController(IProfileService profileService, IUserService userService, ITokenRepository tokenRepository, IAuthorizationService tokenService){
+    public ProfileController(IProfileService profileService, IUserService userService, IAuthorizationService tokenService){
         this.profileService = profileService;
         this.userService = userService;
         this.tokenService = tokenService;
@@ -60,6 +60,4 @@ public class ProfileController {
         User user = tokenService.getUserByAccessTokenValue(accessTokenValue);
         return user.getProfile();
     }
-
-
 }

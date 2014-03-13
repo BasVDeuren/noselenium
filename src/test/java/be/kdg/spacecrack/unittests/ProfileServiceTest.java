@@ -30,19 +30,15 @@ import static org.mockito.Mockito.*;
  *
  */
 public class ProfileServiceTest extends BaseUnitTest{
-
-
     private TokenController tokenController;
     UserRepository userRepository;
 
     @Before
     public void setUp() throws Exception {
-
         TokenStringGenerator generator = new TokenStringGenerator();
         TokenRepository tokenRepository = new TokenRepository(sessionFactory);
         userRepository = mock(UserRepository.class);
         tokenController = new TokenController(new AuthorizationService(tokenRepository, userRepository, generator ));
-
     }
 
     @Test
@@ -50,15 +46,12 @@ public class ProfileServiceTest extends BaseUnitTest{
     public void testCreateContact() throws Exception {
         Session session;
 
-
         ProfileRepository profileRepository = mock(ProfileRepository.class);
         ProfileService contactService = new ProfileService(profileRepository, userRepository);
 
         User user = new User("username", "password", "email");
         session = sessionFactory.getCurrentSession();
-
         session.saveOrUpdate(user);
-
 
         stub(userRepository.getUser(user)).toReturn(user);
         AccessToken accessToken = tokenController.login(user);
@@ -75,7 +68,6 @@ public class ProfileServiceTest extends BaseUnitTest{
     public void testCreateExtraContact_notPossible() throws Exception {
         Session session;
 
-
         ProfileRepository profileRepository = mock(ProfileRepository.class);
         ProfileService profileService = new ProfileService(profileRepository, userRepository);
 
@@ -83,7 +75,6 @@ public class ProfileServiceTest extends BaseUnitTest{
         session = sessionFactory.getCurrentSession();
 
         session.saveOrUpdate(user);
-
 
         stub(userRepository.getUser(user)).toReturn(user);
         AccessToken accessToken = tokenController.login(user);
@@ -93,8 +84,6 @@ public class ProfileServiceTest extends BaseUnitTest{
         Profile profile2 = new Profile("firstname","lastname", calendar.getTime(),"image");
         profileService.createProfile(profile, user);
         profileService.createProfile(profile2, user);
-
-
     }
 
     @Test
@@ -103,7 +92,6 @@ public class ProfileServiceTest extends BaseUnitTest{
         ProfileRepository profileRepository = mock(ProfileRepository.class);
         ProfileService profileService = new ProfileService(profileRepository, userRepository);
         tokenController = mock(TokenController.class);
-
 
         User user = new User("username", "password", "email");
 
@@ -121,5 +109,4 @@ public class ProfileServiceTest extends BaseUnitTest{
 
         verify(profileRepository, VerificationModeFactory.times(1)).editContact(profile);
     }
-
 }

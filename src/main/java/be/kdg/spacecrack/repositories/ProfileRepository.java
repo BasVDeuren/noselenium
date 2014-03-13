@@ -17,14 +17,13 @@ import org.springframework.stereotype.Component;
  */
 @Component("profileRepository")
 public class ProfileRepository implements IProfileRepository {
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
-    public ProfileRepository() {
-    }
+    public ProfileRepository() {}
 
     public ProfileRepository(SessionFactory sessionFactory) {
-
         this.sessionFactory = sessionFactory;
     }
 
@@ -40,30 +39,23 @@ public class ProfileRepository implements IProfileRepository {
 
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Profile p where p.profileId = :pId");
         q.setParameter("pId", user.getProfile().getProfileId());
-        Profile profile = (Profile) q.uniqueResult();
 
-
-        return profile;
+        return (Profile) q.uniqueResult();
     }
 
     @Override
     public void editContact(Profile profile) {
         Session session = sessionFactory.getCurrentSession();
-
         session.saveOrUpdate(profile);
-
     }
 
     @Override
     public Profile getProfileByProfileId(int profileId) {
         Session session = sessionFactory.getCurrentSession();
 
-        Profile profile;
-
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Profile p where p.profileId = :profileId");
         q.setParameter("profileId", profileId);
-        profile = (Profile) q.uniqueResult();
 
-        return profile;
+        return (Profile) q.uniqueResult();
     }
 }

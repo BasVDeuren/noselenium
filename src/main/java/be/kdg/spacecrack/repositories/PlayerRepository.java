@@ -15,36 +15,23 @@ import org.springframework.stereotype.Repository;
 
 @Repository("playerRepository")
 public class PlayerRepository implements IPlayerRepository {
-
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
 
-    public PlayerRepository() {
-    }
+    public PlayerRepository() {}
 
     public PlayerRepository(SessionFactory sessionFactory) {
-
         this.sessionFactory = sessionFactory;
     }
-
-
 
     @Override
     public Player getPlayerByPlayerId(int playerId) {
         Session session = sessionFactory.getCurrentSession();
-        Player player = null;
 
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Player p where p.playerId = :playerId");
         q.setParameter("playerId", playerId);
 
-            player = (Player) q.uniqueResult();
-
-
-
-
-        return player;
-
+        return (Player) q.uniqueResult();
     }
-
-
 }

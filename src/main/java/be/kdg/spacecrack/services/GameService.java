@@ -24,46 +24,35 @@ import java.util.List;
 @Component(value = "gameService")
 @Transactional
 public class GameService implements IGameService {
-
-    public static final int NEWCOLONYSTRENGTH = 1;
-
-
+    public static final int NEW_COLONY_STRENGHT = 1;
 
     @Autowired
-    IPlanetRepository planetRepository;
+    private IPlanetRepository planetRepository;
 
     @Autowired
-    IShipRepository shipRepository;
+    private IShipRepository shipRepository;
 
     @Autowired
-    IColonyRepository colonyRepository;
+    private IColonyRepository colonyRepository;
 
     @Autowired
-    IPlayerRepository playerRepository;
+    private IPlayerRepository playerRepository;
 
     @Autowired
-    IGameRepository gameRepository;
+    private IGameRepository gameRepository;
 
     @Autowired
-    public
-    IMoveShipHandler moveShipHandler;
-
-
+    public IMoveShipHandler moveShipHandler;
 
     @Autowired
-    IViewModelConverter viewModelConverter;
+    private IViewModelConverter viewModelConverter;
 
     @Autowired
-    IGameSynchronizer gameSynchronizer;
+    private IGameSynchronizer gameSynchronizer;
 
-
-
-
-    public GameService() {
-    }
+    public GameService() {}
 
     public GameService(IPlanetRepository planetRepository, IColonyRepository colonyRepository, IShipRepository shipRepository, IPlayerRepository playerRepository, IGameRepository gameRepository, IMoveShipHandler moveShipHandler, IViewModelConverter viewModelConverter, IGameSynchronizer gameSynchronizer) {
-
         this.planetRepository = planetRepository;
         this.shipRepository = shipRepository;
         this.colonyRepository = colonyRepository;
@@ -74,11 +63,8 @@ public class GameService implements IGameService {
         this.gameSynchronizer = gameSynchronizer;
     }
 
-
-
     @Override
     public int createGame(Profile userProfile, String gameName, Profile opponentProfile) {
-
         Game game = new Game();
 
         Player player1 = new Player();
@@ -108,15 +94,8 @@ public class GameService implements IGameService {
         player1StartingShip.setPlayer(player1);
         player2StartingShip.setPlayer(player2);
 
-
-        Colony player1StartingColony = new Colony(planetA);
-        Colony player2StartingColony = new Colony(planetA3);
-
-        player1StartingColony.setStrength(NEWCOLONYSTRENGTH);
-        player2StartingColony.setStrength(NEWCOLONYSTRENGTH);
-
-        player1StartingColony.setPlayer(player1);
-        player2StartingColony.setPlayer(player2);
+        Colony player1StartingColony = new Colony(planetA, player1, NEW_COLONY_STRENGHT);
+        Colony player2StartingColony = new Colony(planetA3, player2, NEW_COLONY_STRENGHT);
 
         game.setName(gameName);
 
@@ -142,7 +121,6 @@ public class GameService implements IGameService {
             throw new SpaceCrackNotAcceptableException("Game is already finished.");
         }
     }
-
 
     @Override
     public Planet getShipLocationByShipId(int shipId) {
@@ -170,16 +148,12 @@ public class GameService implements IGameService {
             if (allTurnsEnded) {
                 for (Player p : players) {
                     p.setTurnEnded(false);
-
                 }
             }
-
-
         } else {
             throw new SpaceCrackNotAcceptableException("Turn is already ended");
         }
         gameRepository.updateGame(game);
-
     }
 
     @Override
@@ -210,21 +184,21 @@ public class GameService implements IGameService {
             }
 
         }
-        throw new SpaceCrackUnexpectedException("This user isn't playing this game");
 
+        throw new SpaceCrackUnexpectedException("This user isn't playing this game");
     }
 
     @Override
     public void buildShip(Integer colonyId) {
         Ship shipOnPlanet = null;
-
         Colony colony = colonyRepository.getColonyById(colonyId);
         Player player = colony.getPlayer();
-
         Game game = player.getGame();
+
         if (player.getCommandPoints() < BUILDSHIPCOST || player.isTurnEnded()) {
             throw new SpaceCrackNotAcceptableException("Dear Sir or Lady, you have either run out of command points or your turn has ended, please wait for the other players to end their turn.");
         }
+
         for (Ship ship : player.getShips()) {
             if (ship.getPlanet().getName().equals(colony.getPlanet().getName())) {
                 shipOnPlanet = ship;
@@ -243,23 +217,17 @@ public class GameService implements IGameService {
 
         player.setCommandPoints(player.getCommandPoints() - BUILDSHIPCOST);
         gameSynchronizer.updateGame(game);
-
-
     }
-
 
     @Override
     public List<Integer> getRevisionNumbers(int gameId) {
-
         return gameRepository.getRevisionNumbers(gameId);
     }
-
 
     @Override
     public GameViewModel getGameRevisionByNumber(int gameId, Number number) {
         Game gameRevision = gameRepository.getGameRevision(number, gameId);
         return viewModelConverter.convertGameToReplayViewModel(gameRevision);
-
     }
 
     @Override
@@ -275,6 +243,4 @@ public class GameService implements IGameService {
     public void deleteGame(int gameId) {
         gameRepository.deleteGame(gameId);
     }
-
-
 }

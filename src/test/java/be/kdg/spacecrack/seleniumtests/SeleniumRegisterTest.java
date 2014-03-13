@@ -40,13 +40,12 @@ public class SeleniumRegisterTest extends SeleniumBaseTestCase {
         wait.until(ExpectedConditions.visibilityOf(btnNewGame));
     }
 
-
     @After
     public void tearDown2() throws Exception {
         Session session = sessionFactory.getCurrentSession();
 
-                @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User u where u.email = :email");
-                q.setParameter("email", "emailSeleniumTest@email.be");
-                q.executeUpdate();
+        @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("delete from User u where u.email = :email");
+        q.setParameter("email", "emailSeleniumTest@email.be");
+        q.executeUpdate();
     }
 }
