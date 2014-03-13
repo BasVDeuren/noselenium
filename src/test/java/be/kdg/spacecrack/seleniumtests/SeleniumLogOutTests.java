@@ -24,12 +24,13 @@ public class SeleniumLogOutTests extends SeleniumBaseTestCase {
         WebElement btnLogout = driver.findElement(By.name("btnLogout"));
         wait.until(ExpectedConditions.visibilityOf(btnLogout));
         btnLogout.click();
-
+        Thread.sleep(1000);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("login")));
 
         assertEquals("http://localhost:8080/#/login", driver.getCurrentUrl());
         WebElement uname = driver.findElement(By.name("uname"));
        wait.until(ExpectedConditions.visibilityOf(uname));
+
         assertEquals(false, btnAction.isDisplayed());
 
     }

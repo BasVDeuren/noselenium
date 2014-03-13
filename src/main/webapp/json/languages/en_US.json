@@ -77,5 +77,6 @@
     "HELPWHENTOUSECOMMANDPOINTS":"A player may make their moves at any time as long as they have the command points to do so. When all players have clicked the end turn button, the turn is ended and will receive new commandpoints.",
     "HELPWINCONDITION": "The game is played out until one of the players has no more colonies left, then the other player is won.",
     "HELP":"",
-    "INVALID_GAMENAME": "You may not use symbols"
+    "INVALID_GAMENAME": "You may not use symbols",
+    "GAMENAMEPLACEHOLDER": "Enter a name for your game"
 }

@@ -71,13 +71,13 @@ spaceApp.controller("createGameController", function ($scope, $translate, Game, 
         }
     };
 
-    $scope.CheckName = function(gameName){
-        return gameName.match(/^[a-zA-Z0-9]+$/)
-    };
-
-    $scope.validateCreateGame = function(){
-        return ($scope.gameData.gameName != '' && $scope.CheckName($scope.gameData.gameName))
-    };
+//    $scope.CheckName = function(gameName){
+//        return gameName.match(/^[a-zA-Z0-9]+$/)
+//    };
+//
+//    $scope.validateCreateGame = function(){
+//        return ($scope.gameData.gameName != '' && $scope.CheckName($scope.gameData.gameName))
+//    };
 
     $scope.findFbfriends = function () {
         FB.ui({app_id: '649165391811913',

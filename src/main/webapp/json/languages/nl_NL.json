@@ -76,6 +76,7 @@
     "HELPOPPONENTWEAKERPLAYERSHIPONPLANET":"Wanneer de planeet een schip bevat waarvan de kracht zwakker is dan de kracht van het schip waarmee je er naartoe vliegt, wordt het verdedigende schip vernietigd en neemt de kolonie op de verdedigende planeet het gevecht over. Wanneer deze zijn kracht op zijn beurt ook lager is dan dat van het schip (de kracht van het schip is ondertussen afgenomen door de kracht van het verdedigende schip), neemt de speler de planeet over en bouwt hierop een eigen kolonie.",
     "HELPATTACKSAMESTRENGTH":"Wanneer je een kolonie of een schip aanvalt met dezelfde kracht als je schip, worden beide stukken vernietigd. Wanneer bij deze stukken een kolonie zat, zal er een planeet opnieuw vrij van kolonies en schepen zijn.",
     "HELPWHENTOUSECOMMANDPOINTS":"A player may make their moves at any time as long as they have the command points to do so. When all players have clicked the end turn button, the turn is ended and will receive new commandpoints.",
-    "HELPWINCONDITION": "Het spel is gedaan wanneer 1 van de spelers geen kolonies meer heeft, in dat geval is de andere speler gewonnen."
+    "HELPWINCONDITION": "Het spel is gedaan wanneer 1 van de spelers geen kolonies meer heeft, in dat geval is de andere speler gewonnen.",
+    "GAMENAMEPLACEHOLDER": "Geef een naam in voor je spel"
 
 }

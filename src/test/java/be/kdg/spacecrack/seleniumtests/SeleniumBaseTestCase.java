@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
-public abstract class SeleniumBaseTestCase  {
+public abstract class SeleniumBaseTestCase {
     @Autowired
     protected SessionFactory sessionFactory;
     protected WebDriver driver;

@@ -6,11 +6,15 @@ package be.kdg.spacecrack.viewmodels;/* Git $Id
  *
  */
 
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 public class GameParameters {
-    @Pattern(message = "The game name should only contain letters and/or numbers",regexp = "^[a-zA-Z0-9]+$")
+    @NotNull @NotEmpty @Pattern(message = "The game name should only contain letters and/or numbers",regexp = "^[a-zA-Z0-9]+$")
     String gameName;
+    @NotNull
     int opponentProfileId;
     public GameParameters() {
     }

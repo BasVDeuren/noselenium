@@ -12,7 +12,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class SeleniumGameTests extends  SeleniumBaseTestCase {
+public class SeleniumGameTests extends SeleniumBaseTestCase {
 
     @Test
     public void testNavigateToCreateGamePage() throws Exception {
@@ -33,10 +33,11 @@ public class SeleniumGameTests extends  SeleniumBaseTestCase {
 
         WebElement txtGameName = driver.findElement(By.name("gameName"));
         WebElement txtSearchString = driver.findElement(By.name("txtSearchString"));
-        txtGameName.sendKeys("$/[].#");
+        txtGameName.sendKeys("TestGame123");
 
         txtSearchString.sendKeys("op");
 
+        wait.until(ExpectedConditions.elementToBeClickable(By.name("btnFind")));
         btnFind.click();
 
         WebElement btnInvite = driver.findElement(By.name("btnInvite"));
@@ -45,4 +46,6 @@ public class SeleniumGameTests extends  SeleniumBaseTestCase {
 
 
     }
+
+
 }
