@@ -139,6 +139,7 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
                 var planet = planetArray[planetKey];
 
                 $scope.planetXSpritesByLetter[planet.name] = new PlanetExtendedSprite(game, planet.x, planet.y, planet, planetListener);
+                game.add.text(planet.x, planet.y, planet.name, { font: '15px Arial', fill: '#FF0000'});
                 var planetXSprite = $scope.planetXSpritesByLetter[planet.name];
                 planetGroup.add(planetXSprite);
             }

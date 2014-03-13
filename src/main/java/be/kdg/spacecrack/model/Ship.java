@@ -20,11 +20,11 @@ public class Ship extends Piece {
     @GeneratedValue
     private int shipId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER )
     @JoinColumn(name = "playerId")
     private Player player;
 
-    @ManyToOne
+    @ManyToOne(fetch= FetchType.EAGER)
     @JoinColumn(name = "planetId")
     private Planet planet;
 

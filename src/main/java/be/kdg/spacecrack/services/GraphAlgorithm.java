@@ -4,7 +4,6 @@ import org.jgrapht.Graphs;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.NeighborIndex;
 import org.jgrapht.graph.DefaultEdge;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -14,7 +14,7 @@ import javax.persistence.*;
 
 @Entity
 @Audited
-@Table(name = "T_Colony")
+@Table(name = "T_Colony", uniqueConstraints = {@UniqueConstraint(name = "colony_game_planetUnique", columnNames = {"colonyId","planetId", "playerId"})})
 public class Colony extends Piece {
     @Id
     @GeneratedValue

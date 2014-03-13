@@ -49,8 +49,7 @@ public class ShipRepositoryTests extends  BaseUnitTest{
         player.setGame(game);
 
         //Create Ship and add to player
-        ship.setPlayer(player);
-        player.getShips().add(ship);
+        player.addShip(ship);
         //Create the game in the database
         int gameId = gameRepository.createOrUpdateGame(game);
         Game gameDb = gameRepository.getGameByGameId(gameId);
@@ -67,22 +66,7 @@ public class ShipRepositoryTests extends  BaseUnitTest{
         assertNotNull(result.getPlayer());
     }
 
-    private Game createGameWithShip() {
 
-
-        Ship ship = new Ship();
-        Player player = new Player();
-        Game game = new Game();
-        //Create Player and add to game
-        game.getPlayers().add(player);
-        player.setGame(game);
-        //Create Ship and add to player
-        ship.setPlayer(player);
-        player.getShips().add(ship);
-        //Create the game in the database
-        int gameId = gameRepository.createOrUpdateGame(game);
-        return gameRepository.getGameByGameId(gameId);
-    }
 
     /*@Test
     @Transactional

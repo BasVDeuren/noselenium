@@ -7,12 +7,10 @@ package be.kdg.spacecrack.services.handlers;/* Git $Id$
  */
 
 import be.kdg.spacecrack.Exceptions.SpaceCrackNotAcceptableException;
-import be.kdg.spacecrack.config.AsyncConfig;
 import be.kdg.spacecrack.model.*;
-import be.kdg.spacecrack.repositories.IGameRepository;
+import be.kdg.spacecrack.repositories.IColonyRepository;
 import be.kdg.spacecrack.repositories.IPlanetRepository;
 import be.kdg.spacecrack.services.GameService;
-import be.kdg.spacecrack.repositories.IColonyRepository;
 import be.kdg.spacecrack.services.GraphAlgorithm;
 import be.kdg.spacecrack.services.IGameService;
 import be.kdg.spacecrack.services.IGameSynchronizer;
@@ -54,8 +52,7 @@ public class MoveShipHandler implements IMoveShipHandler {
     public MoveShipHandler() {
     }
 
-    public MoveShipHandler(IColonyRepository colonyRepository, IPlanetRepository planetRepository, IGameSynchronizer gameSynchronizer)
-    {
+    public MoveShipHandler(IColonyRepository colonyRepository, IPlanetRepository planetRepository, IGameSynchronizer gameSynchronizer) {
         this.colonyRepository = colonyRepository;
         this.planetRepository = planetRepository;
         this.gameSynchronizer = gameSynchronizer;
@@ -66,7 +63,7 @@ public class MoveShipHandler implements IMoveShipHandler {
     public void moveShip(Ship ship, Planet destinationPlanet) {
         Player player = ship.getPlayer();
         Game game = player.getGame();
-        player.setCommandPoints(player.getCommandPoints() -GameService.MOVESHIPCOST);
+        player.setCommandPoints(player.getCommandPoints() - GameService.MOVESHIPCOST);
 
         List<Colony> colonies = colonyRepository.getColoniesByGame(game);
         boolean planetIsColonized = false;
@@ -80,7 +77,7 @@ public class MoveShipHandler implements IMoveShipHandler {
                 planetIsColonized = true;
             }
         }
-        if(!planetIsColonized){
+        if (!planetIsColonized) {
             moveAndColonize(ship, destinationPlanet);
         }
 
@@ -90,50 +87,67 @@ public class MoveShipHandler implements IMoveShipHandler {
         return colony.getPlayer().getPlayerId() == player.getPlayerId();
     }
 
-    private boolean colonyIsOnPlanet(Colony colony, Planet destinationPlanet) {
-        return colony.getPlanet().getName().equals(destinationPlanet.getName());
+    private boolean colonyIsOnPlanet(Colony colony, Planet planet) {
+        return colony.getPlanet().getName().equals(planet.getName());
     }
 
 
     private Colony colonizePlanet(Planet planet, final Player player) {
-        final Colony colony = new Colony();
-        colony.setPlanet(planet);
-        colony.setPlayer(player);
-        colony.setStrength(GameService.NEWCOLONYSTRENGTH);
+        final Colony colony = colonize(planet, player);
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.submit(new Callable<List<Perimeter>>() {
+            @Override
+            public List<Perimeter> call() throws Exception {
+                HibernateTransactionManager transactionManager = (HibernateTransactionManager) applicationContext.getBean("transactionManager");
+                TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
 
-       ExecutorService executorService = Executors.newSingleThreadExecutor();
-       executorService.submit(new Callable<List<Perimeter>>() {
-           @Override
-           public List<Perimeter> call() throws Exception {
-               HibernateTransactionManager transactionManager = (HibernateTransactionManager) applicationContext.getBean("transactionManager");
-               TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
+                List<Perimeter> perimeters = detectPerimeter(player, colony);
+                for (Perimeter perimeter : perimeters) {
 
-               List<Perimeter> perimeters = detectPerimeter(player, colony);
-               for (Perimeter perimeter : perimeters) {
-                   List<Planet> insidePlanets = perimeter.getInsidePlanets();
-                   for(Planet insidePlanet: insidePlanets){
-                       Colony colony1 = new Colony();
-                       colony1.setStrength(1);
-                       colony1.setPlanet(insidePlanet);
-                       colony1.setPlayer(player);
-                   }
-               }
+                    List<Planet> insidePlanets = perimeter.getInsidePlanets();
+                    for (Planet insidePlanet : insidePlanets) {
+                        List<Colony> coloniesByGame = getColoniesByGame(player.getGame());
+                        for (Colony c : coloniesByGame) {
+                            if (colonyIsOnPlanet(c, insidePlanet)) {
+                                deletePiece(c);
+                            }
+                        }
+                        colonize(insidePlanet, player);
 
-               gameSynchronizer.updateGame(player.getGame());
-               transactionManager.commit(status);
-               return perimeters;
-           }
-       });
+                    }
+                }
+
+                gameSynchronizer.updateGame(player.getGame());
+                transactionManager.commit(status);
+                return perimeters;
+            }
+        });
 
 
         return colony;
     }
 
+    private List<Colony> getColoniesByGame(Game game) {
+        List<Colony> colonies = new ArrayList<Colony>();
+        for (Player player : game.getPlayers()) {
+            colonies.addAll(player.getColonies());
+
+        }
+        return colonies;
+    }
+
+    private Colony colonize(Planet insidePlanet, Player player) {
+        Colony colony1 = new Colony();
+        colony1.setStrength(GameService.NEWCOLONYSTRENGTH);
+        colony1.setPlanet(insidePlanet);
+        colony1.setPlayer(player);
+        return colony1;
+    }
+
     private void moveAndColonize(Ship ship, Planet destinationPlanet) {
 
         Player player = ship.getPlayer();
-        if(player.getCommandPoints() < IGameService.CREATECOLONYCOST)
-        {
+        if (player.getCommandPoints() < IGameService.CREATECOLONYCOST) {
             throw new SpaceCrackNotAcceptableException("Insufficient CommandPoints");
         }
 
@@ -167,13 +181,11 @@ public class MoveShipHandler implements IMoveShipHandler {
         }
 
         Piece winner = fightAndDetermineWinner(actingShip, colony);
-        if(winner == actingShip)
-        {
+        if (winner == actingShip) {
 
             moveAndColonize(actingShip, planet);
 
         }
-
 
 
     }
@@ -201,9 +213,9 @@ public class MoveShipHandler implements IMoveShipHandler {
         }
     }
 
-   private void deletePiece(Piece piece) {
+    private void deletePiece(Piece piece) {
         if (piece instanceof Ship) {
-            Ship ship =(Ship) piece;
+            Ship ship = (Ship) piece;
             ship.getPlayer().removeShip(ship);
         } else {
             Colony colony = (Colony) piece;
@@ -251,15 +263,14 @@ public class MoveShipHandler implements IMoveShipHandler {
         Ship shipToMergeWith = null;
         for (Ship alliedShip : ships) {
             if (shipIsOnPlanet(alliedShip, planet)) {
-              shipToMergeWith= alliedShip;
+                shipToMergeWith = alliedShip;
 
             }
         }
 
-        if(shipToMergeWith == null)
-        {
+        if (shipToMergeWith == null) {
             ship.setPlanet(colony.getPlanet());
-        }else{
+        } else {
             mergeAndGetShip(ship, shipToMergeWith);
         }
 
@@ -271,8 +282,8 @@ public class MoveShipHandler implements IMoveShipHandler {
         deletePiece(shipToMerge);
         return shipToMergeWith;
     }
-    public Future<List<Perimeter>> detectPerimeterAsync(Player player, Colony newColony)
-    {
+
+    public Future<List<Perimeter>> detectPerimeterAsync(Player player, Colony newColony) {
         return new AsyncResult<List<Perimeter>>(detectPerimeter(player, newColony));
     }
 
@@ -287,7 +298,7 @@ public class MoveShipHandler implements IMoveShipHandler {
         Map<String, Planet> playerPlanetsMap = new HashMap<String, Planet>();
         List<Planet> playerPlanetsList = new ArrayList<Planet>();
         // add colonies to the graph
-        for(Colony colony : colonies) {
+        for (Colony colony : colonies) {
             Planet planet = colony.getPlanet();
             playerPlanetsList.add(planet);
             playerPlanetsMap.put(planet.getName(), planet);
@@ -299,9 +310,9 @@ public class MoveShipHandler implements IMoveShipHandler {
         playerPlanetsMap.put(newPlanet.getName(), newPlanet);
         graph.addVertex(newPlanet.getName());
         // add connections between colonies to the graph
-        for(Planet planet : playerPlanetsList) {
-            for(PlanetConnection connection : planet.getPlanetConnections()) {
-                if(playerPlanetsList.contains(connection.getChildPlanet())) {
+        for (Planet planet : playerPlanetsList) {
+            for (PlanetConnection connection : planet.getPlanetConnections()) {
+                if (playerPlanetsList.contains(connection.getChildPlanet())) {
                     graph.addEdge(connection.getParentPlanet().getName(), connection.getChildPlanet().getName());
                 }
             }
@@ -315,9 +326,9 @@ public class MoveShipHandler implements IMoveShipHandler {
         List<List<String>> cycles = GraphAlgorithm.calculateChordlessCyclesFromVertex(graph, newColony.getPlanet().getName());
 
         // For every cycles, make a possible perimeter
-        for(List<String> cycle : cycles) {
+        for (List<String> cycle : cycles) {
             Perimeter perimeter = new Perimeter(new ArrayList<Planet>(), new ArrayList<Planet>());
-            for(String vertex : cycle) {
+            for (String vertex : cycle) {
                 Planet planet = playerPlanetsMap.get(vertex);
                 perimeter.getOutsidePlanets().add(planet);
             }
@@ -325,24 +336,24 @@ public class MoveShipHandler implements IMoveShipHandler {
         }
 
         // For every polygon (=cycle) test if it contains a target planet
-        for(Planet target : targetPlanets) {
+        for (Planet target : targetPlanets) {
             List<Perimeter> perimetersForTarget = new ArrayList<Perimeter>();
-            for(Perimeter perimeter : perimeters) {
+            for (Perimeter perimeter : perimeters) {
                 Polygon polygon = new Polygon();
-                for(Planet planet : perimeter.getOutsidePlanets()) {
+                for (Planet planet : perimeter.getOutsidePlanets()) {
                     polygon.addPoint(planet.getX(), planet.getY());
                 }
 
-                if(polygon.contains(target.getX(), target.getY())) {
+                if (polygon.contains(target.getX(), target.getY())) {
                     // This is a perimeter for this target planet (but check if it is the smallest)
                     perimetersForTarget.add(perimeter);
                 }
             }
 
-            if(!perimetersForTarget.isEmpty()) {
+            if (!perimetersForTarget.isEmpty()) {
                 Perimeter smallestPerimeter = perimetersForTarget.get(0);
-                for(Perimeter perimeter : perimetersForTarget) {
-                    if(perimeter.getOutsidePlanets().size() < smallestPerimeter.getOutsidePlanets().size()) {
+                for (Perimeter perimeter : perimetersForTarget) {
+                    if (perimeter.getOutsidePlanets().size() < smallestPerimeter.getOutsidePlanets().size()) {
                         smallestPerimeter = perimeter;
                     }
                 }
@@ -352,9 +363,9 @@ public class MoveShipHandler implements IMoveShipHandler {
         }
 
         // Remove all the perimeters without inside planets
-        for(Iterator<Perimeter> i = perimeters.iterator(); i.hasNext(); ) {
+        for (Iterator<Perimeter> i = perimeters.iterator(); i.hasNext(); ) {
             Perimeter perimeter = i.next();
-            if(perimeter.getInsidePlanets().size() == 0) {
+            if (perimeter.getInsidePlanets().size() == 0) {
                 i.remove();
             }
         }
