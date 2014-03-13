@@ -78,5 +78,6 @@
     "HELPWINCONDITION": "The game is played out until one of the players has no more colonies left, then the other player is won.",
     "HELP":"",
     "INVALID_GAMENAME": "You may not use symbols",
-    "GAMENAMEPLACEHOLDER": "Enter a name for your game"
+    "GAMENAMEPLACEHOLDER": "Enter a name for your game",
+    "VIEW_PROFILE": "View Profile"
 }

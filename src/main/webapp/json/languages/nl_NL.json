@@ -77,6 +77,6 @@
     "HELPATTACKSAMESTRENGTH":"Wanneer je een kolonie of een schip aanvalt met dezelfde kracht als je schip, worden beide stukken vernietigd. Wanneer bij deze stukken een kolonie zat, zal er een planeet opnieuw vrij van kolonies en schepen zijn.",
     "HELPWHENTOUSECOMMANDPOINTS":"A player may make their moves at any time as long as they have the command points to do so. When all players have clicked the end turn button, the turn is ended and will receive new commandpoints.",
     "HELPWINCONDITION": "Het spel is gedaan wanneer 1 van de spelers geen kolonies meer heeft, in dat geval is de andere speler gewonnen.",
-    "GAMENAMEPLACEHOLDER": "Geef een naam in voor je spel"
-
+    "GAMENAMEPLACEHOLDER": "Geef een naam in voor je spel",
+    "VIEW_PROFILE": "Profiel bekijken"
 }

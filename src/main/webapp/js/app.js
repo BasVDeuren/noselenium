@@ -2,16 +2,21 @@
  * Created by Dimi on 3/02/14.
  */
 
-var spaceApp = angular.module('spaceApp', ['ngRoute', 'spaceServices', 'ngCookies', 'ngAnimate', 'pascalprecht.translate', 'ui.bootstrap', 'imageupload', 'firebase','mgcrea.ngStrap'])
+var spaceApp = angular.module('spaceApp', ['ngRoute', 'spaceServices', 'ngCookies', 'ngAnimate', 'pascalprecht.translate', 'ui.bootstrap', 'imageupload', 'firebase', 'mgcrea.ngStrap'])
     .config(appRouter);
 
 //Navigation
 function appRouter($routeProvider, $httpProvider) {
 
+
     var interceptor = ['$rootScope', '$q', '$location', function ($rootScope, $q, $location) {
+
+
         function success(response) {
             if (response.config.url.indexOf("/api/auth") > -1) {
+
                 $rootScope.loggedInBool = true;
+
                 $rootScope.$apply();
             }
             return response;
@@ -22,6 +27,8 @@ function appRouter($routeProvider, $httpProvider) {
             if ($location.path() !== "/login") {
                 if (status == 401) {
                     $rootScope.loggedInBool = false;
+                    $rootScope.facebookBool = false;
+
                     $rootScope.$apply();
                     console.info("unauthorized");
                     console.info($location.path());
@@ -111,7 +118,11 @@ spaceApp.config(['$translateProvider', function ($translateProvider) {
     $translateProvider.preferredLanguage('en_US');
 }]);
 
-spaceApp.controller("MainController", function ($scope, $cookies, $location, $timeout, $translate, $cookieStore, Login, $rootScope) {
+spaceApp.controller("MainController", function ($scope, $cookies, $location, $timeout, $translate, $cookieStore, Login, $rootScope, Profile) {
+    var loginData = {
+        password: ""
+    };
+
     $scope.changeLanguage = function (key) {
         $translate.uses(key);
     };
@@ -123,6 +134,7 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
     $scope.logout = function () {
         Login.delete(function () {
             $rootScope.loggedInBool = false;
+            $rootScope.facebookBool = false;
             $cookieStore.remove('accessToken');
             $scope.go('/login');
         }, function () {
@@ -131,8 +143,21 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
 
     };
 
+    Profile.get(function (data) {
+    console.log("get api/auth/user");
+        loginData.password = data.password;
+        if(loginData.password.substr(0,8) == ("facebook")){
+            $rootScope.facebookBool = true;
+        }else{
+            $rootScope.facebookBool = false;
+        }
+    }, function (data) {
+        console.log("WRONG");
+    });
+
+
     //Notifications
-    $scope.invites = ["invite1","invite2","invite3"];
+    $scope.invites = ["invite1", "invite2", "invite3"];
 
 });
 
