@@ -89,7 +89,6 @@ public class MoveShipHandler implements IMoveShipHandler {
         final Colony colony = colonize(planet, player);
 
 
-
         colonizePerimeteredPlanets(player, colony);
 
 
@@ -103,10 +102,18 @@ public class MoveShipHandler implements IMoveShipHandler {
 
             List<Planet> insidePlanets = perimeter.getInsidePlanets();
             for (Planet insidePlanet : insidePlanets) {
-                List<Colony> coloniesByGame = getColoniesByGame(player.getGame());
+                Game game = player.getGame();
+                List<Colony> coloniesByGame = getColoniesByGame(game);
                 for (Colony c : coloniesByGame) {
+
                     if (colonyIsOnPlanet(c, insidePlanet)) {
                         deletePiece(c);
+                    }
+                }
+                List<Ship> shipsByGame = getShipsByGame(game);
+                for (Ship s : shipsByGame) {
+                    if (shipIsOnPlanet(s, insidePlanet) && s.getPlayer().getPlayerId() != player.getPlayerId()) {
+                        deletePiece(s);
                     }
                 }
                 colonize(insidePlanet, player);
@@ -118,11 +125,18 @@ public class MoveShipHandler implements IMoveShipHandler {
 
     }
 
+    private List<Ship> getShipsByGame(Game game) {
+        List<Ship> ships = new ArrayList<Ship>();
+        for (Player player : game.getPlayers()) {
+            ships.addAll(player.getShips());
+        }
+        return ships;
+    }
+
     private List<Colony> getColoniesByGame(Game game) {
         List<Colony> colonies = new ArrayList<Colony>();
         for (Player player : game.getPlayers()) {
             colonies.addAll(player.getColonies());
-
         }
         return colonies;
     }
