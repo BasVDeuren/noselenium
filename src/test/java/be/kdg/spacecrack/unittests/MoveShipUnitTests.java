@@ -158,7 +158,7 @@ public class MoveShipUnitTests extends BaseUnitTest {
         stub(mockColonyRepository.getColoniesByGame(any(Game.class))).toReturn(gameColonies);
         stub(mockShipRepository.getShipByShipId(argShipId)).toReturn(ship);
         stub(mockPlanetRepository.getPlanetByName(argDestinationPlanetName)).toReturn(planets[1]);
-
+        stub(mockPlanetRepository.getAll()).toReturn(planets);
         IGameSynchronizer mockGameSynchronizer = mock(IGameSynchronizer.class);
         GameService gameServiceWithMockedDependencies = new GameService(mockPlanetRepository, mockColonyRepository, mockShipRepository, mockPlayerRepository, mockGameRepository, new MoveShipHandler(mockColonyRepository, mockPlanetRepository, mockGameSynchronizer), new ViewModelConverter(), mockGameSynchronizer);
         int oldCommandPoints = player.getCommandPoints();

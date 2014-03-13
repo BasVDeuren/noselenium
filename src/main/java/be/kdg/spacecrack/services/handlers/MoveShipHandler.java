@@ -19,19 +19,12 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.ejb.AsyncResult;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 @Component("moveShipHandler")
@@ -94,37 +87,35 @@ public class MoveShipHandler implements IMoveShipHandler {
 
     private Colony colonizePlanet(Planet planet, final Player player) {
         final Colony colony = colonize(planet, player);
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        executorService.submit(new Callable<List<Perimeter>>() {
-            @Override
-            public List<Perimeter> call() throws Exception {
-                HibernateTransactionManager transactionManager = (HibernateTransactionManager) applicationContext.getBean("transactionManager");
-                TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
 
-                List<Perimeter> perimeters = detectPerimeter(player, colony);
-                for (Perimeter perimeter : perimeters) {
 
-                    List<Planet> insidePlanets = perimeter.getInsidePlanets();
-                    for (Planet insidePlanet : insidePlanets) {
-                        List<Colony> coloniesByGame = getColoniesByGame(player.getGame());
-                        for (Colony c : coloniesByGame) {
-                            if (colonyIsOnPlanet(c, insidePlanet)) {
-                                deletePiece(c);
-                            }
-                        }
-                        colonize(insidePlanet, player);
 
-                    }
-                }
-
-                gameSynchronizer.updateGame(player.getGame());
-                transactionManager.commit(status);
-                return perimeters;
-            }
-        });
+        colonizePerimeteredPlanets(player, colony);
 
 
         return colony;
+    }
+
+    private void colonizePerimeteredPlanets(Player player, Colony colony) {
+
+        List<Perimeter> perimeters = detectPerimeter(player, colony);
+        for (Perimeter perimeter : perimeters) {
+
+            List<Planet> insidePlanets = perimeter.getInsidePlanets();
+            for (Planet insidePlanet : insidePlanets) {
+                List<Colony> coloniesByGame = getColoniesByGame(player.getGame());
+                for (Colony c : coloniesByGame) {
+                    if (colonyIsOnPlanet(c, insidePlanet)) {
+                        deletePiece(c);
+                    }
+                }
+                colonize(insidePlanet, player);
+
+            }
+        }
+
+//        gameSynchronizer.updateGame(player.getGame());
+
     }
 
     private List<Colony> getColoniesByGame(Game game) {
