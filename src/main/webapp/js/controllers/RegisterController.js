@@ -3,18 +3,27 @@
  */
 var spaceApp = angular.module('spaceApp');
 
-spaceApp.controller("RegisterController", function ($scope, Register, $cookieStore, Spinner) {
+spaceApp.controller("RegisterController", function ($scope, Register, $cookieStore, Spinner, md5) {
         $scope.registerData = {
-            email: "",
+        email: "",
             username: "",
             password: "",
             passwordRepeated: ""
-        };
+    };
+
+
         $scope.hasRegistrationFailed = false;
     $scope.userNameAlreadyInUse = false;
         $scope.register = function () {
+            var hashedRegisterData = {
+            email: $scope.registerData.email,
+            username: $scope.registerData.username,
+            password: md5.createHash($scope.registerData.password),
+            passwordRepeated: md5.createHash($scope.registerData.passwordRepeated)
+        };
+
             Spinner.spinner.spin(Spinner.target);
-            Register.save($scope.registerData, function (data) {
+            Register.save(hashedRegisterData, function (data) {
                 Spinner.spinner.stop();
                 $cookieStore.put('accessToken', data.value);
                 $scope.go('/spacecrack/home');

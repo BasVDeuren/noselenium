@@ -71,7 +71,6 @@ public class SeleniumEditProfileTests extends SeleniumBaseTestCase {
 
         assertEquals(true,profileSuccesMsg.isDisplayed());
     }
-
     @Test
     public void ChangePassword_Fail() throws Exception {
         login();

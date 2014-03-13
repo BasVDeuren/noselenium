@@ -16,12 +16,16 @@ public class SeleniumChangeLanguage extends SeleniumBaseTestCase {
     @Test
     public void ChangeLanguage_OK() throws InterruptedException {
         login();
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+
         WebElement btnEngels = driver.findElement(By.name("english"));
+
         WebElement btnNederlands = driver.findElement(By.name("dutch"));
         WebElement btnnewgame = driver.findElement(By.name("createGame"));
 
         btnNederlands.click();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        wait.until(ExpectedConditions.visibilityOf(btnEngels));
+        wait.until(ExpectedConditions.visibilityOf(btnnewgame));
         wait.until(ExpectedConditions.textToBePresentInElement(By.name("createGame"), "Nieuw Spel"));
         assertEquals("Nieuw Spel", btnnewgame.getText());
 

@@ -2,21 +2,16 @@
  * Created by Dimi on 3/02/14.
  */
 
-var spaceApp = angular.module('spaceApp', ['ngRoute', 'spaceServices', 'ngCookies', 'ngAnimate', 'pascalprecht.translate', 'ui.bootstrap', 'imageupload', 'firebase', 'mgcrea.ngStrap'])
+var spaceApp = angular.module('spaceApp', ['ngRoute', 'spaceServices', 'ngCookies', 'ngAnimate', 'pascalprecht.translate', 'ui.bootstrap', 'imageupload', 'firebase','mgcrea.ngStrap','angular-md5'])
     .config(appRouter);
 
 //Navigation
 function appRouter($routeProvider, $httpProvider) {
 
-
     var interceptor = ['$rootScope', '$q', '$location', function ($rootScope, $q, $location) {
-
-
         function success(response) {
             if (response.config.url.indexOf("/api/auth") > -1) {
-
                 $rootScope.loggedInBool = true;
-
                 $rootScope.$apply();
             }
             return response;

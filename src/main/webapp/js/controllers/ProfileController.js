@@ -3,7 +3,7 @@
  */
 var spaceApp = angular.module('spaceApp');
 
-spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile, Contact, Spinner) {
+spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile, Contact, Spinner, md5) {
 
 
     /**Password**/
@@ -32,7 +32,13 @@ spaceApp.controller("ProfileController", function ($scope, $cookieStore, Profile
 
     $scope.editUser = function () {
         Spinner.spinner.spin(Spinner.target);
-        Profile.save($scope.editUserData, function () {
+        var hashedEditUserDate = {
+            email: $scope.editUserData.email,
+            username: $scope.editUserData.username,
+            password: md5.createHash($scope.editUserData.password),
+            passwordRepeated: md5.createHash($scope.editUserData.passwordRepeated)
+        };
+        Profile.save(hashedEditUserDate, function () {
             Spinner.spinner.stop();
             console.log("post api/auth/user succeed");
             $scope.isSaveDone = true;

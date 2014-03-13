@@ -1,7 +1,7 @@
 /**
  * Created by Atheesan on 4/02/14.
  */
-function LoginController($scope, Login, Register, $cookieStore, Spinner, Contact) {
+function LoginController($scope, Login, Register, $cookieStore, Spinner, Contact, md5) {
 
     //data klaar zetten
     $scope.contactData = {
@@ -31,7 +31,12 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, Contact
     $scope.alreadyRegistered = false;
     $scope.login = function () {
         Spinner.spinner.spin(Spinner.target);
-        Login.save($scope.loginData, function (data) {
+
+        var hashedLoginData = {
+            email: $scope.loginData.email,
+            password: md5.createHash($scope.loginData.password)
+        };
+        Login.save(hashedLoginData, function (data) {
             Spinner.spinner.stop();
             $cookieStore.put('accessToken', data.value);
             $scope.go('/');

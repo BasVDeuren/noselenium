@@ -1,7 +1,6 @@
 package be.kdg.spacecrack.unittests;
 
 import be.kdg.spacecrack.services.GraphAlgorithm;
-import junit.framework.Assert;
 import org.jgrapht.Graphs;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -15,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 
 /**
@@ -82,7 +81,7 @@ public class GraphAlgorithmTests extends BaseUnitTest {
         cyclesExpected.add(Arrays.asList("A", "D", "E", "B"));
         cyclesExpected.add(Arrays.asList("A", "D", "G", "H", "I", "F", "C", "B"));
 
-        Assert.assertNotSame("Chordless cycles should not match for vertex A and vertex B", cyclesExpected, cyclesFound); // Test output
+        assertNotSame("Chordless cycles should not match for vertex A and vertex B", cyclesExpected, cyclesFound); // Test output
     }
 
     @Test
@@ -94,7 +93,7 @@ public class GraphAlgorithmTests extends BaseUnitTest {
         // Get cycles
         List<List<String>> cyclesFound = GraphAlgorithm.calculateChordlessCyclesFromVertex(graph, "H"); // Test from H to test more than 1 node away
 
-        Assert.assertTrue("List of cycles found should be empty", cyclesFound.isEmpty());
+        assertTrue("List of cycles found should be empty", cyclesFound.isEmpty());
     }
 
     // Vertex to test if it is part of one or more cycles

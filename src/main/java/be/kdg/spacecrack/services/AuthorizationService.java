@@ -20,6 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @Service("authorizationService")
@@ -54,14 +57,27 @@ public class AuthorizationService implements IAuthorizationService {
     }
 
 
-    @Override
-    public void createTestUsers() {
 
-        createTestUser("test@gmail.com", "test", "test","jack","black");
-        createTestUser("opponentje@gmail.com", "OpponentTest", "test","speedy","gonzales");
+
+    @Override
+    public String getMD5HashedPassword(String testPassword) {
+        MessageDigest md5;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+
+        byte[] byteData = md5.digest(testPassword.getBytes());
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < byteData.length; i++) {
+            sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+        }
+        return sb.toString();
     }
 
-    private void createTestUser(String testemail, String testUsername, String testPassword,String firstname, String lastname) {
+    @Override
+    public void createTestUser(String testemail, String testUsername, String testPassword,String firstname, String lastname) {
         List<User> list = userRepository.findUsersByEmailPart(testemail);
         if (list.size() < 1) {
             Profile profile = new Profile();

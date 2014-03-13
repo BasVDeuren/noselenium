@@ -40,6 +40,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHan
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import java.lang.reflect.Method;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -132,8 +134,8 @@ public abstract class BaseFilteredIntegrationTests {
     }
     protected String loginAndRetrieveAccessToken() throws Exception {
 
-
-        User testUser = new User("test", "test", "test@gmail.com");
+        String md5HashedPassword = getMD5HashedPassword("test");
+        User testUser = new User("test", md5HashedPassword, "test@gmail.com");
         String userjson = objectMapper.writeValueAsString(testUser);
 
         MockHttpServletRequestBuilder requestBuilder = post("/accesstokens");
@@ -208,5 +210,20 @@ public abstract class BaseFilteredIntegrationTests {
                 .cookie(new Cookie("accessToken", accessToken))).andReturn().getResponse().getContentAsString();
 
         return objectMapper.readValue(gameJson, GameActivePlayerWrapper.class);
+    }
+    private String getMD5HashedPassword(String testPassword) {
+        MessageDigest md5;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+
+        byte[] byteData = md5.digest(testPassword.getBytes());
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < byteData.length; i++) {
+            sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+        }
+        return sb.toString();
     }
 }

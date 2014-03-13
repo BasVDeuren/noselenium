@@ -12,11 +12,14 @@ import be.kdg.spacecrack.model.User;
 public interface IAuthorizationService {
     public AccessToken getAccessTokenByValue(String accessTokenValue);
 
-    void createTestUsers();
 
     AccessToken login(User user);
 
     void logout(String accessTokenValue);
 
     User getUserByAccessTokenValue(String accessTokenValue);
+
+    String getMD5HashedPassword(String testPassword);
+
+    void createTestUser(String s, String test, String hashedPw, String jack, String black);
 }

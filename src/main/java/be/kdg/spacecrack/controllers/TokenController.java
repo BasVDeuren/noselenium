@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
+
 
 /* Git $Id$
  *
@@ -31,9 +33,18 @@ public class TokenController{
         this.tokenService = tokenService;
     }
 
+
+    @PostConstruct
+    public void createTestUsers() {
+
+        String hashedPw = tokenService.getMD5HashedPassword("test");
+        tokenService.createTestUser("test@gmail.com", "test", hashedPw, "jack", "black");
+        tokenService.createTestUser("opponentje@gmail.com", "OpponentTest", hashedPw,"speedy","gonzales");
+    }
+
     @RequestMapping(value="/accesstokens", method = RequestMethod.POST, consumes = "application/json")
     public @ResponseBody AccessToken login(@RequestBody User user) {
-        tokenService.createTestUsers();
+       // tokenService.createTestUsers();
         AccessToken accessToken = tokenService.login(user);
 
         return accessToken;
