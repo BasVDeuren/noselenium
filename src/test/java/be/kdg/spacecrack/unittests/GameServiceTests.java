@@ -193,7 +193,7 @@ public class GameServiceTests extends BaseUnitTest {
         gameService.endTurn(player.getPlayerId());
         player = playerRepository.getPlayerByPlayerId(player.getPlayerId());
 
-        assertEquals(oldCommandPoints + GameService.COMMANDPOINTSPERTURN, player.getCommandPoints());
+        assertEquals(oldCommandPoints + GameService.COMMANDPOINTS_PER_TURN, player.getCommandPoints());
         gameService.moveShip(player.getShips().get(0).getShipId(), "b");
     }
 
@@ -214,8 +214,8 @@ public class GameServiceTests extends BaseUnitTest {
         assertEquals("player1's turn shouldn't be ended", false, player1.isTurnEnded());
         assertEquals("player2's turn shouldn't be ended", false, player2.isTurnEnded());
 
-        assertEquals(oldCommandPointsOfPlayer1 + GameService.COMMANDPOINTSPERTURN, player1.getCommandPoints());
-        assertEquals(oldCommandPointsOfPlayer2 + GameService.COMMANDPOINTSPERTURN, player2.getCommandPoints());
+        assertEquals(oldCommandPointsOfPlayer1 + GameService.COMMANDPOINTS_PER_TURN, player1.getCommandPoints());
+        assertEquals(oldCommandPointsOfPlayer2 + GameService.COMMANDPOINTS_PER_TURN, player2.getCommandPoints());
 
         gameService.moveShip(player1.getShips().get(0).getShipId(), "b");
         gameService.moveShip(player2.getShips().get(0).getShipId(), "b3");
@@ -239,9 +239,9 @@ public class GameServiceTests extends BaseUnitTest {
         Ship newShip = playerDbShips.get(1);
         assertEquals("Player should have 1 more ship", oldAmountOfShips + 1, playerDbShips.size());
 
-        assertEquals("The ship should have strength", GameService.NEWSHIPSTRENGTH, newShip.getStrength());
+        assertEquals("The ship should have strength", GameService.NEW_SHIP_STRENGTH, newShip.getStrength());
         assertEquals("Ship should be build on colony's planet", colony.getPlanet().getName(), playerDbShips.get(playerDbShips.size() - 1).getPlanet().getName());
-        assertEquals("Player should have lost 3 commandPoints", oldCommandPoints - GameService.BUILDSHIPCOST, playerDb.getCommandPoints());
+        assertEquals("Player should have lost 3 commandPoints", oldCommandPoints - GameService.BUILDSHIP_COST, playerDb.getCommandPoints());
     }
 
     @Transactional
@@ -275,8 +275,8 @@ public class GameServiceTests extends BaseUnitTest {
 
         assertEquals("Player shouldn't have more ships than before", oldAmountOfShips, playerDbShips.size());
         assertEquals("Ship should be build on colony's planet", colony.getPlanet().getName(), playerDbShips.get(playerDbShips.size() - 1).getPlanet().getName());
-        assertEquals("The ship standing on the planet should now be more powerful", oldShipStrength + GameService.NEWSHIPSTRENGTH, shipDb.getStrength());
-        assertEquals("Player should have lost 3 commandPoints", oldCommandPoints - GameService.BUILDSHIPCOST, playerDb.getCommandPoints());
+        assertEquals("The ship standing on the planet should now be more powerful", oldShipStrength + GameService.NEW_SHIP_STRENGTH, shipDb.getStrength());
+        assertEquals("Player should have lost 3 commandPoints", oldCommandPoints - GameService.BUILDSHIP_COST, playerDb.getCommandPoints());
     }
 
     @Transactional

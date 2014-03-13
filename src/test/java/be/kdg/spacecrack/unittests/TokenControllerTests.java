@@ -17,7 +17,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.transaction.annotation.Transactional;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
+
 
 /* Git $Id$
  *

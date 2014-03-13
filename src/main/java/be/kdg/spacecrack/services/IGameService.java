@@ -13,11 +13,11 @@ import java.util.List;
 
 public interface IGameService {
     public static final int START_COMMAND_POINTS = 5;
-    public static final int COMMANDPOINTSPERTURN = START_COMMAND_POINTS;
-    public static final int BUILDSHIPCOST = 3;
+    public static final int COMMANDPOINTS_PER_TURN = START_COMMAND_POINTS;
+    public static final int BUILDSHIP_COST = 3;
     public static final int MOVESHIPCOST = 1;
     public static final int CREATECOLONYCOST = 1;
-    public static final int NEWSHIPSTRENGTH = 1;
+    public static final int NEW_SHIP_STRENGTH = 1;
 
     int createGame(Profile userProfile, String gameName, Profile opponentProfile);
 

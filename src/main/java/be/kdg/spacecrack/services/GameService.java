@@ -88,8 +88,8 @@ public class GameService implements IGameService {
         Ship player1StartingShip = new Ship(planetA);
         Ship player2StartingShip = new Ship(planetA3);
 
-        player1StartingShip.setStrength(NEWSHIPSTRENGTH);
-        player2StartingShip.setStrength(NEWSHIPSTRENGTH);
+        player1StartingShip.setStrength(NEW_SHIP_STRENGTH);
+        player2StartingShip.setStrength(NEW_SHIP_STRENGTH);
 
         player1StartingShip.setPlayer(player1);
         player2StartingShip.setPlayer(player2);
@@ -98,8 +98,8 @@ public class GameService implements IGameService {
         Colony player1StartingColony = new Colony(planetA);
         Colony player2StartingColony = new Colony(planetA3);
 
-        player1StartingColony.setStrength(NEWCOLONYSTRENGTH);
-        player2StartingColony.setStrength(NEWCOLONYSTRENGTH);
+        player1StartingColony.setStrength(NEW_COLONY_STRENGHT);
+        player2StartingColony.setStrength(NEW_COLONY_STRENGHT);
 
         player1StartingColony.setPlayer(player1);
         player2StartingColony.setPlayer(player2);
@@ -120,7 +120,7 @@ public class GameService implements IGameService {
         moveShipHandler.validateMove(ship, destinationPlanet);
         moveShipHandler.moveShip(ship, destinationPlanet);
         checkLost(game);
-        gameRepository.updateGame(game);
+        gameSynchronizer.updateGame(game);
     }
 
     private void validateActionMakeSureGameIsNotFinishedYet(Game game){
@@ -142,7 +142,7 @@ public class GameService implements IGameService {
         Game game = player.getGame();
         if (!player.isTurnEnded()) {
             int commandPoints = player.getCommandPoints();
-            player.setCommandPoints(commandPoints + COMMANDPOINTSPERTURN);
+            player.setCommandPoints(commandPoints + COMMANDPOINTS_PER_TURN);
             player.setTurnEnded(true);
 
             boolean allTurnsEnded = true;
@@ -164,7 +164,7 @@ public class GameService implements IGameService {
         } else {
             throw new SpaceCrackNotAcceptableException("Turn is already ended");
         }
-        gameRepository.updateGame(game);
+         gameSynchronizer.updateGame(game);
 
     }
 
@@ -208,7 +208,7 @@ public class GameService implements IGameService {
         Player player = colony.getPlayer();
 
         Game game = player.getGame();
-        if (player.getCommandPoints() < BUILDSHIPCOST || player.isTurnEnded()) {
+        if (player.getCommandPoints() < BUILDSHIP_COST || player.isTurnEnded()) {
             throw new SpaceCrackNotAcceptableException("Dear Sir or Lady, you have either run out of command points or your turn has ended, please wait for the other players to end their turn.");
         }
         for (Ship ship : player.getShips()) {
@@ -220,14 +220,14 @@ public class GameService implements IGameService {
         Ship ship;
         if (shipOnPlanet == null) {
             ship = new Ship();
-            ship.setStrength(NEWSHIPSTRENGTH);
+            ship.setStrength(NEW_SHIP_STRENGTH);
             ship.setPlayer(player);
             ship.setPlanet(colony.getPlanet());
         } else {
-            shipOnPlanet.setStrength(shipOnPlanet.getStrength() + NEWSHIPSTRENGTH);
+            shipOnPlanet.setStrength(shipOnPlanet.getStrength() + NEW_SHIP_STRENGTH);
         }
 
-        player.setCommandPoints(player.getCommandPoints() - BUILDSHIPCOST);
+        player.setCommandPoints(player.getCommandPoints() - BUILDSHIP_COST);
         gameSynchronizer.updateGame(game);
 
 

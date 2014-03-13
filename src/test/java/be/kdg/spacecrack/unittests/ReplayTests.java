@@ -35,7 +35,8 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
+
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -155,8 +156,6 @@ public class ReplayTests {
 
     private void createProfiles() throws Exception {
         playerRepository = new PlayerRepository(sessionFactory);
-        ColonyRepository colonyRepository = new ColonyRepository(sessionFactory);
-        ShipRepository shipRepository = new ShipRepository(sessionFactory);
 
         user = new User();
         Profile profile = new Profile();
