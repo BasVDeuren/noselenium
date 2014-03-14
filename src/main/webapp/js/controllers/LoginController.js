@@ -91,9 +91,10 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, Contact
 
     $scope.registerFB = function (response) {
         Spinner.spinner.spin(Spinner.target);
+        var fbUsername = response.name.replace(/ /g, '_');
         var user = {
             email: response.email,
-            username: response.name,
+            username: fbUsername,
             password: 'facebook' + response.id,
             passwordRepeated: 'facebook' + response.id
         };

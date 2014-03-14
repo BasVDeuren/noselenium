@@ -15,9 +15,10 @@ spaceApp.controller("RegisterController", function ($scope, Register, $cookieSto
         $scope.hasRegistrationFailed = false;
     $scope.userNameAlreadyInUse = false;
         $scope.register = function () {
+            var regUsername = $scope.registerData.username.replace(/ /g, '_');
             var hashedRegisterData = {
             email: $scope.registerData.email,
-            username: $scope.registerData.username,
+            username: regUsername,
             password: md5.createHash($scope.registerData.password),
             passwordRepeated: md5.createHash($scope.registerData.passwordRepeated)
         };
