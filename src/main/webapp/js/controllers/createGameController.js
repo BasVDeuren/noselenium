@@ -75,16 +75,16 @@ spaceApp.controller("createGameController", function ($scope, $translate, Game, 
     $scope.mailSent = false;
     $scope.sendMail = function(receiverMailAddress){
         Spinner.spinner.spin(Spinner.target);
-        //$.blockUI({ message: null });
+        $.blockUI({ message: null });
         $scope.receiverMail = {
             emailAddress: receiverMailAddress
         };
         MailService.save($scope.receiverMail, function(){
             Spinner.spinner.stop();
-            //$.unblockUI();
+            $.unblockUI();
             $scope.mailSent = true;
         }, function(){
-           // $.unblockUI();
+            $.unblockUI();
             Spinner.spinner.stop();
             $scope.mailSent = false;
         });
