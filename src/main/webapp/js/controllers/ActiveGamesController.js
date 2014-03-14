@@ -13,9 +13,10 @@ spaceApp.controller("ActiveGamesController", function ($scope, $translate, Game,
 
     $scope.games = [
         {gameId: "",
-            name: ""}
+            name: "",
+            loserPlayerId: ""
+        }
     ];
-
 
     Game.query(function (data) {
         $scope.games = data;
@@ -44,6 +45,14 @@ spaceApp.controller("ActiveGamesController", function ($scope, $translate, Game,
 
     $scope.isActiveGame = function (game) {
         return ($scope.getPlayersOrdered(game)[0].requestAccepted && $scope.getPlayersOrdered(game)[1].requestAccepted);
+    };
+
+    $scope.isEndedGame = function (game) {
+        if(game.loserPlayerId == 0){
+            return false;
+        }else{
+            return true;
+        }
     };
 
     $scope.isPendingGame = function (game) {
