@@ -10,8 +10,8 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
     var BUILDSHIPCOST = 3;
     var COLONIZECOST = 2;
     var MOVECOST = 1;
-    var CANVASWIDTH = 1180;
-    var CANVASHEIGHT = 600;
+    var CANVASWIDTH = 930;
+    var CANVASHEIGHT = 558;
     var FARRESTPOINTOFCAMERA = 661;
     var MIDPOINTOFCAMERA = 200;
     //endregion

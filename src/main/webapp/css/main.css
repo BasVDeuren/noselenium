@@ -55,8 +55,8 @@ a {
 }
 
 #game {
-    min-width: 1120px;
-    min-height: 600px;
+    min-width: 930px;
+    min-height: 558px;
     border:10px solid #3e444c;
     border-radius: 4px;
 }
@@ -101,10 +101,10 @@ a {
     text-align: right;
 }
 
-#gameChat{
-    min-width: 1120px;
-    min-height: 250px;
-}
+/*#gameChat{*/
+    /*min-width: 1120px;*/
+    /*min-height: 250px;*/
+/*}*/
 
 #notificationBar {
     margin-right: 10px;
