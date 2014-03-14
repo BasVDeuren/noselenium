@@ -5,7 +5,6 @@
     <div class="popover-content inviteContent">
         <table class="table table-hover">
             <tr ng-repeat="i in userInvites" ng-hide="i.accepted">
-                <td></td>
                 <td><strong>{{i.inviter}}</strong> invited you</td>
                 <td ng-hide="i.accepted">
                     <button class="btn btn-success btn-sm" ng-click="acceptInvite(i)"><i
