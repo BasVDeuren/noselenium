@@ -1,9 +1,17 @@
-<div class="popover" ng-controller="MainController">
+<div class="popover" ng-controller="NavHomeController">
     <div class="arrow"></div>
-    <h3 class="popover-title">Invites</h3>
-    <div class="popover-content">
-        <ul>
-            <li ng-repeat="i in invites">{{i}}</li>
-        </ul>
+    <h3 class="popover-title"><strong>Invites</strong></h3>
+
+    <div class="popover-content inviteContent">
+        <table class="table table-hover">
+            <tr ng-repeat="i in userInvites">
+                <td></td>
+                <td><strong>{{i.inviter}}</strong> invited you</td>
+                <td>
+                    <button class="btn btn-success btn-sm" ng-click="acceptInvite(i.gameId)"><i
+                            class="fa fa-check"></i></button>
+                </td>
+            </tr>
+        </table>
     </div>
-</div>			
+</div>

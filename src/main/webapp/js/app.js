@@ -2,7 +2,7 @@
  * Created by Dimi on 3/02/14.
  */
 
-var spaceApp = angular.module('spaceApp', ['ngRoute', 'spaceServices', 'ngCookies', 'ngAnimate', 'pascalprecht.translate', 'ui.bootstrap', 'imageupload', 'firebase','mgcrea.ngStrap','angular-md5'])
+var spaceApp = angular.module('spaceApp', ['ngRoute', 'spaceServices', 'ngCookies', 'ngAnimate', 'pascalprecht.translate', 'ui.bootstrap', 'imageupload', 'firebase', 'mgcrea.ngStrap','angular-md5'])
     .config(appRouter);
 
 //Navigation
@@ -113,7 +113,7 @@ spaceApp.config(['$translateProvider', function ($translateProvider) {
     $translateProvider.preferredLanguage('en_US');
 }]);
 
-spaceApp.controller("MainController", function ($scope, $cookies, $location, $timeout, $translate, $cookieStore, Login, $rootScope, Profile) {
+spaceApp.controller("MainController", function ($scope, $cookies, $location, $timeout, $translate, $cookieStore, Login, $rootScope, $firebase, Profile, GameInvite) {
     var loginData = {
         password: ""
     };
@@ -138,6 +138,51 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
 
     };
 
+    //Invite Notifications
+
+    $rootScope.invitesArray = [];
+    $rootScope.userInvites = [];
+
+    $rootScope.loadInvites = function () {
+        $rootScope.invitesArray = [];
+        Profile.get(function (data, headers) {
+            console.log("get api/auth/user");
+            var firebaseUrl = 'https://vivid-fire-9476.firebaseio.com/invites/' + data.username.replace(/ /g, '') + data.profile.profileId;
+            var ref = new Firebase(firebaseUrl);
+            $rootScope.userInvites = $firebase(ref);
+
+            ref.on("child_added", function (dataSnapshot) {
+                    if (!dataSnapshot.val().read) {
+                        $rootScope.invitesArray.push(dataSnapshot.val());
+                    }
+            });
+        }, function (data, headers) {
+        });
+    };
+    $rootScope.loadInvites();
+
+    $scope.acceptInvite = function (id) {
+        GameInvite.save({gameId: id}, function () {
+            $scope.go('/spacecrack/game/' + id);
+        });
+    };
+
+    $scope.checkUnreadInvites = function () {
+        if ($rootScope.invitesArray.length == 0) {
+            return false;
+        }
+        return true;
+    };
+
+    $scope.setInvitesAsRead = function(){
+        var keys = $rootScope.userInvites.$getIndex();
+        keys.forEach(function(key, i) {
+            $rootScope.userInvites[key].read = true;
+            $rootScope.userInvites.$save(key);
+        });
+
+        $rootScope.invitesArray = [];
+    };
     Profile.get(function (data) {
     console.log("get api/auth/user");
         loginData.password = data.password;
@@ -151,8 +196,7 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
     });
 
 
-    //Notifications
-    $scope.invites = ["invite1", "invite2", "invite3"];
+  
 
 });
 

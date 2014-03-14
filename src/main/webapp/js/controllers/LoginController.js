@@ -1,7 +1,7 @@
 /**
  * Created by Atheesan on 4/02/14.
  */
-function LoginController($scope, Login, Register, $cookieStore, Spinner, Contact, md5) {
+function LoginController($scope, Login, Register, $cookieStore, Spinner, Contact,$rootScope,md5) {
 
     //data klaar zetten
     $scope.contactData = {
@@ -39,6 +39,7 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, Contact
         Login.save(hashedLoginData, function (data) {
             Spinner.spinner.stop();
             $cookieStore.put('accessToken', data.value);
+            $rootScope.loadInvites();
             $scope.go('/');
             $scope.hasLoginFailed = false;
         }, function () {
@@ -73,6 +74,7 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, Contact
                         Spinner.spinner.stop();
                         $cookieStore.put('accessToken', data.value);
                         $scope.updateFbProfile(response);
+                        $rootScope.loadInvites();
                         $scope.go('/');
                         $scope.hasLoginFailed = false;
                     }, function () {
@@ -100,6 +102,7 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, Contact
             Spinner.spinner.stop();
             $cookieStore.put('accessToken', data.value);
             $scope.updateFbProfile(response);
+            $rootScope.loadInvites();
             $scope.go('/');
             $scope.alreadyRegistered = false;
         }, function () {

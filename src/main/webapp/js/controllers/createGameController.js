@@ -5,14 +5,16 @@
  *
  */
 var spaceApp = angular.module('spaceApp');
-spaceApp.controller("createGameController", function ($scope, $translate, Game, FindPlayer, Profile, MailService, Spinner) {
+spaceApp.controller("createGameController", function ($scope, $translate, Game, FindPlayer, Profile,$firebase,MailService, Spinner) {
 
 
-    //haal ingelogde gebruiker op
+    //haal ingelogde gebruiker op en initialiseer firebase connectie
     Profile.get(function (data, headers) {
         console.log("get api/auth/user");
         $scope.loggedInProfileId = data.profile.profileId;
-    }, function () {
+        $scope.loggedInUserId = data.userId;
+        $scope.loggedInUsername = data.username.replace(/ /g, '-');
+    }, function (data, headers) {
         $scope.loggedInProfileId = null;
     });
 
@@ -22,15 +24,23 @@ spaceApp.controller("createGameController", function ($scope, $translate, Game, 
     };
     $scope.gameId = "";
 
-    $scope.createGame = function (opponentId) {
+    $scope.createGame = function (opponentId,opponentUsername) {
         $scope.gameData.opponentProfileId = opponentId;
         Game.save($scope.gameData, function (data) {
-
             $scope.gameId = data[0];
-
+            $scope.pushInvite($scope.gameId,opponentUsername,opponentId);
             $scope.go('/spacecrack/game/' + $scope.gameId);
 
         })
+    };
+
+    //push invite
+    $scope.pushInvite = function (gameId,opponentUsername,opponentId) {
+        opponentUsername = opponentUsername.replace(/ /g, '');
+        var firebaseUrl = 'https://vivid-fire-9476.firebaseio.com/invites/' + opponentUsername + opponentId;
+        var ref = new Firebase(firebaseUrl);
+        $scope.allInvites = $firebase(ref);
+        $scope.allInvites.$add({inviter: $scope.loggedInUsername, read: false, gameId: gameId});
     };
 
     $scope.selectRandomPlayer = function () {
