@@ -52,7 +52,7 @@ public class ViewModelConverter implements IViewModelConverter {
        playerViewModel.setTurnEnded(player.isTurnEnded());
        playerViewModel.setRequestAccepted(player.isRequestAccepted());
        playerViewModel.setProfileId(player.getProfile().getProfileId());
-       playerViewModel.setPlayerName(player.getProfile().getFirstname() + " " + player.getProfile().getLastname());
+       playerViewModel.setPlayerName((player.getProfile().getFirstname() + " " + player.getProfile().getLastname()).replaceAll("\\s","_"));
        playerViewModel.setPlayerId(player.getPlayerId());
        List<ShipViewModel> shipViewModels  = new ArrayList<ShipViewModel>();
        for(Ship ship: player.getShips()) {
