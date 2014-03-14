@@ -25,7 +25,8 @@ public class GameRepository implements IGameRepository {
     @Autowired
     private SessionFactory sessionFactory;
 
-    public GameRepository() {}
+    public GameRepository() {
+    }
 
     public GameRepository(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -96,10 +97,6 @@ public class GameRepository implements IGameRepository {
         @SuppressWarnings("JpaQlInspection") Query q = session.createQuery("from Game g where g.gameId = :id");
         q.setParameter("id", gameId);
         Game game = (Game) q.uniqueResult();
-        if (game != null) {
-            game.getPlayers().get(0).setGame(null);
-            game.getPlayers().get(1).setGame(null);
-            session.delete(game);
-        }
+        session.delete(game);
     }
 }

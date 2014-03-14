@@ -16,7 +16,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.internal.verification.VerificationModeFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate4.HibernateTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +44,9 @@ public class GameServiceTests extends BaseUnitTest {
     private IPlanetRepository planetRepository;
     private Profile opponentProfile;
 
+    @Autowired
+    private HibernateTransactionManager transactionManager;
+
     @Before
     public void setUp() throws Exception {
         playerRepository = new PlayerRepository(sessionFactory);
@@ -53,6 +61,7 @@ public class GameServiceTests extends BaseUnitTest {
         User opponentUser = new User();
         opponentUser.setProfile(opponentProfile);
         user.setProfile(profile);
+
     }
 
     private Game createGame() {
@@ -470,5 +479,30 @@ public class GameServiceTests extends BaseUnitTest {
         assertTrue("Two perimeters should exist.", !perimeters.isEmpty());
         assertEquals("Two perimeters should exist.", perimeters.size(), 2);
         assertTrue("Expected and actual perimeters should match.", (expectedPerimeters.containsAll(perimeters) && perimeters.containsAll(expectedPerimeters)));
+    }
+
+    @Test
+    @Transactional
+    public void deleteGame() throws Exception {
+        TransactionStatus status1 = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRED));
+
+        User deleteGameTestUser = new User("Bart", "bartjetopdocent", "bartjebartje@gmail.com");
+        Profile profile = new Profile("Bart", "Bartels", null, null);
+        deleteGameTestUser.setProfile(profile);
+
+        transactionManager.commit(status1);
+
+        TransactionStatus status2 = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRED));
+
+        int gameId = gameService.createGame(deleteGameTestUser.getProfile(), "SpaceCrackName", opponentProfile);
+        Game game1 = gameService.getGameByGameId(gameId);
+
+        Game game = game1;
+        transactionManager.commit(status2);
+
+        TransactionStatus status3 = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRED));
+        gameService.deleteGame(game.getGameId());
+        transactionManager.commit(status3);
+
     }
 }

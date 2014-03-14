@@ -31,6 +31,7 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, Contact
     $scope.alreadyRegistered = false;
     $scope.login = function () {
         Spinner.spinner.spin(Spinner.target);
+        $.blockUI({ message: null });
 
         var hashedLoginData = {
             email: $scope.loginData.email,
@@ -38,12 +39,13 @@ function LoginController($scope, Login, Register, $cookieStore, Spinner, Contact
         };
         Login.save(hashedLoginData, function (data) {
             Spinner.spinner.stop();
+            $.unblockUI();
             $cookieStore.put('accessToken', data.value);
-            $rootScope.loadInvites();
             $scope.go('/');
             $scope.hasLoginFailed = false;
         }, function () {
             Spinner.spinner.stop();
+            $.unblockUI();
             $scope.hasLoginFailed = true;
         });
 

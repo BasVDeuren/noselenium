@@ -45,13 +45,26 @@ public abstract class SeleniumBaseTestCase {
     }
     protected void login() {
         driver.get(baseUrl);
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+        WebDriverWait wait = new WebDriverWait(driver, 10);
         WebElement uname = driver.findElement(By.name("uname"));
         WebElement password = driver.findElement(By.name("password"));
         uname.sendKeys("test@gmail.com");
         password.sendKeys("test");
         WebElement loginbutton = driver.findElement(By.name("login"));
         loginbutton.click();
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+
+//        uname = driver.findElement(By.name("uname"));
+//        password = driver.findElement(By.name("password"));
+//        uname.sendKeys("test@gmail.com");
+//        password.sendKeys("test");
+//        loginbutton = driver.findElement(By.name("login"));
+//        loginbutton.click();
+
         wait.until(ExpectedConditions.elementToBeClickable(By.name("createGame")));
     }
 

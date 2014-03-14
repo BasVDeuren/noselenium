@@ -3,6 +3,9 @@
  */
 var spaceApp = angular.module('spaceApp');
 
-spaceApp.controller("NavHomeController", function ($scope, AuthorizationService) {
-    AuthorizationService.get();
+spaceApp.controller("NavHomeController", function ($scope,$rootScope, AuthorizationService) {
+    AuthorizationService.get(function(){
+            $rootScope.loadInvites();
+        }
+    );
 });

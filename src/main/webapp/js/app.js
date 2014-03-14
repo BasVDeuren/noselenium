@@ -145,7 +145,7 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
 
     $rootScope.loadInvites = function () {
         $rootScope.invitesArray = [];
-        Profile.get(function (data, headers) {
+        Profile.get(function (data) {
             console.log("get api/auth/user");
             var firebaseUrl = 'https://vivid-fire-9476.firebaseio.com/invites/' + data.username.replace(/ /g, '') + data.profile.profileId;
             var ref = new Firebase(firebaseUrl);

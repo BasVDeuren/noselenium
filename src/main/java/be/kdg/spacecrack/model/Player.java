@@ -1,10 +1,12 @@
 package be.kdg.spacecrack.model;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.annotations.*;
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +29,8 @@ public class Player {
     @GeneratedValue
     private int playerId;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    @ManyToOne( fetch = FetchType.EAGER)
     @JoinColumn(name = "profileId")
     private Profile profile;
 

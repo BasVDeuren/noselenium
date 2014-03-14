@@ -2,7 +2,7 @@
  * Created by Tim on 24/02/14.
  */
 var spaceApp = angular.module('spaceApp');
-spaceApp.controller("GameController", function ($scope, $translate, Map, Game, Action, ActiveGame, $route, $routeParams) {
+spaceApp.controller("GameController", function ($scope, $translate, Map, Game, Action, ActiveGame, $route, $routeParams, Spinner) {
     //region Declarations
 //Consts not supported internet explorer
 
@@ -101,7 +101,12 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
     }
 //endregion
     function resetGame() {
-        ActiveGame.get({gameId: $routeParams.gameId}, applyGameActiveViewModelData);
+        Spinner.spinner.spin(Spinner.target);
+        $.blockUI({ message: null });
+        ActiveGame.get({gameId: $routeParams.gameId}, applyGameActiveViewModelData, function(){
+            Spinner.spinner.stop();
+            $.unblockUI();
+        });
     }
 
     function drawGame() {
@@ -109,13 +114,12 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
 
         var graphics = game.add.graphics(0, 0);
         graphics.lineStyle(3, 0x999999, 1);
-
         Map.get(function (data) {
-
             //assign planets to their sprites;
             drawPlanets(data);
             drawConnections();
             resetGame();
+        }, function(){
         });
 
         function drawPlanets(data) {
@@ -164,6 +168,8 @@ spaceApp.controller("GameController", function ($scope, $translate, Map, Game, A
 
 
     function applyGameActiveViewModelData(data) {
+        Spinner.spinner.stop();
+        $.unblockUI();
         $scope.game.activePlayerId = data.activePlayerId;
         if (data.game.player2.playerId == $scope.game.activePlayerId) {
             game.camera.x = FARRESTPOINTOFCAMERA;
