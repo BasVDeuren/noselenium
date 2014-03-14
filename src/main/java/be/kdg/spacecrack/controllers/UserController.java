@@ -25,6 +25,7 @@ import java.util.List;
  */
 @Controller
 public class UserController {
+
     @Autowired
     private IUserService userService;
 
@@ -85,9 +86,9 @@ public class UserController {
         return userService.getUsersByString(username);
     }
 
-    @RequestMapping(value = "/auth/findusersbyemail/{email}", method = RequestMethod.GET)
+    @RequestMapping(value = "/auth/findusersbyemail", method = RequestMethod.GET)
     @ResponseBody
-    public List<User> getUsersByEmail(@PathVariable String email) throws Exception {
+    public List<User> getUsersByEmail(@RequestParam(value = "email") String email) throws Exception {
         return userService.getUsersByEmail(email);
     }
 

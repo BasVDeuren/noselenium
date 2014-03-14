@@ -5,14 +5,14 @@
  *
  */
 var spaceApp = angular.module('spaceApp');
-spaceApp.controller("createGameController", function ($scope, $translate, Game, FindPlayer, Profile) {
+spaceApp.controller("createGameController", function ($scope, $translate, Game, FindPlayer, Profile, MailService, Spinner) {
 
 
     //haal ingelogde gebruiker op
     Profile.get(function (data, headers) {
         console.log("get api/auth/user");
         $scope.loggedInProfileId = data.profile.profileId;
-    }, function (data, headers) {
+    }, function () {
         $scope.loggedInProfileId = null;
     });
 
@@ -44,19 +44,40 @@ spaceApp.controller("createGameController", function ($scope, $translate, Game, 
     };
 
     $scope.foundPlayers = [];
-
+    $scope.receiverMail = {
+        emailAddress: ""
+    };
     $scope.searchCriteria = 'email';
+    $scope.findHasCalled = false;
 
     $scope.findPlayers = function (searchString) {
         if ($scope.searchCriteria == "email") {
-            FindPlayer.findUsersByEmail().get({email: searchString}, function (data, headers) {
+            $scope.findHasCalled = true;
+            FindPlayer.findUsersByEmail().get({email: searchString}, function (data) {
                 $scope.foundPlayers = data;
             });
         } else {
-            FindPlayer.findUsersByUsername().get({username: searchString}, function (data, headers) {
+            FindPlayer.findUsersByUsername().get({username: searchString}, function (data) {
                 $scope.foundPlayers = data;
             });
         }
+    };
+    $scope.mailSent = false;
+    $scope.sendMail = function(receiverMailAddress){
+        Spinner.spinner.spin(Spinner.target);
+        //$.blockUI({ message: null });
+        $scope.receiverMail = {
+            emailAddress: receiverMailAddress
+        };
+        MailService.save($scope.receiverMail, function(){
+            Spinner.spinner.stop();
+            //$.unblockUI();
+            $scope.mailSent = true;
+        }, function(){
+           // $.unblockUI();
+            Spinner.spinner.stop();
+            $scope.mailSent = false;
+        });
     };
 
     $scope.hideFoundPlayer = function (profileId) {

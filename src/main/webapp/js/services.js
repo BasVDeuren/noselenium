@@ -73,7 +73,7 @@ angular.module('spaceServices', ['ngResource'])
         };
 
         factory.findUsersByEmail = function() {
-            return $resource('/api/auth/findusersbyemail/:email', {username: '@email'},{'get': { method: 'GET', params: {username: '@email'}, format: 'json', isArray: true }})
+            return $resource('/api/auth/findusersbyemail?email=:email', {username: '@email'},{'get': { method: 'GET', params: {username: '@email'}, format: 'json', isArray: true }})
         };
 
         factory.findUserByUserId = function() {
@@ -97,4 +97,6 @@ angular.module('spaceServices', ['ngResource'])
         return factory;
     }).factory('StatisticsService', function($resource){
         return $resource('/api/auth/statistics');
+    }).factory('MailService', function($resource){
+        return $resource('/api/auth/invitation');
     });

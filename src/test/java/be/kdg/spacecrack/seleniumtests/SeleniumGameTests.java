@@ -26,6 +26,11 @@ public class SeleniumGameTests extends SeleniumBaseTestCase {
         WebElement newgame = driver.findElement(By.name("createGame"));
         wait.until(ExpectedConditions.visibilityOf(newgame));
         newgame.click();
+
+        WebElement username = driver.findElement(By.name("btnUserNameRadio"));
+        wait.until(ExpectedConditions.visibilityOf(username));
+        username.click();
+
         WebElement btnFind = driver.findElement(By.name("btnFind"));
         wait.until(ExpectedConditions.visibilityOf(btnFind));
 

@@ -8,9 +8,9 @@ package be.kdg.spacecrack.controllers;/* Git $Id
 
 import be.kdg.spacecrack.model.Profile;
 import be.kdg.spacecrack.model.User;
-import be.kdg.spacecrack.repositories.ITokenRepository;
-import be.kdg.spacecrack.repositories.TokenRepository;
-import be.kdg.spacecrack.services.*;
+import be.kdg.spacecrack.services.IAuthorizationService;
+import be.kdg.spacecrack.services.IProfileService;
+import be.kdg.spacecrack.services.IUserService;
 import be.kdg.spacecrack.viewmodels.ProfileWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

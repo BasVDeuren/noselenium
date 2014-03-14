@@ -79,5 +79,10 @@
     "HELP":"",
     "INVALID_GAMENAME": "You may not use symbols",
     "GAMENAMEPLACEHOLDER": "Enter a name for your game",
-    "VIEW_PROFILE": "View Profile"
+    "OPPONENTNOTFOUND": "The opponent is not found.",
+    "OPPONENTNOTFOUNDNOTVALIDEMAIL": "The opponent is not found, if you want to send an email to this person, \nenter a valid email adress.",
+    "OPPONENTNOTFOUNDVALIDEMAIL": "The opponent is not found \nbut you can send an email to this user by clicking this button",
+    "MAILOPPONENT": "Send mail",
+    "VIEW_PROFILE": "View Profile",
+    "MAILSENT": "A mail has been sent to "
 }

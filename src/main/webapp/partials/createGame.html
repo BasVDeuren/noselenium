@@ -3,15 +3,18 @@
         <div class="col-md-6 col-md-offset-3">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <form class="form-horizontal" role="form" name="gameForm" >
+                    <form class="form-horizontal" role="form" name="gameForm">
                         <div class="form-group">
                             <label for="gameName" class="col-sm-3 control-label formLabel">{{'NAME' | translate}}:
                                 *</label>
-                            <div class="col-sm-8">
-                                <input type="text" id="gameName" class="form-control" placeholder="{{'GAMENAMEPLACEHOLDER' | translate}}"
-                                       name="gameName" ng-pattern="/^[a-z0-9A-Z]+$/" ng-model="gameData.gameName" required="true">
 
-                                <span ng-show="gameForm.gameName.$error.pattern"  class="label label-danger">{{'INVALID_GAMENAME' | translate}}</span>
+                            <div class="col-sm-8">
+                                <input type="text" id="gameName" class="form-control"
+                                       placeholder="{{'GAMENAMEPLACEHOLDER' | translate}}"
+                                       name="gameName" ng-pattern="/^[a-z0-9A-Z]+$/" ng-model="gameData.gameName"
+                                       required="true">
+
+                                <span ng-show="gameForm.gameName.$error.pattern" class="label label-danger">{{'INVALID_GAMENAME' | translate}}</span>
                             </div>
                         </div>
                         <div class="form-group">
@@ -20,22 +23,45 @@
 
                             <div class="col-sm-8" id="searchCriteria">
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-primary" ng-model="searchCriteria" btn-radio="'email'">Email</button>
-                                    <button type="button" class="btn btn-primary" ng-model="searchCriteria" btn-radio="'username'">{{'USERNAME' | translate}}</button>
-                                    <button type="button" class="btn btn-primary" ng-model="searchCriteria" btn-radio="'facebook'" ng-click="findFbfriends()">Facebook</button>
+                                    <button type="button" class="btn btn-primary" ng-model="searchCriteria"
+                                            btn-radio="'email'">Email
+                                    </button>
+                                    <button type="button" class="btn btn-primary" ng-model="searchCriteria"
+                                            btn-radio="'username'" name="btnUserNameRadio">{{'USERNAME' | translate}}
+                                    </button>
+                                    <button type="button" class="btn btn-primary" ng-model="searchCriteria"
+                                            btn-radio="'facebook'" ng-click="findFbfriends()">Facebook
+                                    </button>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="opponent" class="col-sm-3 control-label formLabel">{{'OPPONENT' | translate}}
-                                </label>
+                            </label>
 
                             <div class="col-md-8" id="opponent">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" name="txtSearchString" ng-model="searchString">
+                                    <input type="text" class="form-control" name="txtSearchString"
+                                           ng-model="searchString" ng-hide="searchCriteria =='email'">
+                                    <input type="text" class="form-control" name="searchStringEmail"
+                                           ng-model="searchStringEmail" ng-show="searchCriteria =='email'"
+                                           ng-pattern="/^[a-z0-9A-Z._]+@[a-zA-Z0-9.-]+\.[a-zA-Z0-9]{2,6}$/">
                                     <span class="input-group-btn">
-                                        <button class="btn btn-info" name="btnFind" type="button" ng-click="findPlayers(searchString)" ng-disabled="gameForm.gameName.$error.required || gameForm.gameName.$error.pattern">{{'FIND' | translate}}</button>
-                                        <button type="submit" class="btn btn-warning" name="createGame" ng-click="selectRandomPlayer()" ng-disabled="gameForm.gameName.$error.required || gameForm.gameName.$error.pattern"><i class="fa fa-share"></i> {{'RANDOM' | translate}}</button>
+                                        <button ng-hide="searchCriteria =='email'" class="btn btn-info" name="btnFind" type="button"
+                                                ng-click="findPlayers(searchString)"
+                                                ng-disabled="gameForm.gameName.$error.required || gameForm.gameName.$error.pattern">
+                                            {{'FIND' | translate}}
+                                        </button>
+                                        <button ng-show="searchCriteria =='email'" class="btn btn-info" name="btnFind" type="button"
+                                                ng-click="findPlayers(searchStringEmail)"
+                                                ng-disabled="gameForm.gameName.$error.required || gameForm.gameName.$error.pattern || gameForm.searchStringEmail.$error.pattern">
+                                            {{'FIND' | translate}}
+                                        </button>
+                                        <button type="submit" class="btn btn-warning" name="createGame"
+                                                ng-click="selectRandomPlayer()"
+                                                ng-disabled="gameForm.gameName.$error.required || gameForm.gameName.$error.pattern">
+                                            <i class="fa fa-share"></i> {{'RANDOM' | translate}}
+                                        </button>
                                     </span>
                                 </div>
                             </div>
@@ -54,6 +80,23 @@
                                             <button type="submit" class="btn btn-warning" name="btnInvite"
                                                     ng-click="createGame(p.profile.profileId)"><i
                                                     class="fa fa-share"></i> {{'INVITE' |
+                                                translate}}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td ng-show="foundPlayers.length == 0">
+                                            <span ng-show="gameForm.searchStringEmail.$error.pattern && searchCriteria =='email' && findHasCalled && !mailSent"
+                                                  class="label label-warning" style="font-size: 100%">{{'OPPONENTNOTFOUNDNOTVALIDEMAIL' | translate}}</span>
+                                            <span ng-show="searchCriteria =='email' && !gameForm.searchStringEmail.$error.pattern && findHasCalled && !mailSent"
+                                                  class="label label-warning" style="font-size: 100%">{{'OPPONENTNOTFOUNDVALIDEMAIL' | translate}}</span>
+                                            <span ng-show="mailSent" ng-disabled="!mailSent"
+                                                  class="label label-info" style="font-size: 100%">{{'MAILSENT' | translate}} {{searchStringEmail}}</span>
+                                            <!--<span ng-show="foundPlayers.length == 0"-->
+                                                      <!--class="label label-danger">{{'OPPONENTNOTFOUND' | translate}}</span>-->
+                                        </td>
+                                        <td ng-show="foundPlayers.length == 0 && searchCriteria =='email' && !gameForm.searchStringEmail.$error.pattern && findHasCalled && !mailSent">
+                                            <button class="btn-default" ng-click="sendMail(searchStringEmail)">{{'MAILOPPONENT' |
                                                 translate}}
                                             </button>
                                         </td>
