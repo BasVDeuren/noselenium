@@ -8,4 +8,9 @@ package be.kdg.spacecrack.utilities;/* Git $Id$
 
 public interface IFirebaseUtil {
     void setValue(String suffix, Object object);
+
+    void clearSpaceCrack();
+
+    void clearChat();
+
 }

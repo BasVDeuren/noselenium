@@ -50,7 +50,8 @@ public class GameService implements IGameService {
     @Autowired
     private IGameSynchronizer gameSynchronizer;
 
-    public GameService() {}
+    public GameService() {
+    }
 
     public GameService(IPlanetRepository planetRepository, IColonyRepository colonyRepository, IShipRepository shipRepository, IPlayerRepository playerRepository, IGameRepository gameRepository, IMoveShipHandler moveShipHandler, IViewModelConverter viewModelConverter, IGameSynchronizer gameSynchronizer) {
         this.planetRepository = planetRepository;
@@ -123,8 +124,8 @@ public class GameService implements IGameService {
         gameSynchronizer.updateGame(game);
     }
 
-    private void validateActionMakeSureGameIsNotFinishedYet(Game game){
-        if(game.getLoserPlayerId() != 0){
+    private void validateActionMakeSureGameIsNotFinishedYet(Game game) {
+        if (game.getLoserPlayerId() != 0) {
             throw new SpaceCrackNotAcceptableException("Game is already finished.");
         }
     }
@@ -151,7 +152,6 @@ public class GameService implements IGameService {
                 if (!p.isTurnEnded()) {
                     allTurnsEnded = false;
                 }
-
             }
             if (allTurnsEnded) {
                 for (Player p : players) {
@@ -159,13 +159,10 @@ public class GameService implements IGameService {
 
                 }
             }
-
-
         } else {
             throw new SpaceCrackNotAcceptableException("Turn is already ended");
         }
-         gameSynchronizer.updateGame(game);
-
+        gameSynchronizer.updateGame(game);
     }
 
     @Override
@@ -179,8 +176,8 @@ public class GameService implements IGameService {
     }
 
     private void checkLost(Game gameByGameId) {
-        for(Player player : gameByGameId.getPlayers()){
-            if(player.getColonies().size() == 0){
+        for (Player player : gameByGameId.getPlayers()) {
+            if (player.getColonies().size() == 0) {
                 gameByGameId.setLoserPlayerId(player.getPlayerId());
             }
         }
@@ -194,7 +191,6 @@ public class GameService implements IGameService {
                     return gamePlayer;
                 }
             }
-
         }
         throw new SpaceCrackUnexpectedException("This user isn't playing this game");
 
@@ -229,14 +225,11 @@ public class GameService implements IGameService {
 
         player.setCommandPoints(player.getCommandPoints() - BUILDSHIP_COST);
         gameSynchronizer.updateGame(game);
-
-
     }
 
 
     @Override
     public List<Integer> getRevisionNumbers(int gameId) {
-
         return gameRepository.getRevisionNumbers(gameId);
     }
 

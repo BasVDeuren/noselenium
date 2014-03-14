@@ -2,7 +2,9 @@
  * Created by Tim on 24/02/14.
  */
 var spaceApp = angular.module('spaceApp');
-spaceApp.controller("GameController", function ($scope, $translate, Map, Game, Action, ActiveGame, $route, $routeParams, Spinner) {
+spaceApp.controller("GameController", function ($scope,$templateCache, $translate, Map, Game, Action, ActiveGame, $route, $routeParams, Spinner) {
+    $templateCache.removeAll();
+
     //region Declarations
 //Consts not supported internet explorer
 

@@ -22,7 +22,7 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.IDENTITY )
     private int gameId;
 
-    @Column(unique = true)
+    @Column
     private String name;
 
     @LazyCollection(LazyCollectionOption.FALSE)

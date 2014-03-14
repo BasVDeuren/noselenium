@@ -2,7 +2,10 @@
  * Created by Tim on 10/03/14.
  */
 var spaceApp = angular.module('spaceApp');
-spaceApp.controller("ReplayGameController", function ($scope, $translate, Map, Game, Action, $route, $routeParams, ReplayGame) {
+spaceApp.controller("ReplayGameController", function ($scope,$templateCache, $translate, Map, Game, Action, $route, $routeParams, ReplayGame) {
+        $templateCache.removeAll();
+
+
     //region Declarations
 
     //const not supported in internet explorer
@@ -136,7 +139,7 @@ spaceApp.controller("ReplayGameController", function ($scope, $translate, Map, G
             ReplayGame.getRevisionByRevisionNumber().get({gameId: $routeParams.gameId, revisionNumber: $scope.nextRevisionNumber}, applyGameData, function(){
                 clearInterval(drawRevisions);
             });
-        }, 2000);
+        }, 800);
     }
 
 

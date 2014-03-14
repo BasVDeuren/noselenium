@@ -66,6 +66,8 @@ public class GameController {
 
     @PostConstruct
     private void createMap() {
+        firebaseUtil.clearSpaceCrack();
+        firebaseUtil.clearChat();
         mapFactory.createPlanets();
     }
 
