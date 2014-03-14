@@ -2,7 +2,7 @@
  * Created by Dimi on 3/02/14.
  */
 
-var spaceApp = angular.module('spaceApp', ['ngRoute', 'spaceServices', 'ngCookies', 'ngAnimate', 'pascalprecht.translate', 'ui.bootstrap', 'imageupload', 'firebase', 'mgcrea.ngStrap','angular-md5'])
+var spaceApp = angular.module('spaceApp', ['ngRoute', 'spaceServices', 'ngCookies', 'ngAnimate', 'pascalprecht.translate', 'ui.bootstrap', 'imageupload', 'firebase', 'mgcrea.ngStrap', 'angular-md5'])
     .config(appRouter);
 
 //Navigation
@@ -152,18 +152,28 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
             $rootScope.userInvites = $firebase(ref);
 
             ref.on("child_added", function (dataSnapshot) {
-                    if (!dataSnapshot.val().read) {
+                if (!dataSnapshot.val().read) {
+                    if (dataSnapshot.val().invitedId == data.profile.profileId && dataSnapshot.val().invited == data.username) {
                         $rootScope.invitesArray.push(dataSnapshot.val());
                     }
+                }
             });
         }, function (data, headers) {
         });
     };
     $rootScope.loadInvites();
 
-    $scope.acceptInvite = function (id) {
-        GameInvite.save({gameId: id}, function () {
-            $scope.go('/spacecrack/game/' + id);
+    $rootScope.acceptInvite = function (game) {
+        GameInvite.save({gameId: game.gameId}, function () {
+            var keys = $rootScope.userInvites.$getIndex();
+            keys.forEach(function (key, i) {
+                if ($rootScope.userInvites[key] == game) {
+                    $rootScope.userInvites[key].accepted = true;
+                    $rootScope.userInvites.$save(key);
+                }
+            });
+            $rootScope.invitesArray = [];
+            $scope.go('/spacecrack/game/' + game.gameId);
         });
     };
 
@@ -174,9 +184,9 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
         return true;
     };
 
-    $scope.setInvitesAsRead = function(){
+    $scope.setInvitesAsRead = function () {
         var keys = $rootScope.userInvites.$getIndex();
-        keys.forEach(function(key, i) {
+        keys.forEach(function (key, i) {
             $rootScope.userInvites[key].read = true;
             $rootScope.userInvites.$save(key);
         });
@@ -184,19 +194,17 @@ spaceApp.controller("MainController", function ($scope, $cookies, $location, $ti
         $rootScope.invitesArray = [];
     };
     Profile.get(function (data) {
-    console.log("get api/auth/user");
+        console.log("get api/auth/user");
         loginData.password = data.password;
-        if(loginData.password.substr(0,8) == ("facebook")){
+        if (loginData.password.substr(0, 8) == ("facebook")) {
             $rootScope.facebookBool = true;
-        }else{
+        } else {
             $rootScope.facebookBool = false;
         }
     }, function (data) {
         console.log("WRONG");
     });
 
-
-  
 
 });
 

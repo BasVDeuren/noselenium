@@ -5,7 +5,7 @@
  *
  */
 var spaceApp = angular.module('spaceApp');
-spaceApp.controller("createGameController", function ($scope, $translate, Game, FindPlayer, Profile,$firebase,MailService, Spinner) {
+spaceApp.controller("createGameController", function ($scope, $translate, Game, FindPlayer, Profile,$firebase,MailService, Spinner,$rootScope) {
 
 
     //haal ingelogde gebruiker op en initialiseer firebase connectie
@@ -40,7 +40,8 @@ spaceApp.controller("createGameController", function ($scope, $translate, Game, 
         var firebaseUrl = 'https://vivid-fire-9476.firebaseio.com/invites/' + opponentUsername + opponentId;
         var ref = new Firebase(firebaseUrl);
         $scope.allInvites = $firebase(ref);
-        $scope.allInvites.$add({inviter: $scope.loggedInUsername, read: false, gameId: gameId});
+        $scope.allInvites.$add({inviter: $scope.loggedInUsername, inviterId: $scope.loggedInProfileId,invited: opponentUsername,invitedId:opponentId, read: false, gameId: gameId, accepted: false});
+        $rootScope.loadInvites();
     };
 
     $scope.selectRandomPlayer = function () {

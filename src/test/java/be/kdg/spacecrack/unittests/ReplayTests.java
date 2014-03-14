@@ -40,7 +40,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:application-context.xml"})
+@ContextConfiguration(locations = {"file:src/test/resources/application-context.xml"})
 public class ReplayTests {
 
     @SuppressWarnings("SpringJavaAutowiringInspection")

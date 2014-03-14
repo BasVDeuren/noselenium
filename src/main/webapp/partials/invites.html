@@ -4,12 +4,16 @@
 
     <div class="popover-content inviteContent">
         <table class="table table-hover">
-            <tr ng-repeat="i in userInvites">
+            <tr ng-repeat="i in userInvites" ng-hide="i.accepted">
                 <td></td>
                 <td><strong>{{i.inviter}}</strong> invited you</td>
-                <td>
-                    <button class="btn btn-success btn-sm" ng-click="acceptInvite(i.gameId)"><i
+                <td ng-hide="i.accepted">
+                    <button class="btn btn-success btn-sm" ng-click="acceptInvite(i)"><i
                             class="fa fa-check"></i></button>
+                </td>
+                <td ng-show="i.accepted">
+                    <button class="btn btn-warning btn-sm" ng-click=""><i
+                            class="fa fa-chevron-circle-right"></i></button>
                 </td>
             </tr>
         </table>
