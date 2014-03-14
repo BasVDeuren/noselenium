@@ -83,5 +83,7 @@
     "OPPONENTNOTFOUNDVALIDEMAIL": "Er is geen tegenspeler gevonden, \nmaar als je op deze knop klikt stuur je een email naar deze persoon als uitnodiging.",
     "MAILOPPONENT": "Verstuur mail",
     "VIEW_PROFILE": "Profiel bekijken",
-    "MAILSENT": "Er is een mail gestuurd naar "
+    "MAILSENT": "Er is een mail gestuurd naar ",
+    "INVITEHASSEND":"De uitnodiging is verstuurd naar de tegenstander",
+    "GOTOACTIVEGAMES" : "Ga naar actieve spelen"
 }

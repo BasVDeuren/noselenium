@@ -47,11 +47,11 @@ spaceApp.controller("ActiveGamesController", function ($scope, $translate, Game,
         return ($scope.getPlayersOrdered(game)[0].requestAccepted && $scope.getPlayersOrdered(game)[1].requestAccepted);
     };
 
-    $scope.isEndedGame = function (game) {
+    $scope.isNotEndedGame = function (game) {
         if(game.loserPlayerId == 0){
-            return false;
-        }else{
             return true;
+        }else{
+            return false;
         }
     };
 

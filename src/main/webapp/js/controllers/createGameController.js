@@ -24,18 +24,17 @@ spaceApp.controller("createGameController", function ($scope, $translate, Game, 
     };
     $scope.gameId = "";
 
-    $scope.createGame = function (opponentId,opponentUsername) {
+    $scope.createGame = function (opponentId, opponentUsername) {
         $scope.gameData.opponentProfileId = opponentId;
         Game.save($scope.gameData, function (data) {
             $scope.gameId = data[0];
-            $scope.pushInvite($scope.gameId,opponentUsername,opponentId);
-            $scope.go('/spacecrack/game/' + $scope.gameId);
+            $scope.pushInvite($scope.gameId, opponentUsername, opponentId);
 
         })
     };
 
     //push invite
-    $scope.pushInvite = function (gameId,opponentUsername,opponentId) {
+    $scope.pushInvite = function (gameId, opponentUsername, opponentId) {
         opponentUsername = opponentUsername.replace(/ /g, '');
         var firebaseUrl = 'https://vivid-fire-9476.firebaseio.com/invites/' + opponentUsername + opponentId;
         var ref = new Firebase(firebaseUrl);
@@ -49,7 +48,6 @@ spaceApp.controller("createGameController", function ($scope, $translate, Game, 
             $scope.gameData.opponentProfileId = data.profile.profileId;
             Game.save($scope.gameData, function (data) {
                 $scope.gameId = data[0];
-                $scope.go('/spacecrack/game/' + $scope.gameId);
             })
         })
     };
@@ -103,14 +101,6 @@ spaceApp.controller("createGameController", function ($scope, $translate, Game, 
         }
     };
 
-//    $scope.CheckName = function(gameName){
-//        return gameName.match(/^[a-zA-Z0-9]+$/)
-//    };
-//
-//    $scope.validateCreateGame = function(){
-//        return ($scope.gameData.gameName != '' && $scope.CheckName($scope.gameData.gameName))
-//    };
-
     $scope.findFbfriends = function () {
         FB.ui({app_id: '649165391811913',
             method: 'apprequests',
@@ -118,23 +108,4 @@ spaceApp.controller("createGameController", function ($scope, $translate, Game, 
         });
     };
 
-//    spaceApp.directive('nosymbols', function() {
-//        return {
-//            require: 'ngModel',
-//            link: function(scope, elm, attrs, ctrl) {
-//                //var regex = /[^a-zA-Z0-9]/;
-//                ctrl.$parsers.unshift(function(viewValue) {
-//                    if (/(a-zA-Z0-9)/.test(viewValue)){
-//                        // it is valid
-//                        ctrl.$setValidity('nosymbols', true);
-//                    } else {
-//                        // it is invalid, return undefined (no model update)
-//                        ctrl.$setValidity('nosymbols', false);
-//                    }
-//                    return viewValue;
-//                });
-//            }
-//        };
-//    });
-})
-;
+});

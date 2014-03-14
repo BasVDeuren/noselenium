@@ -84,5 +84,7 @@
     "OPPONENTNOTFOUNDVALIDEMAIL": "The opponent is not found \nbut you can send an email to this user by clicking this button",
     "MAILOPPONENT": "Send mail",
     "VIEW_PROFILE": "View Profile",
-    "MAILSENT": "A mail has been sent to "
+    "MAILSENT": "A mail has been sent to ",
+    "INVITEHASSEND":"The invite has been send to your opponent",
+    "GOTOACTIVEGAMES" : "Go to active games"
 }

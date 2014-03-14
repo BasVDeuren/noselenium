@@ -12,7 +12,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="game in games" ng-show="isActiveGame(game)" ng-hide="isEndedGame(game)">
+                        <tr ng-repeat="game in games" ng-show="isActiveGame(game) && isNotEndedGame(game)">
                             <td>{{game.name}}</td>
                             <td>{{getPlayersOrdered(game)[1].playerName}}</td>
                             <td class="alignRight">
